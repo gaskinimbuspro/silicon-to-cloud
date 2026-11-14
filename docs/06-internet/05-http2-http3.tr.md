@@ -73,7 +73,7 @@ description: HTTP/1.1 neden yetmedi, HTTP/2 tek TCP bağlantısında akışları
 
 ## 🔧 DevOps bağlantısı
 
-- **gRPC HTTP/2'dir.** Cluster içinde çoğu zaman `h2c`; ingress üzerinden backend'e h2 gerekir (ingress-nginx'te `backend-protocol: GRPC`, Gateway API'de `appProtocol: kubernetes.io/h2c`).
+- **gRPC HTTP/2'dir.** Cluster içinde çoğu zaman `h2c`; ingress üzerinden backend'e h2 gerekir (emekliye ayrılan ingress-nginx'te `backend-protocol: GRPC`, Gateway API'de `appProtocol: kubernetes.io/h2c`).
 - **HTTP/3'ü** önce CDN'de ya da uçta aç (Cloudflare, CloudFront, Google LB); mobil kullanıcılar için en ucuz kazanç.
 - **Azami eşzamanlı akış** (`SETTINGS_MAX_CONCURRENT_STREAMS`, çoğu zaman 100) bağlantı başına paralel isteği sınırlar; istemciler sınıra ulaşınca daha fazla bağlantı açar.
 - **HTTP/2 DoS sınıflarına** (Rapid Reset, CONTINUATION flood) dikkat: proxy'leri güncel tut.

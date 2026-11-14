@@ -107,6 +107,15 @@ Ana thread şunu tekrarlar: **bir görev** al (tıklama handler'ı, zamanlayıc�
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[8.1 — Render pipeline'ına derin dalış](01-rendering.md)** | Tarayıcılar byte'ları piksellere nasıl çevirir: kritik render yolu, render engelleyici CSS ve ayrıştırma engelleyici JS, preload tarayıcısı ve kaynak ipuçları, stil, layout, paint ve compositing, reflow'lar ve layout thrashing, GPU katmanları, fontlar ve görseller. |
+| **[8.2 — JavaScript, event loop ve asenkron](02-javascript-event-loop.md)** | JS runtime modeli (çağrı stack'i, heap, Web API'leri, görev ve mikro görev kuyrukları), event loop ve render, callback'ler, promise'ler ve async/await, uzun görevler ve bölünmeleri, Web Worker'lar, bellek sızıntıları ve aynı modelin Node.js'teki hali. |
+| **[8.3 — Web performansı ve Core Web Vitals](03-web-performance.md)** | Core Web Vitals'ın (LCP, INP, CLS) neyi ölçtüğü ve eşikleri, TTFB ve FCP, laboratuvar ve saha verisi (Lighthouse ve CrUX/RUM), her metriğin ana kaldıraçları, performans bütçeleri ve altyapı/DevOps ekiplerinin sahip olduğu kısımlar. |
+| **[8.4 — Tarayıcı güvenliği](04-browser-security.md)** | Same-origin policy ve site izolasyonu, XSS ve Content Security Policy, CSRF ve SameSite cookie'ler, clickjacking, bir gevşetme olarak CORS, karışık içerik ve HSTS, üçüncü taraf script'ler ve Subresource Integrity, token saklama ve DevOps ekiplerinin ayarlaması gereken güvenlik header'ları. |
+
 ## 🧪 Kendin dene (Chrome DevTools)
 
 1. Herhangi bir siteyi aç → **DevTools → Performance** → sayfa yenilemesini kaydet. Main ve Compositor izlerinde **Parse HTML**, **Evaluate Script**, **Recalculate Style**, **Layout**, **Paint** ve **Composite Layers** bloklarını bul.

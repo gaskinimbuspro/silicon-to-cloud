@@ -107,6 +107,15 @@ The main thread repeats: take **one task** (a click handler, a timer, a network 
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[8.1 — The rendering pipeline in depth](01-rendering.md)** | How browsers turn bytes into pixels - the critical rendering path, render-blocking CSS and parser-blocking JS, preload scanner and resource hints, style, layout, paint and compositing, reflows and layout thrashing, GPU layers, and fonts and images. |
+| **[8.2 — JavaScript, the event loop & async](02-javascript-event-loop.md)** | The JS runtime model (call stack, heap, Web APIs, task and microtask queues), the event loop and rendering, callbacks, promises and async/await, long tasks and how to break them up, Web Workers, memory leaks, and the same model in Node.js. |
+| **[8.3 — Web performance & Core Web Vitals](03-web-performance.md)** | What Core Web Vitals (LCP, INP, CLS) measure and their thresholds, TTFB and FCP, lab vs field data (Lighthouse vs CrUX/RUM), the main levers for each metric, performance budgets, and what infrastructure and DevOps teams own. |
+| **[8.4 — Browser security](04-browser-security.md)** | The same-origin policy and site isolation, XSS and Content Security Policy, CSRF and SameSite cookies, clickjacking, CORS as a relaxation, mixed content and HSTS, third-party scripts and Subresource Integrity, storage of tokens, and the security headers DevOps teams should set. |
+
 ## 🧪 Try it yourself (Chrome DevTools)
 
 1. Open any site → **DevTools → Performance** → record a page reload. Find the **Parse HTML**, **Evaluate Script**, **Recalculate Style**, **Layout**, **Paint** and **Composite Layers** blocks on the Main and Compositor tracks.

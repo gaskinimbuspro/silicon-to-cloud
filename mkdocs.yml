@@ -75,7 +75,12 @@ nav:
       - "7.2 · Caching patterns": 07-server/02-caching.md
       - "7.3 · Databases": 07-server/03-databases.md
       - "7.4 · Queues & events": 07-server/04-queues-events.md
-  - "8 · The browser": 08-browser/index.md
+  - "8 · The browser":
+      - "Overview": 08-browser/index.md
+      - "8.1 · Rendering pipeline": 08-browser/01-rendering.md
+      - "8.2 · JavaScript & event loop": 08-browser/02-javascript-event-loop.md
+      - "8.3 · Web performance": 08-browser/03-web-performance.md
+      - "8.4 · Browser security": 08-browser/04-browser-security.md
   - "9 · Modern infrastructure": 09-infra/index.md
   - "10 · AI infrastructure":
       - "Overview": 10-ai/index.md

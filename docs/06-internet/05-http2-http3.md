@@ -73,7 +73,7 @@ description: Why HTTP/1.1 needed replacing, how HTTP/2 multiplexes streams over 
 
 ## 🔧 DevOps connection
 
-- **gRPC is HTTP/2.** Inside the cluster it's often `h2c`; through an ingress you need h2 to the backend (`backend-protocol: GRPC` on ingress-nginx, `appProtocol: kubernetes.io/h2c` on Gateway API).
+- **gRPC is HTTP/2.** Inside the cluster it's often `h2c`; through an ingress you need h2 to the backend (`backend-protocol: GRPC` on the retired ingress-nginx, `appProtocol: kubernetes.io/h2c` on Gateway API).
 - **Enable HTTP/3** at the CDN or edge first (Cloudflare, CloudFront, Google LB); it's the cheapest win for mobile users.
 - **Max concurrent streams** (`SETTINGS_MAX_CONCURRENT_STREAMS`, often 100) caps parallel requests per connection; clients open more connections when they hit it.
 - Watch for **HTTP/2 DoS classes** (Rapid Reset, CONTINUATION floods): keep proxies patched.
