@@ -43,7 +43,13 @@ nav:
       - "2.1 · Instruction sets & assembly": 02-cpu/01-isa-assembly.md
       - "2.2 · Caches & memory": 02-cpu/02-caches-memory.md
       - "2.3 · Pipelines & speculation": 02-cpu/03-pipeline-speculation.md
-  - "3 · Operating system": 03-os/index.md
+  - "3 · Operating system":
+      - "Overview": 03-os/index.md
+      - "3.1 · Processes & threads": 03-os/01-processes-threads.md
+      - "3.2 · Scheduler & CPU time": 03-os/02-scheduler.md
+      - "3.3 · Virtual memory": 03-os/03-virtual-memory.md
+      - "3.4 · Syscalls, I/O & filesystems": 03-os/04-io-filesystems.md
+      - "3.5 · Namespaces & cgroups": 03-os/05-namespaces-cgroups.md
   - "4 · How a program runs": 04-program/index.md
   - "5 · Networking": 05-network/index.md
   - "6 · DNS, TCP, TLS, HTTP":

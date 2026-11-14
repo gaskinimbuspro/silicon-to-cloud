@@ -124,6 +124,16 @@ Files, terminals, pipes, sockets and devices (`/dev/input/event3` from Chapter 1
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[3.1 — Processes & threads](01-processes-threads.md)** | What a process and a thread are, fork/exec and copy-on-write, process states, PID 1, zombies and orphans, signals and graceful shutdown, and why this matters for containers and Kubernetes. |
+| **[3.2 — The scheduler & CPU time](02-scheduler.md)** | How Linux decides which task runs where, run queues and EEVDF, preemption and context switches, nice and real-time priorities, load average, CPU affinity, and how cgroup CPU weights, quotas and Kubernetes requests/limits really work. |
+| **[3.3 — Virtual memory & memory management](03-virtual-memory.md)** | The process address space, pages and page tables, demand paging and page faults, RSS vs VSZ, the page cache, mmap, swap, memory pressure and reclaim, the OOM killer, cgroup memory limits and why containers get OOMKilled. |
+| **[3.4 — Syscalls, I/O & filesystems](04-io-filesystems.md)** | How system calls work, file descriptors and "everything is a file", the read/write path through VFS, page cache, filesystem and block layer, fsync and durability, blocking vs epoll vs io_uring, inodes, filesystems and storage in containers. |
+| **[3.5 — Namespaces, cgroups & container isolation](05-namespaces-cgroups.md)** | The Linux kernel features that make containers - the seven namespaces, cgroups v2 controllers, capabilities, seccomp and LSMs, user namespaces and rootless containers - and how runc builds a container from them. |
+
 ## 🧪 Try it yourself (Linux)
 
 ```bash

@@ -125,6 +125,16 @@ Dosyalar, terminaller, pipe'lar, soketler ve cihazlar (Bölüm 1'deki `/dev/inpu
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[3.1 — Process'ler ve thread'ler](01-processes-threads.md)** | Process ve thread nedir, fork/exec ve copy-on-write, process durumları, PID 1, zombiler ve yetimler, sinyaller ve düzgün kapanış, container ve Kubernetes için neden önemli. |
+| **[3.2 — Zamanlayıcı ve CPU zamanı](02-scheduler.md)** | Linux hangi task'ın nerede çalışacağına nasıl karar verir, çalışma kuyrukları ve EEVDF, preemption ve bağlam değişimleri, nice ve gerçek zamanlı öncelikler, load average, CPU affinity ve cgroup CPU ağırlıkları, kotaları ve Kubernetes request/limit'lerinin gerçekte nasıl çalıştığı. |
+| **[3.3 — Sanal bellek ve bellek yönetimi](03-virtual-memory.md)** | Process adres alanı, sayfalar ve page table'lar, talep üzerine sayfalama ve page fault'lar, RSS ve VSZ, page cache, mmap, swap, bellek baskısı ve geri alma, OOM killer, cgroup bellek limitleri ve container'ların neden OOMKilled olduğu. |
+| **[3.4 — Syscall'lar, I/O ve dosya sistemleri](04-io-filesystems.md)** | Sistem çağrıları nasıl çalışır, dosya tanımlayıcıları ve "her şey bir dosyadır", VFS, page cache, dosya sistemi ve blok katmanından geçen okuma/yazma yolu, fsync ve kalıcılık, bloklayan I/O, epoll ve io_uring, inode'lar, dosya sistemleri ve container'larda depolama. |
+| **[3.5 — Namespace'ler, cgroup'lar ve container izolasyonu](05-namespaces-cgroups.md)** | Container'ları oluşturan Linux kernel özellikleri: yedi namespace, cgroup v2 controller'ları, capability'ler, seccomp ve LSM'ler, user namespace'ler ve rootless container'lar; runc'nin bunlardan nasıl container kurduğu. |
+
 ## 🧪 Kendin dene (Linux)
 
 ```bash
