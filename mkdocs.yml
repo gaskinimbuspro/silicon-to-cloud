@@ -77,25 +77,4 @@ plugins:
           name: Türkçe
           build: true
           site_name: Silicon to Cloud
-          nav_translations:
-            Home: Ana sayfa
-            "1 · Keypress": "1 · Tuş basımı"
-            "2 · CPU & Assembly": "2 · CPU & Assembly"
-            "3 · Operating system": "3 · İşletim sistemi"
-            "4 · How a program runs": "4 · Program nasıl çalışır"
-            "5 · Networking": "5 · Ağın temelleri"
-            "6 · DNS, TCP, TLS, HTTP": "6 · DNS, TCP, TLS, HTTP"
-            "7 · Server side": "7 · Sunucu tarafı"
-            "8 · The browser": "8 · Tarayıcı"
-            "9 · Modern infrastructure": "9 · Modern altyapı"
-            "10 · AI infrastructure": "10 · AI altyapısı"
-            "Overview": "Genel bakış"
-            "10.1 · AI fundamentals": "10.1 · AI temelleri"
-            "10.2 · GPU hardware": "10.2 · GPU donanımı"
-            "10.3 · Software stack": "10.3 · Yazılım yığını"
-            "10.4 · Distributed training": "10.4 · Dağıtık eğitim"
-            "10.5 · Inference & serving": "10.5 · Inference ve servis"
-            "10.6 · AI platform on Kubernetes": "10.6 · Kubernetes üzerinde AI platformu"
-            "10.7 · Applications: RAG & agents": "10.7 · Uygulamalar: RAG ve ajanlar"
-            "📖 AI glossary": "📖 AI sözlüğü"
   - glightbox   # click a diagram to zoom
