@@ -35,7 +35,7 @@ const itemHtml = (it, color) => Array.isArray(it)
 
 const groupHtml = (g) => `
   <div class="group" id="${g.id}" style="--c:${C[g.color][0]};--bg:${C[g.color][1]}">
-    <div class="gh"><span class="gn">${g.n}</span><span class="gi">${icon(g.icon)}</span>${g.title}<span class="gs">${g.sub || ''}</span></div>
+    <div class="gh"><span class="gn">${g.n}</span><span class="gi">${icon(g.icon)}</span><span class="gt">${g.title}</span>${g.sub ? `<span class="gs">${g.sub}</span>` : ''}</div>
     <div class="gb ${g.reverse ? 'rev' : ''}">${g.items.map((it) => itemHtml(it, g.color)).join('')}</div>
   </div>`;
 
@@ -51,8 +51,10 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
 .row.fill{justify-content:space-between}
 .group{background:color-mix(in srgb,var(--bg) 70%,#fff);border:1.5px solid color-mix(in srgb,var(--c) 35%,#fff);
   border-radius:18px;padding:0 18px 18px;box-shadow:0 1px 2px #0f172a0d,0 8px 24px -12px #0f172a22;position:relative}
-.gh{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--c);
+.gh{position:relative;z-index:2;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--c);
   padding:12px 2px;letter-spacing:.02em;text-transform:uppercase}
+.gh>span{background:color-mix(in srgb,var(--bg) 70%,#fff);border-radius:6px}
+.gh .gt{padding:0 4px}
 .gh .gn{background:var(--c);color:#fff;border-radius:7px;width:22px;height:22px;display:grid;place-items:center;font-size:12px}
 .gh .gi svg{width:18px;height:18px;display:block}
 .gh .gs{margin-left:auto;font-weight:600;font-size:11px;color:#fff;background:var(--c);padding:3px 8px;border-radius:99px;text-transform:none;letter-spacing:0}
