@@ -36,6 +36,7 @@ nav:
   - "1 · Keypress": 01-keypress/index.md
   - "2 · CPU & Assembly": 02-cpu/index.md
   - "3 · Operating system": 03-os/index.md
+  - "4 · How a program runs": 04-program/index.md
 
 markdown_extensions:
   - admonition
@@ -66,4 +67,5 @@ plugins:
             "1 · Keypress": "1 · Tuş basımı"
             "2 · CPU & Assembly": "2 · CPU & Assembly"
             "3 · Operating system": "3 · İşletim sistemi"
+            "4 · How a program runs": "4 · Program nasıl çalışır"
   - glightbox   # click a diagram to zoom
