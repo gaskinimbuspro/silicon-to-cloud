@@ -3,7 +3,7 @@
 From pressing a key to an internet application's UI on screen, and all the way to AI infrastructure.
 I'm learning how it all works, layer by layer, in diagrams and in my own words.
 
-📖 **Site:** https://gaskinimbuspro.github.io/silicon-to-cloud/
+📖 **Site:** https://gaskinimbuspro.github.io/silicon-to-cloud/ · 🇹🇷 [Türkçe](https://gaskinimbuspro.github.io/silicon-to-cloud/tr/)
 
 ![Chapter 1](docs/assets/diagrams/01-keypress.png)
 
@@ -11,15 +11,15 @@ I'm learning how it all works, layer by layer, in diagrams and in my own words.
 
 | # | Chapter |
 |---|---|
-| 1 | [What happens when you press “A”?](docs/01-keypress/index.md) |
+| 1 | [What happens when you press “A”?](docs/01-keypress/index.md) · [TR](docs/01-keypress/index.tr.md) |
 | 2–10 | CPU & Assembly → OS → Programs → Networking → Internet → Server side → Browser → Modern infra → AI infra |
 
 ## Repo layout
 
 ```text
 docs/                  # Site content (MkDocs Material)
-  01-keypress/         # One folder per chapter
-  assets/diagrams/     # Rendered diagrams (PNG)
+  01-keypress/         # One folder per chapter (index.md = EN, index.tr.md = TR)
+  assets/diagrams/     # Rendered diagrams (*.png = EN, *.tr.png = TR)
 diagrams/              # Diagrams as code
   build.mjs            # spec → HTML (Lucide icons) → PNG
   specs/*.mjs          # One definition per diagram

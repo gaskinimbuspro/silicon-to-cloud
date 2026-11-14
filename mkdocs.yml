@@ -24,7 +24,6 @@ theme:
     text: Inter
     code: JetBrains Mono
   features:
-    - navigation.instant
     - navigation.sections
     - navigation.top
     - navigation.footer
@@ -49,4 +48,18 @@ markdown_extensions:
 
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: tr
+          name: Türkçe
+          build: true
+          site_name: Silicon to Cloud
+          nav_translations:
+            Home: Ana sayfa
+            "1 · Keypress": "1 · Tuş basımı"
   - glightbox   # click a diagram to zoom
