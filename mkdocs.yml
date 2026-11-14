@@ -42,6 +42,7 @@ nav:
   - "7 · Server side": 07-server/index.md
   - "8 · The browser": 08-browser/index.md
   - "9 · Modern infrastructure": 09-infra/index.md
+  - "10 · AI infrastructure": 10-ai/index.md
 
 markdown_extensions:
   - admonition
@@ -78,4 +79,5 @@ plugins:
             "7 · Server side": "7 · Sunucu tarafı"
             "8 · The browser": "8 · Tarayıcı"
             "9 · Modern infrastructure": "9 · Modern altyapı"
+            "10 · AI infrastructure": "10 · AI altyapısı"
   - glightbox   # click a diagram to zoom

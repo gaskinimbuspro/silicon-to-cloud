@@ -12,7 +12,15 @@ I'm learning how it all works, layer by layer, in diagrams and in my own words.
 | # | Chapter |
 |---|---|
 | 1 | [What happens when you press “A”?](docs/01-keypress/index.md) · [TR](docs/01-keypress/index.tr.md) |
-| 2–10 | CPU & Assembly → OS → Programs → Networking → Internet → Server side → Browser → Modern infra → AI infra |
+| 2 | [CPU & Assembly](docs/02-cpu/index.md) · [TR](docs/02-cpu/index.tr.md) |
+| 3 | [The operating system](docs/03-os/index.md) · [TR](docs/03-os/index.tr.md) |
+| 4 | [How a program runs](docs/04-program/index.md) · [TR](docs/04-program/index.tr.md) |
+| 5 | [Networking fundamentals](docs/05-network/index.md) · [TR](docs/05-network/index.tr.md) |
+| 6 | [DNS, TCP, TLS, HTTP](docs/06-internet/index.md) · [TR](docs/06-internet/index.tr.md) |
+| 7 | [Server side](docs/07-server/index.md) · [TR](docs/07-server/index.tr.md) |
+| 8 | [The browser](docs/08-browser/index.md) · [TR](docs/08-browser/index.tr.md) |
+| 9 | [Modern infrastructure](docs/09-infra/index.md) · [TR](docs/09-infra/index.tr.md) |
+| 10 | [AI infrastructure](docs/10-ai/index.md) · [TR](docs/10-ai/index.tr.md) |
 
 ## Repo layout
 
