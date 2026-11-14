@@ -109,6 +109,15 @@ Akış şöyle: uygulama kuyruğa bir **iş (job)** koyar ve hemen `202 Accepted
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[7.1 — Yük dengeleme](01-load-balancing.md)** | L4 ve L7 yük dengeleme, algoritmalar (round robin, least connections, consistent hashing, EWMA), health check ve readiness, bağlantı boşaltma, yapışkan oturumlar, global yük dengeleme ve Kubernetes Service, Ingress ve Gateway API'nin trafiği nasıl dengelediği. |
+| **[7.2 — Önbellek desenleri](02-caching.md)** | Önbelleklerin nerede yaşadığı (tarayıcı, CDN, proxy, process içi, Redis), cache-aside, read-through, write-through ve write-behind, TTL ve geçersiz kılma, tahliye politikaları, önbellek izdihamı ve sıcak anahtarlar, Redis temelleri ve bir önbelleğin nasıl ölçüleceği. |
+| **[7.3 — Veritabanları: depolama, transaction'lar ve replikasyon](03-databases.md)** | İlişkisel veritabanları veriyi nasıl saklar ve bulur (sayfalar, B-tree indeksleri, WAL), transaction'lar, ACID ve izolasyon seviyeleri, MVCC ve kilitler, bağlantı havuzu, replikasyon, failover ve yedekler (PITR), sharding, ne zaman NoSQL seçilir ve Kubernetes'te veritabanı çalıştırmak. |
+| **[7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler](04-queues-events.md)** | Sistemler neden kuyruk kullanır, kuyruk ve log farkı (RabbitMQ/SQS ve Kafka), topic'ler, partition'lar ve tüketici grupları, teslim garantileri ve idempotency, yeniden denemeler ve dead-letter kuyrukları, sıralama, outbox deseni ve CDC, saga'lar, geri basınç ve KEDA ile tüketicileri otomatik ölçekleme. |
+
 ## 🧪 Kendin dene (Docker)
 
 İki uygulama sunucusunun önünde bir load balancer, 2 dakikada:

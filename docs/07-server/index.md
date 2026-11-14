@@ -109,6 +109,15 @@ Flow: the app puts a **job** on the queue and immediately replies `202 Accepted`
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[7.1 — Load balancing](01-load-balancing.md)** | L4 vs L7 load balancing, algorithms (round robin, least connections, consistent hashing, EWMA), health checks and readiness, connection draining, sticky sessions, global load balancing, and how Kubernetes Services, Ingress and Gateway API balance traffic. |
+| **[7.2 — Caching patterns](02-caching.md)** | Where caches live (browser, CDN, proxy, in-process, Redis), cache-aside, read-through, write-through and write-behind, TTLs and invalidation, eviction policies, cache stampedes and hot keys, Redis essentials, and how to measure a cache. |
+| **[7.3 — Databases: storage, transactions & replication](03-databases.md)** | How relational databases store and find data (pages, B-tree indexes, WAL), transactions, ACID and isolation levels, MVCC and locks, connection pooling, replication, failover and backups (PITR), sharding, and when to choose NoSQL, plus running databases on Kubernetes. |
+| **[7.4 — Queues, streams & event-driven systems](04-queues-events.md)** | Why systems use queues, queues vs logs (RabbitMQ/SQS vs Kafka), topics, partitions and consumer groups, delivery guarantees and idempotency, retries and dead-letter queues, ordering, the outbox pattern and CDC, sagas, backpressure and autoscaling consumers with KEDA. |
+
 ## 🧪 Try it yourself (Docker)
 
 A load balancer in front of two app servers, in 2 minutes:

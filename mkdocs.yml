@@ -69,7 +69,12 @@ nav:
       - "6.4 · TLS & certificates": 06-internet/04-tls.md
       - "6.5 · HTTP/2 & HTTP/3": 06-internet/05-http2-http3.md
       - "6.6 · Methods, status codes & APIs": 06-internet/06-apis.md
-  - "7 · Server side": 07-server/index.md
+  - "7 · Server side":
+      - "Overview": 07-server/index.md
+      - "7.1 · Load balancing": 07-server/01-load-balancing.md
+      - "7.2 · Caching patterns": 07-server/02-caching.md
+      - "7.3 · Databases": 07-server/03-databases.md
+      - "7.4 · Queues & events": 07-server/04-queues-events.md
   - "8 · The browser": 08-browser/index.md
   - "9 · Modern infrastructure": 09-infra/index.md
   - "10 · AI infrastructure":
