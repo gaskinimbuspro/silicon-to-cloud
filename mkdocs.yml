@@ -41,6 +41,7 @@ nav:
   - "6 · DNS, TCP, TLS, HTTP": 06-internet/index.md
   - "7 · Server side": 07-server/index.md
   - "8 · The browser": 08-browser/index.md
+  - "9 · Modern infrastructure": 09-infra/index.md
 
 markdown_extensions:
   - admonition
@@ -76,4 +77,5 @@ plugins:
             "6 · DNS, TCP, TLS, HTTP": "6 · DNS, TCP, TLS, HTTP"
             "7 · Server side": "7 · Sunucu tarafı"
             "8 · The browser": "8 · Tarayıcı"
+            "9 · Modern infrastructure": "9 · Modern altyapı"
   - glightbox   # click a diagram to zoom
