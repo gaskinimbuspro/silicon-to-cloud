@@ -1,0 +1,11 @@
+{# Giscus comments (GitHub Discussions). Activates when extra.giscus.repo_id is set in mkdocs.yml. #}
+{% set g = config.extra.giscus %}
+{% if g and g.repo_id and page.meta.comments != false and not page.is_homepage %}
+  <h2 id="__comments">{{ "Yorumlar ve sorular" if i18n_page_locale == "tr" else "Comments & questions" }}</h2>
+  <script src="https://giscus.app/client.js"
+    data-repo="{{ g.repo }}" data-repo-id="{{ g.repo_id }}"
+    data-category="{{ g.category }}" data-category-id="{{ g.category_id }}"
+    data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0"
+    data-input-position="top" data-theme="preferred_color_scheme"
+    data-lang="{{ 'tr' if i18n_page_locale == 'tr' else 'en' }}" crossorigin="anonymous" async></script>
+{% endif %}
