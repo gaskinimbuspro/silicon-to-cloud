@@ -1,0 +1,15 @@
+name: "🐞 Correction / outdated fact"
+description: Something on a page is wrong, unclear or out of date
+labels: [correction]
+body:
+  - type: input
+    id: page
+    attributes: { label: Page URL, placeholder: "https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/04-tls/" }
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes: { label: What is wrong?, description: Quote the sentence if you can. }
+    validations: { required: true }
+  - type: textarea
+    id: source
+    attributes: { label: Source, description: A link that shows the correct information. }

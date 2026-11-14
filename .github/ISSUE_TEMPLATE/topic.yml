@@ -1,0 +1,11 @@
+name: "💡 Suggest a topic"
+description: Something you'd like explained the Silicon to Cloud way
+labels: [topic]
+body:
+  - type: input
+    id: topic
+    attributes: { label: Topic }
+    validations: { required: true }
+  - type: textarea
+    id: why
+    attributes: { label: What would you like to understand?, description: Questions you have, or where it bit you in production. }

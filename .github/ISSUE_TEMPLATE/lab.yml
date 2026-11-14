@@ -1,0 +1,15 @@
+name: "🧪 Broken command or lab"
+description: A command in "Try it yourself" or in labs/ doesn't work
+labels: [lab]
+body:
+  - type: input
+    id: where
+    attributes: { label: Page or lab script }
+    validations: { required: true }
+  - type: textarea
+    id: output
+    attributes: { label: Command and output, render: shell }
+    validations: { required: true }
+  - type: input
+    id: env
+    attributes: { label: Environment, placeholder: "Ubuntu 24.04 / macOS 15 / Codespaces / kind 0.30" }

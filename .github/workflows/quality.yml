@@ -1,0 +1,39 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 5 * * 1"   # every Monday: catch links that broke since last week
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - name: EN/TR parity
+        run: python3 tools/check_parity.py
+      - name: Generated data is reproducible
+        run: python3 tools/build_data.py && python3 tools/build_home.py
+      - name: Strict build (no broken internal links)
+        run: CI=false mkdocs build --strict
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check external links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress --max-concurrency 8 --timeout 20 --max-retries 2
+            --accept 200,206,429,403
+            --exclude '^https://(localhost|127\.0\.0\.1)' --exclude 'example\.com' --exclude 'shop\.example'
+            --exclude 'linkedin\.com'
+            './docs/**/*.md' README.md
+          fail: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}

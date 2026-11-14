@@ -19,10 +19,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
+      - run: sudo apt-get install -y -qq libcairo2 >/dev/null
       - run: pip install -r requirements.txt
       - name: Generate quiz data, flashcards, tooltips and home page
         run: python3 tools/build_data.py && python3 tools/build_home.py
       - run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdocs gh-deploy --strict --force --no-history -m "Deploy site {sha}"
+          # social cards need fonts from the internet; if anything goes wrong there, deploy without them
+          mkdocs gh-deploy --strict --force --no-history -m "Deploy site {sha}" \
+            || CI=false mkdocs gh-deploy --strict --force --no-history -m "Deploy site {sha} (no social cards)"

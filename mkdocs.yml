@@ -8,6 +8,7 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: overrides
   language: en
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -142,4 +143,22 @@ plugins:
           name: Türkçe
           build: true
           site_name: Silicon to Cloud
+  - social:
+      enabled: !ENV [CI, false]
+      cards_layout_options:
+        background_color: "#6366f1"
+        font_family: Inter
   - glightbox   # click a diagram to zoom
+
+extra:
+  # Comments: install https://github.com/apps/giscus on this repo, enable Discussions,
+  # then copy repo_id and category_id from https://giscus.app into the fields below.
+  giscus:
+    repo: gaskinimbuspro/silicon-to-cloud
+    repo_id: ""
+    category: Comments
+    category_id: ""
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gaskinimbuspro/silicon-to-cloud
+      name: GitHub repository
