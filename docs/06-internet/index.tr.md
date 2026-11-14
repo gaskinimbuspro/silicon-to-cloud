@@ -10,6 +10,26 @@ description: Bir URL'de Enter'a bastıktan sonra ne olur? DNS çözümleme, TCP 
     kimse okuyamasın ve değiştiremesin diye bağlantıyı **TLS** ile sarar, sonra üzerinden **HTTP** konuşur:
     "GET / lütfen" → "200 OK, işte HTML". Bu adımların her biri gidiş-dönüşe (round trip) mal olur. Gecikme olarak hissettiğin şey bu gidiş-dönüşlerdir.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **URL** | Uniform Resource Locator | Bir kaynağın adresi | şema://host:port/yol?sorgu |
+| **DNS** | Domain Name System | İsimleri IP adreslerine çevirir | Özyinelemeli çözücü kök → TLD → yetkili yolunu yürür |
+| **TLD** | Top-Level Domain | Bir ismin son etiketi (.com, .org, .tr) | TLD sunucuları her alan adının yetkili sunucularını gösterir |
+| **TTL (DNS)** | Time To Live | Bir DNS cevabının ne kadar önbellekte tutulabileceği | Taşımalardan önce düşür |
+| **TCP** | Transmission Control Protocol | Güvenilir, sıralı byte akışı | 3 adımlı el sıkışma, ACK, yeniden gönderim, akış + tıkanıklık kontrolü |
+| **UDP** | User Datagram Protocol | Gönder ve unut datagramları | El sıkışma ve yeniden gönderim yok; DNS ve QUIC'in temeli |
+| **RTT** | Round-Trip Time | Bir mesajın gidip gelme süresi | Her el sıkışma adımı yaklaşık bir RTT'ye mal olur |
+| **TLS** | Transport Layer Security | Şifreleme + sunucu kimlik doğrulama | Anahtar değişimi (ECDHE) + sertifika kontrolü, sonra simetrik şifreleme |
+| **CA / certificate** | Certificate Authority | Güvenilir yayıncı / bir alan adının anahtarının imzalı kanıtı | Tarayıcı zinciri güvenilir bir kök CA'ya kadar kontrol eder |
+| **SNI / ALPN** | Server Name Indication / Application-Layer Protocol Negotiation | TLS eklentileri | ClientHello içinde hangi hostname / hangi protokol (h2, h3) |
+| **HTTP** | HyperText Transfer Protocol | Web'in istek/cevap protokolü | Metot + yol + başlıklar → durum + başlıklar + gövde |
+| **HTTP/2 / HTTP/3 / QUIC** | — / — / Quick UDP Internet Connections | TCP üzerinde / QUIC (UDP) üzerinde çoklanmış HTTP | Tek bağlantıda çok akış; QUIC TCP head-of-line blocking'i kaldırır |
+| **TTFB** | Time To First Byte | İlk cevap byte'ı gelene kadar geçen süre | DNS + TCP + TLS + sunucu işleme |
+
+## 🗺️ Büyük resim
+
 ![DNS → TCP → TLS → HTTP](../assets/diagrams/06-internet.png)
 
 ---
@@ -120,6 +140,12 @@ Sunucuya 50 ms gidiş-dönüş süresi varsa ve hiçbir şey önbellekte değils
 Bu, **HTML'in ilk byte'ından önce** ~150–200 ms demek. **Bağlantının yeniden kullanılması**, **HTTP/2 / HTTP/3** ve **CDN**'lerin (sunucuları kullanıcıya yakın koymak, Bölüm 7) bu kadar önemli olmasının sebebi bu.
 
 > DevOps bağlantısı: TLS genelde load balancer'da ya da ingress'te **sonlandırılır** (terminate). Sertifikalar çoğunlukla **cert-manager** ile **Let's Encrypt**'ten alınır. Arkasındaki trafik düz HTTP olabilir ya da yeniden şifrelenebilir (service mesh'te mTLS).
+
+### El sıkışmalar nasıl toplanır?
+
+HTML'in ilk byte'ından önce: **TCP** el sıkışması için bir RTT, **TLS 1.3** için bir RTT, **HTTP** istek/cevabı için bir RTT (önbellekte değilse artı DNS). 50 ms RTT'li bir hatta bu zaten ~150 ms. QUIC üzerinde HTTP/3 taşıma ve TLS el sıkışmalarını birleştirir.
+
+![El sıkışmalar nasıl toplanır?](../assets/diagrams/06a-handshakes.png)
 
 ---
 

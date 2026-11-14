@@ -10,6 +10,25 @@ description: Registers, the memory hierarchy, the fetch-decode-execute cycle and
     **decodes** it, **executes** it on values held in **registers**, **writes back** the result and moves on to the
     next one, billions of times per second. Everything else (caches, RAM, disk) exists to keep it fed with data.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **CPU** | Central Processing Unit | The processor running your code | Fetches, decodes and executes instructions |
+| **ISA** | Instruction Set Architecture | The instructions a CPU understands (x86-64, ARM64) | Compilers translate code into this instruction set |
+| **Register** | — | Tiny storage slots inside the core | The only place math happens directly |
+| **RIP / RSP** | Instruction Pointer / Stack Pointer | Next instruction address / top of stack | Updated by every instruction, call, ret and push/pop |
+| **ALU** | Arithmetic Logic Unit | The part that does math and logic | Adds, compares, shifts values from registers |
+| **Cache line** | — | 64-byte unit moved between RAM and caches | Reading one byte loads its 63 neighbours too |
+| **L1 / L2 / L3** | Level 1/2/3 cache | On-chip memories, smaller = faster | Keep recently used data close to the core |
+| **Pipeline** | — | Overlapping fetch/decode/execute of several instructions | Keeps every stage busy every cycle |
+| **Branch prediction** | — | Guessing which way an if goes | Wrong guess → pipeline flush, wasted cycles |
+| **Stack frame** | — | A function's area on the stack | Holds return address, saved registers, locals |
+| **ABI** | Application Binary Interface | Binary-level rules between compiled code | Which registers hold args/return values, stack layout |
+| **GHz** | gigahertz | Clock frequency | 3 GHz = 3 billion cycles per second |
+
+## 🗺️ Big picture
+
 ![Inside the CPU](../assets/diagrams/02-cpu.png)
 
 > Reference: x86-64 (Intel/AMD) on Linux. ARM (Apple M-series, AWS Graviton) has different register names but the same ideas.
@@ -123,6 +142,12 @@ add:
 - The stack **grows downward** in memory: `push` decreases `RSP`, `pop` increases it.
 - `ret` pops that address back into `RIP`, and execution continues in the caller.
 - Every function call gets its own **stack frame**. Infinite recursion keeps adding frames until it runs out of space: a **stack overflow**.
+
+### How does the stack work during a call?
+
+`call` pushes the return address and jumps. The **prologue** saves the old frame pointer and reserves space for locals. The **epilogue** undoes that, and `ret` pops the return address into RIP. Every call grows the stack downward; every return shrinks it back.
+
+![How does the stack work during a call?](../assets/diagrams/02a-stack.png)
 
 ---
 

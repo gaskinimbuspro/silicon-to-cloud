@@ -10,6 +10,26 @@ description: What happens after you press Enter on a URL — DNS resolution, the
     wraps it in **TLS** so nobody can read or change it, and then speaks **HTTP** over it:
     "GET / please" → "200 OK, here's the HTML". Each of these steps costs round trips, and round trips are what you feel as latency.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **URL** | Uniform Resource Locator | Address of a resource | scheme://host:port/path?query |
+| **DNS** | Domain Name System | Turns names into IP addresses | Recursive resolver walks root → TLD → authoritative |
+| **TLD** | Top-Level Domain | The last label of a name (.com, .org, .tr) | TLD servers point to each domain's authoritative servers |
+| **TTL (DNS)** | Time To Live | How long a DNS answer may be cached | Lower it before migrations |
+| **TCP** | Transmission Control Protocol | Reliable, ordered byte stream | 3-way handshake, ACKs, retransmits, flow + congestion control |
+| **UDP** | User Datagram Protocol | Fire-and-forget datagrams | No handshake, no retransmits; base of DNS and QUIC |
+| **RTT** | Round-Trip Time | Time for a message to go and come back | Every handshake step costs about one RTT |
+| **TLS** | Transport Layer Security | Encryption + server authentication | Key exchange (ECDHE) + certificate check, then symmetric encryption |
+| **CA / certificate** | Certificate Authority | Trusted issuer / signed proof of a domain's key | Browser checks the chain up to a trusted root CA |
+| **SNI / ALPN** | Server Name Indication / Application-Layer Protocol Negotiation | TLS extensions | Which hostname / which protocol (h2, h3) inside ClientHello |
+| **HTTP** | HyperText Transfer Protocol | Request/response protocol of the web | Method + path + headers → status + headers + body |
+| **HTTP/2 / HTTP/3 / QUIC** | — / — / Quick UDP Internet Connections | Multiplexed HTTP over TCP / over QUIC (UDP) | Many streams on one connection; QUIC removes TCP head-of-line blocking |
+| **TTFB** | Time To First Byte | Time until the first response byte arrives | DNS + TCP + TLS + server processing |
+
+## 🗺️ Big picture
+
 ![DNS → TCP → TLS → HTTP](../assets/diagrams/06-internet.png)
 
 ---
@@ -120,6 +140,12 @@ With a 50 ms round trip to the server and nothing cached:
 That's ~150–200 ms **before the first byte of HTML**, which is why **connection reuse**, **HTTP/2 / HTTP/3** and **CDNs** (putting servers close to users, Chapter 7) matter so much.
 
 > DevOps connection: TLS is often **terminated** at the load balancer or ingress, using certificates from **Let's Encrypt** via **cert-manager**. Behind it, traffic may be plain HTTP or re-encrypted (mTLS in a service mesh).
+
+### How do the handshakes add up?
+
+Before the first byte of HTML: one RTT for the **TCP** handshake, one for the **TLS 1.3** handshake, one for the **HTTP** request/response (plus DNS if not cached). On a 50 ms RTT link that is already ~150 ms. HTTP/3 over QUIC merges the transport and TLS handshakes.
+
+![How do the handshakes add up?](../assets/diagrams/06a-handshakes.png)
 
 ---
 

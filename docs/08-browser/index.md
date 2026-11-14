@@ -11,6 +11,25 @@ description: How a browser turns HTML, CSS and JavaScript into pixels — proces
     (**paint**), and lets the GPU stack the resulting layers into a frame (**composite**). It tries to do this
     within 16.7 ms, 60 times a second, on a **single main thread** that JavaScript also has to share.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **DOM** | Document Object Model | Tree of HTML elements in memory | Built by the HTML parser, changed by JS |
+| **CSSOM** | CSS Object Model | Tree of style rules | Built from stylesheets; render-blocking |
+| **Render tree** | — | Visible nodes with computed styles | DOM + CSSOM, minus display:none |
+| **Layout (reflow)** | — | Computing box geometry | Position and size of every box |
+| **Paint / composite** | — | Recording draw commands / stacking layers on the GPU | Composite-only changes (transform/opacity) are cheap |
+| **Main thread** | — | The renderer's single thread for JS + rendering | Long tasks block input and frames |
+| **Event loop** | — | The scheduler of the main thread | Task → microtasks → render, repeat |
+| **V8** | — | Chrome's JavaScript engine | Bytecode interpreter + optimizing JIT |
+| **defer / async** | — | Script loading attributes | Download in parallel; run after parse / when ready |
+| **Web Worker** | — | Background JS thread without DOM access | Moves heavy work off the main thread |
+| **LCP / INP / CLS** | Largest Contentful Paint / Interaction to Next Paint / Cumulative Layout Shift | Core Web Vitals | Load speed / responsiveness / visual stability |
+| **SPA / SSR** | Single-Page Application / Server-Side Rendering | Client builds the page / server sends full HTML | SSR then hydrates with JS |
+
+## 🗺️ Big picture
+
 ![The browser rendering pipeline](../assets/diagrams/08-browser.png)
 
 ---
@@ -62,6 +81,12 @@ The main thread runs a loop: take a **task** (a click handler, a network callbac
 - A JS task that runs for 200 ms blocks clicks, typing and rendering for 200 ms. That's **jank**. Tasks over 50 ms are called **long tasks**.
 - Heavy work goes to a **Web Worker** (a separate thread without DOM access) or is split into smaller chunks.
 - **Layout thrashing:** reading layout (`offsetHeight`) right after writing styles, in a loop, forces layout again and again.
+
+### How does the event loop work?
+
+The main thread repeats: take **one task** (a click handler, a timer, a network callback) and run it to completion, then run **all microtasks** (resolved promises), then — if a frame is due — **render** (rAF → style → layout → paint). A task longer than 50 ms delays input and frames.
+
+![How does the event loop work?](../assets/diagrams/08a-eventloop.png)
 
 ## 5 · Measuring what users feel: Core Web Vitals
 

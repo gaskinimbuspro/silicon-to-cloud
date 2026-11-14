@@ -11,6 +11,27 @@ description: How a single keypress travels through hardware, a CPU interrupt, th
     **user space**, the application translates the number into the letter **'a'** using the keyboard layout and draws it,
     and the GPU sends the new frame to the monitor. All of this takes **~10–50 ms**.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **MCU** | Microcontroller Unit | Tiny computer inside the keyboard | Scans the key matrix, debounces, builds HID reports |
+| **HID** | Human Interface Device | USB device class for keyboards and mice | Sends fixed-format reports (8 bytes for a keyboard) |
+| **USB** | Universal Serial Bus | The cable/protocol between keyboard and PC | Host polls devices at a fixed interval |
+| **xHCI** | eXtensible Host Controller Interface | The USB host controller chip | Polls devices, DMAs data to RAM, raises interrupts |
+| **DMA** | Direct Memory Access | Device writes to RAM without the CPU | Controller copies data while the CPU keeps working |
+| **IRQ / MSI** | Interrupt Request / Message Signaled Interrupt | A device's signal to the CPU | MSI = a write to a special address that the APIC turns into an interrupt |
+| **APIC** | Advanced Programmable Interrupt Controller | Routes interrupts to CPU cores | Delivers a vector number to a core |
+| **IDT / ISR** | Interrupt Descriptor Table / Interrupt Service Routine | Table of handlers / the handler itself | CPU looks up the vector in the IDT and jumps to the ISR |
+| **Ring 0 / ring 3** | — | Kernel mode / user mode | CPU privilege levels; syscalls and interrupts cross them |
+| **evdev** | event device | Linux's generic input event interface | Queues key events on /dev/input/eventX |
+| **Compositor** | — | Display server combining windows (Wayland/X11) | Reads input, sends it to the focused window, composes frames |
+| **xkb** | X Keyboard Extension | Keyboard layout database/library | Maps keycode + layout + modifiers to a character |
+| **GPU / framebuffer** | Graphics Processing Unit | Graphics chip / memory holding the final frame | Composes windows into the framebuffer, sent to the monitor |
+| **vsync** | vertical synchronization | The monitor's refresh tick | New frames are shown only at each refresh (16.7 ms at 60 Hz) |
+
+## 🗺️ Big picture
+
 ![End-to-end flow from the A key to the screen](../assets/diagrams/01-keypress.png)
 
 > Reference setup: Linux + Wayland + USB keyboard. On Windows and macOS the layer names differ, but the logic is the same
@@ -101,6 +122,12 @@ xhci_isr:
 |---|---|
 | 17 | The compositor uses the **GPU** to combine all windows into a single frame in the **framebuffer**. |
 | 18 | On the monitor's next refresh (**vsync**, every 16.7 ms at 60 Hz) the frame is sent over HDMI/DP, the pixels change, and **'a' appears.** |
+
+### How does an interrupt work?
+
+The CPU is busy running a program. A device raises an **IRQ**; at the next instruction boundary the CPU saves RIP/RFLAGS/RSP on the kernel stack, switches to ring 0, looks up the vector in the **IDT** and jumps to the **ISR**. The handler does the minimum (acknowledge the device, queue work), then `iretq` restores the saved state and the program continues as if nothing happened.
+
+![How does an interrupt work?](../assets/diagrams/01a-interrupt.png)
 
 ---
 

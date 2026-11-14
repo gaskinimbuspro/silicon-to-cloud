@@ -10,6 +10,25 @@ description: Önişleme, derleme, assemble, link, ELF dosyası, fork/execve, din
     çocuk process **`execve`** çağırır, kernel dosyayı yepyeni bir adres alanına **eşler (map)**, **dinamik bağlayıcı**
     paylaşımlı kütüphaneleri yükler ve sonunda senin **`main()`** fonksiyonun çalışır. Java, Python ve Node.js araya bir **runtime/VM** ekler.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **Compiler** | — | Kaynak kodu assembly/makine koduna çevirir | Ayrıştırır, tip kontrol eder, optimize eder, kod üretir |
+| **Preprocessor** | — | Derlemeden önceki metin düzeyi adım (C/C++) | #include ve #define'ı açar |
+| **Assembler** | — | Assembly → object dosyası | Komutları byte'lara kodlar, sembolleri kaydeder |
+| **Linker** | — | Object dosyalarını ve kütüphaneleri birleştirir | Sembolleri çözer, çalıştırılabilir dosyayı yazar |
+| **ELF** | Executable and Linkable Format | Linux'un binary dosya formatı | Başlık + yüklenecek segmentler + bölümler |
+| **Static / dynamic linking** | — | Kütüphaneleri içine kopyala / başlangıçta yükle | Dinamik: ld.so .so dosyalarını eşler ve adresleri düzeltir |
+| **ld.so** | dynamic linker/loader | Paylaşımlı kütüphaneleri yükleyen program | PT_INTERP'te adı geçer, main()'den önce çalışır |
+| **fork / execve** | — | Process'i kopyala / programını değiştir | Shell bir çocuk fork eder, çocuk yeni programı exec eder |
+| **libc** | C standard library | Syscall sarmalayıcıları + standart fonksiyonlar | printf, malloc, open → altta syscall'lar |
+| **Bytecode** | — | Bir VM için taşınabilir ara kod | Bir yorumlayıcı ya da JIT çalıştırır (JVM, CPython, V8) |
+| **JIT / AOT** | Just-In-Time / Ahead-Of-Time | Çalışırken / çalışmadan önce derlemek | JIT sıcak kodu çalışma anında, AOT native binary üretir |
+| **VM** | Virtual Machine (language runtime) | Bytecode çalıştıran runtime | JVM, CPython VM, V8 motoru |
+
+## 🗺️ Büyük resim
+
 ![Bir program nasıl çalışır](../assets/diagrams/04-program.png)
 
 ---
@@ -80,6 +99,12 @@ gcc main.c -o app        # tek komut, dört aşama:
 | **Python** | `.py` kaynak | **CPython** kodu bytecode'a (`.pyc`) derler ve bir yorumlayıcı döngüsünde çalıştırır | Çoğunlukla yorumlanır. Bu yüzden CPU'yu yoran işler C eklentilerine (NumPy, PyTorch) gider |
 
 > Her durumda kernel'in `execve` ile başlattığı şey bir ELF'tir: ya senin binary'n, ya da `java`, `node`, `python3`.
+
+### AOT, yorumlayıcı ve JIT nasıl farklıdır?
+
+**AOT** derleyiciler (C, Go, Rust) çalıştırmadan önce makine kodu üretir: hızlı başlangıç, ısınma yok. **Yorumlayıcılar** (CPython) bytecode'u komut komut çalıştırır: esnek ama yavaş. **JIT** runtime'lar (JVM, V8) yorumlayarak başlar, hangi kodun sıcak olduğunu ölçer, sonra çalışırken sadece onu makine koduna derler.
+
+![AOT, yorumlayıcı ve JIT nasıl farklıdır?](../assets/diagrams/04a-runtimes.png)
 
 ---
 

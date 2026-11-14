@@ -11,6 +11,27 @@ description: Klavyedeki bir tuş basışının donanımdan, CPU kesmesinden, ker
     uygulama sayıyı klavye düzenine göre **'a' harfine** çevirip çizer ve GPU bu kareyi monitöre yollar.
     Bunların hepsi **~10–50 ms** içinde olur.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **MCU** | Microcontroller Unit | Klavyenin içindeki minik bilgisayar | Tuş matrisini tarar, titreşimi giderir, HID raporu üretir |
+| **HID** | Human Interface Device | Klavye ve fareler için USB cihaz sınıfı | Sabit formatlı raporlar gönderir (klavyede 8 byte) |
+| **USB** | Universal Serial Bus | Klavye ile PC arasındaki kablo/protokol | Host cihazları sabit aralıklarla yoklar |
+| **xHCI** | eXtensible Host Controller Interface | USB host denetleyici çipi | Cihazları yoklar, veriyi DMA ile RAM'e yazar, kesme üretir |
+| **DMA** | Direct Memory Access | Cihazın CPU olmadan RAM'e yazması | CPU çalışmaya devam ederken denetleyici veriyi kopyalar |
+| **IRQ / MSI** | Interrupt Request / Message Signaled Interrupt | Bir cihazın CPU'ya sinyali | MSI = APIC'in kesmeye çevirdiği özel bir adrese yazma |
+| **APIC** | Advanced Programmable Interrupt Controller | Kesmeleri CPU çekirdeklerine yönlendirir | Bir çekirdeğe vektör numarası iletir |
+| **IDT / ISR** | Interrupt Descriptor Table / Interrupt Service Routine | Handler tablosu / handler'ın kendisi | CPU vektörü IDT'de bulur ve ISR'a atlar |
+| **Ring 0 / ring 3** | — | Kernel modu / kullanıcı modu | CPU yetki seviyeleri; syscall ve kesmeler bu sınırı geçer |
+| **evdev** | event device | Linux'un genel girdi olay arayüzü | Tuş olaylarını /dev/input/eventX'te kuyruğa koyar |
+| **Compositor** | — | Pencereleri birleştiren görüntü sunucusu (Wayland/X11) | Girdiyi okur, odaktaki pencereye yollar, kareleri birleştirir |
+| **xkb** | X Keyboard Extension | Klavye düzeni veritabanı/kütüphanesi | Keycode + düzen + değiştiricileri bir karaktere eşler |
+| **GPU / framebuffer** | Graphics Processing Unit | Grafik çipi / son kareyi tutan bellek | Pencereleri framebuffer'da birleştirir, monitöre gönderir |
+| **vsync** | vertical synchronization | Monitörün yenilenme anı | Yeni kareler sadece her yenilemede görünür (60 Hz'de 16,7 ms) |
+
+## 🗺️ Büyük resim
+
 ![A tuşundan ekrana uçtan uca akış](../assets/diagrams/01-keypress.tr.png)
 
 > Örnek ortam: Linux + Wayland + USB klavye. Windows ve macOS'ta katmanların isimleri değişir ama mantık aynıdır
@@ -101,6 +122,12 @@ xhci_isr:
 |---|---|
 | 17 | Compositor tüm pencereleri **GPU** ile tek bir kareye birleştirir ve **framebuffer**'a yazar. |
 | 18 | Monitörün bir sonraki yenilenmesinde (**vsync**, 60 Hz'de her 16,7 ms) kare HDMI/DP üzerinden gönderilir. Pikseller değişir ve **'a' görünür.** |
+
+### Kesme (interrupt) nasıl çalışır?
+
+CPU bir programı çalıştırıyor. Bir cihaz **IRQ** üretir; bir sonraki komut sınırında CPU RIP/RFLAGS/RSP'yi kernel stack'ine kaydeder, ring 0'a geçer, vektörü **IDT**'de bulur ve **ISR**'a atlar. Handler en azını yapar (cihazı onayla, işi kuyruğa koy), sonra `iretq` kaydedilen durumu geri yükler ve program hiçbir şey olmamış gibi devam eder.
+
+![Kesme (interrupt) nasıl çalışır?](../assets/diagrams/01a-interrupt.png)
 
 ---
 

@@ -11,6 +11,27 @@ description: Containers (namespaces, cgroups, image layers), Kubernetes (control
     in YAML with the **actual state** of the cluster and fixes the difference, forever. **CI/CD** builds the images
     and **GitOps** tells the cluster what should run. **Observability** shows you whether it actually works.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **Container** | — | A process isolated with namespaces and limited with cgroups | Started from an image by a runtime (containerd/runc) |
+| **Namespace** | — | What a process can see | pid, net, mnt, uts, ipc, user, cgroup |
+| **cgroup** | control group | What a process can use | CPU quota, memory limit, I/O, pids |
+| **OCI image** | Open Container Initiative | Standard container image format | Manifest + layers + config, addressed by digest |
+| **CRI / CNI** | Container Runtime Interface / Container Network Interface | Plugin APIs of Kubernetes | kubelet ↔ runtime / pod networking plugins |
+| **API server / etcd** | — | Kubernetes front door / its database | Everything reads/writes cluster state through the API |
+| **Scheduler / kubelet** | — | Picks a node / runs pods on a node | Filter + score nodes / talk to the runtime |
+| **Controller / reconcile** | — | Loop making actual state match desired state | Watch → compare → act → repeat |
+| **Service / Ingress** | — | Stable virtual IP for pods / HTTP routing into the cluster | kube-proxy/eBPF load-balances; ingress routes by host/path |
+| **CI / CD** | Continuous Integration / Continuous Delivery | Automated build-test / automated release | Pipelines on every push; rollouts to environments |
+| **GitOps** | — | Git as the source of truth for deployments | An in-cluster agent (Argo CD, Flux) syncs from git |
+| **IaC** | Infrastructure as Code | Cloud resources defined in code | Terraform/OpenTofu, Pulumi, Crossplane plan & apply |
+| **SLO** | Service Level Objective | A reliability/latency target | e.g. 99.9% of requests < 300 ms |
+| **OTel** | OpenTelemetry | Open standard for metrics, logs, traces | SDKs + collector export to any backend |
+
+## 🗺️ Big picture
+
 ![From git push to a running pod](../assets/diagrams/09-infra.png)
 
 ---
@@ -68,6 +89,12 @@ An **image** follows the OCI standard: a manifest + layers (tarballs) + config (
 !!! tip "Remember this"
     Kubernetes never "runs a command once". Every component **watches** the API and **reconciles**: "Is actual = desired?
     If not, take one step closer." Delete a pod of a Deployment and a new one appears. That's the controller doing its job.
+
+### How does reconciliation work?
+
+Each controller watches the API server, compares the **desired** state (spec) with the **actual** state (status), and takes one step to close the gap — then repeats on every change and periodically. This is why deleting a pod managed by a Deployment just brings it back.
+
+![How does reconciliation work?](../assets/diagrams/09a-reconcile.png)
 
 ## 3 · CI/CD and GitOps
 

@@ -10,6 +10,25 @@ description: Preprocess, compile, assemble, link, the ELF file, fork/execve, the
     the child calls **`execve`**, the kernel **maps** the file into a fresh address space, the **dynamic linker**
     pulls in shared libraries, and finally your **`main()`** runs. Java, Python and Node.js add a **runtime/VM** in between.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **Compiler** | — | Translates source code to assembly/machine code | Parses, type-checks, optimizes, emits code |
+| **Preprocessor** | — | Text-level step before compiling (C/C++) | Expands #include and #define |
+| **Assembler** | — | Assembly → object file | Encodes instructions into bytes, records symbols |
+| **Linker** | — | Combines object files and libraries | Resolves symbols, writes the executable |
+| **ELF** | Executable and Linkable Format | Linux's binary file format | Header + segments to load + sections |
+| **Static / dynamic linking** | — | Copy libraries in / load them at start | Dynamic: ld.so maps .so files and fixes addresses |
+| **ld.so** | dynamic linker/loader | Program that loads shared libraries | Named in PT_INTERP, runs before main() |
+| **fork / execve** | — | Copy the process / replace its program | Shell forks a child, child execs the new program |
+| **libc** | C standard library | Wrappers for syscalls + standard functions | printf, malloc, open → syscalls underneath |
+| **Bytecode** | — | Portable intermediate code for a VM | Run by an interpreter or JIT (JVM, CPython, V8) |
+| **JIT / AOT** | Just-In-Time / Ahead-Of-Time | Compile while running / before running | JIT compiles hot code at runtime; AOT produces native binaries |
+| **VM** | Virtual Machine (language runtime) | Runtime executing bytecode | JVM, CPython VM, V8 engine |
+
+## 🗺️ Big picture
+
 ![How a program runs](../assets/diagrams/04-program.png)
 
 ---
@@ -80,6 +99,12 @@ gcc main.c -o app        # one command, four stages:
 | **Python** | `.py` source | **CPython** compiles to bytecode (`.pyc`) and runs it in an interpreter loop | Mostly interpreted, so CPU-heavy work goes to C extensions (NumPy, PyTorch) |
 
 > In every case, what the kernel actually starts with `execve` is an ELF: your binary, or `java`, `node`, `python3`.
+
+### How do AOT, interpreters and JIT differ?
+
+**AOT** compilers (C, Go, Rust) produce machine code before you run it: fast start, nothing to warm up. **Interpreters** (CPython) execute bytecode one instruction at a time: flexible but slower. **JIT** runtimes (JVM, V8) start interpreting, profile which code is hot, then compile just that to machine code while running.
+
+![How do AOT, interpreters and JIT differ?](../assets/diagrams/04a-runtimes.png)
 
 ---
 

@@ -11,6 +11,26 @@ description: CDN, load balancer, reverse proxy, stateless uygulama sunucuları, 
     Uygulama veriyi önce **cache**'ten okur, orada yoksa **veritabanına** gider, yavaş işleri de **worker**'lar için
     bir **kuyruğa** atar. Stateless kısmı kopya ekleyerek ölçeklersin, stateful kısmı (veriyi) özenle korursun.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **CDN** | Content Delivery Network | Kullanıcılara yakın, içerik önbellekleyen sunucular | Önbellekteki cevapları en yakın uçtan sunar |
+| **LB** | Load Balancer | Trafiği arka uçlara dağıtır | L4 bağlantıya, L7 HTTP isteğine göre; health check |
+| **L4 / L7** | Layer 4 / Layer 7 | Taşıma düzeyi ve uygulama düzeyi | L4 IP:port'u, L7 host, yol, başlıkları görür |
+| **Reverse proxy / ingress** | — | İstekleri servislere yönlendiren ön sunucu | Host/yola göre yönlendirir, TLS sonlandırır, başlık ekler |
+| **Stateless / stateful** | — | İstekler arasında bir şey tutmaz / veri tutar | Stateless kopya ile ölçeklenir; stateful özen ister |
+| **Horizontal / vertical scaling** | — | Daha fazla makine / daha büyük makine | Yatay ölçek stateless uygulama ve load balancer ister |
+| **Cache-aside** | — | Uygulamanın yönettiği önbellek deseni | Cache'e bak → ıskada DB'yi oku → cache'i doldur |
+| **Primary / replica** | — | Yazma node'u / veritabanının okuma kopyaları | Replikasyon değişiklikleri genelde asenkron kopyalar |
+| **Replication lag** | — | Replikaların bir yazmayı görmesindeki gecikme | Yazmadan sonra okuma eski veri dönebilir |
+| **Queue / worker** | — | İş tamponu / onları tüketen process | En az bir kez teslim → idempotent işler, hatalar için DLQ |
+| **Idempotent** | — | Aynı sonuçla iki kez çalıştırılması güvenli | Ödeme ve işler için idempotency anahtarları kullan |
+| **Object storage** | — | Dosya/blob deposu (S3, GCS) | Düz isim alanı, HTTP API, presigned URL'ler |
+| **Circuit breaker** | — | Hata veren bir bağımlılığı bir süre çağırmayı keser | Zaman aşımları birikmesin diye hızlı başarısız ol |
+
+## 🗺️ Büyük resim
+
 ![Tipik bir web backend'i](../assets/diagrams/07-server.png)
 
 ---
@@ -60,6 +80,12 @@ return value
 - Tüm **yazmaları** **primary** alır. **Okuma replikaları** bir kopya alır (genelde **asenkron**) ve okumalara cevap verir. Bu yüzden yazmadan hemen sonraki bir okuma eski veriyi görebilir (**replikasyon gecikmesi**).
 - **Bağlantı havuzu (connection pooling)**: PgBouncer ya da uygulamadaki havuzlar. Veritabanları onbinlerce değil, yüzlerce bağlantıyı kaldırır.
 - **Sharding** (veriyi birden fazla primary'ye bölmek) ancak tek bir primary yetişemediğinde gündeme gelir.
+
+### Cache-aside nasıl çalışır?
+
+Uygulama önce cache'e sorar. **İsabette** hemen döner. **Iskada** veritabanını sorgular, sonucu TTL ile cache'e yazar ve döner. Yazmalarda cache'teki anahtarı siler (ya da günceller), okuyanlar uzun süre eski veri görmez.
+
+![Cache-aside nasıl çalışır?](../assets/diagrams/07a-cache.png)
 
 ## 5 · Asenkron işler: kuyruk, worker, nesne depolama
 

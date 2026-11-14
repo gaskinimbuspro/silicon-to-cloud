@@ -11,6 +11,27 @@ description: Layers and encapsulation, MAC and IP addresses, subnets, ARP, switc
     your private IP for a public one. Then dozens of routers forward it **hop by hop** until it reaches the server,
     which unwraps the layers in reverse.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **OSI / TCP/IP model** | Open Systems Interconnection | Layered models of networking | Each layer solves one problem and adds one header |
+| **MAC address** | Media Access Control | 48-bit hardware address on a local link | Used by switches to deliver frames |
+| **IP address** | Internet Protocol | Address of a host on the internet (IPv4 32-bit, IPv6 128-bit) | Routers forward packets by destination IP |
+| **Port** | — | 16-bit number selecting a program on a host | TCP/UDP header carries source and destination ports |
+| **Subnet / CIDR** | Classless Inter-Domain Routing | A block of IPs like 192.168.1.0/24 | /24 = first 24 bits are the network part |
+| **Default gateway** | — | The router for everything outside your subnet | Frames for remote IPs go to its MAC |
+| **ARP** | Address Resolution Protocol | Finds the MAC for an IP on the local network | Broadcast 'who has X?', owner replies, result cached |
+| **Switch** | — | L2 device forwarding frames by MAC | Learns which MAC is behind which port |
+| **Router** | — | L3 device forwarding packets between networks | Longest-prefix match in the routing table, TTL−1 |
+| **NAT** | Network Address Translation | Rewrites private addresses to a public one | Remembers each connection in a conntrack table |
+| **MTU** | Maximum Transmission Unit | Largest payload per frame (usually 1500 bytes) | Bigger data is split into several packets |
+| **TTL** | Time To Live | Hop counter in the IP header | Each router decrements it; 0 = drop (prevents loops) |
+| **BGP / AS** | Border Gateway Protocol / Autonomous System | How networks on the internet share routes | Each AS announces the IP ranges it can reach |
+| **VPC** | Virtual Private Cloud | A private network in a cloud | Subnets, route tables, gateways, security groups in software |
+
+## 🗺️ Big picture
+
 ![How a packet travels](../assets/diagrams/05-network.png)
 
 ---
@@ -57,6 +78,12 @@ Reply:     "192.168.1.1 is at a4:2b:b0:12:34:56"     → cached in the ARP table
 
 A **switch** (or Wi-Fi access point) learns which MAC lives behind which port and forwards frames only there. It never looks at IP addresses.
 
+### How does ARP work?
+
+To send a frame on the LAN you need the destination's **MAC**. If it is not in the cache, the host broadcasts *who has 192.168.1.1?*; every device hears it, only the owner replies with its MAC. The answer is cached (`ip neigh`) and frames can flow.
+
+![How does ARP work?](../assets/diagrams/05a-arp.png)
+
 ## 4 · The router and NAT
 
 | # | What happens |
@@ -66,6 +93,12 @@ A **switch** (or Wi-Fi access point) learns which MAC lives behind which port an
 | — | **NAT:** `192.168.x.x` addresses are **private** (also `10.0.0.0/8` and `172.16.0.0/12`). They're not routable on the internet, so the router rewrites the source to its **public IP** and a port, and remembers the mapping in a **connection tracking** table so replies can find their way back. |
 
 > That's also why someone on the internet can't simply connect *to* your laptop: there is no NAT entry until you start the conversation (unless you add port forwarding).
+
+### How does NAT work?
+
+On the way out, the router replaces the private source IP:port with its public IP and a free port, and writes the mapping into **conntrack**. When the reply arrives at that public port, it looks up the mapping and rewrites the destination back to the private address.
+
+![How does NAT work?](../assets/diagrams/05b-nat.png)
 
 ## 5 · The internet: a network of networks
 

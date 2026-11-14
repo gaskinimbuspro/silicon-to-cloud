@@ -11,6 +11,27 @@ description: Katmanlar ve kapsülleme, MAC ve IP adresleri, subnet'ler, ARP, swi
     genel bir IP ile değiştirir. Sonra onlarca router paketi sunucuya ulaşana kadar **hop hop** iletir.
     Sunucu da katmanları ters sırayla açar.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **OSI / TCP/IP model** | Open Systems Interconnection | Ağın katmanlı modelleri | Her katman tek bir sorunu çözer ve bir başlık ekler |
+| **MAC address** | Media Access Control | Yerel bağlantıdaki 48 bitlik donanım adresi | Switch'ler çerçeveleri teslim etmek için kullanır |
+| **IP address** | Internet Protocol | İnternetteki bir makinenin adresi (IPv4 32 bit, IPv6 128 bit) | Router'lar paketleri hedef IP'ye göre iletir |
+| **Port** | — | Bir makinedeki programı seçen 16 bitlik sayı | TCP/UDP başlığı kaynak ve hedef portları taşır |
+| **Subnet / CIDR** | Classless Inter-Domain Routing | 192.168.1.0/24 gibi bir IP bloğu | /24 = ilk 24 bit ağ kısmıdır |
+| **Default gateway** | — | Subnet dışındaki her şey için router | Uzak IP'lere giden çerçeveler onun MAC'ine gider |
+| **ARP** | Address Resolution Protocol | Yerel ağda bir IP'nin MAC'ini bulur | 'X kimde?' yayını, sahibi cevaplar, sonuç önbelleğe alınır |
+| **Switch** | — | MAC'e göre çerçeve ileten L2 cihazı | Hangi MAC'in hangi portun arkasında olduğunu öğrenir |
+| **Router** | — | Ağlar arasında paket ileten L3 cihazı | Yönlendirme tablosunda en uzun önek eşleşmesi, TTL−1 |
+| **NAT** | Network Address Translation | Özel adresleri genel bir adrese çevirir | Her bağlantıyı bir conntrack tablosunda hatırlar |
+| **MTU** | Maximum Transmission Unit | Çerçeve başına en büyük yük (genelde 1500 byte) | Daha büyük veri birden fazla pakete bölünür |
+| **TTL** | Time To Live | IP başlığındaki hop sayacı | Her router bir azaltır; 0 = at (döngüleri önler) |
+| **BGP / AS** | Border Gateway Protocol / Autonomous System | İnternetteki ağların rota paylaşma şekli | Her AS ulaşabildiği IP aralıklarını duyurur |
+| **VPC** | Virtual Private Cloud | Bulutta özel bir ağ | Yazılımda subnet, route table, gateway, security group |
+
+## 🗺️ Büyük resim
+
 ![Bir paket nasıl yolculuk eder](../assets/diagrams/05-network.png)
 
 ---
@@ -57,6 +78,12 @@ Cevap:             "192.168.1.1, a4:2b:b0:12:34:56'da"     → ARP tablosuna kay
 
 Bir **switch** (ya da Wi-Fi erişim noktası) hangi MAC'in hangi portun arkasında olduğunu öğrenir ve çerçeveleri sadece oraya iletir. IP adreslerine hiç bakmaz.
 
+### ARP nasıl çalışır?
+
+LAN'da bir çerçeve göndermek için hedefin **MAC**'i gerekir. Önbellekte yoksa makine *192.168.1.1 kimde?* diye yayın yapar; herkes duyar, sadece sahibi MAC'iyle cevap verir. Cevap önbelleğe alınır (`ip neigh`) ve çerçeveler akmaya başlar.
+
+![ARP nasıl çalışır?](../assets/diagrams/05a-arp.png)
+
 ## 4 · Router ve NAT
 
 | # | Ne oluyor |
@@ -66,6 +93,12 @@ Bir **switch** (ya da Wi-Fi erişim noktası) hangi MAC'in hangi portun arkasın
 | — | **NAT:** `192.168.x.x` adresleri **özeldir** (`10.0.0.0/8` ve `172.16.0.0/12` de öyle). İnternette yönlendirilemezler. Bu yüzden router kaynak adresi kendi **genel IP**'si ve bir port ile değiştirir ve bu eşleşmeyi bir **bağlantı takip (conntrack)** tablosunda hatırlar ki cevaplar geri dönüş yolunu bulabilsin. |
 
 > İnternetteki birinin laptopuna öylece bağlanamamasının sebebi de bu: konuşmayı sen başlatana kadar NAT tablosunda bir girdi yoktur (port yönlendirme eklemediğin sürece).
+
+### NAT nasıl çalışır?
+
+Giderken router özel kaynak IP:port'u kendi genel IP'si ve boş bir portla değiştirir, eşleşmeyi **conntrack**'e yazar. Cevap o genel porta geldiğinde eşleşmeye bakar ve hedefi özel adrese geri çevirir.
+
+![NAT nasıl çalışır?](../assets/diagrams/05b-nat.png)
 
 ## 5 · İnternet: ağların ağı
 

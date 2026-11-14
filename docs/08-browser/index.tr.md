@@ -11,6 +11,25 @@ description: Tarayıcı HTML, CSS ve JavaScript'i nasıl piksele çevirir? Proce
     onları nasıl çizeceğini kaydeder (**paint**) ve ortaya çıkan katmanları GPU'nun bir kare halinde üst üste koymasını sağlar
     (**composite**). Bunu saniyede 60 kez, 16,7 ms içinde, JavaScript'in de paylaşmak zorunda olduğu **tek bir ana thread** üzerinde yapmaya çalışır.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **DOM** | Document Object Model | Bellekteki HTML eleman ağacı | HTML ayrıştırıcısı kurar, JS değiştirir |
+| **CSSOM** | CSS Object Model | Stil kuralları ağacı | Stil dosyalarından kurulur; render'ı bloklar |
+| **Render tree** | — | Hesaplanmış stilleriyle görünür düğümler | DOM + CSSOM, display:none hariç |
+| **Layout (reflow)** | — | Kutu geometrisini hesaplamak | Her kutunun konumu ve boyutu |
+| **Paint / composite** | — | Çizim komutlarını kaydetmek / katmanları GPU'da üst üste koymak | Sadece composite değişiklikler (transform/opacity) ucuzdur |
+| **Main thread** | — | Renderer'ın JS + render için tek thread'i | Uzun görevler girdiyi ve kareleri bloklar |
+| **Event loop** | — | Ana thread'in zamanlayıcısı | Görev → mikro görevler → render, tekrar |
+| **V8** | — | Chrome'un JavaScript motoru | Bytecode yorumlayıcı + optimize eden JIT |
+| **defer / async** | — | Script yükleme öznitelikleri | Paralel indir; ayrıştırmadan sonra / hazır olunca çalıştır |
+| **Web Worker** | — | DOM erişimi olmayan arka plan JS thread'i | Ağır işi ana thread'den çıkarır |
+| **LCP / INP / CLS** | Largest Contentful Paint / Interaction to Next Paint / Cumulative Layout Shift | Core Web Vitals | Yükleme hızı / tepki süresi / görsel kararlılık |
+| **SPA / SSR** | Single-Page Application / Server-Side Rendering | İstemci sayfayı kurar / sunucu tam HTML gönderir | SSR sonra JS ile hydrate eder |
+
+## 🗺️ Büyük resim
+
 ![Tarayıcının render hattı](../assets/diagrams/08-browser.png)
 
 ---
@@ -62,6 +81,12 @@ Ana thread bir döngü çalıştırır: bir **görev (task)** al (tıklama işle
 - 200 ms süren bir JS görevi tıklamaları, yazmayı ve render'ı 200 ms boyunca bloklar. Buna **jank** (takılma) denir. 50 ms'yi aşan görevlere **uzun görev (long task)** denir.
 - Ağır işler bir **Web Worker**'a (DOM erişimi olmayan ayrı bir thread) gider ya da küçük parçalara bölünür.
 - **Layout thrashing:** bir döngüde stilleri yazdıktan hemen sonra layout'u okumak (`offsetHeight`), layout'u tekrar tekrar zorlar.
+
+### Event loop nasıl çalışır?
+
+Ana thread şunu tekrarlar: **bir görev** al (tıklama handler'ı, zamanlayıcı, ağ callback'i) ve sonuna kadar çalıştır, sonra **tüm mikro görevleri** (çözülmüş promise'ler) çalıştır, sonra kare zamanı geldiyse **render** et (rAF → style → layout → paint). 50 ms'den uzun bir görev girdiyi ve kareleri geciktirir.
+
+![Event loop nasıl çalışır?](../assets/diagrams/08a-eventloop.png)
 
 ## 5 · Kullanıcının hissettiğini ölçmek: Core Web Vitals
 

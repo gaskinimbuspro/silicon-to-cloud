@@ -10,6 +10,27 @@ description: Processes, threads, the scheduler, virtual memory, syscalls, file d
     (**scheduler**), its own memory (**virtual memory**) and simple access to devices (**files, sockets**),
     while making sure no program can touch what isn't its own. Programs ask it for anything they need through **syscalls**.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **OS / kernel** | Operating System | The software that manages hardware and programs | Runs in ring 0, everything else asks it via syscalls |
+| **Process / PID** | Process ID | A running program with its own memory | Created by fork/clone + execve |
+| **Thread** | — | A worker sharing a process's memory | Own stack and registers, scheduled independently |
+| **Scheduler** | — | Decides which task runs on which core | Time slices + timer interrupts + context switches |
+| **EEVDF / CFS** | Earliest Eligible Virtual Deadline First / Completely Fair Scheduler | Linux's scheduler algorithms | Give each task a fair share, weighted by nice |
+| **Context switch** | — | Switching the CPU from one task to another | Save registers, load the next task's, maybe switch page tables |
+| **Virtual memory** | — | Each process's private view of memory | Page tables map virtual pages to physical frames |
+| **MMU / TLB** | Memory Management Unit / Translation Lookaside Buffer | Hardware doing translation / its cache | Translates every address, caches recent ones |
+| **Page fault** | — | Access to an unmapped page | Kernel maps or loads it, then the instruction retries |
+| **Syscall** | System call | A request from a program to the kernel | Number in RAX, args in registers, `syscall` instruction |
+| **fd** | file descriptor | Small integer handle to an open file/socket/pipe | Index into the process's fd table |
+| **VFS** | Virtual File System | Kernel layer giving one API for all file types | Routes read/write to the right filesystem or driver |
+| **Signal** | — | A notification sent to a process | SIGTERM (polite), SIGKILL (final), SIGINT (Ctrl+C) |
+| **cgroup / OOM** | control group / Out Of Memory | Resource limits for groups of processes / memory exhaustion | Exceeding a memory cgroup limit triggers the OOM killer |
+
+## 🗺️ Big picture
+
 ![The operating system](../assets/diagrams/03-os.png)
 
 ---
@@ -66,6 +87,12 @@ Every process thinks it has a huge, private memory starting near address 0. The 
 Why this matters: process A **cannot even name** process B's memory. Isolation comes for free from the page tables.
 
 > DevOps connection: `OOMKilled` in Kubernetes means the container hit its **memory cgroup limit** and the kernel's OOM killer stopped it.
+
+### How does address translation work?
+
+Every memory access uses a **virtual address**. The **MMU** first checks the **TLB**; on a hit the physical address is ready in about one cycle. On a miss it walks the 4-level page table. If there is no valid entry, the CPU raises a **page fault** and the kernel maps (or loads) the page and retries the instruction.
+
+![How does address translation work?](../assets/diagrams/03a-vm.png)
 
 ## 5 · Syscalls: the only door into the kernel
 

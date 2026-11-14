@@ -11,6 +11,26 @@ description: CDN, load balancers, reverse proxies, stateless app servers, caches
     **database**, and pushes slow work to a **queue** for **workers**. You scale the stateless part by adding copies
     and protect the stateful part (data) carefully.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **CDN** | Content Delivery Network | Servers near users caching content | Serves cached responses from the closest edge |
+| **LB** | Load Balancer | Spreads traffic over backends | L4 by connection, L7 by HTTP request; health checks |
+| **L4 / L7** | Layer 4 / Layer 7 | Transport-level vs application-level | L4 sees IP:port, L7 sees host, path, headers |
+| **Reverse proxy / ingress** | — | Front server routing requests to services | Routes by host/path, terminates TLS, adds headers |
+| **Stateless / stateful** | — | Keeps nothing between requests / keeps data | Stateless scales by copies; stateful needs care |
+| **Horizontal / vertical scaling** | — | More machines / bigger machine | Horizontal needs stateless apps and a load balancer |
+| **Cache-aside** | — | App-managed caching pattern | Check cache → on miss read DB → fill cache |
+| **Primary / replica** | — | Write node / read copies of a database | Replication copies changes, usually asynchronously |
+| **Replication lag** | — | Delay before replicas see a write | Read-after-write may return old data |
+| **Queue / worker** | — | Buffer of jobs / process consuming them | At-least-once delivery → idempotent jobs, DLQ for failures |
+| **Idempotent** | — | Safe to run twice with the same result | Use idempotency keys for payments and jobs |
+| **Object storage** | — | Store for files/blobs (S3, GCS) | Flat namespace, HTTP API, presigned URLs |
+| **Circuit breaker** | — | Stops calling a failing dependency for a while | Fail fast instead of piling up timeouts |
+
+## 🗺️ Big picture
+
 ![A typical web backend](../assets/diagrams/07-server.png)
 
 ---
@@ -60,6 +80,12 @@ return value
 - **Primary** takes all **writes**. **Read replicas** receive a copy (usually **asynchronous**) and serve reads, so a read right after a write may see old data (**replication lag**).
 - **Connection pooling** (PgBouncer, or pools in the app): databases handle hundreds of connections, not tens of thousands.
 - **Sharding** (splitting data across several primaries) comes only when one primary can't keep up.
+
+### How does cache-aside work?
+
+The app asks the cache first. On a **hit** it returns immediately. On a **miss** it queries the database, stores the result in the cache with a TTL, and returns. On writes, it deletes (or updates) the cached key so readers don't see stale data for long.
+
+![How does cache-aside work?](../assets/diagrams/07a-cache.png)
 
 ## 5 · Async work: queue, workers, object storage
 

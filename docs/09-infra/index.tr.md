@@ -11,6 +11,27 @@ description: Container'lar (namespace, cgroup, imaj katmanları), Kubernetes (co
     **istenen durumu** cluster'ın **gerçek durumuyla** sürekli karşılaştırır ve farkı sonsuza kadar düzeltir. **CI/CD** imajları üretir,
     **GitOps** cluster'a neyin çalışması gerektiğini söyler, **gözlemlenebilirlik** de gerçekten çalışıp çalışmadığını gösterir.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **Container** | — | Namespace'lerle izole, cgroup'larla sınırlandırılmış process | Bir runtime (containerd/runc) imajdan başlatır |
+| **Namespace** | — | Bir process'in neyi görebileceği | pid, net, mnt, uts, ipc, user, cgroup |
+| **cgroup** | control group | Bir process'in neyi kullanabileceği | CPU kotası, bellek limiti, I/O, pid sayısı |
+| **OCI image** | Open Container Initiative | Standart container imaj formatı | Manifest + katmanlar + config, digest ile adreslenir |
+| **CRI / CNI** | Container Runtime Interface / Container Network Interface | Kubernetes'in eklenti API'leri | kubelet ↔ runtime / pod ağ eklentileri |
+| **API server / etcd** | — | Kubernetes'in ön kapısı / veritabanı | Her şey cluster durumunu API üzerinden okur/yazar |
+| **Scheduler / kubelet** | — | Node seçer / node'da pod çalıştırır | Node'ları filtrele + puanla / runtime ile konuş |
+| **Controller / reconcile** | — | Gerçek durumu istenen duruma eşitleyen döngü | İzle → karşılaştır → harekete geç → tekrar |
+| **Service / Ingress** | — | Pod'lar için sabit sanal IP / cluster'a HTTP yönlendirme | kube-proxy/eBPF dağıtır; ingress host/yola göre yönlendirir |
+| **CI / CD** | Continuous Integration / Continuous Delivery | Otomatik derle-test et / otomatik sürüm | Her push'ta pipeline; ortamlara rollout |
+| **GitOps** | — | Deploy'lar için doğruluk kaynağı olarak git | Cluster içindeki ajan (Argo CD, Flux) git'ten senkronlar |
+| **IaC** | Infrastructure as Code | Kodda tanımlanan bulut kaynakları | Terraform/OpenTofu, Pulumi, Crossplane plan & apply |
+| **SLO** | Service Level Objective | Bir güvenilirlik/gecikme hedefi | ör. isteklerin %99,9'u < 300 ms |
+| **OTel** | OpenTelemetry | Metrik, log, trace için açık standart | SDK'lar + collector, her backend'e aktarır |
+
+## 🗺️ Büyük resim
+
 ![git push'tan çalışan pod'a](../assets/diagrams/09-infra.png)
 
 ---
@@ -68,6 +89,12 @@ Bir **imaj** OCI standardına uyar: bir manifest + katmanlar (tarball'lar) + yap
 !!! tip "Bunu hatırla"
     Kubernetes asla "bir komutu bir kez çalıştırmaz". Her bileşen API'yi **izler** ve **uzlaştırır (reconcile)**: "Gerçek = istenen mi?
     Değilse bir adım yaklaş." Bir Deployment'ın pod'unu sil, yenisi belirir. Bu, controller'ın işini yapmasıdır.
+
+### Uzlaştırma (reconcile) nasıl çalışır?
+
+Her controller API server'ı izler, **istenen** durumu (spec) **gerçek** durumla (status) karşılaştırır ve farkı kapatmak için bir adım atar; sonra her değişiklikte ve periyodik olarak tekrar eder. Deployment'ın yönettiği bir pod'u silince geri gelmesinin sebebi bu.
+
+![Uzlaştırma (reconcile) nasıl çalışır?](../assets/diagrams/09a-reconcile.png)
 
 ## 3 · CI/CD ve GitOps
 

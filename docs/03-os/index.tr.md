@@ -11,6 +11,27 @@ description: Process, thread, zamanlayıcı, sanal bellek, syscall, dosya tanım
     (**dosyalar, soketler**). Bunu yaparken hiçbir programın kendine ait olmayan şeye dokunamamasını garanti eder.
     Programlar ihtiyaç duydukları her şeyi ondan **syscall** ile ister.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **OS / kernel** | Operating System | Donanımı ve programları yöneten yazılım | Ring 0'da çalışır, diğer her şey ona syscall ile sorar |
+| **Process / PID** | Process ID | Kendi belleği olan çalışan bir program | fork/clone + execve ile oluşturulur |
+| **Thread** | — | Bir process'in belleğini paylaşan işçi | Kendi stack'i ve register'ları var, ayrı zamanlanır |
+| **Scheduler** | — | Hangi task'ın hangi çekirdekte çalışacağına karar verir | Zaman dilimi + timer kesmesi + bağlam değişimi |
+| **EEVDF / CFS** | Earliest Eligible Virtual Deadline First / Completely Fair Scheduler | Linux'un zamanlayıcı algoritmaları | Her task'a nice ağırlıklı adil pay verir |
+| **Context switch** | — | CPU'yu bir task'tan diğerine geçirmek | Register'ları kaydet, sıradakininkini yükle, gerekirse page table değiştir |
+| **Virtual memory** | — | Her process'in belleğe özel bakışı | Page table'lar sanal sayfaları fiziksel çerçevelere eşler |
+| **MMU / TLB** | Memory Management Unit / Translation Lookaside Buffer | Çeviriyi yapan donanım / önbelleği | Her adresi çevirir, son çevirileri önbellekte tutar |
+| **Page fault** | — | Eşlenmemiş bir sayfaya erişim | Kernel eşler ya da yükler, komut tekrar denenir |
+| **Syscall** | System call | Bir programın kernel'den isteği | Numara RAX'te, argümanlar register'larda, `syscall` komutu |
+| **fd** | file descriptor | Açık dosya/soket/pipe'a küçük sayı tutamacı | Process'in fd tablosunda bir indeks |
+| **VFS** | Virtual File System | Tüm dosya türleri için tek API sunan kernel katmanı | read/write'ı doğru dosya sistemine ya da sürücüye yönlendirir |
+| **Signal** | — | Bir process'e gönderilen bildirim | SIGTERM (kibar), SIGKILL (son), SIGINT (Ctrl+C) |
+| **cgroup / OOM** | control group / Out Of Memory | Process grupları için kaynak limitleri / belleğin tükenmesi | Bellek cgroup limitini aşmak OOM killer'ı tetikler |
+
+## 🗺️ Büyük resim
+
 ![İşletim sistemi](../assets/diagrams/03-os.png)
 
 ---
@@ -67,6 +88,12 @@ Her process, 0 adresine yakın başlayan devasa ve özel bir belleği olduğunu 
 Bu neden önemli: A process'i, B process'inin belleğinin **adını bile koyamaz**. İzolasyon page table'lardan bedavaya gelir.
 
 > DevOps bağlantısı: Kubernetes'teki `OOMKilled`, container'ın **bellek cgroup limitine** dayandığı ve kernel'in OOM killer'ının onu durdurduğu anlamına gelir.
+
+### Adres çevirisi nasıl çalışır?
+
+Her bellek erişimi bir **sanal adres** kullanır. **MMU** önce **TLB**'ye bakar; isabette fiziksel adres yaklaşık bir döngüde hazırdır. Iskada 4 seviyeli page table'ı yürür. Geçerli bir girdi yoksa CPU **page fault** üretir; kernel sayfayı eşler (ya da yükler) ve komutu tekrar dener.
+
+![Adres çevirisi nasıl çalışır?](../assets/diagrams/03a-vm.png)
 
 ## 5 · Syscall: kernel'e açılan tek kapı
 

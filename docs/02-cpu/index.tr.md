@@ -10,6 +10,25 @@ description: Register'lar, bellek hiyerarşisi, fetch-decode-execute döngüsü 
     **çözer (decode)**, **register**'lardaki değerlerle **çalıştırır (execute)**, sonucu **geri yazar (write back)**
     ve bir sonrakine geçer. Bunu saniyede milyarlarca kez yapar. Önbellekler, RAM ve disk sadece onu veriyle beslemek için vardır.
 
+## 📖 Temel terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **CPU** | Central Processing Unit | Kodunu çalıştıran işlemci | Komutları okur, çözer ve çalıştırır |
+| **ISA** | Instruction Set Architecture | CPU'nun anladığı komutlar (x86-64, ARM64) | Derleyiciler kodu bu komut setine çevirir |
+| **Register** | — | Çekirdeğin içindeki minik depolama hücreleri | Hesabın doğrudan yapıldığı tek yer |
+| **RIP / RSP** | Instruction Pointer / Stack Pointer | Sıradaki komut adresi / stack'in tepesi | Her komut, call, ret ve push/pop ile güncellenir |
+| **ALU** | Arithmetic Logic Unit | Hesap ve mantık işlemlerini yapan kısım | Register'lardaki değerleri toplar, karşılaştırır, kaydırır |
+| **Cache line** | — | RAM ile önbellekler arasında taşınan 64 byte'lık birim | Bir byte okumak 63 komşusunu da getirir |
+| **L1 / L2 / L3** | Level 1/2/3 cache | Çip üstü bellekler, küçük olan hızlı | Son kullanılan veriyi çekirdeğe yakın tutar |
+| **Pipeline** | — | Birkaç komutun fetch/decode/execute'unu üst üste bindirmek | Her döngüde her aşamayı meşgul tutar |
+| **Branch prediction** | — | Bir if'in hangi yöne gideceğini tahmin etmek | Yanlış tahmin → boru hattı boşaltılır, döngüler boşa gider |
+| **Stack frame** | — | Bir fonksiyonun stack üzerindeki alanı | Dönüş adresi, kaydedilmiş register'lar ve yerelleri tutar |
+| **ABI** | Application Binary Interface | Derlenmiş kodlar arası ikili düzey kurallar | Argüman/dönüş register'ları, stack düzeni |
+| **GHz** | gigahertz | Saat frekansı | 3 GHz = saniyede 3 milyar döngü |
+
+## 🗺️ Büyük resim
+
 ![CPU'nun içi](../assets/diagrams/02-cpu.png)
 
 > Örnek ortam: Linux üzerinde x86-64 (Intel/AMD). ARM'da (Apple M serisi, AWS Graviton) register isimleri farklıdır ama fikirler aynıdır.
@@ -123,6 +142,12 @@ add:
 - Stack bellekte **aşağı doğru büyür**: `push` `RSP`'yi azaltır, `pop` artırır.
 - `ret` o adresi stack'ten alıp `RIP`'e koyar ve çalışma çağıran fonksiyonda devam eder.
 - Her fonksiyon çağrısı kendi **stack çerçevesini (stack frame)** alır. Sonsuz özyineleme yer bitene kadar çerçeve ekler: **stack overflow**.
+
+### Çağrı sırasında stack nasıl çalışır?
+
+`call` dönüş adresini push eder ve atlar. **Prologue** eski frame pointer'ı kaydeder ve yereller için yer ayırır. **Epilogue** bunu geri alır, `ret` dönüş adresini RIP'e pop eder. Her çağrı stack'i aşağı doğru büyütür, her dönüş geri küçültür.
+
+![Çağrı sırasında stack nasıl çalışır?](../assets/diagrams/02a-stack.png)
 
 ---
 
