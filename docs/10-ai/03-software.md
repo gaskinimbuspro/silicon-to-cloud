@@ -174,7 +174,7 @@ Monitor: nvidia-smi (NVML) · DCGM exporter (SM/tensor activity, XID) · dcgmi d
 
 ## 📚 Sources
 
-- [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 - [CUDA compatibility guide](https://docs.nvidia.com/deploy/cuda-compatibility/)
 - [NVIDIA Container Toolkit docs](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/index.html)
 - [MIG user guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) · [MPS docs](https://docs.nvidia.com/deploy/mps/)

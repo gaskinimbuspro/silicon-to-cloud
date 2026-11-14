@@ -205,10 +205,10 @@ Scale-up: NVLink/NVSwitch, NVL72 · Scale-out: IB/RoCE, rail-optimized, GPUDirec
 
 ## 📚 Sources
 
-- [NVIDIA CUDA C++ Programming Guide: hardware implementation](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [NVIDIA CUDA C++ Programming Guide: hardware implementation](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 - [NVIDIA data center GPU datasheets](https://www.nvidia.com/en-us/data-center/)
 - [Making Deep Learning Go Brrrr From First Principles (Horace He)](https://horace.io/brrr_intro.html)
-- [Roofline model (Williams et al.)](https://people.eecs.berkeley.edu/~kubitron/cs252/handouts/papers/RooflineVyNoYellow.pdf)
+- [Roofline model (Williams et al.)](https://doi.org/10.1145/1498765.1498785)
 - [NVIDIA GPUDirect](https://developer.nvidia.com/gpudirect)
 
 ## ✍️ My notes

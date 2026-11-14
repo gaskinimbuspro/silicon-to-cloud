@@ -120,6 +120,10 @@ Akış şöyle: uygulama kuyruğa bir **iş (job)** koyar ve hemen `202 Accepted
 
 ## 🧪 Kendin dene (Docker)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 07-server` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/07-server/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 İki uygulama sunucusunun önünde bir load balancer, 2 dakikada:
 
 ```bash

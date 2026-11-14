@@ -136,6 +136,10 @@ Files, terminals, pipes, sockets and devices (`/dev/input/event3` from Chapter 1
 
 ## 🧪 Try it yourself (Linux)
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 03-os` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/03-os/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) Processes and threads
 ps -eo pid,ppid,nlwp,stat,cmd | head      # nlwp = number of threads

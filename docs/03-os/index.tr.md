@@ -137,6 +137,10 @@ Dosyalar, terminaller, pipe'lar, soketler ve cihazlar (Bölüm 1'deki `/dev/inpu
 
 ## 🧪 Kendin dene (Linux)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 03-os` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/03-os/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) Process'ler ve thread'ler
 ps -eo pid,ppid,nlwp,stat,cmd | head      # nlwp = thread sayısı

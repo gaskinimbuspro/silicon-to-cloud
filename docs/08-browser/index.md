@@ -118,6 +118,10 @@ The main thread repeats: take **one task** (a click handler, a timer, a network 
 
 ## 🧪 Try it yourself (Chrome DevTools)
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 08-browser` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/08-browser/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 1. Open any site → **DevTools → Performance** → record a page reload. Find the **Parse HTML**, **Evaluate Script**, **Recalculate Style**, **Layout**, **Paint** and **Composite Layers** blocks on the Main and Compositor tracks.
 2. **DevTools → Lighthouse** → run a report and read LCP, CLS and TBT (total blocking time).
 3. **DevTools → More tools → Rendering** → enable **Paint flashing** and **Layout shift regions**, then scroll and interact.

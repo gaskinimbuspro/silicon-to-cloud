@@ -34,6 +34,7 @@ jobs:
             --no-progress --max-concurrency 8 --timeout 20 --max-retries 2
             --accept 200,206,429,403
             --exclude '^https://(localhost|127\.0\.0\.1)' --exclude 'example\.com' --exclude 'shop\.example'
-            --exclude 'linkedin\.com'
+            --exclude 'linkedin\.com' --exclude 'host:port' --exclude 'ema://'
+            --exclude 'file://.*/docs/[^.]*$'
             './docs/**/*.md' README.md
           fail: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}

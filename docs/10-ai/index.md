@@ -138,6 +138,10 @@ Training also stores **gradients and optimizer states** (several times the weigh
 
 ## 🧪 Try it yourself
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 10-ai` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/10-ai/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) No GPU needed: run a small model locally (Ollama)
 ollama run llama3.2:1b "Explain the KV cache in one sentence"
@@ -198,7 +202,7 @@ K8s: GPU Operator · nvidia.com/gpu · tainted GPU pools · scale on queue/KV, n
 ## 📚 Sources
 
 - [vLLM docs](https://docs.vllm.ai/) · [PagedAttention paper (Kwon et al., 2023)](https://arxiv.org/abs/2309.06180)
-- [NVIDIA CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [NVIDIA CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 - [NVIDIA GPU Operator docs](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html)
 - [Hugging Face: LLM inference optimization](https://huggingface.co/docs/transformers/main/en/llm_optims)
 - [The Illustrated Transformer (Jay Alammar)](https://jalammar.github.io/illustrated-transformer/)

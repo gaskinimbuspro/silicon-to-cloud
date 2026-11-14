@@ -118,6 +118,10 @@ Ana thread şunu tekrarlar: **bir görev** al (tıklama handler'ı, zamanlayıc�
 
 ## 🧪 Kendin dene (Chrome DevTools)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 08-browser` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/08-browser/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 1. Herhangi bir siteyi aç → **DevTools → Performance** → sayfa yenilemesini kaydet. Main ve Compositor izlerinde **Parse HTML**, **Evaluate Script**, **Recalculate Style**, **Layout**, **Paint** ve **Composite Layers** bloklarını bul.
 2. **DevTools → Lighthouse** → bir rapor çalıştır ve LCP, CLS ile TBT (toplam bloklama süresi) değerlerini oku.
 3. **DevTools → More tools → Rendering** → **Paint flashing** ve **Layout shift regions** seçeneklerini aç, sonra sayfayı kaydır ve etkileşime gir.

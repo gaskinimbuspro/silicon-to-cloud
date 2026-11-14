@@ -161,6 +161,10 @@ add:
 
 ## 🧪 Kendin dene (Linux)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 02-cpu` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/02-cpu/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) CPU'nu tanı: çekirdekler, önbellek boyutları, özellikler
 lscpu

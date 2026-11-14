@@ -120,6 +120,10 @@ Flow: the app puts a **job** on the queue and immediately replies `202 Accepted`
 
 ## 🧪 Try it yourself (Docker)
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 07-server` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/07-server/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 A load balancer in front of two app servers, in 2 minutes:
 
 ```bash

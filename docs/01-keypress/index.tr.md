@@ -155,6 +155,10 @@ CPU bir programı çalıştırıyor. Bir cihaz **IRQ** üretir; bir sonraki komu
 
 ## 🧪 Kendin dene (Linux)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 01-keypress` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/01-keypress/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 Mac kullanıyorsan bu laboratuvarları bir Linux VM'de (UTM, Multipass) ya da bir Linux makinede yap.
 
 ```bash

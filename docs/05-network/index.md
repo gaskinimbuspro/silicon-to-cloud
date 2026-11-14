@@ -125,6 +125,10 @@ The server's NIC accepts the frame because it's addressed to its MAC. The kernel
 
 ## 🧪 Try it yourself (Linux / macOS)
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 05-network` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/05-network/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) Your addresses, subnet and MAC
 ip addr                     # macOS: ifconfig

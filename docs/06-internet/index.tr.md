@@ -162,6 +162,10 @@ HTML'in ilk byte'ından önce: **TCP** el sıkışması için bir RTT, **TLS 1.3
 
 ## 🧪 Kendin dene
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 06-internet` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/06-internet/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) DNS
 dig example.com                 # cevap + TTL

@@ -162,6 +162,10 @@ Before the first byte of HTML: one RTT for the **TCP** handshake, one for the **
 
 ## 🧪 Try it yourself
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 06-internet` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/06-internet/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) DNS
 dig example.com                 # answer + TTL

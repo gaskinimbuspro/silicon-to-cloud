@@ -174,7 +174,7 @@ Paylaşım: tüm GPU > MIG (donanım dilimi) > MPS (ortak bağlam) > zaman dilim
 
 ## 📚 Kaynaklar
 
-- [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 - [CUDA uyumluluk rehberi](https://docs.nvidia.com/deploy/cuda-compatibility/)
 - [NVIDIA Container Toolkit dokümanları](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/index.html)
 - [MIG kullanıcı rehberi](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) · [MPS dokümanları](https://docs.nvidia.com/deploy/mps/)

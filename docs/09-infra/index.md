@@ -131,6 +131,10 @@ Useful habits: the **RED** method for services (Rate, Errors, Duration), **USE**
 
 ## 🧪 Try it yourself (Linux + Docker)
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 09-infra` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/09-infra/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) A "container" with nothing but unshare: new PID + mount namespace
 sudo unshare --pid --fork --mount-proc bash

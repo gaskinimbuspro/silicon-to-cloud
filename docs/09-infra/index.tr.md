@@ -131,6 +131,10 @@ Cluster dışındaki bulut kaynakları (VPC'ler, veritabanları, DNS) da aynı b
 
 ## 🧪 Kendin dene (Linux + Docker)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 09-infra` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/09-infra/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) Sadece unshare ile bir "container": yeni PID + mount namespace
 sudo unshare --pid --fork --mount-proc bash

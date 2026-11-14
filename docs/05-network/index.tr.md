@@ -125,6 +125,10 @@ Sunucunun NIC'i çerçeveyi kabul eder, çünkü çerçeve onun MAC'ine gönderi
 
 ## 🧪 Kendin dene (Linux / macOS)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 05-network` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/05-network/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) Adreslerin, subnet'in ve MAC'in
 ip addr                     # macOS: ifconfig

@@ -118,6 +118,10 @@ gcc main.c -o app        # tek komut, dört aşama:
 
 ## 🧪 Kendin dene (Linux)
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 04-program` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/04-program/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 cat > main.c <<'EOF'
 #include <stdio.h>

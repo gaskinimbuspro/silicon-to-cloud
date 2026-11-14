@@ -155,6 +155,10 @@ The CPU is busy running a program. A device raises an **IRQ**; at the next instr
 
 ## 🧪 Try it yourself (Linux)
 
+!!! example "🧪 Ready-made lab"
+    Run this chapter's experiments with one command: `./labs/run.sh 01-keypress` ([scripts](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/01-keypress/)). No setup? [Open in Codespaces](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 On a Mac, run these labs in a Linux VM (UTM, Multipass) or on a Linux machine.
 
 ```bash

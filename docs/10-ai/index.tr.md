@@ -138,6 +138,10 @@ Eğitim ayrıca **gradyanları ve optimizer durumlarını** saklar (ağırlık b
 
 ## 🧪 Kendin dene
 
+!!! example "🧪 Hazır lab"
+    Bu bölümün deneyleri tek komutla: `./labs/run.sh 10-ai` ([script'ler](https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/10-ai/)). Kurulum istemiyorsan [Codespaces'te aç](https://codespaces.new/gaskinimbuspro/silicon-to-cloud). <!-- s2c-lab -->
+
+
 ```bash
 # 1) GPU gerekmez: küçük bir modeli yerelde çalıştır (Ollama)
 ollama run llama3.2:1b "KV cache'i tek cümlede açıkla"
@@ -198,7 +202,7 @@ K8s: GPU Operator · nvidia.com/gpu · taint'li GPU havuzları · CPU'ya değil 
 ## 📚 Kaynaklar
 
 - [vLLM dokümanları](https://docs.vllm.ai/) · [PagedAttention makalesi (Kwon vd., 2023)](https://arxiv.org/abs/2309.06180)
-- [NVIDIA CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [NVIDIA CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 - [NVIDIA GPU Operator dokümanları](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html)
 - [Hugging Face: LLM inference optimizasyonu](https://huggingface.co/docs/transformers/main/en/llm_optims)
 - [The Illustrated Transformer (Jay Alammar)](https://jalammar.github.io/illustrated-transformer/)
