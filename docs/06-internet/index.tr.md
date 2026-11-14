@@ -126,6 +126,9 @@ Content-Length: 1256
 
 ---
 
+!!! tip "Daha derine in"
+    Önbellek, kimlik doğrulama, cookie, güvenlik, CORS, proxy ve trace'i header'lar yönetir. Diagramlı tam rehber: **[6.1 · HTTP header'ları](01-headers.md)**.
+
 ## Zaman nereye gidiyor?
 
 Sunucuya 50 ms gidiş-dönüş süresi varsa ve hiçbir şey önbellekte değilse:

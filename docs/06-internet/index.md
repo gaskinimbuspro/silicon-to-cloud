@@ -126,6 +126,9 @@ Content-Length: 1256
 
 ---
 
+!!! tip "Go deeper"
+    Headers drive caching, auth, cookies, security, CORS, proxies and tracing. Full guide with diagrams: **[6.1 · HTTP headers](01-headers.md)**.
+
 ## Where the time goes
 
 With a 50 ms round trip to the server and nothing cached:
