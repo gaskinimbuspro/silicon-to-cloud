@@ -1,0 +1,52 @@
+site_name: Silicon to Cloud
+site_description: From a single keypress to the UI on screen to AI infrastructure — how computers and the internet actually work, layer by layer.
+site_author: Gökhan Aşkın
+site_url: https://gaskinimbuspro.github.io/silicon-to-cloud/
+repo_url: https://github.com/gaskinimbuspro/silicon-to-cloud
+repo_name: silicon-to-cloud
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle: { icon: material/weather-night, name: Dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle: { icon: material/weather-sunny, name: Light mode }
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.highlight
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - "1 · Keypress": 01-keypress/index.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight: { anchor_linenums: true }
+  - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
+  - tables
+  - toc: { permalink: true }
+
+plugins:
+  - search
+  - glightbox   # click a diagram to zoom
