@@ -1,11 +1,14 @@
 // Diagrams as code: spec (JS) -> HTML (Lucide icons) -> PNG (headless Chrome)
-// Usage: node build.mjs specs/01-keypress.mjs out/01-keypress
+// Usage: node build.mjs specs/02-cpu.mjs ../docs/assets/diagrams/02-cpu [en|tr]
+// Or render everything: npm run build:all
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
-const [, , specPath, outBase] = process.argv;
-const spec = (await import(path.resolve(specPath))).default;
+const [, , specPath, outBase, lang = 'en'] = process.argv;
+const mod = (await import(path.resolve(specPath))).default;
+// A spec can be a plain object or a function of the language ('en' | 'tr')
+const spec = typeof mod === 'function' ? mod(lang) : mod;
 const icon = (name) =>
   fs.readFileSync(`node_modules/lucide-static/icons/${name}.svg`, 'utf8')
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -56,7 +59,7 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
 .gb{display:flex;gap:78px;align-items:flex-start}
 .gb.rev{flex-direction:row-reverse}
 .col{display:flex;flex-direction:column;gap:22px}
-.node{width:138px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px 10px 12px;text-align:center;
+.node{width:138px;min-height:150px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px 10px 12px;text-align:center;
   box-shadow:0 1px 2px #0f172a0f,0 4px 12px -6px #0f172a1f;position:relative;z-index:2}
 .ico{width:58px;height:58px;margin:0 auto 9px;border-radius:14px;display:grid;place-items:center;
   background:var(--bg);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 22%,#fff)}
