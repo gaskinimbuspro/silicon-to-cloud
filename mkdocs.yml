@@ -50,7 +50,11 @@ nav:
       - "3.3 · Virtual memory": 03-os/03-virtual-memory.md
       - "3.4 · Syscalls, I/O & filesystems": 03-os/04-io-filesystems.md
       - "3.5 · Namespaces & cgroups": 03-os/05-namespaces-cgroups.md
-  - "4 · How a program runs": 04-program/index.md
+  - "4 · How a program runs":
+      - "Overview": 04-program/index.md
+      - "4.1 · Compiling & linking": 04-program/01-compile-link.md
+      - "4.2 · ELF & the loader": 04-program/02-elf-loader.md
+      - "4.3 · Language runtimes": 04-program/03-runtimes.md
   - "5 · Networking": 05-network/index.md
   - "6 · DNS, TCP, TLS, HTTP":
       - "Overview": 06-internet/index.md

@@ -108,6 +108,14 @@ gcc main.c -o app        # one command, four stages:
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[4.1 — Compiling & linking](01-compile-link.md)** | What compilers do inside (front end, IR, optimizer, back end), optimization levels, object files and symbols, static vs dynamic linking, LTO, cross-compilation, reproducible builds and build caching, with Go, Rust and C examples. |
+| **[4.2 — ELF & the program loader](02-elf-loader.md)** | The ELF file format (header, segments, sections), what execve does, ASLR and PIE, the dynamic loader ld.so, library search paths, PLT/GOT and lazy binding, LD_PRELOAD, security hardening flags, and the classic "not found" and "symbol not found" errors. |
+| **[4.3 — Language runtimes: JVM, V8, Python, Go](03-runtimes.md)** | What a language runtime adds to a process - interpreters and JIT compilers, garbage collection, threading models (GIL, event loop, goroutines, virtual threads) - and how to size and tune JVM, Node.js, Python and Go services in containers. |
+
 ## 🧪 Try it yourself (Linux)
 
 ```bash

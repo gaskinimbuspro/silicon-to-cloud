@@ -108,6 +108,14 @@ gcc main.c -o app        # tek komut, dört aşama:
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[4.1 — Derleme ve linkleme](01-compile-link.md)** | Derleyicilerin içinde ne olur (ön uç, IR, optimizer, arka uç), optimizasyon seviyeleri, object dosyaları ve semboller, statik ve dinamik linkleme, LTO, çapraz derleme, tekrarlanabilir build'ler ve build önbelleği; Go, Rust ve C örnekleriyle. |
+| **[4.2 — ELF ve program yükleyici](02-elf-loader.md)** | ELF dosya formatı (başlık, segmentler, bölümler), execve'nin yaptıkları, ASLR ve PIE, dinamik yükleyici ld.so, kütüphane arama yolları, PLT/GOT ve tembel bağlama, LD_PRELOAD, güvenlik sıkılaştırma bayrakları ve klasik "not found" ve "symbol not found" hataları. |
+| **[4.3 — Dil runtime'ları: JVM, V8, Python, Go](03-runtimes.md)** | Bir dil runtime'ının process'e ne eklediği (yorumlayıcılar ve JIT derleyiciler, çöp toplama, thread modelleri: GIL, event loop, goroutine'ler, sanal thread'ler) ve JVM, Node.js, Python ve Go servislerinin container'larda nasıl boyutlandırılıp ayarlanacağı. |
+
 ## 🧪 Kendin dene (Linux)
 
 ```bash
