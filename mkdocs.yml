@@ -41,6 +41,11 @@ nav:
   - "6 · DNS, TCP, TLS, HTTP":
       - "Overview": 06-internet/index.md
       - "6.1 · HTTP headers": 06-internet/01-headers.md
+      - "6.2 · DNS": 06-internet/02-dns.md
+      - "6.3 · TCP": 06-internet/03-tcp.md
+      - "6.4 · TLS & certificates": 06-internet/04-tls.md
+      - "6.5 · HTTP/2 & HTTP/3": 06-internet/05-http2-http3.md
+      - "6.6 · Methods, status codes & APIs": 06-internet/06-apis.md
   - "7 · Server side": 07-server/index.md
   - "8 · The browser": 08-browser/index.md
   - "9 · Modern infrastructure": 09-infra/index.md

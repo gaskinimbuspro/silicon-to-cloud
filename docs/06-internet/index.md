@@ -126,9 +126,6 @@ Content-Length: 1256
 
 ---
 
-!!! tip "Go deeper"
-    Headers drive caching, auth, cookies, security, CORS, proxies and tracing. Full guide with diagrams: **[6.1 · HTTP headers](01-headers.md)**.
-
 ## Where the time goes
 
 With a 50 ms round trip to the server and nothing cached:
@@ -151,6 +148,17 @@ Before the first byte of HTML: one RTT for the **TCP** handshake, one for the **
 ![How do the handshakes add up?](../assets/diagrams/06a-handshakes.png)
 
 ---
+
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[6.1 — HTTP headers deep dive](01-headers.md)** | What an HTTP header is, how a message is built, and what headers do for routing, content negotiation, caching, authentication, cookies, security, CORS, proxies and tracing. |
+| **[6.2 — DNS deep dive](02-dns.md)** | How DNS resolution works, record types, TTL and caching, DNS in Kubernetes, DNSSEC, encrypted DNS and the DNS problems DevOps engineers meet most. |
+| **[6.3 — TCP deep dive](03-tcp.md)** | TCP connection lifecycle and states, sequence numbers and ACKs, flow control and congestion control (CUBIC, BBR), keep-alive and connection reuse, and the TCP problems seen in production. |
+| **[6.4 — TLS & certificates deep dive](04-tls.md)** | What TLS protects, how the TLS 1.3 handshake and key exchange work, certificates and chains of trust, revocation, short-lived certificates and automation with ACME and cert-manager, mTLS, and post-quantum TLS. |
+| **[6.5 — HTTP/2 & HTTP/3 deep dive](05-http2-http3.md)** | Why HTTP/1.1 needed replacing, how HTTP/2 multiplexes streams over one TCP connection, how QUIC and HTTP/3 remove TCP head-of-line blocking, and what this means for load balancers, gRPC and Kubernetes. |
+| **[6.6 — Methods, status codes & API styles](06-apis.md)** | HTTP methods and their safety and idempotency, every status code family that matters in operations, and how REST, gRPC, GraphQL, WebSockets and SSE use HTTP, plus versioning, pagination, retries and rate limits. |
 
 ## 🧪 Try it yourself
 

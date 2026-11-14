@@ -126,9 +126,6 @@ Content-Length: 1256
 
 ---
 
-!!! tip "Daha derine in"
-    Önbellek, kimlik doğrulama, cookie, güvenlik, CORS, proxy ve trace'i header'lar yönetir. Diagramlı tam rehber: **[6.1 · HTTP header'ları](01-headers.md)**.
-
 ## Zaman nereye gidiyor?
 
 Sunucuya 50 ms gidiş-dönüş süresi varsa ve hiçbir şey önbellekte değilse:
@@ -151,6 +148,17 @@ HTML'in ilk byte'ından önce: **TCP** el sıkışması için bir RTT, **TLS 1.3
 ![El sıkışmalar nasıl toplanır?](../assets/diagrams/06a-handshakes.png)
 
 ---
+
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[6.1 — HTTP header'larına derin dalış](01-headers.md)** | HTTP header'ı nedir, bir mesaj nasıl kurulur, header'lar yönlendirme, içerik pazarlığı, önbellek, kimlik doğrulama, cookie, güvenlik, CORS, proxy ve trace için ne işe yarar. |
+| **[6.2 — DNS'e derin dalış](02-dns.md)** | DNS çözümlemesi nasıl çalışır, kayıt tipleri, TTL ve önbellek, Kubernetes'te DNS, DNSSEC, şifreli DNS ve DevOps mühendislerinin en sık karşılaştığı DNS sorunları. |
+| **[6.3 — TCP'ye derin dalış](03-tcp.md)** | TCP bağlantı yaşam döngüsü ve durumları, sıra numaraları ve ACK'ler, akış kontrolü ve tıkanıklık kontrolü (CUBIC, BBR), keep-alive ve bağlantı yeniden kullanımı, üretimde görülen TCP sorunları. |
+| **[6.4 — TLS ve sertifikalara derin dalış](04-tls.md)** | TLS neyi korur, TLS 1.3 el sıkışması ve anahtar değişimi nasıl çalışır, sertifikalar ve güven zinciri, iptal, kısa ömürlü sertifikalar, ACME ve cert-manager ile otomasyon, mTLS ve kuantum sonrası TLS. |
+| **[6.5 — HTTP/2 ve HTTP/3'e derin dalış](05-http2-http3.md)** | HTTP/1.1 neden yetmedi, HTTP/2 tek TCP bağlantısında akışları nasıl çoklar, QUIC ve HTTP/3 TCP head-of-line blocking'i nasıl kaldırır, load balancer'lar, gRPC ve Kubernetes için ne anlama gelir. |
+| **[6.6 — Metotlar, durum kodları ve API stilleri](06-apis.md)** | HTTP metotları ve güvenli/idempotent olmaları, operasyonda önemli tüm durum kodu aileleri, REST, gRPC, GraphQL, WebSocket ve SSE'nin HTTP'yi nasıl kullandığı; sürümleme, sayfalama, yeniden deneme ve hız sınırları. |
 
 ## 🧪 Kendin dene
 
