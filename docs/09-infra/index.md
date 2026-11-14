@@ -119,6 +119,16 @@ Useful habits: the **RED** method for services (Rate, Errors, Duration), **USE**
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[9.1 — Containers & images](01-containers-images.md)** | What an OCI image is (layers, manifests, digests, multi-arch indexes), how builds and caching work, writing small and secure Dockerfiles, registries, tags vs digests, signing and SBOMs, and the runtime chain from kubelet through containerd and runc. |
+| **[9.2 — Kubernetes architecture](02-kubernetes-architecture.md)** | The control plane (API server, etcd, scheduler, controllers) and node components, the declarative model and reconciliation, what happens after kubectl apply, scheduling (requests, affinity, taints), workload types, QoS and eviction, operators and CRDs, and how to troubleshoot pods. |
+| **[9.3 — Kubernetes networking](03-kubernetes-networking.md)** | The Kubernetes network model, how CNI plugins give pods IPs and connect nodes (routes, overlays, eBPF), Services and kube-proxy, cluster DNS, Ingress and Gateway API, NetworkPolicies, service meshes and how to debug pod connectivity. |
+| **[9.4 — CI/CD & GitOps](04-cicd-gitops.md)** | Continuous integration and delivery stages, pipeline design and caching, artifact and supply-chain security (SBOM, signing, SLSA), environments and promotion, GitOps with Argo CD and Flux, deployment strategies (rolling, blue-green, canary), progressive delivery, rollbacks and DORA metrics. |
+| **[9.5 — Observability: metrics, logs, traces & SLOs](05-observability.md)** | The three signals (metrics, logs, traces) and profiles, OpenTelemetry and the collector, Prometheus and PromQL basics, RED and USE methods, structured logging, distributed tracing and sampling, SLIs, SLOs, error budgets and burn-rate alerts, and on-call practice. |
+
 ## 🧪 Try it yourself (Linux + Docker)
 
 ```bash

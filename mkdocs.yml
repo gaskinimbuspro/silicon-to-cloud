@@ -81,7 +81,13 @@ nav:
       - "8.2 · JavaScript & event loop": 08-browser/02-javascript-event-loop.md
       - "8.3 · Web performance": 08-browser/03-web-performance.md
       - "8.4 · Browser security": 08-browser/04-browser-security.md
-  - "9 · Modern infrastructure": 09-infra/index.md
+  - "9 · Modern infrastructure":
+      - "Overview": 09-infra/index.md
+      - "9.1 · Containers & images": 09-infra/01-containers-images.md
+      - "9.2 · Kubernetes architecture": 09-infra/02-kubernetes-architecture.md
+      - "9.3 · Kubernetes networking": 09-infra/03-kubernetes-networking.md
+      - "9.4 · CI/CD & GitOps": 09-infra/04-cicd-gitops.md
+      - "9.5 · Observability & SLOs": 09-infra/05-observability.md
   - "10 · AI infrastructure":
       - "Overview": 10-ai/index.md
       - "10.1 · AI fundamentals": 10-ai/01-fundamentals.md

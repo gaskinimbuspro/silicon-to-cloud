@@ -119,6 +119,16 @@ Cluster dışındaki bulut kaynakları (VPC'ler, veritabanları, DNS) da aynı b
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[9.1 — Container'lar ve imajlar](01-containers-images.md)** | OCI imajı nedir (katmanlar, manifest'ler, digest'ler, çok mimarili index'ler), build'ler ve önbellek nasıl çalışır, küçük ve güvenli Dockerfile yazmak, registry'ler, etiket ve digest, imzalama ve SBOM'lar, kubelet'ten containerd ve runc'ye runtime zinciri. |
+| **[9.2 — Kubernetes mimarisi](02-kubernetes-architecture.md)** | Control plane (API server, etcd, scheduler, controller'lar) ve node bileşenleri, bildirimsel model ve uzlaştırma, kubectl apply'dan sonra ne olduğu, zamanlama (request'ler, affinity, taint'ler), iş yükü tipleri, QoS ve tahliye, operator'ler ve CRD'ler, pod'larda sorun giderme. |
+| **[9.3 — Kubernetes ağı](03-kubernetes-networking.md)** | Kubernetes ağ modeli, CNI eklentilerinin pod'lara nasıl IP verdiği ve node'ları bağladığı (rotalar, overlay'ler, eBPF), Service'ler ve kube-proxy, cluster DNS'i, Ingress ve Gateway API, NetworkPolicy'ler, service mesh'ler ve pod bağlantısında hata ayıklama. |
+| **[9.4 — CI/CD ve GitOps](04-cicd-gitops.md)** | Sürekli entegrasyon ve teslim aşamaları, pipeline tasarımı ve önbellek, artefakt ve tedarik zinciri güvenliği (SBOM, imzalama, SLSA), ortamlar ve terfi, Argo CD ve Flux ile GitOps, deploy stratejileri (rolling, blue-green, canary), kademeli teslim, geri alma ve DORA metrikleri. |
+| **[9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar](05-observability.md)** | Üç sinyal (metrikler, loglar, trace'ler) ve profiller, OpenTelemetry ve collector, Prometheus ve PromQL temelleri, RED ve USE yöntemleri, yapılandırılmış loglama, dağıtık trace ve örnekleme, SLI, SLO, hata bütçeleri ve burn-rate alarmları, nöbet pratikleri. |
+
 ## 🧪 Kendin dene (Linux + Docker)
 
 ```bash
