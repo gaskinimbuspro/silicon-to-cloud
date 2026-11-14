@@ -38,6 +38,7 @@ nav:
   - "3 · Operating system": 03-os/index.md
   - "4 · How a program runs": 04-program/index.md
   - "5 · Networking": 05-network/index.md
+  - "6 · DNS, TCP, TLS, HTTP": 06-internet/index.md
 
 markdown_extensions:
   - admonition
@@ -70,4 +71,5 @@ plugins:
             "3 · Operating system": "3 · İşletim sistemi"
             "4 · How a program runs": "4 · Program nasıl çalışır"
             "5 · Networking": "5 · Ağın temelleri"
+            "6 · DNS, TCP, TLS, HTTP": "6 · DNS, TCP, TLS, HTTP"
   - glightbox   # click a diagram to zoom
