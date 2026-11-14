@@ -151,6 +151,14 @@ add:
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[2.1 — Instruction sets & assembly](01-isa-assembly.md)** | What an ISA is, x86-64 vs ARM64 (and RISC-V), CISC vs RISC, how instructions are encoded into bytes, addressing modes, flags and jumps, SIMD, the System V calling convention, and how to read compiler output and crash dumps. |
+| **[2.2 — Caches & the memory hierarchy](02-caches-memory.md)** | Why caches exist, latency numbers, cache lines and locality, associativity and eviction, cache coherence (MESI) and false sharing, NUMA, TLBs and huge pages, memory bandwidth, and what it means for performance work and Kubernetes. |
+| **[2.3 — Pipelines, branch prediction & speculation](03-pipeline-speculation.md)** | How CPUs overlap instructions in a pipeline, superscalar and out-of-order execution, branch prediction and mispredictions, speculative execution and Spectre/Meltdown, SMT (Hyper-Threading), frequency and power, and reading IPC with perf. |
+
 ## 🧪 Try it yourself (Linux)
 
 ```bash

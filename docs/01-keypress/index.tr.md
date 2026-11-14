@@ -145,6 +145,14 @@ CPU bir programı çalıştırıyor. Bir cihaz **IRQ** üretir; bir sonraki komu
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[1.1 — Kesmeler ve cihaz sürücüleri](01-interrupts-drivers.md)** | Kesmeler nedir ve neden var, polling, kesme ve DMA farkı, MSI/MSI-X ve IRQ affinity, üst ve alt yarılar, sürücüler nasıl eşlenip yüklenir ve bunların üretimde nasıl göründüğü (softirq, irqbalance, NIC kuyrukları). |
+| **[1.2 — USB ve HID](02-usb-hid.md)** | USB nasıl çalışır (host güdümlü yoklama, enumeration, tanımlayıcılar, endpoint'ler ve aktarım tipleri), HID sınıfı ve rapor tanımlayıcıları, 8 byte'lık klavye raporu, yoklama hızı ve gecikme, sunucularda, VM'lerde ve container'larda USB. |
+| **[1.3 — Linux girdi yığını](03-input-stack.md)** | evdev ve girdi olayları, libinput, compositor ile Wayland ve X11 farkı, klavye odağı, xkbcommon ile keymap'ler (keycode → keysym → karakter), tuş tekrarı, girdi yöntemleri ve tarayıcıların bunu KeyboardEvent'e nasıl çevirdiği. |
+
 ## 🧪 Kendin dene (Linux)
 
 Mac kullanıyorsan bu laboratuvarları bir Linux VM'de (UTM, Multipass) ya da bir Linux makinede yap.

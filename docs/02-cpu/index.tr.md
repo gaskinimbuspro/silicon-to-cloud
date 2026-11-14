@@ -151,6 +151,14 @@ add:
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[2.1 — Komut setleri ve assembly](01-isa-assembly.md)** | ISA nedir, x86-64 ve ARM64 (ve RISC-V), CISC ve RISC, komutların byte'lara nasıl kodlandığı, adresleme modları, bayraklar ve atlamalar, SIMD, System V çağrı kuralı, derleyici çıktısı ve crash dump okumak. |
+| **[2.2 — Önbellekler ve bellek hiyerarşisi](02-caches-memory.md)** | Önbellekler neden var, gecikme rakamları, cache line ve yerellik, ilişkisellik ve tahliye, önbellek tutarlılığı (MESI) ve false sharing, NUMA, TLB ve huge page, bellek bant genişliği ve bunların performans çalışmaları ve Kubernetes için anlamı. |
+| **[2.3 — Boru hatları, dal tahmini ve spekülasyon](03-pipeline-speculation.md)** | CPU'ların komutları boru hattında nasıl üst üste bindirdiği, superscalar ve sıra dışı çalıştırma, dal tahmini ve yanlış tahminler, spekülatif çalıştırma ve Spectre/Meltdown, SMT (Hyper-Threading), frekans ve güç, perf ile IPC okumak. |
+
 ## 🧪 Kendin dene (Linux)
 
 ```bash

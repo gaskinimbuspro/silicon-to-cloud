@@ -145,6 +145,14 @@ The CPU is busy running a program. A device raises an **IRQ**; at the next instr
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[1.1 — Interrupts & device drivers](01-interrupts-drivers.md)** | What interrupts are and why they exist, polling vs interrupts vs DMA, MSI/MSI-X and IRQ affinity, top and bottom halves, how drivers are matched and loaded, and how this shows up in production (softirq, irqbalance, NIC queues). |
+| **[1.2 — USB & HID](02-usb-hid.md)** | How USB works (host-driven polling, enumeration, descriptors, endpoints and transfer types), the HID class and report descriptors, the 8-byte keyboard report, polling rate and latency, and USB in servers, VMs and containers. |
+| **[1.3 — The Linux input stack](03-input-stack.md)** | evdev and input events, libinput, the compositor and Wayland vs X11, keyboard focus, keymaps with xkbcommon (keycode → keysym → character), key repeat, input methods, and how browsers turn it into KeyboardEvent. |
+
 ## 🧪 Try it yourself (Linux)
 
 On a Mac, run these labs in a Linux VM (UTM, Multipass) or on a Linux machine.

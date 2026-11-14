@@ -33,8 +33,16 @@ theme:
 
 nav:
   - Home: index.md
-  - "1 · Keypress": 01-keypress/index.md
-  - "2 · CPU & Assembly": 02-cpu/index.md
+  - "1 · Keypress":
+      - "Overview": 01-keypress/index.md
+      - "1.1 · Interrupts & drivers": 01-keypress/01-interrupts-drivers.md
+      - "1.2 · USB & HID": 01-keypress/02-usb-hid.md
+      - "1.3 · Linux input stack": 01-keypress/03-input-stack.md
+  - "2 · CPU & Assembly":
+      - "Overview": 02-cpu/index.md
+      - "2.1 · Instruction sets & assembly": 02-cpu/01-isa-assembly.md
+      - "2.2 · Caches & memory": 02-cpu/02-caches-memory.md
+      - "2.3 · Pipelines & speculation": 02-cpu/03-pipeline-speculation.md
   - "3 · Operating system": 03-os/index.md
   - "4 · How a program runs": 04-program/index.md
   - "5 · Networking": 05-network/index.md
