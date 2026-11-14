@@ -37,6 +37,7 @@ nav:
   - "2 · CPU & Assembly": 02-cpu/index.md
   - "3 · Operating system": 03-os/index.md
   - "4 · How a program runs": 04-program/index.md
+  - "5 · Networking": 05-network/index.md
 
 markdown_extensions:
   - admonition
@@ -68,4 +69,5 @@ plugins:
             "2 · CPU & Assembly": "2 · CPU & Assembly"
             "3 · Operating system": "3 · İşletim sistemi"
             "4 · How a program runs": "4 · Program nasıl çalışır"
+            "5 · Networking": "5 · Ağın temelleri"
   - glightbox   # click a diagram to zoom
