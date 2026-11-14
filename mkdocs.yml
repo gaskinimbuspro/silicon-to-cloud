@@ -20,11 +20,17 @@ theme:
       primary: indigo
       accent: indigo
       toggle: { icon: material/weather-sunny, name: Light mode }
+  logo: assets/images/logo.svg
+  favicon: assets/images/logo.svg
   font:
     text: Inter
     code: JetBrains Mono
   features:
     - navigation.sections
+    - navigation.path
+    - content.tooltips
+    - search.suggest
+    - search.share
     - navigation.top
     - navigation.footer
     - content.code.copy
@@ -33,6 +39,8 @@ theme:
 
 nav:
   - Home: index.md
+  - "🧭 Learning paths": paths.md
+  - "🎯 Practice": practice.md
   - "1 · Keypress":
       - "Overview": 01-keypress/index.md
       - "1.1 · Interrupts & drivers": 01-keypress/01-interrupts-drivers.md
@@ -98,6 +106,7 @@ nav:
       - "10.6 · AI platform on Kubernetes": 10-ai/06-kubernetes.md
       - "10.7 · Applications: RAG & agents": 10-ai/07-applications.md
       - "📖 AI glossary": 10-ai/glossary.md
+  - "🆕 What's new": changelog.md
 
 markdown_extensions:
   - admonition
@@ -109,9 +118,19 @@ markdown_extensions:
   - md_in_html
   - tables
   - toc: { permalink: true }
+  - abbr
+  - pymdownx.snippets:
+      auto_append: [includes/abbreviations.md]
+  - pymdownx.keys
+
+extra_css:
+  - assets/css/site.css
+extra_javascript:
+  - assets/js/site.js
 
 plugins:
-  - search
+  - search:
+      lang: [en, tr]
   - i18n:
       docs_structure: suffix
       languages:

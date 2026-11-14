@@ -2,37 +2,66 @@
 title: Ana sayfa
 hide:
   - navigation
+  - toc
 ---
 
-# Silicon to Cloud
+<div class="s2c-hero" markdown>
 
-Klavyede bir tuşa basmaktan, internetteki bir uygulamanın arayüzünün ekranımıza gelmesine kadar her adımı
-**diagramlarla**, **kendi anladığım haliyle** öğrendiğim bir seri. Hedefim, aylar sonra bir temel konuyu unuttuğumda
-2 dakikada hatırlayabileceğim bir kaynak oluşturmak. Seri **AI altyapısıyla** bitiyor.
+# Tek bir tuştan buluttaki yapay zekâya
 
-## Her bölümde
+Bilgisayarlar, internet ve modern altyapı <b>gerçekte</b> nasıl çalışır: katman katman, mimari diagramlar, uygulamalı lab'ler ve kısa quiz'lerle. Bir DevOps mühendisinden, tüm yığını anlamak isteyen mühendislere.
 
-| | |
-|---|---|
-| 📖 **Terimler ve kısaltmalar** | Her terim: açılımı, ne olduğu, nasıl çalıştığı |
-| 🗺️ **Büyük resim diagramı** | Bütün akış tek bir mimari diagramda |
-| 🔍 **Katman katman anlatım** | Her adımda ne oluyor ve neden önemli |
-| 🧪 **Kendin dene** | Terminalde gerçekten görebileceğin komutlar |
-| 🃏 **Hatırlatma kartı** | 2 dakikalık özet |
-| ❓ **Kendini test et** | Cevapları gizli sorular |
-| 📚 **Kaynaklar** | Derine inmek için birincil kaynaklar |
+<div class="s2c-ctas">
+<a class="s2c-btn" href="01-keypress/">🚀 Yolculuğa başla</a>
+<a class="s2c-btn ghost" href="paths/">🧭 Bir öğrenme yolu seç</a>
+<a class="s2c-btn ghost" href="practice/">🎯 Pratik yap</a>
+</div>
+<div class="s2c-chips"><span>📚 10 bölüm</span><span>📄 55 sayfa</span><span>🗺️ 99 diagram</span><span>❓ 270 soru</span><span>🇬🇧 / 🇹🇷</span></div>
+</div>
 
-## Yol haritası
+<div class="s2c-you">
+<div class="s2c-ring"><b>0%</b></div>
+<div><h3>Senin yolculuğun</h3><p>…</p></div>
+<a class="s2c-btn" href="01-keypress/">1. bölümle başla →</a>
+</div>
 
-| # | Bölüm | Konular | Derin dalışlar |
-|---|---|---|---|
-| 1 | [“A” tuşuna bastığımızda ne olur?](01-keypress/index.md) | donanım, kesme, kernel, ekran | [1.1](01-keypress/01-interrupts-drivers.md) · [1.2](01-keypress/02-usb-hid.md) · [1.3](01-keypress/03-input-stack.md) |
-| 2 | [CPU & Assembly](02-cpu/index.md) | register, bellek hiyerarşisi, komut döngüsü, stack | [2.1](02-cpu/01-isa-assembly.md) · [2.2](02-cpu/02-caches-memory.md) · [2.3](02-cpu/03-pipeline-speculation.md) |
-| 3 | [İşletim sistemi](03-os/index.md) | process, thread, zamanlayıcı, sanal bellek, syscall | [3.1](03-os/01-processes-threads.md) · [3.2](03-os/02-scheduler.md) · [3.3](03-os/03-virtual-memory.md) · [3.4](03-os/04-io-filesystems.md) · [3.5](03-os/05-namespaces-cgroups.md) |
-| 4 | [Bir program nasıl çalışır](04-program/index.md) | derleme, link, ELF, execve, dinamik bağlayıcı, runtime | [4.1](04-program/01-compile-link.md) · [4.2](04-program/02-elf-loader.md) · [4.3](04-program/03-runtimes.md) |
-| 5 | [Ağın temelleri](05-network/index.md) | katmanlar, MAC/IP, ARP, switch, router, NAT | [5.1](05-network/01-ethernet-arp-vlan.md) · [5.2](05-network/02-ip-routing.md) · [5.3](05-network/03-nat-firewall.md) · [5.4](05-network/04-cloud-networking.md) |
-| 6 | [DNS, TCP, TLS, HTTP](06-internet/index.md) | URL'den ilk byte'a | [6.1](06-internet/01-headers.md) · [6.2](06-internet/02-dns.md) · [6.3](06-internet/03-tcp.md) · [6.4](06-internet/04-tls.md) · [6.5](06-internet/05-http2-http3.md) · [6.6](06-internet/06-apis.md) |
-| 7 | [Sunucu tarafı](07-server/index.md) | CDN, load balancer, uygulama sunucuları, cache, veritabanı, kuyruk | [7.1](07-server/01-load-balancing.md) · [7.2](07-server/02-caching.md) · [7.3](07-server/03-databases.md) · [7.4](07-server/04-queues-events.md) |
-| 8 | [Tarayıcı](08-browser/index.md) | DOM, CSSOM, JS, layout, paint, composite | [8.1](08-browser/01-rendering.md) · [8.2](08-browser/02-javascript-event-loop.md) · [8.3](08-browser/03-web-performance.md) · [8.4](08-browser/04-browser-security.md) |
-| 9 | [Modern altyapı](09-infra/index.md) | container, Kubernetes, CI/CD, GitOps, gözlemlenebilirlik | [9.1](09-infra/01-containers-images.md) · [9.2](09-infra/02-kubernetes-architecture.md) · [9.3](09-infra/03-kubernetes-networking.md) · [9.4](09-infra/04-cicd-gitops.md) · [9.5](09-infra/05-observability.md) |
-| 10 | [AI altyapısı](10-ai/index.md) | GPU, KV cache, batching, CUDA, RAG, Kubernetes'te GPU | [10.1](10-ai/01-fundamentals.md) · [10.2](10-ai/02-gpu.md) · [10.3](10-ai/03-software.md) · [10.4](10-ai/04-training.md) · [10.5](10-ai/05-inference.md) · [10.6](10-ai/06-kubernetes.md) · [10.7](10-ai/07-applications.md) |
+## 🗺️ Yolculuk
+
+Her kart bir bölüm. Sayfaları okundu olarak işaretledikçe çubuk dolar.
+
+<div class="s2c-grid">
+<a class="s2c-card s2c-hw" href="01-keypress/" data-chapter="01-keypress/" data-pages="4"><span class="s2c-num">1</span><span class="s2c-pill">Donanım</span><span class="s2c-ico">⌨️</span><strong>“A”ya bas</strong><small>Kesmeler, USB HID, kernel girdisi, compositor, pikseller</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-hw" href="02-cpu/" data-chapter="02-cpu/" data-pages="4"><span class="s2c-num">2</span><span class="s2c-pill">Donanım</span><span class="s2c-ico">🧠</span><strong>CPU ve Assembly</strong><small>Register'lar, komutlar, önbellekler, boru hatları, spekülasyon</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-os" href="03-os/" data-chapter="03-os/" data-pages="6"><span class="s2c-num">3</span><span class="s2c-pill">OS ve programlar</span><span class="s2c-ico">🐧</span><strong>İşletim sistemi</strong><small>Process'ler, zamanlayıcı, sanal bellek, syscall'lar, cgroup'lar</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-os" href="04-program/" data-chapter="04-program/" data-pages="4"><span class="s2c-num">4</span><span class="s2c-pill">OS ve programlar</span><span class="s2c-ico">⚙️</span><strong>Program nasıl çalışır</strong><small>Derleyici, linker, ELF, yükleyici, JVM/V8/Python/Go</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-net" href="05-network/" data-chapter="05-network/" data-pages="5"><span class="s2c-num">5</span><span class="s2c-pill">Ağ</span><span class="s2c-ico">🔌</span><strong>Ağ</strong><small>Ethernet, ARP, IP routing, NAT, firewall'lar, VPC'ler</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-net" href="06-internet/" data-chapter="06-internet/" data-pages="7"><span class="s2c-num">6</span><span class="s2c-pill">Ağ</span><span class="s2c-ico">🌍</span><strong>DNS, TCP, TLS, HTTP</strong><small>URL'den ilk byte'a, header'lar, HTTP/3, API'ler</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-app" href="07-server/" data-chapter="07-server/" data-pages="5"><span class="s2c-num">7</span><span class="s2c-pill">Uygulamalar</span><span class="s2c-ico">🖥️</span><strong>Sunucu tarafı</strong><small>Load balancer'lar, önbellekler, veritabanları, kuyruklar</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-app" href="08-browser/" data-chapter="08-browser/" data-pages="5"><span class="s2c-num">8</span><span class="s2c-pill">Uygulamalar</span><span class="s2c-ico">🎨</span><strong>Tarayıcı</strong><small>Render, event loop, Web Vitals, tarayıcı güvenliği</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="09-infra/" data-chapter="09-infra/" data-pages="6"><span class="s2c-num">9</span><span class="s2c-pill">Bulut</span><span class="s2c-ico">☸️</span><strong>Modern altyapı</strong><small>Container'lar, Kubernetes, GitOps, gözlemlenebilirlik</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-ai" href="10-ai/" data-chapter="10-ai/" data-pages="9"><span class="s2c-num">10</span><span class="s2c-pill">AI</span><span class="s2c-ico">🤖</span><strong>AI altyapısı</strong><small>LLM'ler, GPU'lar, eğitim, çıkarım, K8s, RAG ve ajanlar</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+</div>
+
+
+## ✨ Her sayfa nasıl çalışır
+
+<div class="s2c-features">
+<div><b>📖 Önce terimler</b>Her kısaltmanın açılımı var. Anlamı için herhangi bir kısaltmanın üstüne gel.</div>
+<div><b>🗺️ Büyük resim diagramı</b>Tüm akış bir bakışta; büyütmek için tıkla.</div>
+<div><b>⚙️ Nasıl çalışır</b>Kavram diagramlarıyla adım adım açıklamalar.</div>
+<div><b>🔧 DevOps bağlantısı</b>Production'da neden önemli, gerçek hata modlarıyla.</div>
+<div><b>🧪 Kendin dene</b>Komutlar ve lab'ler; ya da hepsini Codespaces'te aç.</div>
+<div><b>❓ Kendini test et</b>Sayfa başına beş soru, artı aralıklı tekrar ile pratik modu.</div>
+</div>
+
+## 🧭 Nereden başlayacağını bilmiyor musun?
+
+- **Alt seviyeye yeni misin?** → sırayla oku: [1. bölüm](01-keypress/index.md).
+- **DevOps / SRE mülakatına mı hazırlanıyorsun?** → şu yolu izle: [mülakat yolu](paths.md).
+- **Kubernetes'te AI mı çalıştırmak istiyorsun?** → doğrudan geç: [AI altyapısı](10-ai/index.md).
+- **5 dakikan mı var?** → [rastgele birkaç soru çöz](practice.md) ya da [Anki kartlarını](assets/data/flashcards.tr.csv) indir.
+
+!!! tip "İlerlemen seninle kalır"
+    Okuduğun sayfalar menüde ✓ ile işaretlenir ve bu sayfada sayılır. Her şey sadece tarayıcında saklanır; hesap yok, takip yok.
+
+[Yenilikler →](changelog.md)

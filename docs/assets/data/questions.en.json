@@ -1,0 +1,2432 @@
+[
+{
+"id": "213aa1c380",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.1 — Interrupts & device drivers",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "Why can't an interrupt handler sleep or do heavy work?",
+"a": "It runs with interrupts (at least on that line/core) blocked and outside any process context; sleeping would freeze that core's interrupt handling. Heavy work goes to a bottom half."
+},
+{
+"id": "19aea39fbb",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.1 — Interrupts & device drivers",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "What does NAPI do and why?",
+"a": "After the first interrupt it disables the NIC's interrupt and polls batches of packets until the queue is empty, avoiding an interrupt storm at high packet rates."
+},
+{
+"id": "cdd8e7e42e",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.1 — Interrupts & device drivers",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "How does Linux know which driver to load for a newly plugged device?",
+"a": "The bus reads the device IDs, the kernel emits a uevent with a modalias, udev matches it to a module and runs modprobe; the driver's probe() then claims the device."
+},
+{
+"id": "39a68a6e08",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.1 — Interrupts & device drivers",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "A node shows one core at 100% in si while others are idle. What do you check?",
+"a": "/proc/interrupts: NIC queue IRQs probably land on one core. Add queues / RSS, fix IRQ affinity or enable irqbalance, consider RPS."
+},
+{
+"id": "29dd812d15",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.1 — Interrupts & device drivers",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "Why must GPU drivers be installed on the node and not just in the container?",
+"a": "Drivers are kernel code. Containers share the host kernel; they only carry user-space libraries that talk to the host's driver."
+},
+{
+"id": "ddf612a9af",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.2 — USB & HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "If USB devices can't speak first, how does a key press reach the computer?",
+"a": "The host polls the keyboard's interrupt endpoint every 1–8 ms; the next poll after the press returns a report instead of NAK."
+},
+{
+"id": "beed1264e0",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.2 — USB & HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "Why does one generic driver work for almost every keyboard and mouse?",
+"a": "HID devices describe their report layout in a report descriptor, so the HID core can parse any of them."
+},
+{
+"id": "325312a1b0",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.2 — USB & HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "Does the keyboard send the letter 'a'?",
+"a": "No. It sends usage 0x04, a key position. The layout (xkb in user space) decides it means \"a\", \"q\" or something else."
+},
+{
+"id": "cbedf97f6c",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.2 — USB & HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "How much latency can a 125 Hz polling rate add?",
+"a": "Up to 8 ms (average ~4 ms) before the host even sees the report."
+},
+{
+"id": "679d7a0a96",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.2 — USB & HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "Why do some hardened servers block unknown USB devices?",
+"a": "A device can claim to be a keyboard and type commands (BadUSB). Allow-listing with USBGuard prevents that."
+},
+{
+"id": "7aaa388b7e",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.3 — The Linux input stack",
+"url": "01-keypress/03-input-stack/",
+"q": "Where does the letter (as opposed to the key position) get decided on a Wayland desktop?",
+"a": "In the application, by xkbcommon applying the keymap the compositor sent, using the current modifier state."
+},
+{
+"id": "59ddd90509",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.3 — The Linux input stack",
+"url": "01-keypress/03-input-stack/",
+"q": "Why are /dev/input/event files not readable by normal users?",
+"a": "Reading them would let any program capture every keystroke system-wide (a keylogger)."
+},
+{
+"id": "81d8d565ed",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.3 — The Linux input stack",
+"url": "01-keypress/03-input-stack/",
+"q": "Why could any X11 app capture your passwords, but not on Wayland?",
+"a": "X11 let any client listen to all input; on Wayland the compositor only sends input to the focused surface."
+},
+{
+"id": "adc66e03df",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.3 — The Linux input stack",
+"url": "01-keypress/03-input-stack/",
+"q": "A game should use WASD on every layout. Which KeyboardEvent field should it read?",
+"a": "event.code, the physical key position, not event.key."
+},
+{
+"id": "de2f5c6cb8",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "1.3 — The Linux input stack",
+"url": "01-keypress/03-input-stack/",
+"q": "Who generates key repeat when you hold a key down?",
+"a": "The client/toolkit, using the rate and delay advertised by the compositor; the keyboard only reports that the key is still down."
+},
+{
+"id": "14724d7542",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "Chapter 1 — What happens when you press “A”?",
+"url": "01-keypress/",
+"q": "If you switch from QWERTY to AZERTY, does the code sent over USB change for the same physical key?",
+"a": "No. The code (0x04) describes the key's position. Translating it to a character is done by the OS or the app, using the layout."
+},
+{
+"id": "b903680ee7",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "Chapter 1 — What happens when you press “A”?",
+"url": "01-keypress/",
+"q": "With 8 ms polling, how long can a keypress wait in the worst case?",
+"a": "About 8 ms. If you press right after a poll, the report waits until the next one."
+},
+{
+"id": "ce70068d86",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "Chapter 1 — What happens when you press “A”?",
+"url": "01-keypress/",
+"q": "What happens to the program the CPU was running when the interrupt arrived?",
+"a": "The CPU finishes the current instruction, saves the program's state (RIP, RFLAGS, …) on the stack, runs the handler, and resumes the program exactly where it was with iretq. The program never notices."
+},
+{
+"id": "56119a5ee0",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "Chapter 1 — What happens when you press “A”?",
+"url": "01-keypress/",
+"q": "Why don't applications read the keyboard directly from /dev/input?",
+"a": "Security and focus. If every app could read every key, every app would be a keylogger. The compositor only delivers events to the focused window."
+},
+{
+"id": "f8d83d6db5",
+"ch": "01-keypress",
+"chTitle": "Chapter 1 — What happens when you press “A”?",
+"page": "Chapter 1 — What happens when you press “A”?",
+"url": "01-keypress/",
+"q": "Why is the 'A' keycode 38 on X11 but 30 on Wayland?",
+"a": "For historical reasons X11 adds 8 to the evdev code (30 + 8 = 38). Wayland sends the evdev code as is."
+},
+{
+"id": "8c0e45c9a9",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.1 — Instruction sets & assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "Why does an amd64 image fail on a Graviton node?",
+"a": "Graviton is ARM64; the binary's instructions belong to a different ISA. The kernel refuses to execute it (exec format error)."
+},
+{
+"id": "bbeedbc1f9",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.1 — Instruction sets & assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "Why is decoding x86 harder than ARM64?",
+"a": "x86 instructions are 1–15 bytes long, so the CPU must find instruction boundaries first; ARM64 instructions are always 4 bytes."
+},
+{
+"id": "b966ead4d9",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.1 — Instruction sets & assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "In a gdb session a function crashed. Where do you find its first two arguments?",
+"a": "In RDI and RSI (System V calling convention), if they haven't been overwritten yet."
+},
+{
+"id": "f2febcf35b",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.1 — Instruction sets & assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "A program dies with SIGILL after migrating to another VM type. What's a likely cause?",
+"a": "It was compiled for CPU extensions (AVX-512, AVX2) the new CPU doesn't support."
+},
+{
+"id": "c9a63ff0b2",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.1 — Instruction sets & assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "What does xor eax, eax do and why do compilers prefer it?",
+"a": "Sets EAX to zero; it's shorter than mov eax, 0 and recognized by the CPU as a dependency-breaking zero idiom."
+},
+{
+"id": "4aaa46aa1c",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.2 — Caches & the memory hierarchy",
+"url": "02-cpu/02-caches-memory/",
+"q": "Why does reading one byte from RAM cost as much as reading 64?",
+"a": "Memory moves in 64-byte cache lines; the whole line is fetched either way."
+},
+{
+"id": "de7b696bd8",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.2 — Caches & the memory hierarchy",
+"url": "02-cpu/02-caches-memory/",
+"q": "Why is iterating a linked list much slower than an array of the same length?",
+"a": "Each node can be anywhere in memory, so each step can be a cache miss and the prefetcher can't predict the next address."
+},
+{
+"id": "23c3311ce0",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.2 — Caches & the memory hierarchy",
+"url": "02-cpu/02-caches-memory/",
+"q": "Two threads increment two different counters and get slower than one thread. Why?",
+"a": "The counters share a cache line (false sharing); each write invalidates the other core's copy."
+},
+{
+"id": "738d5ec5de",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.2 — Caches & the memory hierarchy",
+"url": "02-cpu/02-caches-memory/",
+"q": "What does NUMA mean for a database on a 2-socket server?",
+"a": "Memory attached to the other socket is slower; threads and their data should stay on the same node (or memory interleaved)."
+},
+{
+"id": "15420a833d",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.2 — Caches & the memory hierarchy",
+"url": "02-cpu/02-caches-memory/",
+"q": "Why do huge pages help large heaps?",
+"a": "One TLB entry covers 2 MB (or 1 GB) instead of 4 KB, so far fewer TLB misses and page-table walks."
+},
+{
+"id": "0d6e10ad45",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.3 — Pipelines, branch prediction & speculation",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "How can a CPU finish one instruction per cycle if each takes 15+ cycles?",
+"a": "Pipelining: many instructions are in different stages at the same time."
+},
+{
+"id": "d907b21b17",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.3 — Pipelines, branch prediction & speculation",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Why does sorting an array make a branchy loop over it faster?",
+"a": "The if becomes predictable (all false, then all true), so mispredictions and pipeline flushes nearly disappear."
+},
+{
+"id": "1e571ca39a",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.3 — Pipelines, branch prediction & speculation",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "What does Spectre exploit?",
+"a": "Speculative execution leaves traces in the cache that aren't rolled back; timing cache accesses reveals data read speculatively."
+},
+{
+"id": "16e7b7c7a3",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.3 — Pipelines, branch prediction & speculation",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Your cloud VM has 8 vCPUs. How many physical cores is that likely to be?",
+"a": "Usually 4 physical cores with SMT (2 hardware threads each), depending on the provider and instance type."
+},
+{
+"id": "5789a0dd26",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "2.3 — Pipelines, branch prediction & speculation",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "A pod with low average CPU shows latency spikes and rising cfs_throttled_periods. What's happening?",
+"a": "Its threads use up the CPU limit's quota early in each 100 ms period and are throttled until the next one. Raise or remove the limit, or reduce thread bursts."
+},
+{
+"id": "d0e43ec883",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "Chapter 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "Why is iterating over an array faster than over a linked list with the same number of elements?",
+"a": "The array's elements sit next to each other, so one 64-byte cache line brings several of them at once and the prefetcher can guess what comes next. Linked-list nodes are scattered, so each one may need a ~100 ns trip to RAM."
+},
+{
+"id": "60e6821eb4",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "Chapter 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "What does the RIP register hold, and who changes it?",
+"a": "The address of the next instruction. It normally advances by the instruction's length. Jumps, call, ret and interrupts change it directly."
+},
+{
+"id": "50c15fa811",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "Chapter 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "What does ret actually do?",
+"a": "It pops the return address that call pushed onto the stack and puts it into RIP, so execution continues right after the call."
+},
+{
+"id": "fbf5110b37",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "Chapter 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "Why can a program compiled with GCC call a library compiled with Clang?",
+"a": "Both follow the same calling convention (System V ABI): which registers carry arguments and return values, and which registers each side must preserve."
+},
+{
+"id": "45cfc43a96",
+"ch": "02-cpu",
+"chTitle": "Chapter 2 — CPU & Assembly",
+"page": "Chapter 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "Roughly how many CPU cycles does one RAM access cost at 3 GHz?",
+"a": "About 300 cycles (~100 ns × 3 cycles/ns). During that time the core could have executed hundreds of instructions."
+},
+{
+"id": "f080735d71",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.1 — Processes & threads",
+"url": "03-os/01-processes-threads/",
+"q": "Why is fork() fast even for a process with gigabytes of memory?",
+"a": "Copy-on-write: parent and child share pages until one of them writes; only page tables are copied up front."
+},
+{
+"id": "81b91b1acb",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.1 — Processes & threads",
+"url": "03-os/01-processes-threads/",
+"q": "What's the difference between a zombie and an orphan?",
+"a": "A zombie has exited but hasn't been reaped by its parent. An orphan is still running but its parent died; it gets adopted by PID 1."
+},
+{
+"id": "51ccfb9f42",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.1 — Processes & threads",
+"url": "03-os/01-processes-threads/",
+"q": "Your pod always takes 30 s to stop. Why?",
+"a": "The app (PID 1) doesn't handle SIGTERM, so nothing happens until the kubelet sends SIGKILL after the grace period."
+},
+{
+"id": "1eaf1095ba",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.1 — Processes & threads",
+"url": "03-os/01-processes-threads/",
+"q": "What does exit code 137 mean?",
+"a": "128 + 9: the process was killed by SIGKILL, commonly by the OOM killer or after the termination grace period."
+},
+{
+"id": "4765f2fe18",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.1 — Processes & threads",
+"url": "03-os/01-processes-threads/",
+"q": "When would you use processes instead of threads?",
+"a": "When you need isolation (a crash or memory leak shouldn't take everything down) or to avoid a lock like Python's GIL."
+},
+{
+"id": "ab808d2d37",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.2 — The scheduler & CPU time",
+"url": "03-os/02-scheduler/",
+"q": "What happens to a task that calls read() on a socket with no data?",
+"a": "It blocks: leaves the run queue and sleeps until data arrives; the scheduler runs something else."
+},
+{
+"id": "6cbe910a65",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.2 — The scheduler & CPU time",
+"url": "03-os/02-scheduler/",
+"q": "Load average is 16 on a 16-core server but CPU is 20%. What's going on?",
+"a": "Load includes D-state tasks; many tasks are probably stuck in uninterruptible I/O (disk, NFS)."
+},
+{
+"id": "f9d682efa4",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.2 — The scheduler & CPU time",
+"url": "03-os/02-scheduler/",
+"q": "What's the difference between a CPU request and a CPU limit in Kubernetes?",
+"a": "Request sets cpu.weight (share under contention, used for scheduling); limit sets cpu.max (hard quota, causes throttling)."
+},
+{
+"id": "cba587ed1c",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.2 — The scheduler & CPU time",
+"url": "03-os/02-scheduler/",
+"q": "Why can a CPU limit hurt latency even when average CPU usage is well below it?",
+"a": "Multiple threads can burn the whole period's quota early, then the container is throttled for the rest of the period."
+},
+{
+"id": "2cb916f3f0",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.2 — The scheduler & CPU time",
+"url": "03-os/02-scheduler/",
+"q": "Why should runtimes like the JVM or Go know the container's CPU limit?",
+"a": "They size thread pools and GC workers from the number of CPUs; seeing 64 host cores with a 2-CPU limit causes heavy throttling."
+},
+{
+"id": "e579f0116e",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.3 — Virtual memory & memory management",
+"url": "03-os/03-virtual-memory/",
+"q": "A process allocates 4 GB but RSS is only 50 MB. Is something wrong?",
+"a": "No. Pages are only backed by RAM when touched (demand paging); untouched allocations cost nothing."
+},
+{
+"id": "e05073ef55",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.3 — Virtual memory & memory management",
+"url": "03-os/03-virtual-memory/",
+"q": "free shows 1 GB free on a 64 GB server. Should you worry?",
+"a": "Look at available. Most RAM is probably page cache, which the kernel drops when applications need memory."
+},
+{
+"id": "87f85cd351",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.3 — Virtual memory & memory management",
+"url": "03-os/03-virtual-memory/",
+"q": "What's the difference between a minor and a major page fault?",
+"a": "Minor: the data is already in RAM, only a mapping is added. Major: the data must be read from disk."
+},
+{
+"id": "eeb65012f1",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.3 — Virtual memory & memory management",
+"url": "03-os/03-virtual-memory/",
+"q": "Why did my JVM pod get OOMKilled even though -Xmx is below the limit?",
+"a": "The JVM uses memory outside the heap (metaspace, thread stacks, direct buffers, JIT code, native libs); heap + all that exceeded memory.max."
+},
+{
+"id": "ad6063d7a9",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.3 — Virtual memory & memory management",
+"url": "03-os/03-virtual-memory/",
+"q": "Why can't Kubernetes throttle memory the way it throttles CPU?",
+"a": "CPU time can be delayed; memory already in use can't be taken back without reclaiming (cache/swap) or killing the process."
+},
+{
+"id": "6cbbf6474c",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.4 — Syscalls, I/O & filesystems",
+"url": "03-os/04-io-filesystems/",
+"q": "What happens between calling read() and the kernel running its code?",
+"a": "libc sets the syscall number and args in registers and executes syscall; the CPU switches to ring 0 and jumps to the kernel entry, which dispatches to the read handler."
+},
+{
+"id": "a6031f9bb9",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.4 — Syscalls, I/O & filesystems",
+"url": "03-os/04-io-filesystems/",
+"q": "write() returned success. Is the data on disk?",
+"a": "Not necessarily: it's in the page cache as a dirty page. Only after fsync() (or writeback) is it on stable storage."
+},
+{
+"id": "45eb96d8cf",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.4 — Syscalls, I/O & filesystems",
+"url": "03-os/04-io-filesystems/",
+"q": "How does nginx handle 50,000 connections with a few worker processes?",
+"a": "Non-blocking sockets + epoll: each worker waits for readiness on all its sockets and only handles the ready ones."
+},
+{
+"id": "4acd2ab56c",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.4 — Syscalls, I/O & filesystems",
+"url": "03-os/04-io-filesystems/",
+"q": "You deleted a 20 GB log but the disk is still full. Why?",
+"a": "A process still has the file open; the inode isn't freed until the last fd is closed. Restart/reload the process or truncate via /proc/PID/fd."
+},
+{
+"id": "aa57af5adf",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.4 — Syscalls, I/O & filesystems",
+"url": "03-os/04-io-filesystems/",
+"q": "Why can /dev/shm usage cause an OOMKill in a pod?",
+"a": "It's tmpfs, i.e. RAM, and counts against the container's memory cgroup."
+},
+{
+"id": "e3c6e5624c",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.5 — Namespaces, cgroups & container isolation",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Is a container a lightweight VM?",
+"a": "No. It's a regular process on the host kernel, isolated with namespaces and limited with cgroups. A VM runs its own kernel."
+},
+{
+"id": "5c742abfa7",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.5 — Namespaces, cgroups & container isolation",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Why can two containers in the same pod reach each other on localhost?",
+"a": "They share one network namespace (held by the pause container)."
+},
+{
+"id": "86c8c83340",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.5 — Namespaces, cgroups & container isolation",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Which kernel feature enforces a memory limit, and what happens when it's exceeded?",
+"a": "The memory cgroup (memory.max); the OOM killer kills a process inside that cgroup."
+},
+{
+"id": "6fb19df00a",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.5 — Namespaces, cgroups & container isolation",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Why is privileged: true dangerous?",
+"a": "It gives all capabilities, disables seccomp/AppArmor confinement and exposes host devices; the container can usually control the host."
+},
+{
+"id": "40e60a4b47",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "3.5 — Namespaces, cgroups & container isolation",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "An app inside a container reads /proc/meminfo and sees 256 GB on a 2 GB limit. Why?",
+"a": "/proc/meminfo isn't namespaced; the app must read the cgroup files (memory.max) to learn its real limit."
+},
+{
+"id": "be63964cbd",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "Chapter 3 — The operating system",
+"url": "03-os/",
+"q": "Two threads of the same process and two separate processes both run in parallel. What is the key difference?",
+"a": "Threads share one address space (memory, open files) and can read each other's data directly. Separate processes have separate page tables and cannot see each other's memory without explicit sharing (pipes, sockets, shared memory)."
+},
+{
+"id": "b7a57c0ae5",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "Chapter 3 — The operating system",
+"url": "03-os/",
+"q": "Why can't a buggy process overwrite another process's memory?",
+"a": "Each process has its own page table. Its virtual addresses can only map to the physical frames the kernel gave it, and the MMU enforces this on every access."
+},
+{
+"id": "01b9fbe8fa",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "Chapter 3 — The operating system",
+"url": "03-os/",
+"q": "What happens, step by step, when your program calls write()?",
+"a": "libc puts the syscall number in RAX and arguments in RDI/RSI/RDX, executes syscall, the CPU switches to ring 0, the kernel's VFS finds what fd refers to and calls the right driver, the result comes back in RAX, and the CPU returns to ring 3."
+},
+{
+"id": "f906f058f2",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "Chapter 3 — The operating system",
+"url": "03-os/",
+"q": "A container keeps getting killed with OOMKilled. Which kernel mechanism is doing it?",
+"a": "The memory cgroup limit plus the kernel's OOM killer. The container used more memory than its limit, so the kernel killed a process inside it."
+},
+{
+"id": "bebd2de3ce",
+"ch": "03-os",
+"chTitle": "Chapter 3 — The operating system",
+"page": "Chapter 3 — The operating system",
+"url": "03-os/",
+"q": "Why should your container's PID 1 handle SIGTERM?",
+"a": "Kubernetes sends SIGTERM first to allow a graceful shutdown (finish requests, close connections). If PID 1 ignores it, the pod waits out the grace period and is then killed with SIGKILL, dropping in-flight work."
+},
+{
+"id": "2b6d8e966b",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.1 — Compiling & linking",
+"url": "04-program/01-compile-link/",
+"q": "What does the compiler's IR make possible?",
+"a": "One optimizer for many languages and many targets; front ends and back ends can be mixed (LLVM)."
+},
+{
+"id": "ecfc86b537",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.1 — Compiling & linking",
+"url": "04-program/01-compile-link/",
+"q": "What does U puts in nm output mean?",
+"a": "The object file uses puts but doesn't define it; the linker (or loader) must find it, here in libc."
+},
+{
+"id": "a2abf60f16",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.1 — Compiling & linking",
+"url": "04-program/01-compile-link/",
+"q": "Why are Go binaries popular for FROM scratch images?",
+"a": "With CGO_ENABLED=0 they're statically linked: no libc or loader needed, only the kernel."
+},
+{
+"id": "e18849f7e2",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.1 — Compiling & linking",
+"url": "04-program/01-compile-link/",
+"q": "A security fix lands in OpenSSL. What's the difference for statically vs dynamically linked apps?",
+"a": "Dynamic: update the shared library (base image) once. Static: every binary must be rebuilt and redeployed."
+},
+{
+"id": "dea65182d7",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.1 — Compiling & linking",
+"url": "04-program/01-compile-link/",
+"q": "Why do reproducible builds matter for supply-chain security?",
+"a": "Anyone can rebuild from source and check the binary is bit-identical, proving nothing was injected during the build."
+},
+{
+"id": "2388c0481a",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.2 — ELF & the program loader",
+"url": "04-program/02-elf-loader/",
+"q": "What's the difference between ELF segments and sections?",
+"a": "Segments describe what the loader maps into memory and with which permissions; sections are for the linker, debuggers and tools and can be stripped."
+},
+{
+"id": "87b89a92cf",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.2 — ELF & the program loader",
+"url": "04-program/02-elf-loader/",
+"q": "Is main the first code that runs in a C program?",
+"a": "No. ld.so runs first (for dynamic binaries), then _start → __libc_start_main and constructors, then main."
+},
+{
+"id": "8e81d677d2",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.2 — ELF & the program loader",
+"url": "04-program/02-elf-loader/",
+"q": "A container fails with exec /app: no such file or directory but /app exists. Why?",
+"a": "Its interpreter (PT_INTERP, e.g. glibc's ld-linux) isn't in the image, or it's built for another architecture."
+},
+{
+"id": "f21fcd2868",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.2 — ELF & the program loader",
+"url": "04-program/02-elf-loader/",
+"q": "What is ASLR and why does it need PIE?",
+"a": "Randomizing where code, heap, stack and libraries load each run; the executable itself can only move if it's position-independent."
+},
+{
+"id": "cc3173e35e",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.2 — ELF & the program loader",
+"url": "04-program/02-elf-loader/",
+"q": "What does full RELRO protect?",
+"a": "It resolves all symbols at start and makes the GOT read-only, so an attacker can't overwrite function pointers in it."
+},
+{
+"id": "8f896c6f6d",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.3 — Language runtimes: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "Why are JVM services slow for the first minute after a deploy?",
+"a": "Code starts interpreted; the JIT compiles hot methods only after profiling them (warm-up)."
+},
+{
+"id": "6ca85a47b6",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.3 — Language runtimes: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "Why doesn't adding threads speed up CPU-bound pure-Python code?",
+"a": "The GIL lets only one thread execute Python bytecode at a time (except in the free-threaded build)."
+},
+{
+"id": "0c743f44a4",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.3 — Language runtimes: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "A Node.js pod has a 4-CPU limit but never goes above 1 CPU. Why?",
+"a": "JavaScript runs on one thread; use worker threads or more, smaller replicas."
+},
+{
+"id": "fef34fd198",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.3 — Language runtimes: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "What should GOMEMLIMIT be set to in a container with a 1 GiB limit, and why?",
+"a": "Around 900 MiB: the GC then works harder before reaching the limit, avoiding OOMKills, while leaving headroom for non-heap memory."
+},
+{
+"id": "8f66d747a1",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "4.3 — Language runtimes: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "The JVM's default max heap is 25% of the container memory. What do you change?",
+"a": "Set -XX:MaxRAMPercentage (e.g. 70–75%), leaving room for off-heap memory."
+},
+{
+"id": "7e649e106c",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "Chapter 4 — How a program runs",
+"url": "04-program/",
+"q": "At which stage does printf get its real address?",
+"a": "Not in the compiler or assembler. Those leave an undefined symbol. With static linking the linker fills it in; with dynamic linking the dynamic linker resolves it at start-up (or lazily on first call)."
+},
+{
+"id": "e692d556e3",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "Chapter 4 — How a program runs",
+"url": "04-program/",
+"q": "What's the difference between fork() and execve()?",
+"a": "fork() creates a new process that is a copy of the current one. execve() replaces the current process's program with a new one (same PID, new memory). Starting a program = fork + execve."
+},
+{
+"id": "2a029d032c",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "Chapter 4 — How a program runs",
+"url": "04-program/",
+"q": "Your image runs fine on your laptop but fails on the cluster with exec format error. Why?",
+"a": "The binary was built for a different CPU architecture, e.g. arm64 (Apple Silicon) vs amd64 nodes. Build multi-arch images (docker buildx --platform linux/amd64,linux/arm64)."
+},
+{
+"id": "f5bc5852e0",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "Chapter 4 — How a program runs",
+"url": "04-program/",
+"q": "Why can a Go binary run in a FROM scratch image but a typical C program can't?",
+"a": "A static Go binary contains everything it needs and has no PT_INTERP. A dynamically linked C program needs ld-linux.so and libc.so.6, which a scratch image doesn't have."
+},
+{
+"id": "566ea04f20",
+"ch": "04-program",
+"chTitle": "Chapter 4 — How a program runs",
+"page": "Chapter 4 — How a program runs",
+"url": "04-program/",
+"q": "What does a JIT compiler do?",
+"a": "It watches which code runs often (\"hot\") and compiles that bytecode into native machine code while the program is running, so those parts run at near-native speed."
+},
+{
+"id": "20b076d5cf",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.1 — Ethernet, ARP & VLANs (Layer 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "What does a switch do with a frame whose destination MAC it hasn't learned?",
+"a": "It floods it to all ports in that VLAN except the one it came in on."
+},
+{
+"id": "87ad522b9a",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.1 — Ethernet, ARP & VLANs (Layer 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "You ping 8.8.8.8. Whose MAC address does your laptop ARP for?",
+"a": "The default gateway's; MACs only matter on the local link."
+},
+{
+"id": "fa3124ae7d",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.1 — Ethernet, ARP & VLANs (Layer 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "Why do VXLAN overlays usually need a smaller MTU?",
+"a": "VXLAN encapsulation adds ~50 bytes of headers; inner packets must shrink so the outer packet still fits in 1500."
+},
+{
+"id": "1adf457b94",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.1 — Ethernet, ARP & VLANs (Layer 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "Why doesn't gratuitous-ARP failover usually work in AWS/GCP VPCs?",
+"a": "The cloud network isn't a real L2 segment; the SDN controls which IP belongs to which interface and ignores GARP."
+},
+{
+"id": "f54e975719",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.1 — Ethernet, ARP & VLANs (Layer 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "What problem does STP solve?",
+"a": "It blocks redundant links so broadcasts can't loop forever and cause a broadcast storm."
+},
+{
+"id": "9cbce78c2d",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.2 — IP addressing, subnets & routing",
+"url": "05-network/02-ip-routing/",
+"q": "How many addresses are in a /22, and what range does 10.1.4.0/22 cover?",
+"a": "1024 addresses: 10.1.4.0 – 10.1.7.255."
+},
+{
+"id": "e945367a77",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.2 — IP addressing, subnets & routing",
+"url": "05-network/02-ip-routing/",
+"q": "A host has routes for 10.0.0.0/8 via A and 10.0.5.0/24 via B. Where does 10.0.5.20 go?",
+"a": "Via B: the /24 is the longest matching prefix."
+},
+{
+"id": "8c6c5c509e",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.2 — IP addressing, subnets & routing",
+"url": "05-network/02-ip-routing/",
+"q": "Do the source and destination IPs change as a packet crosses routers?",
+"a": "No (without NAT). Only TTL/checksum and the L2 (MAC) header change at each hop."
+},
+{
+"id": "3607c0445d",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.2 — IP addressing, subnets & routing",
+"url": "05-network/02-ip-routing/",
+"q": "Why can blocking all ICMP break HTTPS for some users?",
+"a": "PMTU discovery depends on ICMP \"fragmentation needed\"; without it, big packets are dropped silently and connections hang."
+},
+{
+"id": "37b7b13e44",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.2 — IP addressing, subnets & routing",
+"url": "05-network/02-ip-routing/",
+"q": "Why must pod CIDRs not overlap with your corporate network?",
+"a": "Routes would be ambiguous: traffic to corporate IPs would be sent into the cluster (or vice versa) and peering/VPN can't be set up."
+},
+{
+"id": "42bc55b16b",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.3 — NAT, firewalls & conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Why does a stateful firewall need only one rule for HTTPS while a NACL needs two?",
+"a": "conntrack lets replies of an allowed flow through automatically; a stateless NACL must explicitly allow the return traffic to ephemeral ports."
+},
+{
+"id": "813dfbed1b",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.3 — NAT, firewalls & conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "How does a packet to a ClusterIP reach a pod when no interface has that IP?",
+"a": "kube-proxy rules DNAT the destination to a chosen pod IP in PREROUTING/OUTPUT; conntrack keeps the mapping for the connection."
+},
+{
+"id": "3024da896d",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.3 — NAT, firewalls & conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Many pods call one external API through a NAT gateway and get random connection timeouts. Likely cause?",
+"a": "SNAT source-port exhaustion to that single destination IP:port. Add NAT IPs, reuse connections, or spread destinations."
+},
+{
+"id": "634cc60ff7",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.3 — NAT, firewalls & conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "What happens to other traffic once a NetworkPolicy selects a pod for ingress?",
+"a": "All ingress not explicitly allowed by some policy is denied for that pod."
+},
+{
+"id": "a22658817e",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.3 — NAT, firewalls & conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Why does externalTrafficPolicy: Local preserve the client IP?",
+"a": "Traffic only goes to pods on the node that received it, so no SNAT to another node is needed."
+},
+{
+"id": "3c80a0a90b",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.4 — Cloud networking (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "What makes a subnet 'public'?",
+"a": "Its route table has a default route to an internet gateway (and instances have public IPs)."
+},
+{
+"id": "f61e588be1",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.4 — Cloud networking (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "Instances in a private subnet can't download packages. What do you check?",
+"a": "The subnet's route table has 0.0.0.0/0 → a NAT gateway in a public subnet, the NAT gateway is healthy, and SG/NACL allow outbound + return traffic."
+},
+{
+"id": "e13c1b0c16",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.4 — Cloud networking (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "VPC A is peered with B, and B with C. Can A reach C?",
+"a": "No. Peering isn't transitive; use a transit gateway or peer A and C directly."
+},
+{
+"id": "d39aff02be",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.4 — Cloud networking (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "Why is it better to reference security groups than CIDRs in rules?",
+"a": "Rules follow roles, not IPs: any instance (or pod with SG-for-pods) in the app SG is allowed, even as IPs change with autoscaling."
+},
+{
+"id": "c1b9b065b8",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "5.4 — Cloud networking (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "Your NAT gateway bill is huge. What's a common fix?",
+"a": "Add VPC endpoints for S3/ECR/other AWS services so that traffic bypasses the NAT gateway."
+},
+{
+"id": "4e08205d5b",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "Chapter 5 — Networking fundamentals",
+"url": "05-network/",
+"q": "A packet goes through 12 routers. How many times does the destination IP change? And the destination MAC?",
+"a": "The destination IP stays the same the whole way (ignoring NAT on the server side). The destination MAC changes at every hop, because each L2 frame only goes to the next device."
+},
+{
+"id": "bd8a68c7ff",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "Chapter 5 — Networking fundamentals",
+"url": "05-network/",
+"q": "Your laptop wants to reach 192.168.1.50 and 8.8.8.8. Which MAC address does it put on each frame?",
+"a": "For 192.168.1.50 (same /24): that machine's own MAC, found via ARP. For 8.8.8.8 (outside the subnet): the gateway's MAC."
+},
+{
+"id": "0e1d9649ae",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "Chapter 5 — Networking fundamentals",
+"url": "05-network/",
+"q": "What does a switch look at, and what does a router look at?",
+"a": "A switch looks at MAC addresses (L2). A router looks at IP addresses (L3) and its routing table."
+},
+{
+"id": "9c6e803d49",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "Chapter 5 — Networking fundamentals",
+"url": "05-network/",
+"q": "Why can't a server on the internet open a connection to your laptop at home?",
+"a": "Your laptop only has a private IP behind NAT. The router only knows where to send incoming packets for conversations your side started (conntrack entries). Unsolicited inbound traffic has no mapping, unless you configure port forwarding."
+},
+{
+"id": "77a51a6c13",
+"ch": "05-network",
+"chTitle": "Chapter 5 — Networking fundamentals",
+"page": "Chapter 5 — Networking fundamentals",
+"url": "05-network/",
+"q": "What is the AWS equivalent of your home router's NAT?",
+"a": "A NAT gateway: instances in a private subnet send outbound traffic through it, and it rewrites their private IPs to a public one."
+},
+{
+"id": "1f7a7714e9",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP headers deep dive",
+"url": "06-internet/01-headers/",
+"q": "What does Cache-Control: no-cache actually mean?",
+"a": "The response may be stored, but it must be revalidated with the server (e.g. If-None-Match) before each use. To forbid storing, use no-store."
+},
+{
+"id": "0db3db3259",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP headers deep dive",
+"url": "06-internet/01-headers/",
+"q": "Your API works with curl but the browser shows a CORS error. Why, and where is the fix?",
+"a": "CORS is enforced only by browsers. The API (or the ingress in front of it) must return Access-Control-Allow-Origin for that origin, and answer the OPTIONS preflight with the allowed methods and headers."
+},
+{
+"id": "89cf336d97",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP headers deep dive",
+"url": "06-internet/01-headers/",
+"q": "Behind your load balancer every log line shows the same client IP. What's wrong?",
+"a": "The app logs the TCP peer (the LB). Read the client IP from X-Forwarded-For / Forwarded, and trust only entries added by your own proxies."
+},
+{
+"id": "bba4420897",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP headers deep dive",
+"url": "06-internet/01-headers/",
+"q": "Why must a CDN see Vary: Accept-Encoding?",
+"a": "The same URL exists in several encodings (br, gzip, none). Without Vary the CDN may serve a brotli body to a client that can't decode it."
+},
+{
+"id": "34de375133",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP headers deep dive",
+"url": "06-internet/01-headers/",
+"q": "Which cookie attributes stop JavaScript from reading a session cookie and stop it being sent over HTTP?",
+"a": "HttpOnly (no JS access) and Secure (HTTPS only). Add SameSite=Lax or Strict against CSRF."
+},
+{
+"id": "23aa28c160",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS deep dive",
+"url": "06-internet/02-dns/",
+"q": "Who actually walks the root → TLD → authoritative chain: your laptop or the resolver?",
+"a": "The recursive resolver. Your laptop's stub resolver sends one query and gets the final answer."
+},
+{
+"id": "86f47c871d",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS deep dive",
+"url": "06-internet/02-dns/",
+"q": "You changed an A record with TTL 3600 ten minutes ago. Why do some users still see the old IP?",
+"a": "Resolvers that cached it before the change keep it until their copy's TTL expires (up to an hour), and some apps cache even longer."
+},
+{
+"id": "c4763df47f",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS deep dive",
+"url": "06-internet/02-dns/",
+"q": "Why can a pod's lookup of api.stripe.com be slow, and what are two fixes?",
+"a": "ndots:5 makes it try every search suffix first, each for A and AAAA. Use the FQDN with a trailing dot, lower ndots, and/or run NodeLocal DNSCache."
+},
+{
+"id": "73ef9d2990",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS deep dive",
+"url": "06-internet/02-dns/",
+"q": "What does DNSSEC protect against, and what doesn't it protect?",
+"a": "Forged or modified answers (authenticity and integrity). It doesn't hide which names you look up; that's DoH/DoT."
+},
+{
+"id": "cf0b91abc4",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS deep dive",
+"url": "06-internet/02-dns/",
+"q": "What is a subdomain takeover?",
+"a": "A CNAME still points at a cloud resource (bucket, app, CDN) that was deleted. An attacker claims that resource name and now serves content on your subdomain."
+},
+{
+"id": "9589649962",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP deep dive",
+"url": "06-internet/03-tcp/",
+"q": "Why does TCP need a handshake before sending data?",
+"a": "Both sides must agree on starting sequence numbers and confirm the other side is reachable and willing."
+},
+{
+"id": "db8d0cd2e0",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP deep dive",
+"url": "06-internet/03-tcp/",
+"q": "What's the difference between flow control and congestion control?",
+"a": "Flow control protects the receiver (rwnd, its buffer). Congestion control protects the network (cwnd, estimated from loss or bandwidth/RTT)."
+},
+{
+"id": "2ec519bef3",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP deep dive",
+"url": "06-internet/03-tcp/",
+"q": "Your service has 20,000 sockets in CLOSE_WAIT. What do you fix?",
+"a": "The application: it receives the peer's FIN but never closes its socket (leaked connections, missing close() / response body not closed)."
+},
+{
+"id": "8999f45097",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP deep dive",
+"url": "06-internet/03-tcp/",
+"q": "Why do you get intermittent 502s when the LB idle timeout is 60 s and the backend's keep-alive timeout is 30 s?",
+"a": "The backend closes idle connections first; the LB may send a new request on a connection the backend just closed. Make the backend's timeout longer than the LB's."
+},
+{
+"id": "25387d439f",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP deep dive",
+"url": "06-internet/03-tcp/",
+"q": "Why can one gRPC client overload a single pod behind a Kubernetes Service?",
+"a": "kube-proxy balances per TCP connection, and gRPC sends all requests over one long-lived HTTP/2 connection. Use L7 load balancing (mesh, gateway) or client-side balancing."
+},
+{
+"id": "0a2966aadd",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS & certificates deep dive",
+"url": "06-internet/04-tls/",
+"q": "Why doesn't TLS just use RSA/ECDSA to encrypt all the data?",
+"a": "Asymmetric crypto is slow. It's used once to agree keys and prove identity; the data uses fast symmetric ciphers."
+},
+{
+"id": "1b0fb7ca8e",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS & certificates deep dive",
+"url": "06-internet/04-tls/",
+"q": "What does the CertificateVerify signature prove that the certificate alone doesn't?",
+"a": "That the server has the private key. Anyone can copy a public certificate; only the owner can sign with its key."
+},
+{
+"id": "4626c86c7e",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS & certificates deep dive",
+"url": "06-internet/04-tls/",
+"q": "Your site works in Chrome but curl says 'unable to get local issuer certificate'. Why?",
+"a": "The server isn't sending the intermediate certificate. Chrome had it cached; curl didn't. Serve the full chain."
+},
+{
+"id": "254b941634",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS & certificates deep dive",
+"url": "06-internet/04-tls/",
+"q": "Why is the industry moving to 47-day certificates?",
+"a": "Revocation doesn't work reliably, so short lifetimes limit how long a stolen or mis-issued certificate is useful, and force automation."
+},
+{
+"id": "9ca446f68a",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS & certificates deep dive",
+"url": "06-internet/04-tls/",
+"q": "Which ACME challenge do you need for .example.com?",
+"a": "DNS-01: wildcard certificates require a TXT record under _acme-challenge.example.com."
+},
+{
+"id": "4c9e0aa254",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 & HTTP/3 deep dive",
+"url": "06-internet/05-http2-http3/",
+"q": "HTTP/2 multiplexes streams. Why can it still suffer from head-of-line blocking?",
+"a": "Streams share one TCP connection; a lost TCP segment blocks delivery of all later bytes, so every stream waits."
+},
+{
+"id": "9b8f795bd6",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 & HTTP/3 deep dive",
+"url": "06-internet/05-http2-http3/",
+"q": "How does a browser find out a site supports HTTP/3?",
+"a": "Alt-Svc: h3=\":443\" on an earlier response, or an HTTPS DNS record. Then it tries QUIC and falls back to TCP if UDP is blocked."
+},
+{
+"id": "66b7b7b202",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 & HTTP/3 deep dive",
+"url": "06-internet/05-http2-http3/",
+"q": "Why is 0-RTT data restricted to safe requests?",
+"a": "An attacker can replay the first flight. Replaying a GET is harmless; replaying a payment POST is not."
+},
+{
+"id": "9da200d28b",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 & HTTP/3 deep dive",
+"url": "06-internet/05-http2-http3/",
+"q": "Your gRPC service behind a Kubernetes Service has one hot pod. Why?",
+"a": "gRPC keeps one long-lived HTTP/2 connection; kube-proxy balances connections, not requests."
+},
+{
+"id": "39cfed3dd2",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 & HTTP/3 deep dive",
+"url": "06-internet/05-http2-http3/",
+"q": "What happens to a QUIC connection when the phone switches from Wi-Fi to 5G?",
+"a": "The IP changes but the Connection ID doesn't, so the connection migrates instead of reconnecting."
+},
+{
+"id": "ec7d8c7cf7",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Methods, status codes & API styles",
+"url": "06-internet/06-apis/",
+"q": "Which methods can a proxy safely retry automatically, and why?",
+"a": "Idempotent ones (GET, HEAD, PUT, DELETE, OPTIONS): repeating them doesn't change the result. POST may create a duplicate."
+},
+{
+"id": "c3bccbcf3d",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Methods, status codes & API styles",
+"url": "06-internet/06-apis/",
+"q": "What's the difference between 401 and 403?",
+"a": "401: we don't know who you are (missing/invalid credentials). 403: we know who you are and you're not allowed."
+},
+{
+"id": "be8352bf48",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Methods, status codes & API styles",
+"url": "06-internet/06-apis/",
+"q": "Users get 504 on a report endpoint that takes 90 s. Where do you look first?",
+"a": "The proxy/ingress/LB read timeout (often 60 s). Raise it for that route, or make the endpoint asynchronous (202 + polling)."
+},
+{
+"id": "74906eebca",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Methods, status codes & API styles",
+"url": "06-internet/06-apis/",
+"q": "Why do LLM chat UIs often use SSE rather than WebSockets?",
+"a": "The stream is one-directional (server → client), SSE is plain HTTP, works through proxies and CDNs, and reconnects automatically."
+},
+{
+"id": "d31d7a4d83",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Methods, status codes & API styles",
+"url": "06-internet/06-apis/",
+"q": "Why does gRPC return HTTP 200 even when the call failed?",
+"a": "gRPC reports its own status in the grpc-status trailer at the end of the stream; HTTP status only says the transport worked."
+},
+{
+"id": "12cc26e683",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "Your recursive resolver already knows .com's servers. Does it still ask the root for example.com?",
+"a": "No. It caches the root's referral (the .com NS records) for their TTL and goes straight to the .com servers. The root is only asked when that cache has expired."
+},
+{
+"id": "ab1d3424eb",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "Why does a new HTTPS request cost at least 2 RTTs before any HTTP data flows (TLS 1.3 over TCP)?",
+"a": "1 RTT for the TCP handshake, then 1 RTT for the TLS 1.3 handshake. Only then can the HTTP request be sent. HTTP/3 merges the transport and TLS handshakes to save one of them."
+},
+{
+"id": "3ff7d6460d",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "How does the browser know the server really is example.com and not an attacker?",
+"a": "The server sends a certificate for example.com signed by a CA the browser trusts, and proves it holds the matching private key (CertificateVerify). The browser checks the chain, the hostname and the validity dates."
+},
+{
+"id": "756c440834",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "What is SNI and why is it needed?",
+"a": "Server Name Indication: the hostname sent in ClientHello. One IP (a load balancer, a CDN) can serve thousands of sites, so it needs to know which certificate to present before encryption starts."
+},
+{
+"id": "7e712a183e",
+"ch": "06-internet",
+"chTitle": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"page": "Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "502 vs 504 from your load balancer: what's the difference?",
+"a": "502 Bad Gateway: the LB got an invalid or no response from the backend (crashed, connection refused). 504 Gateway Timeout: the backend didn't answer in time."
+},
+{
+"id": "48a8a4727a",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.1 — Load balancing",
+"url": "07-server/01-load-balancing/",
+"q": "Why can an L4 load balancer leave gRPC traffic unbalanced?",
+"a": "It balances connections; gRPC multiplexes all requests over one long-lived HTTP/2 connection, so one backend gets everything from that client."
+},
+{
+"id": "da55d9def0",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.1 — Load balancing",
+"url": "07-server/01-load-balancing/",
+"q": "What's the difference between readiness and liveness probes?",
+"a": "Readiness: should this pod receive traffic now? Liveness: is it stuck and should be restarted?"
+},
+{
+"id": "cadca572a8",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.1 — Load balancing",
+"url": "07-server/01-load-balancing/",
+"q": "Why is a deep liveness check (that queries the DB) dangerous?",
+"a": "A DB hiccup fails every pod's liveness and Kubernetes restarts them all at once, turning a blip into an outage."
+},
+{
+"id": "e8e69166cf",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.1 — Load balancing",
+"url": "07-server/01-load-balancing/",
+"q": "When is consistent hashing useful?",
+"a": "When the same key should hit the same backend (cache locality, shards) and you want few keys to move when backends change."
+},
+{
+"id": "04abffda9d",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.1 — Load balancing",
+"url": "07-server/01-load-balancing/",
+"q": "Users see 502s for a few seconds during every rollout. What do you check?",
+"a": "Graceful shutdown: readiness turning false before exit, a preStop sleep so endpoints update, SIGTERM handling, and LB deregistration delay."
+},
+{
+"id": "498893e86b",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.2 — Caching patterns",
+"url": "07-server/02-caching/",
+"q": "Why delete the key on write instead of updating it in cache-aside?",
+"a": "Concurrent writers can update the cache in the wrong order, leaving an old value; deleting makes the next read fetch the current one."
+},
+{
+"id": "2cd942dc10",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.2 — Caching patterns",
+"url": "07-server/02-caching/",
+"q": "What is a cache stampede and how do you prevent it?",
+"a": "Many requests miss the same expired hot key at once and all hit the DB. Use request coalescing/locks, stale-while-revalidate or early refresh with jittered TTLs."
+},
+{
+"id": "c60a225cfb",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.2 — Caching patterns",
+"url": "07-server/02-caching/",
+"q": "Your Redis is at 100% CPU on one core while others are idle. Possible causes?",
+"a": "A slow command (KEYS, huge sets, Lua) or a hot key; Redis executes commands on one thread."
+},
+{
+"id": "a0f1016fa5",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.2 — Caching patterns",
+"url": "07-server/02-caching/",
+"q": "When is write-behind acceptable?",
+"a": "When losing the last few writes is tolerable (counters, metrics) and write speed matters more than durability."
+},
+{
+"id": "98e92f0321",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.2 — Caching patterns",
+"url": "07-server/02-caching/",
+"q": "What happens to the database when the cache cluster restarts empty, and how do you prepare?",
+"a": "It gets the full read load (cold cache). Warm critical keys, ramp traffic, and protect the DB with rate limits/circuit breakers."
+},
+{
+"id": "54ab257fa6",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.3 — Databases: storage, transactions & replication",
+"url": "07-server/03-databases/",
+"q": "Why is the WAL written before the data pages?",
+"a": "So a committed transaction can always be recovered by replaying the log after a crash, while data pages can be flushed lazily."
+},
+{
+"id": "6e81c353fd",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.3 — Databases: storage, transactions & replication",
+"url": "07-server/03-databases/",
+"q": "Why doesn't replication replace backups?",
+"a": "It copies every change, including mistakes and malicious deletes, to replicas within seconds; you need point-in-time backups to go back."
+},
+{
+"id": "b7f3da4b3d",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.3 — Databases: storage, transactions & replication",
+"url": "07-server/03-databases/",
+"q": "A query filters on created_at but the only index is on (tenant_id, created_at). Will it be used efficiently?",
+"a": "Generally no: B-tree composite indexes are used left-to-right; without tenant_id in the filter it can't seek efficiently."
+},
+{
+"id": "09e6797409",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.3 — Databases: storage, transactions & replication",
+"url": "07-server/03-databases/",
+"q": "What's the trade-off between sync and async replication?",
+"a": "Sync: no data loss on failover but higher commit latency and availability coupling. Async: fast commits but possible loss of recent transactions and stale replica reads."
+},
+{
+"id": "b2c6483b46",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.3 — Databases: storage, transactions & replication",
+"url": "07-server/03-databases/",
+"q": "You scale your app from 10 to 100 pods and Postgres starts refusing connections. Why and what's the fix?",
+"a": "Each pod's pool opens N connections; total exceeds max_connections. Use a connection pooler (PgBouncer/RDS Proxy) and smaller per-pod pools."
+},
+{
+"id": "fbff6e79d7",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.4 — Queues, streams & event-driven systems",
+"url": "07-server/04-queues-events/",
+"q": "Why must consumers be idempotent?",
+"a": "With at-least-once delivery, a crash between processing and ack causes redelivery; the handler must produce the same result twice."
+},
+{
+"id": "1db1b0a137",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.4 — Queues, streams & event-driven systems",
+"url": "07-server/04-queues-events/",
+"q": "You have a topic with 6 partitions and scale consumers to 10. What happens?",
+"a": "Only 6 consumers get partitions; 4 sit idle. Parallelism is capped by the partition count."
+},
+{
+"id": "814bf33243",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.4 — Queues, streams & event-driven systems",
+"url": "07-server/04-queues-events/",
+"q": "What's the problem with 'write to DB, then publish to Kafka' in application code?",
+"a": "The two aren't atomic: a crash or publish failure after the commit loses the event (or the reverse order publishes events for data that was rolled back). Use an outbox/CDC."
+},
+{
+"id": "f7d647552f",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.4 — Queues, streams & event-driven systems",
+"url": "07-server/04-queues-events/",
+"q": "What does a growing consumer lag tell you, and what do you do?",
+"a": "Consumers process slower than producers write. Scale consumers (up to partitions), fix slow handlers, or add partitions."
+},
+{
+"id": "e5fa5962b8",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "7.4 — Queues, streams & event-driven systems",
+"url": "07-server/04-queues-events/",
+"q": "Queue or log for 'replay the last 7 days of events into a new analytics service'?",
+"a": "A log (Kafka) with ≥ 7 days retention; a queue deletes messages once consumed."
+},
+{
+"id": "3119420a38",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "Chapter 7 — Server side",
+"url": "07-server/",
+"q": "Why should app servers be stateless?",
+"a": "So any instance can serve any request and any instance can be added or killed at any time. That enables horizontal scaling, rolling deploys and self-healing."
+},
+{
+"id": "60f53deb34",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "Chapter 7 — Server side",
+"url": "07-server/",
+"q": "What's the difference between an L4 and an L7 load balancer?",
+"a": "L4 forwards TCP/UDP connections by IP and port without reading the content. L7 understands HTTP, so it can route by host, path or header, terminate TLS and retry individual requests."
+},
+{
+"id": "c76bc10b4f",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "Chapter 7 — Server side",
+"url": "07-server/",
+"q": "A user updates their profile and then immediately sees the old version. What could cause this?",
+"a": "Replication lag (the read went to a replica that hasn't caught up yet) or a stale cache entry that wasn't invalidated on write."
+},
+{
+"id": "057ad7d147",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "Chapter 7 — Server side",
+"url": "07-server/",
+"q": "Why should queue workers be idempotent?",
+"a": "Most queues deliver \"at least once\", so a job can run twice (e.g. a worker crashes after doing the work but before acknowledging it). Running it twice must not charge a card twice."
+},
+{
+"id": "e7895dac1a",
+"ch": "07-server",
+"chTitle": "Chapter 7 — Server side",
+"page": "Chapter 7 — Server side",
+"url": "07-server/",
+"q": "Your API calls a payment provider that sometimes takes 30 s. What do you add?",
+"a": "A timeout on the call, retries with backoff (only if the call is idempotent), a circuit breaker, and ideally moving it to an async job so the user's request doesn't wait."
+},
+{
+"id": "6a435c22d7",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.1 — The rendering pipeline in depth",
+"url": "08-browser/01-rendering/",
+"q": "Why is CSS render-blocking but images aren't?",
+"a": "Without the CSSOM the browser can't know how anything looks or where it goes; painting without it would flash unstyled content. Images can fill in later."
+},
+{
+"id": "65689c5f24",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.1 — The rendering pipeline in depth",
+"url": "08-browser/01-rendering/",
+"q": "What's the difference between defer and async?",
+"a": "Both download in parallel. defer runs after HTML parsing, in document order; async runs as soon as it's downloaded, in any order."
+},
+{
+"id": "3eba152c66",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.1 — The rendering pipeline in depth",
+"url": "08-browser/01-rendering/",
+"q": "Why animate transform instead of left?",
+"a": "left triggers layout and paint every frame; transform can be handled by the compositor on the GPU without layout."
+},
+{
+"id": "728a50c180",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.1 — The rendering pipeline in depth",
+"url": "08-browser/01-rendering/",
+"q": "What is layout thrashing?",
+"a": "Interleaving DOM writes and layout reads so the browser must recompute layout synchronously many times per frame."
+},
+{
+"id": "c412b0e100",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.1 — The rendering pipeline in depth",
+"url": "08-browser/01-rendering/",
+"q": "What can the infrastructure team do for rendering speed?",
+"a": "Lower TTFB (CDN, caching, streaming), compression, HTTP/2-3, early hints, correct cache headers and image optimization at the edge."
+},
+{
+"id": "7a2652e3c8",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.2 — JavaScript, the event loop & async",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "In what order do setTimeout(f,0), Promise.resolve().then(g) and a sync console.log run?",
+"a": "Sync log first, then g (microtask), then f (task)."
+},
+{
+"id": "61494fdaef",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.2 — JavaScript, the event loop & async",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "Why does a 500 ms loop make clicks feel ignored?",
+"a": "The click handler is a task that can only run after the current task finishes; rendering also waits."
+},
+{
+"id": "4b14333180",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.2 — JavaScript, the event loop & async",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "Does await block the main thread?",
+"a": "No. It pauses that async function and returns control to the event loop; CPU-bound code still blocks."
+},
+{
+"id": "4eef4bae58",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.2 — JavaScript, the event loop & async",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "When should you use a Web Worker?",
+"a": "For CPU-heavy work (parsing, image/crypto processing, search) that would otherwise create long tasks on the main thread."
+},
+{
+"id": "bc2e794b3a",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.2 — JavaScript, the event loop & async",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "What's the server-side equivalent of a long task, and how do you detect it?",
+"a": "A blocking operation on the Node.js event loop; detect with event loop delay/utilization metrics."
+},
+{
+"id": "650f456d2d",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.3 — Web performance & Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "Why can't Lighthouse report INP, and what does it show instead?",
+"a": "INP needs real user interactions over the page's life; Lighthouse shows Total Blocking Time as a lab proxy."
+},
+{
+"id": "60430295f6",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.3 — Web performance & Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "LCP is 4 s but TTFB is 3 s. Where do you start?",
+"a": "Server side: caching HTML at the CDN, backend/database latency, redirects, origin distance. The frontend can't fix a 3 s TTFB."
+},
+{
+"id": "959bbaf1e0",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.3 — Web performance & Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "What does 'p75 LCP = 2.3 s' mean?",
+"a": "75% of real page loads had LCP at or below 2.3 s; the slowest 25% were worse."
+},
+{
+"id": "aeda27319c",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.3 — Web performance & Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "A cookie banner pushes the page down after load. Which metric suffers and how do you fix it?",
+"a": "CLS. Reserve its space from the start, overlay it, or show it without moving existing content."
+},
+{
+"id": "c6d18cfe55",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.3 — Web performance & Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "Name three infrastructure changes that improve Core Web Vitals.",
+"a": "CDN caching of HTML/assets, HTTP/3 + Brotli compression, image optimization at the edge (also: Early Hints, removing redirect chains)."
+},
+{
+"id": "dd0fe34b43",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.4 — Browser security",
+"url": "08-browser/04-browser-security/",
+"q": "What exactly does the same-origin policy prevent?",
+"a": "Reading responses, DOM, cookies and storage of another origin; it doesn't prevent sending requests to it."
+},
+{
+"id": "760f1e7447",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.4 — Browser security",
+"url": "08-browser/04-browser-security/",
+"q": "Why is XSS so dangerous even with the SOP in place?",
+"a": "The attacker's script runs on your origin, so the SOP treats it as your code: it can read pages and call APIs as the user."
+},
+{
+"id": "3fabd60ac0",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.4 — Browser security",
+"url": "08-browser/04-browser-security/",
+"q": "How does SameSite=Lax stop most CSRF?",
+"a": "Cookies aren't attached to cross-site POSTs or subrequests, so a forged form submission from another site arrives without the session."
+},
+{
+"id": "3e8346da1c",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.4 — Browser security",
+"url": "08-browser/04-browser-security/",
+"q": "Is CORS a security feature that protects your API?",
+"a": "No. It's a controlled relaxation of the SOP for browser reads; it doesn't stop non-browser clients and isn't authentication."
+},
+{
+"id": "588dd80712",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "8.4 — Browser security",
+"url": "08-browser/04-browser-security/",
+"q": "Why roll out CSP in Report-Only mode first?",
+"a": "To see what legitimate scripts/styles would be blocked before enforcing, avoiding breaking the site."
+},
+{
+"id": "5afe9143f5",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "Chapter 8 — The browser",
+"url": "08-browser/",
+"q": "Why can a plain <script src> in the <head> delay the whole page?",
+"a": "It's parser-blocking: the HTML parser stops, waits for the script to download and execute, and only then continues building the DOM. defer or async avoids this."
+},
+{
+"id": "25aa690dd3",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "Chapter 8 — The browser",
+"url": "08-browser/",
+"q": "Which is cheaper to animate, left or transform: translateX()? Why?",
+"a": "transform. Changing left triggers layout and paint on the main thread every frame. transform can be handled by the compositor on the GPU without layout or paint."
+},
+{
+"id": "60298164e3",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "Chapter 8 — The browser",
+"url": "08-browser/",
+"q": "A button click takes 400 ms to show any effect. Which metric gets worse, and what's the usual cause?",
+"a": "INP (Interaction to Next Paint). Usually a long JavaScript task on the main thread that blocks the event handler or the next rendering step."
+},
+{
+"id": "9468d2bde1",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "Chapter 8 — The browser",
+"url": "08-browser/",
+"q": "What's the difference between View Source and the Elements panel?",
+"a": "View Source shows the original HTML bytes the server sent. Elements shows the current DOM, after the parser fixed things up and JavaScript changed it."
+},
+{
+"id": "678ab4ee72",
+"ch": "08-browser",
+"chTitle": "Chapter 8 — The browser",
+"page": "Chapter 8 — The browser",
+"url": "08-browser/",
+"q": "Why does each site get its own renderer process?",
+"a": "Security and stability. A compromised or crashing page is isolated in its own sandboxed process (Site Isolation) and can't read other sites' memory or bring them down."
+},
+{
+"id": "0e9228b603",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.1 — Containers & images",
+"url": "09-infra/01-containers-images/",
+"q": "Why does changing one line of source code rebuild npm install in a badly ordered Dockerfile?",
+"a": "The COPY . . comes before the install step; any source change invalidates that layer and every layer after it."
+},
+{
+"id": "4b4f35cad8",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.1 — Containers & images",
+"url": "09-infra/01-containers-images/",
+"q": "You RUN rm secret.key in a later step. Is the secret gone from the image?",
+"a": "No. It's still in the earlier layer; anyone with the image can extract it. Use build secrets."
+},
+{
+"id": "8e39f7b0a3",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.1 — Containers & images",
+"url": "09-infra/01-containers-images/",
+"q": "What's the difference between a tag and a digest?",
+"a": "A tag is a movable name; a digest is a content hash that always identifies the same image bytes."
+},
+{
+"id": "578b02287f",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.1 — Containers & images",
+"url": "09-infra/01-containers-images/",
+"q": "Which component actually calls clone() to create the container's namespaces?",
+"a": "runc (or another OCI runtime), started by containerd's shim on behalf of the kubelet."
+},
+{
+"id": "ad7a445f32",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.1 — Containers & images",
+"url": "09-infra/01-containers-images/",
+"q": "Pods take 2 minutes to start on new nodes. Where do you look?",
+"a": "Image pull time: image size, registry throttling/latency, no cache on fresh nodes; use smaller images, mirrors, pre-pulling or lazy pulling."
+},
+{
+"id": "1037fea6e8",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.2 — Kubernetes architecture",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "Which component writes to etcd?",
+"a": "Only the API server; everything else reads and writes through it."
+},
+{
+"id": "b0ec2d8421",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.2 — Kubernetes architecture",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "A pod stays Pending forever. What do you check?",
+"a": "kubectl describe pod events: insufficient CPU/memory requests, untolerated taints, unsatisfiable affinity, unbound PVC or zone mismatch."
+},
+{
+"id": "a9649c9d27",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.2 — Kubernetes architecture",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "Why did a pod you deleted come back?",
+"a": "Its ReplicaSet controller saw fewer pods than desired and created a replacement."
+},
+{
+"id": "618308679a",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.2 — Kubernetes architecture",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "What does the scheduler use to decide if a pod fits: requests or actual usage?",
+"a": "Requests."
+},
+{
+"id": "ac9267d2ef",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.2 — Kubernetes architecture",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "What's an operator?",
+"a": "A controller plus CRDs that automate running a specific application (create, scale, backup, upgrade, failover) the way a human operator would."
+},
+{
+"id": "5b90e637bb",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.3 — Kubernetes networking",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "What are the three rules of the Kubernetes network model?",
+"a": "Every pod gets its own IP; pods can reach all other pods without NAT; agents on a node can reach all pods on that node."
+},
+{
+"id": "d936eda4c8",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.3 — Kubernetes networking",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "What does the CNI plugin do when a pod starts?",
+"a": "Creates the pod's interface (veth), assigns an IP, sets routes, and makes the IP reachable from other nodes."
+},
+{
+"id": "c2cece4b9b",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.3 — Kubernetes networking",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "A Service exists but curl to it times out. First thing to check?",
+"a": "Its EndpointSlice: if empty, the selector doesn't match or no pods are Ready."
+},
+{
+"id": "7c7feb3b7f",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.3 — Kubernetes networking",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "Why prefer Gateway API over Ingress for new setups?",
+"a": "It's the maintained standard with richer, portable features (traffic splitting, header matching, role separation), and the community ingress-nginx controller has been retired."
+},
+{
+"id": "ab2325574d",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.3 — Kubernetes networking",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "After applying a default-deny NetworkPolicy, nothing can resolve DNS. Why?",
+"a": "Egress to kube-dns (port 53) is now denied too; add an explicit allow rule for DNS."
+},
+{
+"id": "9a84f50ee1",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.4 — CI/CD & GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Why 'build once, promote everywhere' instead of rebuilding per environment?",
+"a": "So production runs exactly the bytes that were tested; rebuilding can pull different dependencies or base images."
+},
+{
+"id": "9c94df2681",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.4 — CI/CD & GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "What's the main security advantage of pull-based GitOps?",
+"a": "CI doesn't need cluster credentials; the cluster pulls from git and only needs read access."
+},
+{
+"id": "d0bc176765",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.4 — CI/CD & GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Someone runs kubectl edit in production. What does Argo CD with selfHeal do?",
+"a": "It detects drift from git and reverts the live object to the git state."
+},
+{
+"id": "19d057664a",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.4 — CI/CD & GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "When is blue-green better than canary?",
+"a": "When you need an instant, all-at-once switch and instant rollback, and can afford double capacity briefly (or can't split traffic finely)."
+},
+{
+"id": "7e99796a7a",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.4 — CI/CD & GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Why must DB migrations be backward compatible during rolling or canary deploys?",
+"a": "Old and new app versions run simultaneously against the same database."
+},
+{
+"id": "6118d67c87",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.5 — Observability: metrics, logs, traces & SLOs",
+"url": "09-infra/05-observability/",
+"q": "Why shouldn't you use user_id as a Prometheus label?",
+"a": "Each distinct value creates a new time series; millions of users = millions of series, exploding memory, storage and query cost."
+},
+{
+"id": "53d21ae583",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.5 — Observability: metrics, logs, traces & SLOs",
+"url": "09-infra/05-observability/",
+"q": "What's the difference between an SLI and an SLO?",
+"a": "The SLI is the measurement (ratio of good events); the SLO is the target for it over a time window."
+},
+{
+"id": "b1d1409085",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.5 — Observability: metrics, logs, traces & SLOs",
+"url": "09-infra/05-observability/",
+"q": "Your SLO is 99.9% over 30 days. How much full downtime does the error budget allow?",
+"a": "0.1% of 30 days ≈ 43.2 minutes."
+},
+{
+"id": "d6ff8fa57e",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.5 — Observability: metrics, logs, traces & SLOs",
+"url": "09-infra/05-observability/",
+"q": "Why alert on burn rate instead of 'error rate > 1% for 5 minutes'?",
+"a": "Burn rate ties alerts to the budget and user impact: fast burns page quickly, slow burns open tickets, and brief harmless blips don't wake anyone."
+},
+{
+"id": "802d6d421a",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "9.5 — Observability: metrics, logs, traces & SLOs",
+"url": "09-infra/05-observability/",
+"q": "What does tail-based sampling give you that head-based sampling doesn't?",
+"a": "The decision is made after the trace completes, so you can keep all errors and slow traces while dropping most normal ones."
+},
+{
+"id": "03b1d328de",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "Chapter 9 — Modern infrastructure",
+"url": "09-infra/",
+"q": "Is a container a small virtual machine?",
+"a": "No. It's a normal Linux process sharing the host kernel, isolated with namespaces and limited with cgroups. A VM runs its own kernel on a hypervisor."
+},
+{
+"id": "92c2647fc4",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "Chapter 9 — Modern infrastructure",
+"url": "09-infra/",
+"q": "A pod is stuck in Pending. Which component hasn't done its job yet, and why might that be?",
+"a": "The scheduler hasn't bound it to a node, usually because no node has enough free CPU/memory for its requests, or because of taints, affinity rules or an unbound PersistentVolumeClaim. kubectl describe pod shows the reason in the events."
+},
+{
+"id": "fcd7bf806b",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "Chapter 9 — Modern infrastructure",
+"url": "09-infra/",
+"q": "You delete a pod that belongs to a Deployment and a new one appears. Who created it?",
+"a": "The ReplicaSet controller (in kube-controller-manager). It saw actual replicas < desired replicas and created a new Pod object, which the scheduler and kubelet then made real."
+},
+{
+"id": "7127d3acf2",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "Chapter 9 — Modern infrastructure",
+"url": "09-infra/",
+"q": "What's the difference between push-based CD and GitOps?",
+"a": "In push-based CD the pipeline runs kubectl apply/helm upgrade against the cluster with cluster credentials. In GitOps an agent inside the cluster (Argo CD, Flux) pulls the desired state from git and reconciles continuously, so git is the source of truth and drift is corrected."
+},
+{
+"id": "61212b651e",
+"ch": "09-infra",
+"chTitle": "Chapter 9 — Modern infrastructure",
+"page": "Chapter 9 — Modern infrastructure",
+"url": "09-infra/",
+"q": "Your service is slow but CPU and memory look fine. Which signal do you reach for?",
+"a": "Traces, to see which downstream call or span is taking the time across services. Then logs for that specific request."
+},
+{
+"id": "1ef915a34e",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.1 — AI fundamentals for infra people",
+"url": "10-ai/01-fundamentals/",
+"q": "Why is everything in LLM infrastructure measured in tokens?",
+"a": "The model processes tokens, not characters or words. Compute per request, latency per step, KV cache memory and API cost all scale with the number of input and output tokens."
+},
+{
+"id": "e6d3c88965",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.1 — AI fundamentals for infra people",
+"url": "10-ai/01-fundamentals/",
+"q": "A MoE model has 120B total parameters but only 5B active per token. What do you size memory and compute for?",
+"a": "Memory for all 120B (every expert must be loaded), compute for roughly 5B per token. That's why MoE models are cheap to run per token but still need lots of GPU memory."
+},
+{
+"id": "d3bb91b7e6",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.1 — AI fundamentals for infra people",
+"url": "10-ai/01-fundamentals/",
+"q": "Why can past keys and values be cached in a decoder-only model?",
+"a": "Each token only attends to earlier tokens, and earlier tokens never change once generated. So their K and V vectors stay valid and can be reused for every following step."
+},
+{
+"id": "2396fd8d70",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.1 — AI fundamentals for infra people",
+"url": "10-ai/01-fundamentals/",
+"q": "What does temperature 0 mean?",
+"a": "Greedy decoding: always pick the most likely next token. Output becomes deterministic (given the same inputs and setup)."
+},
+{
+"id": "de513b70d5",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.1 — AI fundamentals for infra people",
+"url": "10-ai/01-fundamentals/",
+"q": "What's the difference between fine-tuning with LoRA and full fine-tuning, from an infra point of view?",
+"a": "LoRA trains small adapter matrices while the base weights stay frozen, so it needs far less GPU memory and produces small files. Many LoRA adapters can even be served on top of one shared base model."
+},
+{
+"id": "ea88dee8de",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.2 — GPU & accelerator hardware",
+"url": "10-ai/02-gpu/",
+"q": "Why are LLMs usually limited by memory bandwidth rather than FLOPS during decode?",
+"a": "Each decode step reads every weight once but only does ~2 FLOPs per weight per sequence. That's far below the ~300 FLOPs/byte the GPU needs to be compute-bound, so it waits on HBM."
+},
+{
+"id": "09e97f92f7",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.2 — GPU & accelerator hardware",
+"url": "10-ai/02-gpu/",
+"q": "What's the theoretical max decode speed of a 70B FP8 model on one GPU with 4.8 TB/s?",
+"a": "70 GB of weights ÷ 4.8 TB/s ≈ 15 ms per token → ~70 tokens/s for a single stream (ignoring KV cache reads). Batching raises total throughput, not single-stream speed."
+},
+{
+"id": "a039cc00f8",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.2 — GPU & accelerator hardware",
+"url": "10-ai/02-gpu/",
+"q": "What's the difference between NVLink and InfiniBand?",
+"a": "NVLink is the scale-up link between GPUs inside a server or rack (TB/s, memory-like). InfiniBand (or RoCE) is the scale-out network between servers (hundreds of Gb/s per NIC)."
+},
+{
+"id": "7929330752",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.2 — GPU & accelerator hardware",
+"url": "10-ai/02-gpu/",
+"q": "What does GPUDirect RDMA save?",
+"a": "Copies through the CPU and system RAM. The NIC reads from and writes to GPU memory directly, which lowers latency and frees the CPU."
+},
+{
+"id": "6a97f1e2e0",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.2 — GPU & accelerator hardware",
+"url": "10-ai/02-gpu/",
+"q": "Why does every GPU get its own NIC in an AI server?",
+"a": "Collective operations (like all-reduce) make all GPUs send data at the same time. One NIC per GPU, each on its own \"rail\", gives every GPU full network bandwidth without sharing."
+},
+{
+"id": "c21d7c2199",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.3 — GPU software stack & sharing",
+"url": "10-ai/03-software/",
+"q": "Your pod fails with \\\"CUDA driver version is insufficient for CUDA runtime version\\\". Where is the problem?",
+"a": "The host's driver is older than the CUDA runtime inside the image needs. Either upgrade the node driver (GPU Operator / node image) or use an image built for an older CUDA version."
+},
+{
+"id": "d4fe9c148f",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.3 — GPU software stack & sharing",
+"url": "10-ai/03-software/",
+"q": "Why doesn't a CUDA container image contain the GPU driver?",
+"a": "The driver includes a kernel module (nvidia.ko) that must match the host kernel and is loaded on the host. The toolkit mounts the matching user-space part (libcuda.so) from the host into the container at start-up."
+},
+{
+"id": "40a3a25482",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.3 — GPU software stack & sharing",
+"url": "10-ai/03-software/",
+"q": "When would you choose MIG over time-slicing?",
+"a": "When workloads from different teams or tenants share a GPU and need guaranteed memory and fault isolation with predictable performance. Time-slicing gives no isolation and no memory limits."
+},
+{
+"id": "955b412459",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.3 — GPU software stack & sharing",
+"url": "10-ai/03-software/",
+"q": "nvidia-smi shows 100% utilization but throughput is low. What do you check?",
+"a": "DCGM metrics like SM activity, tensor pipe activity and memory bandwidth. 100% \"utilization\" only means some kernel was running in the sample period; it may be tiny, memory-bound or waiting."
+},
+{
+"id": "0a9ec93873",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.3 — GPU software stack & sharing",
+"url": "10-ai/03-software/",
+"q": "What does NCCL do, and on which hardware paths?",
+"a": "It implements collective communication (all-reduce, all-gather, reduce-scatter…) between GPUs, choosing NVLink/NVSwitch inside a node and InfiniBand/RoCE with GPUDirect RDMA between nodes."
+},
+{
+"id": "a26f669850",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.4 — Distributed training",
+"url": "10-ai/04-training/",
+"q": "Why is tensor parallelism usually kept inside one server (or NVLink domain)?",
+"a": "TP exchanges partial results in every layer, forward and backward. That needs the TB/s bandwidth and low latency of NVLink; over the network it would make every step wait."
+},
+{
+"id": "9bb61901c3",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.4 — Distributed training",
+"url": "10-ai/04-training/",
+"q": "Roughly how much memory does full training state need for a 13B model with AdamW and mixed precision?",
+"a": "About 16 bytes per parameter → ~208 GB, before activations. That's more than one GPU, so you'd use FSDP/ZeRO across several GPUs."
+},
+{
+"id": "f1106af838",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.4 — Distributed training",
+"url": "10-ai/04-training/",
+"q": "What is gang scheduling and why does distributed training need it?",
+"a": "Starting all processes of a job together or not at all. If only some ranks start, they block waiting for the others while holding expensive GPUs, and two such jobs can deadlock the cluster."
+},
+{
+"id": "0cf5b8aa36",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.4 — Distributed training",
+"url": "10-ai/04-training/",
+"q": "One node in a 512-GPU job has a slow NIC. What happens to the whole job?",
+"a": "Every collective waits for the slowest participant, so every step slows down to that node's speed. Straggler detection and replacing the node matter."
+},
+{
+"id": "ecdbb27465",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.4 — Distributed training",
+"url": "10-ai/04-training/",
+"q": "Your 1,000-GPU run checkpoints every 3 hours and a node fails every 4 hours on average. Why is that bad?",
+"a": "Each failure loses up to 3 hours × 1,000 GPUs of work plus restart time, and failures happen almost as often as checkpoints. Checkpoint more often (asynchronously) to raise goodput."
+},
+{
+"id": "cbc3301a73",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.5 — Inference & serving deep dive",
+"url": "10-ai/05-inference/",
+"q": "Users complain the first word takes 4 seconds to appear but then text flows fast. Which metric and which phase?",
+"a": "High TTFT: either queueing (not enough capacity, or bad routing) or slow prefill (very long prompts). Prefix caching, chunked prefill, more replicas or P/D disaggregation help."
+},
+{
+"id": "d060f7602b",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.5 — Inference & serving deep dive",
+"url": "10-ai/05-inference/",
+"q": "Why does round-robin load balancing hurt LLM serving?",
+"a": "It ignores where each conversation's KV cache (prefix) lives, so requests keep landing on pods that must recompute the prefill. KV-aware routing sends them to the pod that already has the prefix."
+},
+{
+"id": "e981ef0662",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.5 — Inference & serving deep dive",
+"url": "10-ai/05-inference/",
+"q": "How much KV cache does a 32-layer model with 8 KV heads of dimension 128 need for 100 concurrent 4k-token requests in BF16?",
+"a": "2 × 32 × 8 × 128 × 2 bytes = 128 KB/token → × 4,096 tokens × 100 requests ≈ 54 GB."
+},
+{
+"id": "b230bf639b",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.5 — Inference & serving deep dive",
+"url": "10-ai/05-inference/",
+"q": "Does speculative decoding change the model's answers?",
+"a": "No. Accepted tokens are exactly those the target model would have produced; the draft only lets several of them be confirmed in one forward pass."
+},
+{
+"id": "2e28063ae3",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.5 — Inference & serving deep dive",
+"url": "10-ai/05-inference/",
+"q": "Why split prefill and decode onto different GPUs?",
+"a": "They stress different resources (compute vs memory bandwidth). Mixed together, long prefills stall everyone's decode steps. Separate pools can be sized and scaled independently and tuned for their bottleneck."
+},
+{
+"id": "c88ae45d92",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.6 — AI platform on Kubernetes",
+"url": "10-ai/06-kubernetes/",
+"q": "What can DRA express that nvidia.com/gpu: 1 can't?",
+"a": "Attributes and relationships: a specific model or memory size, a MIG profile, several GPUs on the same NVLink domain, shared claims between pods. The device plugin only exposes a count."
+},
+{
+"id": "bb3116fa08",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.6 — AI platform on Kubernetes",
+"url": "10-ai/06-kubernetes/",
+"q": "A 64-GPU training job gets 40 pods scheduled and the rest stay Pending. What's wrong, and what fixes it?",
+"a": "No gang scheduling: the default scheduler placed pods one by one. The 40 running pods hold GPUs while waiting for the others. Kueue (or KAI/Volcano) admits the job only when all 64 GPUs are available."
+},
+{
+"id": "631ad0f71f",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.6 — AI platform on Kubernetes",
+"url": "10-ai/06-kubernetes/",
+"q": "Why should GPU nodes be tainted?",
+"a": "So that ordinary pods (web apps, sidecars, system jobs) don't land on very expensive GPU nodes and take CPU/memory that GPU workloads need. Only pods that tolerate the taint and request GPUs go there."
+},
+{
+"id": "6e504f957c",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.6 — AI platform on Kubernetes",
+"url": "10-ai/06-kubernetes/",
+"q": "Your LLM Deployment scales up but new pods take 8 minutes to become Ready. What do you change?",
+"a": "Cache model weights close to the node (local NVMe pre-pull, shared PVC, OCI artifacts), use a streaming loader, keep a minimum number of warm replicas and scale earlier (on queue length rather than on SLO violations)."
+},
+{
+"id": "876b5656f7",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.6 — AI platform on Kubernetes",
+"url": "10-ai/06-kubernetes/",
+"q": "What does the endpoint picker in the Gateway API Inference Extension do that a normal Service doesn't?",
+"a": "It chooses a model server pod per request based on LLM-specific signals: prefix/KV cache locality, queue length, KV cache usage, LoRA adapters loaded. A Service just load-balances connections."
+},
+{
+"id": "490651cd12",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.7 — AI applications: RAG, agents, gateways, evals",
+"url": "10-ai/07-applications/",
+"q": "Why use hybrid search instead of vector search only?",
+"a": "Vectors capture meaning but are weak on exact tokens such as error codes, ticket IDs or product names. BM25 keyword search catches those. Combining both improves recall."
+},
+{
+"id": "96a15bfb85",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.7 — AI applications: RAG, agents, gateways, evals",
+"url": "10-ai/07-applications/",
+"q": "Where should permissions be enforced in a RAG system?",
+"a": "At retrieval time: store ACL metadata with each chunk and filter the search by the user's identity, so the model never sees documents the user isn't allowed to read."
+},
+{
+"id": "9f24e529aa",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.7 — AI applications: RAG, agents, gateways, evals",
+"url": "10-ai/07-applications/",
+"q": "What exactly does the model produce in tool calling, and who runs the tool?",
+"a": "The model produces a structured message naming the tool and its JSON arguments. The application (or its MCP client) validates and executes the call, then sends the result back to the model."
+},
+{
+"id": "07e3831dea",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.7 — AI applications: RAG, agents, gateways, evals",
+"url": "10-ai/07-applications/",
+"q": "What is prompt injection, and why is it a bigger risk for agents?",
+"a": "Instructions hidden in user input, documents or tool results that try to override the system's instructions. Agents act on systems with credentials, so a successful injection can cause real side effects, not just a bad answer."
+},
+{
+"id": "06a67f2939",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "10.7 — AI applications: RAG, agents, gateways, evals",
+"url": "10-ai/07-applications/",
+"q": "You change the system prompt to fix one complaint. How do you know you didn't break something else?",
+"a": "Run the eval suite (a versioned test set with graders) before and after the change, compare scores per category, and roll out gradually while sampling and grading live traffic."
+},
+{
+"id": "8c489f25da",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "Chapter 10 — AI infrastructure",
+"url": "10-ai/",
+"q": "Why is decoding usually limited by memory bandwidth rather than compute?",
+"a": "Each decode step produces one token per request, but it still has to read all model weights (and the KV cache) from HBM. There's little math per byte read, so the GPU waits for memory. Batching many requests together reuses each weight read for more tokens."
+},
+{
+"id": "19fe59f24e",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "Chapter 10 — AI infrastructure",
+"url": "10-ai/",
+"q": "Can a 70B model in FP16 run on a single 80 GB GPU?",
+"a": "No. The weights alone are ~140 GB. Options: quantize (FP8 ≈ 70 GB, still tight with KV cache; INT4 ≈ 35 GB) or split the model across several GPUs with tensor parallelism."
+},
+{
+"id": "427288b0e7",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "Chapter 10 — AI infrastructure",
+"url": "10-ai/",
+"q": "What is the KV cache, and why does it limit concurrency?",
+"a": "It stores the attention keys and values of all previous tokens of each active request so they aren't recomputed every step. It grows with context length and the number of concurrent requests, and it has to fit in GPU memory next to the weights."
+},
+{
+"id": "aea8a6834e",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "Chapter 10 — AI infrastructure",
+"url": "10-ai/",
+"q": "Why scale an LLM service on queue length or KV cache usage instead of CPU?",
+"a": "The work happens on the GPU. CPU usage stays low even when the GPU is saturated and requests are queuing, so CPU-based autoscaling would never react."
+},
+{
+"id": "385eb4371b",
+"ch": "10-ai",
+"chTitle": "Chapter 10 — AI infrastructure",
+"page": "Chapter 10 — AI infrastructure",
+"url": "10-ai/",
+"q": "In RAG, what does the embedding model do, and what does the vector DB do?",
+"a": "The embedding model turns text (chunks and questions) into vectors that capture meaning. The vector DB stores the chunk vectors and quickly finds the ones closest to the question's vector, which are then added to the prompt."
+}
+]

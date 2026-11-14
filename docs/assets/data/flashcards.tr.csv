@@ -1,0 +1,1035 @@
+#separator:semicolon;
+Kesme;"Interrupt — CPU'yu durdurup bir handler çalıştırtan sinyal · Donanım üretir; CPU IDT üzerinden atlar"
+IRQ;Interrupt Request — Bir kesme hattı/numarası · cat /proc/interrupts listeler
+Polling;"CPU'nun bir cihazı sürekli kontrol etmesi · Boştayken CPU yakar; çok yüksek yükte harika"
+DMA;Direct Memory Access — Cihazın veriyi RAM'e kendisinin kopyalaması · Sürücü ona tampon adresleri (ring) verir
+MSI / MSI-X;Message Signaled Interrupts — Bellek yazması olarak gönderilen kesme · Kuyruk başına bir vektör, her çekirdeğe yönlenebilir
+APIC;Advanced Programmable Interrupt Controller — Kesmeleri çekirdeklere iletir · Çekirdek başına Local APIC + I/O APIC
+ISR / üst yarı;Interrupt Service Routine — Kesmede hemen çalışan kod · Çok kısa olmalı, uyuyamaz
+Alt yarı;Bottom half — Kesme işinin ertelenen kısmı · softirq, tasklet, workqueue, threaded IRQ
+softirq;"software interrupt — Kernel'in yüksek öncelikli ertelenmiş işi · top'ta si; NET_RX, BLOCK, TIMER"
+Sürücü;Driver — Bir cihaz türü için kernel kodu · Eşlenince probe(), sonra bir alt sisteme hizmet
+Kernel modülü;Kernel'in yüklenebilir parçası (.ko) · modprobe, lsmod
+udev;userspace device manager — Kernel cihaz olaylarına tepki verir · Modül yükler, /dev dosyaları oluşturur, isim verir
+IRQ affinity;Bir IRQ'yu hangi çekirdeklerin işleyeceği · /proc/irq/N/smp_affinity, irqbalance
+NAPI;New API — Ağ sürücülerinin yük altında polling'e geçmesi · Bir kesme, sonra bir paket grubu yoklanır
+Kesmeler;"Cihaz sinyal verir; CPU handler çalıştırır — Düşük/düzensiz yük, gecikmeye hassas girdi · Çok yüksek hızda kesme fırtınası"
+DMA + kesme;Cihaz veriyi RAM'e kendisi yazar, grup başına bir kesme — Diskler, NIC'ler, GPU'lar · Dikkatli tampon yönetimi ister
+USB;"Universal Serial Bus — Host kontrollü çevre birimi bus'ı · Tüm trafiği host planlar; cihazlar sadece cevaplar"
+Host denetleyici (xHCI);eXtensible Host Controller Interface — USB bus'ını yöneten çip · RAM'deki aktarım ring'lerini çalıştırır, kesme üretir
+Hub;Port çoğaltıcı · Takma/çıkarma olaylarını host'a bildirir
+Enumeration;Yeni takılan cihazı keşfetmek · Reset → tanımlayıcılar → adres → yapılandırma
+Tanımlayıcı;Descriptor — Cihazın döndürdüğü öz tanım verisi · Cihaz, yapılandırma, arayüz, endpoint, HID rapor
+VID / PID;Vendor ID / Product ID — Üretici ve modelin 16 bitlik kimlikleri · 046d:c31c = Logitech klavye
+Endpoint;Cihaz üzerindeki bir veri kanalı · EP0 kontrol + diğerleri (IN/OUT)
+Aktarım tipleri;"Transfer types — Control, interrupt, bulk, isochronous · Klavye: interrupt; disk: bulk; ses: isochronous"
+Yoklama aralığı;Polling interval — Host'un bir interrupt endpoint'ine ne sıklıkla sorduğu · Klavyede 1–8 ms (125–1000 Hz), oyun cihazlarında daha hızlı
+HID;Human Interface Device — Girdi cihazları için cihaz sınıfı · Kendini tarif eden raporlar, özel sürücü gerekmez
+Rapor tanımlayıcısı;Report descriptor — Cihazın rapor düzenini tarif eder · Usage page'ler, boyutlar, sayılar
+Usage;"Bir alanın anlamı (ör. ""Keyboard A"") · HID Usage Tables'tan numaralar"
+Boot protokolü;Boot protocol — Sabit, basit 8 byte'lık klavye formatı · BIOS/UEFI'de tanımlayıcı ayrıştırmadan çalışır
+NKRO;N-Key RollOver — Aynı anda istenen sayıda tuş · 6 slot yerine bitmap rapor kullanır
+Input alt sistemi;"Tüm girdi cihazları için kernel katmanı · Sürücüler olay bildirir; o dağıtır"
+evdev;event device — Genel arayüz /dev/input/eventN · struct input_event: zaman, tip, kod, değer
+EV_KEY / EV_SYN;"Olay tipleri · Tuş bas/bırak/tekrar; ""bu grubun sonu"""
+Keycode;Fiziksel bir tuşun numarası · Linux'ta KEY_A = 30 (xkb'de +8)
+libinput;Girdi cihazlarını yöneten kütüphane · Cihaz kurulumu, imleç ivmesi, jestler, tuş durumu
+Compositor;Wayland'da görüntü sunucusu (GNOME Mutter, KDE KWin, Sway) · Girdi + çıktının sahibi, pencereleri birleştirir
+Wayland / X11;"Görüntü protokolleri · Wayland: girdiyi compositor yönlendirir; X11: X sunucusu"
+Odak;Focus — Klavye girdisini hangi yüzeyin aldığı · Compositor seçer
+Keymap;Keycode'lardan sembollere kurallar · Düzen, varyant, seçenekler (ör. tr, us, caps:escape)
+xkbcommon;X Keyboard Extension common library — Uygulamaların ve compositor'ların kullandığı keymap motoru · Değiştirici durumunu izler, keysym + UTF-8 döner
+Keysym;key symbol — Bir tuşun bir düzendeki anlamı · XKB_KEY_a, XKB_KEY_A, XKB_KEY_Return
+Değiştirici / seviye;Modifier / level — Shift, AltGr, Ctrl… / tuştaki hangi sembol · Shift = seviye 2, AltGr = seviye 3
+IME;Input Method Editor — Karmaşık yazı sistemleri için metin oluşturur · text-input protokolü üzerinden ibus/fcitx
+KeyboardEvent;Tarayıcının tuş olayı · key (anlam), code (fiziksel konum)
+MCU;Microcontroller Unit — Klavyenin içindeki minik bilgisayar · Tuş matrisini tarar, titreşimi giderir, HID raporu üretir
+xHCI;eXtensible Host Controller Interface — USB host denetleyici çipi · Cihazları yoklar, veriyi DMA ile RAM'e yazar, kesme üretir
+IRQ / MSI;Interrupt Request / Message Signaled Interrupt — Bir cihazın CPU'ya sinyali · MSI = APIC'in kesmeye çevirdiği özel bir adrese yazma
+IDT / ISR;Interrupt Descriptor Table / Interrupt Service Routine — Handler tablosu / handler'ın kendisi · CPU vektörü IDT'de bulur ve ISR'a atlar
+Ring 0 / ring 3;"Kernel modu / kullanıcı modu · CPU yetki seviyeleri; syscall ve kesmeler bu sınırı geçer"
+xkb;X Keyboard Extension — Klavye düzeni veritabanı/kütüphanesi · Keycode + düzen + değiştiricileri bir karaktere eşler
+GPU / framebuffer;Graphics Processing Unit — Grafik çipi / son kareyi tutan bellek · Pencereleri framebuffer'da birleştirir, monitöre gönderir
+vsync;vertical synchronization — Monitörün yenilenme anı · Yeni kareler sadece her yenilemede görünür (60 Hz'de 16,7 ms)
+ISA;Instruction Set Architecture — Bir CPU ailesinin anladığı komutlar + register'lar · x86-64, ARM64 (AArch64), RISC-V
+CISC / RISC;Complex / Reduced Instruction Set Computer — İki tasarım felsefesi · Çok sayıda değişken uzunluklu komut / az sayıda sabit uzunluklu komut
+Opcode;operation code — Hangi komut olduğunu söyleyen byte'lar · 8d = LEA, c3 = RET
+Operand;Bir komutun üzerinde çalıştığı şey · Register, bellek adresi, sabit değer
+Adresleme modu;Addressing mode — Bir bellek operandının nasıl hesaplandığı · [taban + indeksölçek + kayma]
+ModRM / SIB;Mod-Reg-R/M / Scale-Index-Base — Operandları kodlayan x86 byte'ları · Register'ları ve adres biçimini seçer
+Immediate;Komutun içindeki sabit · mov eax, 42
+Bayraklar (RFLAGS);Flags — Aritmetiğin set ettiği bitler · ZF (sıfır), CF (elde), SF (işaret), OF (taşma)
+Atlama / dal;Jump / branch — RIP'i değiştirir · jmp, cmp sonrası koşullu je, jne, jl …
+SIMD;"Single Instruction, Multiple Data — Çok değer üzerinde tek komut · SSE, AVX2, AVX-512 (x86); NEON, SVE (ARM)"
+µop;micro-operation — İçerideki daha basit işlem · x86 komutları µop'lara çözer
+ABI;Application Binary Interface — Derlenmiş kodlar arası ikili düzey kurallar · Çağrı kuralı, struct düzeni, syscall'lar
+Çağrı kuralı;Calling convention — Çağrılarda argüman/dönüş/register'ların nasıl ele alındığı · Linux/macOS'ta System V, Windows'ta Microsoft x64
+Disassembler;Byte'ları assembly'ye geri çevirir · objdump -d, gdb, Compiler Explorer
+Önbellek;Cache — Son kullanılan veriyi tutan küçük hızlı bellek · Bir sonraki, daha yavaş seviyeye gitmeden önce bakılır
+L1 / L2 / L3 (LLC);Level 1/2/3 (Last-Level Cache) — Önbellek seviyeleri · L1/L2 çekirdek başına, L3 çekirdeklerce paylaşılır
+Cache line;Taşıma birimi: 64 byte · 1 byte okumak tüm satırı yükler
+İsabet / ıska;Hit / miss — Önbellekte bulundu / bulunamadı · Iska → bir sonraki seviyeye sor
+Yerellik;Locality — Zamansal (yakında yeniden kullan) + uzamsal (komşular) · Önbellekler ikisinden de yararlanır
+Prefetcher;Sıradaki satırları tahmin eden donanım · Sıralı/adımlı erişimde harika
+İlişkisellik;Associativity — Bir satırın önbellekte nerede durabileceği · 8-way = kümesindeki 8 slottan biri
+Tutarlılık / MESI;Modified, Exclusive, Shared, Invalid — Çekirdeklerin kopyalarını tutarlı tutmak · Yazmak diğer çekirdeklerin kopyalarını geçersiz kılar
+False sharing;Farklı çekirdeklerin aynı satırdaki farklı değişkenlere yazması · Satır çekirdekler arasında gidip gelir
+NUMA;"Non-Uniform Memory Access — Her soketin ""kendi"" RAM'i var · Uzak bellek yerel bellekten yavaş"
+TLB;Translation Lookaside Buffer — Sanal→fiziksel çeviri önbelleği · Iska bir page table yürüyüşüne mal olur
+Huge page;4 KB yerine 2 MB / 1 GB sayfalar · Daha az TLB girdisi gerekir
+Bellek bant genişliği;Memory bandwidth — RAM'in verebildiği GB/s · Veri yoğun kodda çoğu zaman gerçek sınır
+Cache-miss / IPC;Instructions Per Cycle — Temel performans sayaçları · perf stat ikisini de gösterir
+Boru hattı;Pipeline — Çalıştırmayı aşamalara bölmek · Her aşama her döngüde farklı bir komut üzerinde çalışır
+Superscalar;Döngü başına birkaç komut · Birden fazla çözücü ve çalıştırma birimi
+OoO;Out-of-Order execution — Komutları program sırasıyla değil, girdileri hazır olunca çalıştırmak · Sonuçlar sonra sırayla işlenir
+ROB;ReOrder Buffer — Uçuştaki komutları izler · Onları program sırasıyla emekliye ayırır
+Register yeniden adlandırma;Register renaming — Mimari register'ları fiziksel olanlara eşlemek · Sahte bağımlılıkları kaldırır
+Bağımlılık zinciri;Dependency chain — Birbirinin sonucuna ihtiyaç duyan komutlar · Paralelliği sınırlar
+IPC / CPI;Instructions Per Cycle / Cycles Per Instruction — Verimlilik ölçüsü · perf stat bildirir
+Dal tahmincisi;Branch predictor — Dal yönünü ve hedefini tahmin eden donanım · Geçmişten öğrenir
+Yanlış tahmin;Misprediction — Yanlış tahmin · Boru hattı boşaltılır, ~15–20 döngü kaybolur
+Spekülatif çalıştırma;Speculative execution — Tahmin edilen yolu doğrulanmadan çalıştırmak · Yanlışsa atılır
+Spectre / Meltdown;Spekülasyona yönelik yan kanal saldırıları · Sırlar önbellek zamanlamasıyla sızar
+SMT / Hyper-Threading;"Simultaneous Multi-Threading — İki donanım thread'i tek çekirdeği paylaşır · Boş birimleri doldurur; vCPU çoğu zaman bunlardan biri"
+Turbo / DVFS;Dynamic Voltage and Frequency Scaling — Saat hızı yük ve ısıyla değişir · Az aktif çekirdek → daha yüksek boost
+Top-down analizi;Döngüleri sınıflandırma: ön uç, kötü spekülasyon, arka uç, emeklilik · perf stat --topdown
+CPU;Central Processing Unit — Kodunu çalıştıran işlemci · Komutları okur, çözer ve çalıştırır
+Register;Çekirdeğin içindeki minik depolama hücreleri · Hesabın doğrudan yapıldığı tek yer
+RIP / RSP;Instruction Pointer / Stack Pointer — Sıradaki komut adresi / stack'in tepesi · Her komut, call, ret ve push/pop ile güncellenir
+ALU;Arithmetic Logic Unit — Hesap ve mantık işlemlerini yapan kısım · Register'lardaki değerleri toplar, karşılaştırır, kaydırır
+L1 / L2 / L3;Level 1/2/3 cache — Çip üstü bellekler, küçük olan hızlı · Son kullanılan veriyi çekirdeğe yakın tutar
+Pipeline;Birkaç komutun fetch/decode/execute'unu üst üste bindirmek · Her döngüde her aşamayı meşgul tutar
+Branch prediction;Bir if'in hangi yöne gideceğini tahmin etmek · Yanlış tahmin → boru hattı boşaltılır, döngüler boşa gider
+Stack frame;Bir fonksiyonun stack üzerindeki alanı · Dönüş adresi, kaydedilmiş register'lar ve yerelleri tutar
+GHz;gigahertz — Saat frekansı · 3 GHz = saniyede 3 milyar döngü
+Process;Çalışmakta olan bir program · Kendi adres alanı, fd'leri, kimlik bilgileri
+PID / PPID / TID;"Process ID / Parent PID / Thread ID — Sayısal kimlikler · Her thread'in TID'i var; ana thread'in TID'i = PID"
+Thread;Process içinde çalıştırma bağlamı · Belleği paylaşır, kendi stack'i + register'ları
+fork() / clone();Yeni process/thread oluştur · clone bayrakları neyin paylaşılacağına karar verir
+COW;Copy-On-Write — fork sonrası tembel kopyalama · Bir taraf yazana kadar sayfalar paylaşılır
+execve();Bir process'teki programı değiştir · Aynı PID, yeni kod ve bellek
+wait() / waitpid();Ebeveynin çocuğun çıkış durumunu toplaması · Zombiyi kaldırır
+Zombi;Zombie — Çıkış durumu toplanmamış bitmiş process · Sadece bir PID ve çıkış kodu tutar
+Yetim;Orphan — Ebeveyni ölmüş process · PID 1'e (ya da bir subreaper'a) bağlanır
+PID 1 / init;"Bir PID namespace'indeki ilk process · Yetimleri toplamalı; varsayılan sinyal davranışı farklı"
+Sinyal;Signal — Asenkron bildirim · SIGTERM, SIGKILL, SIGINT, SIGCHLD, SIGHUP
+Çıkış kodu;"Exit code — Çıkışta dönen sayı · 0 = tamam; 128+N = N sinyaliyle öldürüldü (137 = SIGKILL)"
+Durum kodları;ps'te R, S, D, Z, T · Çalışıyor, Uyuyor, Kesilemez, Zombi, Durdurulmuş
+Zamanlayıcı;Scheduler — Sıradaki task'ı seçen kernel kodu · Tick, uyanma, bloklanma, yield'da çalışır
+Çalışma kuyruğu;Run queue — CPU başına çalışabilir task listesi · O CPU'yu bekleyen task'lar
+EEVDF;Earliest Eligible Virtual Deadline First — 6.6'dan beri Linux'un varsayılan adil zamanlayıcısı · En erken sanal deadline'a sahip uygun task'ı seçer
+CFS;Completely Fair Scheduler — Önceki varsayılan (2007–2023) · En az sanal çalışma süresine sahip task'ı seçerdi
+Zaman dilimi;Time slice — Bir task'ın yeniden değerlendirilmeden önce çalışabileceği süre · Birkaç ms, yüke bağlı
+Preemption;Çalışan bir task'tan CPU'yu almak · Tick'te ya da daha hak eden bir task uyanınca
+Bağlam değişimi;Context switch — CPU'yu bir task'tan diğerine geçirmek · Register'ları kaydet/yükle, gerekirse page table değiştir
+nice;Kullanıcı önceliği −20…19 · Task'ın ağırlığını değiştirir (adım başına ~1,25×)
+RT politikaları;Real-Time (SCHED_FIFO, SCHED_RR, SCHED_DEADLINE) — Katı öncelik sınıfları · Normal task'lardan önce her zaman çalışır
+Load average;Çalışabilir + D durumundaki task'ların ortalaması · 1, 5, 15 dakikalık değerler
+Affinity;Bir task'ın hangi CPU'larda çalışabileceği · taskset, cpuset'ler
+cpu.weight / cpu.max;cgroup v2 CPU payı / sert kota · Çekişmede ağırlık / periyot başına kota
+Throttling;Kotasını kullanmış bir cgroup'u durdurmak · Bir sonraki periyoda kadar (varsayılan 100 ms)
+PSI;Pressure Stall Information — Task'ların CPU/bellek/IO için ne kadar beklediği · /proc/pressure/cpu
+Sanal adres;Virtual address — Programın kullandığı adres · Her erişimde MMU tarafından çevrilir
+Sayfa / çerçeve;Page / frame — Sanal / fiziksel belleğin 4 KB'lık birimi · Page table'lar sayfaları çerçevelere eşler
+Page table;Process başına eşleme ağacı (4–5 seviye) · TLB ıskasında MMU yürür
+Page fault;(Henüz) eşlenmemiş bir sayfaya erişim · Kernel eşler (minor) ya da diskten okur (major)
+Talep üzerine sayfalama;Demand paging — RAM ilk dokunuşta atanır · malloc(1 GB) yazılana kadar ~0 RSS kullanır
+VSZ / RSS;Virtual Size / Resident Set Size — Ayrılmış adres alanı / RAM'deki sayfalar · Belleğe mal olan RSS'tir
+PSS / USS;Proportional / Unique Set Size — Paylaşılan sayfalar bölünmüş RSS / sadece özel sayfalar · Process başına daha adil hesap
+Anonim bellek;Anonymous memory — Heap, stack'ler: bir dosyaya dayanmaz · Sadece swap'e gidebilir
+Page cache;"RAM'de önbelleğe alınmış dosya verisi · Geri alınabilir; free'de ""buff/cache"""
+mmap;memory map — Bir dosyayı ya da anonim belleği adres alanına eşle · Tembel yükleme, paylaşımlı kütüphaneler, veritabanları
+Swap / zswap;Anonim sayfalar için disk (ya da sıkıştırılmış RAM) · Yavaşlatır ama OOM'u önler
+Geri alma;Reclaim — Baskı altında bellek boşaltmak · Temiz cache'i bırak, kirli sayfaları yaz, swap
+OOM killer;Out Of Memory — Bellek boşaltmak için kernel bir process'i öldürür · En yüksek oom_score'u seçer
+memory.max / memory.high;cgroup v2 sert limit / yavaşlatma noktası · Kubernetes bellek limiti → memory.max
+Syscall;system call — User space'ten kernel'e istek · syscall komutu, numara RAX'te
+vDSO;virtual Dynamic Shared Object — User space'e eşlenmiş kernel kodu · Gerçek syscall olmadan gettimeofday
+fd;file descriptor — Açık dosya/soket/pipe için küçük tamsayı · Process'in fd tablosunda indeks
+VFS;Virtual File System — Tüm dosya sistemleri için ortak katman · ext4, xfs, NFS, procfs, soketler için aynı API
+Inode;index node — Bir dosyanın üst verisi (boyut, sahip, bloklar) · İsimler (dentry) inode'lara işaret eder
+Dentry;directory entry — İsim → inode bağlantısı, önbellekli · Yol arama önbelleği
+fsync;"Bir dosyanın verisini kalıcı depolamaya zorla · Kalıcılık; bilerek yavaş"
+Blok katmanı (blk-mq);multi-queue block layer — I/O isteklerini kuyruğa alır ve birleştirir · Cihaza CPU başına bir kuyruk
+Journal;Dosya sisteminin ön yazma logu · Çökme sonrası tutarlılık
+IOPS / throughput / gecikme;I/O operations per second — Depolama performans rakamları · Küçük rastgele ve büyük sıralı I/O
+epoll;Çok sayıda fd'yi aynı anda bekle · Kernel hangilerinin hazır olduğunu söyler
+io_uring;Paylaşımlı ring'li asenkron I/O arayüzü · Az syscall ile I/O gönder ve tamamla
+OverlayFS;Container imajlarının kullandığı birleşim dosya sistemi · Salt okunur katmanlar + tek yazılabilir katman
+Namespace;Bir kernel kaynağının özel görünümü · clone()/unshare() bayraklarıyla oluşturulur
+pid ns;Kendi PID numaralandırması · Container'ın ilk process'i PID 1'dir
+net ns;Kendi arayüzleri, rotaları, iptables'ı, portları · veth çiftleri / CNI ile bağlanır
+mnt ns;Kendi mount tablosu · İmaj dosya sistemine pivot_root
+uts / ipc ns;UNIX Time-Sharing / Inter-Process Communication — Kendi hostname'i / kendi SysV IPC ve POSIX kuyrukları · İçerideki hostname ≠ host
+user ns;Kendi UID/GID eşlemesi · İçerideki root = dışarıda yetkisiz kullanıcı
+cgroup;control group — Kaynak limitleri olan process grubu · /sys/fs/cgroup altındaki dosyalar
+cgroup v2;Birleşik hiyerarşi (modern varsayılan) · cpu.max, memory.max, io.max, pids.max
+Capability'ler;Capabilities — Root'un güçlerinin ~40 parçaya bölünmüş hali · CAP_NET_ADMIN, CAP_SYS_ADMIN… varsayılan olarak düşürülür
+seccomp;secure computing mode — Syscall filtresi (BPF) · Tehlikeli syscall'ları engeller (kexec_load, mount…)
+LSM;Linux Security Module — Zorunlu erişim kontrolü · AppArmor profilleri, SELinux etiketleri
+OCI runtime;Open Container Initiative — Container'ı oluşturan program · runc, crun, gVisor (runsc), Kata
+Rootless;Tamamen normal kullanıcıyla çalışan container'lar · User namespace'ler + slirp4netns/pasta
+Privileged;Korumaların neredeyse tamamı kapalı container · Host'ta fiilen root
+OS / kernel;Operating System — Donanımı ve programları yöneten yazılım · Ring 0'da çalışır, diğer her şey ona syscall ile sorar
+Process / PID;Process ID — Kendi belleği olan çalışan bir program · fork/clone + execve ile oluşturulur
+Scheduler;Hangi task'ın hangi çekirdekte çalışacağına karar verir · Zaman dilimi + timer kesmesi + bağlam değişimi
+EEVDF / CFS;Earliest Eligible Virtual Deadline First / Completely Fair Scheduler — Linux'un zamanlayıcı algoritmaları · Her task'a nice ağırlıklı adil pay verir
+Context switch;CPU'yu bir task'tan diğerine geçirmek · Register'ları kaydet, sıradakininkini yükle, gerekirse page table değiştir
+Virtual memory;Her process'in belleğe özel bakışı · Page table'lar sanal sayfaları fiziksel çerçevelere eşler
+MMU / TLB;Memory Management Unit / Translation Lookaside Buffer — Çeviriyi yapan donanım / önbelleği · Her adresi çevirir, son çevirileri önbellekte tutar
+Signal;Bir process'e gönderilen bildirim · SIGTERM (kibar), SIGKILL (son), SIGINT (Ctrl+C)
+cgroup / OOM;control group / Out Of Memory — Process grupları için kaynak limitleri / belleğin tükenmesi · Bellek cgroup limitini aşmak OOM killer'ı tetikler
+Derleyici;Compiler — Kaynağı makine koduna çevirir · gcc, clang/LLVM, rustc, go build, javac (bytecode'a)
+AST;Abstract Syntax Tree — Ayrıştırılmış kodun ağaç hali · Parser kurar, tip kontrolünden geçer
+IR;Intermediate Representation — Dilden ve CPU'dan bağımsız kod · LLVM IR, GCC GIMPLE, Go SSA
+SSA;Static Single Assignment — Her değişkenin bir kez atandığı IR biçimi · Optimizasyonları basitleştirir
+Optimizasyon seviyesi;Derleyicinin ne kadar optimize ettiği · -O0 debug … -O2 varsayılan … -O3, -Os boyut
+Object dosyası (.o);Makine kodu + semboller + relocation'lar · Kaynak dosya başına bir tane
+Sembol;Symbol — İsimli fonksiyon ya da değişken · Tanımlı (T) ya da tanımsız (U)
+Relocation;"""Bu adresi sonra düzelt"" notu · Linker ya da yükleyici doldurur"
+Linker;Object'leri bir çalıştırılabilire birleştirir · ld (bfd), gold, lld, mold
+Statik kütüphane (.a);archive — Link sırasında içine kopyalanan .o paketi · Daha büyük binary, çalışma anı bağımlılığı yok
+Paylaşımlı kütüphane (.so);shared object — Çalışma anında yüklenir, bellekte paylaşılır · Daha küçük binary'ler, kütüphaneleri ayrı güncelle
+LTO / PGO;Link-Time Optimization / Profile-Guided Optimization — Tüm program / veriye dayalı optimizasyon · Daha hızlı binary'ler, daha yavaş build'ler
+Çapraz derleme;Cross-compiling — Başka bir OS/CPU için build · GOOS=linux GOARCH=arm64, --target
+Tekrarlanabilir build;Reproducible build — Aynı kaynak → bit bit aynı çıktı · Tedarik zincirini doğrulamak için gerekli
+ELF;"Executable and Linkable Format — Çalıştırılabilirler, .o ve .so için Linux/BSD formatı · Sihirli byte'lar 7f 45 4c 46 (""\x7fELF"")"
+ELF başlığı;ELF header — İlk byte'lar: sınıf, ISA, giriş noktası, tablo konumları · readelf -h
+Segment (program başlığı);Yükleyicinin eşlediği şey (PT_LOAD, PT_INTERP, PT_DYNAMIC…) · readelf -l
+Bölüm;Section — Araçların/linker'ın kullandığı (.text, .data, .symtab, .debug_) · readelf -S
+Giriş noktası;Entry point — Çalışan ilk komut (_start) · main değil
+PT_INTERP;program interpreter — Dinamik yükleyicinin yolu · /lib64/ld-linux-x86-64.so.2
+ld.so;dynamic linker/loader — Başlangıçta paylaşımlı kütüphaneleri yükler · RPATH, LD_LIBRARY_PATH, ld.so.cache ile ayarlanır
+DT_NEEDED;Gerekli kütüphaneler listesi · readelf -d
+GOT / PLT;Global Offset Table / Procedure Linkage Table — Kütüphane adresleri için dolaylama tabloları · Tembel ya da başlangıçta doldurulur
+ASLR;Address Space Layout Randomization — Her çalışmada rastgele taban adresler · Exploit'leri zorlaştırır
+PIE;Position-Independent Executable — Her yere yüklenebilen çalıştırılabilir · Tam ASLR için gerekli
+RELRO / NX / stack canary;RELocation Read-Only / No-eXecute — Sıkılaştırma özellikleri · GOT'u, stack'i, veri sayfalarını korur
+soname;shared object name — Kütüphane ABI kimliği (libssl.so.3) · Dosya adındaki ana sürüm
+LD_PRELOAD;Bir kütüphaneyi önce yüklemeye zorla · Fonksiyonları ez (izleme, mock'lar, saldırılar da)
+Runtime;Programınla birlikte çalışan kod · Bellek, thread'ler, derleme, standart kütüphane
+Bytecode;Bir VM için taşınabilir komut formatı · .class, .pyc, V8 Ignition bytecode'u
+Yorumlayıcı;Interpreter — Bytecode'u komut komut çalıştırır · Basit, daha yavaş
+JIT;"Just-In-Time compiler — Sıcak kodu çalışma anında makine koduna derler · Isınma ister; profil verisi kullanır"
+AOT;Ahead-Of-Time — Çalıştırmadan önce native'e derle · Go, Rust, GraalVM native-image
+GC;Garbage Collector — Artık erişilemeyen belleği boşaltır · Köklerden canlı nesneleri işaretle, gerisini geri al
+Stop-the-world duraklaması;GC için tüm uygulama thread'leri durur · Gecikme sıçramaları olarak görünür
+Nesilsel GC;Generational GC — Genç ve yaşlı nesneleri ayır · Çoğu nesne genç ölür
+GIL;Global Interpreter Lock — CPython kilidi: aynı anda tek thread Python çalıştırır · 3.13'ten beri free-threaded build'ler kaldırır
+Event loop;Callback'leri çalıştıran tek thread · Node.js (libuv), Python asyncio
+Goroutine;Go'nun hafif thread'i (~2 KB stack) · OS thread'leri üzerinde M:N zamanlanır
+Sanal thread'ler;Virtual threads — JVM hafif thread'leri (Java 21+) · OS thread maliyeti olmadan bloklayan kod
+Heap limiti;Azami yönetilen bellek · -Xmx, --max-old-space-size, GOMEMLIMIT
+Isınma;Warm-up — JIT optimize edene kadarki yavaş dönem · Otomatik ölçeklemeyi ve soğuk başlangıçları etkiler
+Compiler;Kaynak kodu assembly/makine koduna çevirir · Ayrıştırır, tip kontrol eder, optimize eder, kod üretir
+Preprocessor;Derlemeden önceki metin düzeyi adım (C/C++) · #include ve #define'ı açar
+Assembler;Assembly → object dosyası · Komutları byte'lara kodlar, sembolleri kaydeder
+Static / dynamic linking;Kütüphaneleri içine kopyala / başlangıçta yükle · Dinamik: ld.so .so dosyalarını eşler ve adresleri düzeltir
+fork / execve;Process'i kopyala / programını değiştir · Shell bir çocuk fork eder, çocuk yeni programı exec eder
+libc;C standard library — Syscall sarmalayıcıları + standart fonksiyonlar · printf, malloc, open → altta syscall'lar
+JIT / AOT;Just-In-Time / Ahead-Of-Time — Çalışırken / çalışmadan önce derlemek · JIT sıcak kodu çalışma anında, AOT native binary üretir
+VM;Virtual Machine (language runtime) — Bytecode çalıştıran runtime · JVM, CPython VM, V8 motoru
+C / C++ / Rust / Go;Native ELF binary — Doğrudan CPU · Önceden derleme (AOT)
+Java / Kotlin;.class/.jar bytecode — JVM (kendisi de bir ELF) bytecode'u yorumlar · JIT: sık çalışan metotlar çalışma anında makine koduna derlenir (HotSpot)
+JavaScript (Node.js);.js kaynak — V8 kodu bytecode'a çevirir (Ignition) · JIT: sık çalışan fonksiyonlar makine koduna optimize edilir (TurboFan)
+Python;.py kaynak — CPython kodu bytecode'a (.pyc) derler ve bir yorumlayıcı döngüsünde çalıştırır · Çoğunlukla yorumlanır. Bu yüzden CPU'yu yoran işler C eklentilerine (NumPy, PyTorch) gider
+L2;Layer 2 (veri bağlantı katmanı) — Tek bir yerel ağ içinde teslimat · MAC ile adreslenen çerçeveler
+Çerçeve;"Frame — L2 paketi: hedef MAC, kaynak MAC, EtherType, yük, FCS · FCS = sağlama toplamı; bozuk çerçeveler atılır"
+MAC adresi;Media Access Control — 48 bitlik NIC adresi · aa:bb:cc:dd:ee:ff, ilk yarısı = üretici (OUI)
+EtherType;İçinde hangi protokol olduğu · 0x0800 IPv4, 0x86DD IPv6, 0x0806 ARP
+Switch;Çerçeveleri MAC'e göre ileten cihaz · Kaynak MAC'leri bir MAC tablosuna öğrenir
+Taşırma;Flooding — Bir çerçeveyi tüm portlardan göndermek · Yayın ve bilinmeyen hedefler için
+Yayın alanı;Broadcast domain — Birbirinin yayınlarını alan makineler kümesi · Bir VLAN / bir subnet
+ARP;Address Resolution Protocol — LAN'da IPv4 → MAC araması · Yayınla soru, tek alıcılı cevap, önbellekte
+NDP;Neighbor Discovery Protocol — IPv6'da ARP'nin yerini alan · ICMPv6 multicast kullanır
+GARP;"Gratuitous ARP — ""Bu IP benim MAC'imde"" diyen istenmemiş ARP · Failover için (VIP taşınır)"
+VLAN / 802.1Q;Virtual LAN — Paylaşımlı donanımda mantıksal L2 ağı · 12 bitlik VLAN ID'li 4 byte'lık etiket
+Trunk / access port;Çok sayıda etiketli VLAN / tek etiketsiz VLAN taşır · Switch-switch ve switch-makine
+MTU;"Maximum Transmission Unit — Çerçeve başına en büyük yük · Standart 1500, ""jumbo"" 9000"
+STP;Spanning Tree Protocol — Döngüleri önlemek için yedek bağlantıları kapatır · Kök seçer, döngü portlarını devre dışı bırakır
+IP;Internet Protocol — L3: ağlar arası adresleme ve iletim · En iyi çaba, teslim garantisi yok
+IPv4 / IPv6;32 bit / 128 bit adresler · 10.0.1.5 / 2001:db8::5
+CIDR;Classless Inter-Domain Routing — adres/önek-uzunluğu gösterimi · /24 = ilk 24 bit ağdır
+Subnet maskesi;Subnet mask — Önekle aynı, noktalı · /24 = 255.255.255.0
+Ağ / yayın adresi;Bir IPv4 subnet'inin ilk / son adresi · Makineler kullanamaz
+Özel aralıklar;RFC 1918 — 10/8, 172.16/12, 192.168/16 · İnternette yönlendirilmez → NAT gerekir
+CGNAT aralığı;Carrier-Grade NAT — 100.64.0.0/10 · ISP'ler, pod CIDR'ları için de kullanılır
+Routing tablosu;Önek → sonraki durak / arayüz listesi · ip route
+En uzun önek eşleşmesi;"Longest-prefix match — En özel rota kazanır · /32, /24'ü; /24, /0'ı yener"
+Default rota;"0.0.0.0/0 (::/0) · ""Geri kalan her şey → gateway"""
+TTL / hop limit;"Time To Live — Router başına azalan sayaç · 0 → at + ICMP ""time exceeded"""
+ICMP;Internet Control Message Protocol — Hatalar ve teşhis · ping (echo), unreachable, time exceeded
+PMTUD;"Path MTU Discovery — Bir yoldaki en küçük MTU'yu bulmak · ICMP ""fragmentation needed""a dayanır"
+BGP;Border Gateway Protocol — Ağlar arası rota değişimi · İnternet, ayrıca Calico/MetalLB/bulut router'ları
+Firewall;Trafiğe kurallarla izin verir ya da engeller · IP, port, protokol, durum, arayüze göre eşleştirir
+Durumsuz / durumlu;Stateless / stateful — Her paketi tek başına değerlendirir / bağlantıları bilir · Durumlu olan cevaplara otomatik izin verir
+netfilter;Kernel paket işleme çerçevesi · Kancalar: PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING
+iptables / nftables;netfilter kuralları için kullanıcı araçları · nftables modern yerine geçen
+conntrack;connection tracking — Aktif akışlar tablosu · Durumlar: NEW, ESTABLISHED, RELATED, INVALID
+NAT;Network Address Translation — Paketlerde IP/port'ları yeniden yazmak · Cevaplarda conntrack ile ters çeviri
+SNAT / MASQUERADE;Source NAT — Kaynak adresi değiştir · Tek IP arkasında çok sayıda özel makine
+DNAT;Destination NAT — Hedef adresi değiştir · Port yönlendirme, Service VIP → pod
+Port tükenmesi;Port exhaustion — SNAT için kaynak portların bitmesi · (kaynak IP, hedef IP, hedef port) başına ~64K
+kube-proxy;Her node'da Service'leri uygular · iptables / IPVS / nftables modları
+eBPF;extended Berkeley Packet Filter — Kernel'de güvenle çalışan programlar · Cilium kube-proxy ve iptables'ın yerini alır
+NetworkPolicy;Kubernetes pod düzeyinde firewall · CNI uygular
+Security group / NACL;— / Network Access Control List — Arayüz başına / subnet başına bulut firewall'u · Durumlu / durumsuz
+VPC / VNet;Virtual Private Cloud / Virtual Network — Bir bölgedeki izole ağ · AWS/GCP VPC, Azure VNet der
+SDN;"Software-Defined Networking — Hypervisor'larda/NIC'lerde uygulanan ağ · Gerçek L2 yok; kimin kime ulaşacağına bulut karar verir"
+Bölge / AZ;Region / Availability Zone — Coğrafi alan / içindeki izole veri merkez(ler)i · Subnet'ler tek bir AZ'de yaşar (AWS)
+Subnet (public / private);"VPC CIDR'ının bir dilimi · ""Public"" = internet gateway'e rotası var"
+Route table;Subnet başına routing kuralları · 0.0.0.0/0 → igw-… ya da → nat-…
+IGW;Internet Gateway — VPC'yi internete bağlar · Genel IP'ler için 1:1 NAT
+NAT gateway;Private subnet'ler için sadece dışa internet · Yönetilen SNAT, GB başına ücretli
+ENI;Elastic Network Interface — Bir instance'a bağlı sanal NIC · IP'leri ve security group'ları var
+Security group (SG);"ENI'lerde durumlu firewall · ""SG X'ten"" gelen trafiğe izin verebilir"
+NACL;Network Access Control List — Durumsuz subnet firewall'u · Sıralı izin/red kuralları
+VPC endpoint / PrivateLink;Bulut servislerine özel erişim · NAT/internet olmadan S3, ECR, API'ler
+Peering / TGW;— / Transit Gateway — İki VPC'yi bağla / çok VPC + şirket içi için merkez · Peering geçişli değildir
+VPN / Direct Connect;Şifreli tünel / buluta özel fiber · Hibrit bağlantı
+Egress;Bölgeden/buluttan çıkan trafik · Genelde pahalı olan yön
+OSI / TCP/IP model;Open Systems Interconnection — Ağın katmanlı modelleri · Her katman tek bir sorunu çözer ve bir başlık ekler
+MAC address;Media Access Control — Yerel bağlantıdaki 48 bitlik donanım adresi · Switch'ler çerçeveleri teslim etmek için kullanır
+IP address;Internet Protocol — İnternetteki bir makinenin adresi (IPv4 32 bit, IPv6 128 bit) · Router'lar paketleri hedef IP'ye göre iletir
+Port;Bir makinedeki programı seçen 16 bitlik sayı · TCP/UDP başlığı kaynak ve hedef portları taşır
+Subnet / CIDR;Classless Inter-Domain Routing — 192.168.1.0/24 gibi bir IP bloğu · /24 = ilk 24 bit ağ kısmıdır
+Default gateway;Subnet dışındaki her şey için router · Uzak IP'lere giden çerçeveler onun MAC'ine gider
+Router;Ağlar arasında paket ileten L3 cihazı · Yönlendirme tablosunda en uzun önek eşleşmesi, TTL−1
+TTL;"Time To Live — IP başlığındaki hop sayacı · Her router bir azaltır; 0 = at (döngüleri önler)"
+BGP / AS;Border Gateway Protocol / Autonomous System — İnternetteki ağların rota paylaşma şekli · Her AS ulaşabildiği IP aralıklarını duyurur
+VPC;Virtual Private Cloud — Bulutta özel bir ağ · Yazılımda subnet, route table, gateway, security group
+Header (alan);"Ad: değer biçiminde bir üst veri satırı · Adlar büyük/küçük harfe duyarsız; gövdeden önce gönderilir"
+İstek / cevap header'ı;İstemcinin / sunucunun gönderdiği üst veri · Accept, Authorization ve Content-Type, Set-Cookie
+Başlangıç / durum satırı;İsteğin / cevabın ilk satırı · GET /yol HTTP/1.1 / HTTP/1.1 200 OK
+MIME tipi;Multipurpose Internet Mail Extensions — application/json gibi format etiketi · Content-Type ve Accept içine yazılır
+İçerik pazarlığı;Content negotiation — İstemci ne alabileceğini söyler, sunucu seçer · Gelen Accept-, giden Content- + Vary
+Hop-by-hop / end-to-end;Tek bağlantıya ait / son alıcıya ait header'lar · Proxy'ler hop-by-hop olanları siler (Connection, Keep-Alive)
+Cache-Control;Tarayıcı ve CDN için önbellek kuralları · max-age, no-store, private, s-maxage …
+ETag;"Entity Tag — Bir cevabın sürüm kimliği · İstemci If-None-Match ile geri yollar; değişmediyse 304"
+Cookie / Set-Cookie;"Tarayıcının saklayıp geri yolladığı küçük durum · Sunucu koyar; tarayıcı uyan isteklere Cookie ekler"
+Authorization / Bearer;"Bir isteğin kimlik bilgisi · Authorization: Bearer <token>; yok/geçersiz → 401"
+CORS;Cross-Origin Resource Sharing — Farklı origin'den okuma için tarayıcı kuralı · API Access-Control-Allow- header'larıyla izin verir
+Origin;Bir sayfanın şema + host + port'u · https://app.example.com ≠ https://api.example.com
+HSTS;"HTTP Strict Transport Security — ""Bu siteye hep HTTPS ile gel"" · Strict-Transport-Security: max-age=…"
+CSP;Content Security Policy — Script/stillerin nereden yüklenebileceğinin izin listesi · Tarayıcı geri kalanını engeller (XSS'in çoğunu durdurur)
+XSS;Cross-Site Scripting — Saldırganın script'inin senin sayfanda çalışması · Çıktıyı escape etmek + CSP ile önlenir
+X-Forwarded-For (XFF);Proxy'lerin arkasındaki asıl istemci IP'si · Her proxy bağlantıyı aldığı adresi ekler
+traceparent;W3C Trace Context — Servisler arasında taşınan dağıtık trace kimliği · 00-<trace-id>-<span-id>-<flags>
+HPACK / QPACK;HTTP/2 / HTTP/3'te header sıkıştırma · Statik + dinamik tablolar tekrarlanan header'ları indeksle değiştirir
+Pseudo-header;HTTP/2+'da başlangıç satırının yerini alan alanlar · :method, :path, :authority, :scheme, :status
+Yönlendirme;Host (h2/h3'te :authority) — Location (3xx / 201 ile) · Sanal hosting, ingress kuralları, yönlendirmeler
+Gövde sınırı;Content-Length, Transfer-Encoding — aynı · Gövdenin nerede bittiği
+Bağlantı;Connection, Upgrade — Connection, Keep-Alive · Keep-alive, WebSocket'e yükseltme (hop-by-hop)
+Kimlik;Authorization, Cookie — WWW-Authenticate, Set-Cookie · Girişler, API token'ları, oturumlar
+Güvenlik;Origin, Sec-Fetch- — Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, Referrer-Policy · Tarayıcıya kullanıcıyı nasıl koruyacağını söylemek
+Proxy;X-Forwarded-For, X-Forwarded-Proto, Forwarded, Via — Via · LB arkasında gerçek istemci IP'si ve şeması
+Gözlemlenebilirlik;X-Request-ID, traceparent, tracestate — X-Request-ID, Server-Timing · Log ve trace'leri ilişkilendirmek
+Hız sınırı;Retry-After (+ RateLimit- taslakları) · 429 / 503 sonrası istemciye ne zaman tekrar deneyeceğini söylemek
+DNS;Domain Name System — İsimlerin dağıtık veritabanı · Her biri kendi isim sunucularında duran zone hiyerarşisi
+Zone;Ağacın tek bir operatörün yönettiği kısmı · example.com zone'u kendi kayıtlarını ve yetki devirlerini tutar
+Stub çözücü;Stub resolver — İşletim sistemindeki küçük çözücü · Tek bir özyinelemeli çözücüye sorar, cevapları önbelleğe alır
+Özyinelemeli çözücü;Recursive resolver — Sorguyu senin yerine yapan sunucu · Kök → TLD → yetkili yolunu yürür, her şeyi önbelleğe alır
+Yetkili sunucu;Authoritative server — Zone'un gerçek cevaplarını tutan sunucu · AA (authoritative answer) bayrağıyla cevaplar
+Kök / TLD;Top-Level Domain — Ağacın tepesi / .com, .org, .tr · Kök TLD sunucularını, TLD alan adının NS'ini gösterir
+Kayıt (RR);Resource Record — Tek bir girdi: ad, tip, TTL, değer · shop.example.com. 300 IN A 93.184.215.14
+Negatif önbellek;"Negative caching — ""Bu isim yok"" (NXDOMAIN) cevabını önbelleğe almak · Zone'un SOA minimum TTL'i kadar sürer"
+Glue kaydı;Glue record — Bir isim sunucusunun IP'si, üst zone'da saklanır · NS kendi zone'unun içindeyse döngüyü kırar
+DNSSEC;DNS Security Extensions — DNS kayıtlarına imza · Çözücü kökten başlayan anahtar zincirini doğrular
+DoH / DoT;DNS over HTTPS / DNS over TLS — Şifreli DNS · Sorguları ağ yolundan gizler
+CoreDNS;Kubernetes'in cluster DNS sunucusu · .svc.cluster.local'ı cevaplar, gerisini iletir
+ndots;resolv.conf seçeneği · Bundan az noktalı isimler önce search domain'leriyle denenir
+TCP;Transmission Control Protocol — IP üzerinde güvenilir byte akışı · El sıkışma, sıra numaraları, ACK, yeniden gönderim
+Soket;Socket — Bir uç: IP + port (+ protokol) · Bağlantı = 4'lü (kaynak IP, kaynak port, hedef IP, hedef port)
+Segment;Tek bir TCP paketi · Başlık (20+ byte) + yük
+SYN / ACK / FIN / RST;synchronize / acknowledge / finish / reset — Başlık bayrakları · Aç / onayla / kibarca kapat / iptal et
+Sıra numarası;Sequence number — Segment verisinin byte konumu · Alıcının sıralamasını ve boşlukları bulmasını sağlar
+MSS;Maximum Segment Size — Segment başına en büyük yük · Genelde 1460 byte (1500 MTU − 40 byte başlık)
+rwnd;receive window — Alıcıdaki boş tampon alanı · Akış kontrolü: gönderen bunu aşamaz
+cwnd;congestion window — Gönderenin ağın kaldırabileceği miktar tahmini · ACK'lerle büyür, kayıpta küçülür
+RTT / RTO;Round-Trip Time / Retransmission TimeOut — Ölçülen gecikme / yeniden gönderim zamanlayıcısı · RTO ölçülen RTT'ye göre ayarlanır
+CUBIC / BBR;— / Bottleneck Bandwidth and RTT — Tıkanıklık kontrol algoritmaları · Kayıp tabanlı (Linux varsayılanı) / model tabanlı
+TIME_WAIT;Aktif kapanıştan sonraki durum · 4'lüyü Linux'ta ~60 sn ayrılmış tutar
+Keep-alive;Bir bağlantıyı çok istek için kullanmak (HTTP) ya da boştakileri yoklamak (TCP) · El sıkışmadan tasarruf / ölü karşı tarafı bulur
+Backlog;accept() bekleyen bağlantı kuyruğu · Kuyruk dolu → SYN'ler düşer, bağlanma yavaşlar
+Ephemeral port;İstemci tarafında rastgele port · Linux'ta 32768–60999 aralığı
+TLS;Transport Layer Security — Bir bağlantı için şifreleme + kimlik doğrulama · El sıkışma anahtarlarda anlaşır, sonra kayıtlar şifrelenir
+SSL;"Secure Sockets Layer — TLS'in eskimiş atası · Adı ""SSL sertifikası""nda yaşıyor; protokol öldü"
+Simetrik şifre;Aynı anahtar şifreler ve çözer · AES-GCM, ChaCha20-Poly1305: hızlı, veri için
+Asimetrik kripto;Açık/özel anahtar çifti · Sadece anahtar anlaşması ve imza için
+ECDHE;Elliptic Curve Diffie-Hellman Ephemeral — Anahtar değişimi · İki taraf anahtar paylarını aynı sırra birleştirir
+Forward secrecy;Sunucu anahtarı sonradan sızsa da eski trafik güvende · Bağlantı başına taze (geçici) anahtarlar
+Sertifika (X.509);"""Bu açık anahtar şu isimlere ait"" diyen imzalı belge · SAN, yayıncı, geçerlilik, açık anahtar içerir"
+SAN;Subject Alternative Name — Sertifikadaki host adı listesi · Tarayıcı host adının içinde olup olmadığına bakar
+CA;Certificate Authority — Sertifika imzalayan kurum · Önce alan adını kontrol ettiğini doğrulamalı
+Zincir / ara sertifika;Yaprak ← ara ← kök · Sunucu yaprak + ara sertifikaları gönderir
+Trust store;İşletim sisteminin/tarayıcının güvendiği kök CA'lar · /etc/ssl/certs, Java cacerts, tarayıcı depoları
+ACME;Automatic Certificate Management Environment — Otomatik sertifika alma protokolü · Kontrolü kanıtla (HTTP-01/DNS-01), sertifikayı al
+OCSP / CRL;"Online Certificate Status Protocol / Certificate Revocation List — ""Bu sertifika iptal"" deme yolları · Yerini kısa ömürlü sertifikalara bırakıyor"
+mTLS;mutual TLS — İki taraf da sertifika sunar · Mesh'lerde ve zero-trust'ta servis kimliği
+SNI / ECH;Server Name Indication / Encrypted Client Hello — El sıkışmadaki host adı / şifreli hali · Tek IP'de çok site / hangisi olduğunu gizler
+HOL blocking;Head-Of-Line blocking — Yavaş/kayıp tek parça arkasındaki her şeyi bekletir · 1.1'de HTTP düzeyinde, h2'de TCP düzeyinde
+Akış;Stream — Bağlantı içinde tek bir istek/cevap çifti · Çok akış tek bağlantıda iç içe geçer
+Çoklama;Multiplexing — Tek bağlantıda çok akış · Farklı akışların çerçeveleri kabloda karışık
+ALPN;Application-Layer Protocol Negotiation — TLS sırasında h2 ya da http/1.1 seçer · ClientHello'da listelenir
+h2c;HTTP/2 cleartext — TLS'siz HTTP/2 · Cluster içinde kullanılır (gRPC)
+QUIC;"— (eskiden ""Quick UDP Internet Connections"") — İçinde TLS 1.3 olan UDP üstü taşıma · Akışlar, kayıp kurtarma, tıkanıklık kontrolü user space'te"
+Connection ID;QUIC'in bağlantı kimliği · IP/port değişse de yaşar (bağlantı göçü)
+0-RTT;zero round-trip time — Devam eden oturumda ilk uçuşta veri göndermek · Daha hızlı ama tekrar oynatılabilir → sadece güvenli istekler
+Alt-Svc;"Alternative Service — Başka bir protokol/uç nokta duyuran header · Alt-Svc: h3="":443""; ma=86400"
+Server push;"İstenmemiş kaynakları gönderen h2 özelliği · Tarayıcılardan kaldırıldı; 103 Early Hints kullan"
+Metot (fiil);Method — Bir isteğin eylemi · GET, POST, PUT, PATCH, DELETE, …
+Güvenli;Safe — Sunucu durumunu değiştirmez · GET, HEAD, OPTIONS
+Idempotent;İki kez yapmak = bir kez yapmak · GET, PUT, DELETE (POST, PATCH değil)
+Durum kodu;Status code — İsteğin 3 haneli sonucu · 1xx bilgi · 2xx tamam · 3xx yönlendirme · 4xx istemci · 5xx sunucu
+REST;REpresentational State Transfer — Kaynak odaklı API stili · URL'ler isim, metotlar fiil, JSON gövdeler
+OpenAPI;Makinenin okuyabildiği REST sözleşmesi · Doküman, istemci, doğrulama üretir
+gRPC;gRPC Remote Procedure Calls — HTTP/2 üzerinde RPC framework'ü · Protobuf sözleşmesi, üretilen stub'lar, streaming
+Protobuf;Protocol Buffers — Kompakt ikili serileştirme · Numaralı alanlı şema
+GraphQL;Tek uç nokta üzerinde sorgu dili · İstemci tam ihtiyacı olan alanları ister
+WebSocket;HTTP'den yükseltilmiş çift yönlü bağlantı · Upgrade: websocket, sonra iki yönlü çerçeveler
+SSE;"Server-Sent Events — HTTP üzerinden sunucudan tek yönlü akış · text/event-stream; LLM token akışında kullanılır"
+Idempotency anahtarı;"Idempotency key — İdempotent olmayan istek için istemcinin seçtiği kimlik · Sunucu sonucu saklar; yeniden deneme aynı sonucu döner"
+URL;Uniform Resource Locator — Bir kaynağın adresi · şema://host:port/yol?sorgu
+TLD;Top-Level Domain — Bir ismin son etiketi (.com, .org, .tr) · TLD sunucuları her alan adının yetkili sunucularını gösterir
+TTL (DNS);Time To Live — Bir DNS cevabının ne kadar önbellekte tutulabileceği · Taşımalardan önce düşür
+UDP;"User Datagram Protocol — Gönder ve unut datagramları · El sıkışma ve yeniden gönderim yok; DNS ve QUIC'in temeli"
+RTT;Round-Trip Time — Bir mesajın gidip gelme süresi · Her el sıkışma adımı yaklaşık bir RTT'ye mal olur
+CA / certificate;Certificate Authority — Güvenilir yayıncı / bir alan adının anahtarının imzalı kanıtı · Tarayıcı zinciri güvenilir bir kök CA'ya kadar kontrol eder
+SNI / ALPN;Server Name Indication / Application-Layer Protocol Negotiation — TLS eklentileri · ClientHello içinde hangi hostname / hangi protokol (h2, h3)
+HTTP;HyperText Transfer Protocol — Web'in istek/cevap protokolü · Metot + yol + başlıklar → durum + başlıklar + gövde
+HTTP/2 / HTTP/3 / QUIC;"— / — / Quick UDP Internet Connections — TCP üzerinde / QUIC (UDP) üzerinde çoklanmış HTTP · Tek bağlantıda çok akış; QUIC TCP head-of-line blocking'i kaldırır"
+TTFB;Time To First Byte — İlk cevap byte'ı gelene kadar geçen süre · DNS + TCP + TLS + sunucu işleme
+LB;Load Balancer — Trafiği backend'lere dağıtır · Donanım, yazılım (nginx, HAProxy, Envoy) ya da bulut
+L4 LB;Layer 4 — TCP/UDP bağlantılarını dengeler · Sadece IP:port görür, çok hızlı
+L7 LB;Layer 7 — HTTP isteklerini dengeler · Host/yol/header'a göre yönlendirir, TLS, yeniden deneme
+Round robin;Sırayla sıradaki backend · Basit, yükü umursamaz
+Least connections / least request;En az aktif olan backend · Maliyeti eşit olmayan istekler için daha iyi
+Consistent hashing;"Aynı anahtar → aynı backend · Önbellek yakınlığı; havuz değişince az anahtar taşınır"
+EWMA / P2C;Exponentially Weighted Moving Average / Power of Two Choices — Gecikmeye duyarlı seçim · Rastgele 2 seç, hızlı olanı al
+Health check;Bir backend'in trafik alıp almayacağına karar veren yoklama · Aktif (LB yoklar) ya da pasif (hataları izler)
+Readiness / liveness;K8s: trafik alabilir / yeniden başlatılmalı · Farklı sorular, farklı probe'lar
+Boşaltma;Draining — Yeni trafiği durdur, mevcut olanın bitmesine izin ver · Deploy ve küçültme sırasında
+Yapışkan oturumlar;Sticky sessions — Bir istemciyi tek backend'e sabitle · Cookie ya da kaynak IP yakınlığı
+Anycast / GSLB;— / Global Server Load Balancing — Kullanıcıları en yakın bölgeye yönlendir · Birçok yerden aynı IP / DNS tabanlı
+Gateway API;Kubernetes'te Ingress'in halefi · Gateway + HTTPRoute/GRPCRoute, rol odaklı
+İsabet / ıska / isabet oranı;Hit / miss / hit ratio — Bulundu / bulunamadı / isabet % · %95 ve %99 isabet oranı = 5× daha az DB çağrısı
+Cache-aside;lazy loading — Uygulama önbelleği okur, ıskada doldurur · En yaygın desen
+Read-through;Önbellek kütüphanesi DB'den kendisi yükler · Uygulama sadece önbellekle konuşur
+Write-through;Önbelleğe ve DB'ye birlikte yaz · Önbellek hep taze, yazmalar yavaş
+Write-behind;write-back — Önbelleğe yaz, DB'ye sonra · Hızlı, kayıp riski
+Geçersiz kılma;Invalidation — Eski girdileri silmek/güncellemek · Yazmada sil, olaylar, sürümlü anahtarlar
+Tahliye (LRU/LFU);Least Recently / Frequently Used — Dolunca neyin atılacağı · Redis maxmemory-policy
+İzdiham / thundering herd;Stampede — Tek bir anahtar için aynı anda çok ıska · Hepsi DB'ye aynı anda gider
+Sıcak anahtar;Hot key — Dev trafiği olan tek anahtar · Tek bir önbellek shard'ını boğar
+Redis;REmote DIctionary Server — Bellek içi veri deposu · String, hash, set, sorted set, stream
+Memcached;Basit dağıtık bellek önbelleği · Çok thread'li, sadece anahtar/değer
+CDN;Content Delivery Network — Kullanıcılara yakın uç önbellekler · Origin'inden gelen Cache-Control
+RDBMS / SQL;Relational DB Management System / Structured Query Language — Tablolar + ilişkiler + sorgular · PostgreSQL, MySQL, SQL Server, Oracle
+Sayfa;Page — Depolama birimi (Postgres 8 KB, InnoDB 16 KB) · Buffer pool'da önbelleğe alınır
+İndeks (B-tree);Index — Hızlı arama için sıralı ağaç · Tam tarama yerine O(log n) sayfa okuma
+WAL / redo log / binlog;Write-Ahead Log — Değişikliklerin sadece eklenen logu · Veri sayfalarından önce yazılır + fsync edilir
+Transaction;Birlikte başarılı ya da başarısız olan değişiklikler grubu · BEGIN … COMMIT / ROLLBACK
+ACID;Atomicity, Consistency, Isolation, Durability — Transaction garantileri · Ya hep ya hiç, kurallar korunur, karışma yok, çökmeden sağ çıkar
+İzolasyon seviyesi;Isolation level — Eşzamanlı transaction'ların birbirini ne kadar gördüğü · Read committed, repeatable read, serializable
+MVCC;Multi-Version Concurrency Control — Okuyanlar snapshot görür, yazanlar yeni sürüm oluşturur · Okuyanlar yazanları bloklamaz
+Deadlock;İki transaction birbirini bekler · DB birini öldürür
+Sorgu planı / EXPLAIN;Query plan — DB'nin bir sorguyu nasıl çalıştıracağı · Index scan ya da seq scan, join'ler
+Bağlantı havuzu;Connection pool — DB bağlantılarını yeniden kullanmak · PgBouncer, HikariCP, RDS Proxy
+Replikasyon (senkron / asenkron);WAL'ı replikalara kopyalamak · Kalıcılık ve gecikme ödünleşimi
+PITR;Point-In-Time Recovery — Herhangi bir saniyeye geri dön · Temel yedek + arşivlenmiş WAL
+Sharding;Veriyi anahtara göre veritabanlarına bölmek · Yatay yazma ölçekleme
+RPO / RTO;Recovery Point / Time Objective — Azami veri kaybı / azami kesinti · Yedek ve HA tasarımını belirler
+Broker;Mesajları saklayan ve ileten sunucu · Kafka, RabbitMQ, SQS, Pub/Sub, NATS
+Üretici / tüketici;Producer / consumer — Mesaj yazar / okur · Zamanda ve ölçekte ayrışmış
+Kuyruk;Queue — Her mesajı tek tüketici işler, sonra silinir · İş dağıtımı
+Log / stream;Sadece eklenen, saklanan, yeniden oynatılabilir · Çok sayıda tüketici grubu bağımsız okur
+Topic / partition;İsimli stream / onun sıralı bir parçası · Sıra sadece bir partition içinde garanti
+Tüketici grubu;Consumer group — Bir topic'in partition'larını paylaşan tüketiciler · Azami paralellik = partition sayısı
+Offset / ack;"acknowledgement — Okunan konum / ""bu mesajla işim bitti"" · İşledikten sonra commit et"
+En fazla / en az / tam bir kez;At-most / at-least / exactly-once — Teslim garantileri · Pratik varsayılan: en az bir kez + idempotency
+Idempotency;İki kez işlemek bir kez işlemekle aynı etkiye sahip · Mesaj kimliğine göre ayıkla, upsert
+DLQ;Dead-Letter Queue — Zehirli mesajların gittiği yer · Sonra incele ve yeniden oynat
+Geri basınç;Backpressure — Tüketiciler yetişemeyince üreticileri yavaşlatmak · Sınırlı kuyruklar, hız sınırları
+Outbox / CDC;"— / Change Data Capture — Güvenilir ""DB yazma + olay"" · Olay satırı aynı transaction'da, sonra aktarılır"
+Saga;Servisler arası çok adımlı iş süreci · Her adımın telafi eden bir eylemi var
+Tüketici gecikmesi;"Consumer lag — İşlenmeyi bekleyen mesajlar · Ana metrik; otomatik ölçeklemeyi sürer (KEDA)"
+L4 / L7;Layer 4 / Layer 7 — Taşıma düzeyi ve uygulama düzeyi · L4 IP:port'u, L7 host, yol, başlıkları görür
+Reverse proxy / ingress;İstekleri servislere yönlendiren ön sunucu · Host/yola göre yönlendirir, TLS sonlandırır, başlık ekler
+Stateless / stateful;"İstekler arasında bir şey tutmaz / veri tutar · Stateless kopya ile ölçeklenir; stateful özen ister"
+Horizontal / vertical scaling;Daha fazla makine / daha büyük makine · Yatay ölçek stateless uygulama ve load balancer ister
+Primary / replica;Yazma node'u / veritabanının okuma kopyaları · Replikasyon değişiklikleri genelde asenkron kopyalar
+Replication lag;Replikaların bir yazmayı görmesindeki gecikme · Yazmadan sonra okuma eski veri dönebilir
+Queue / worker;İş tamponu / onları tüketen process · En az bir kez teslim → idempotent işler, hatalar için DLQ
+Object storage;Dosya/blob deposu (S3, GCS) · Düz isim alanı, HTTP API, presigned URL'ler
+Circuit breaker;Hata veren bir bağımlılığı bir süre çağırmayı keser · Zaman aşımları birikmesin diye hızlı başarısız ol
+CRP;Critical Rendering Path — Byte'lardan ilk piksellere adımlar · HTML → DOM, CSS → CSSOM, layout, paint
+DOM / CSSOM;Document / CSS Object Model — İçerik / stil ağaçları · İndirilirken adım adım kurulur
+Render engelleyici;Render-blocking — Tarayıcının boyamadan önce beklediği kaynak · <head>'deki <link rel=stylesheet>
+Ayrıştırma engelleyici;Parser-blocking — HTML ayrıştırmayı durduran script · defer/async'siz <script src>
+Preload tarayıcısı;Preload scanner — Kaynakları erken bulan ikincil ayrıştırıcı · Ana ayrıştırıcı bloklanmışken indirmeleri başlatır
+Kaynak ipuçları;Resource hints — preload, preconnect, dns-prefetch, fetchpriority · Tarayıcıya neyin erken önemli olduğunu söyler
+Stil yeniden hesaplama;Style recalc — Elemanların son stillerini hesaplamak · Seçici eşleştirme, cascade, kalıtım
+Layout (reflow);Her kutunun geometrisini hesaplamak · Büyük DOM'larda pahalı
+Paint;Çizim işlemlerini katmanlara kaydetmek · Metin, renkler, kenarlıklar, görseller
+Compositing;Katmanları GPU'da birleştirmek · transform/opacity değişiklikleri sadece bunu ister
+Layout thrashing;DOM yazma ve layout okumayı sırayla yapmak · Çok sayıda senkron layout'u zorlar
+FOIT / FOUT;Flash Of Invisible / Unstyled Text — Font yükleme davranışları · font-display ile kontrol edilir
+Tembel yükleme;"Lazy loading — Ekran dışı görselleri/iframe'leri sonra yükle · loading=""lazy"""
+Çağrı stack'i;"Call stack — O an çalışan fonksiyonların çerçeveleri · Aynı anda bir tane; sıradaki görevden önce boşalmalı"
+Heap;Nesnelerin yaşadığı yer · V8 tarafından çöp toplanır
+Web API'leri;JS dışındaki tarayıcı özellikleri · fetch, zamanlayıcılar, DOM olayları, IndexedDB
+Görev (macrotask);Task — Görev kuyruğundan bir iş birimi · Olay handler'ı, zamanlayıcı callback'i, mesaj
+Mikro görev;Microtask — Yüksek öncelikli devam işi · Promise tepkileri, queueMicrotask, MutationObserver
+Promise;Gelecekteki bir değer için nesne · .then callback'leri mikro görev olarak çalışır
+async / await;Promise'ler üstüne sözdizimi · await thread'i değil fonksiyonu duraklatır
+Uzun görev;Long task — 50 ms'den uzun görev · Girdiyi geciktirir → kötü INP
+rAF;requestAnimationFrame — Sonraki boyamadan önce callback · Animasyonlar ve DOM yazmaları için
+Web Worker;DOM'suz arka plan thread'i · Ağır hesaplamayı ana thread'den çıkarır
+Bellek sızıntısı;Memory leak — Yanlışlıkla erişilebilir tutulan nesneler · Kopuk DOM düğümleri, listener'lar, büyüyen önbellekler
+libuv;Node.js'in event loop'u + thread havuzu · Sunucuda aynı model
+Core Web Vitals;Google'ın üç ana UX metriği · LCP, INP, CLS
+LCP;Largest Contentful Paint — En büyük içerik elemanı render olana kadar geçen süre · İyi ≤ 2,5 sn
+INP;Interaction to Next Paint — Girdiden sonraki kareye tipik en yavaş gecikme · İyi ≤ 200 ms (2024'te FID'nin yerini aldı)
+CLS;Cumulative Layout Shift — Görünür içeriğin beklenmedik hareketi · İyi ≤ 0,1
+FCP;First Contentful Paint — Boyanan ilk metin/görsel · İyi ≤ 1,8 sn
+TBT;Total Blocking Time — Tepkisellik için laboratuvar vekili · 50 ms üstü uzun görev sürelerinin toplamı
+p75;75. yüzdelik — Ziyaretlerin %75'inin geçtiği değer · Her metriği geçti/kaldı değerlendirmede kullanılır
+Laboratuvar verisi;Lab data — Kontrollü ortamda sentetik test · Lighthouse, WebPageTest
+Saha verisi / RUM;Real User Monitoring — Gerçek ziyaretçilerden ölçümler · CrUX, web-vitals.js, sağlayıcı RUM'u
+CrUX;Chrome UX Report — Google'ın açık saha veri seti · Origin/URL düzeyi, 28 günlük pencere
+Performans bütçesi;Performance budget — Byte/metrik limitleri · CI'da uygulanır
+Site;"Kayıt edilebilir alan adı (eTLD+1) + şema · https://example.com; SameSite bunu kullanır"
+SOP;Same-Origin Policy — Sayfalar diğer origin'lerin cevaplarını/DOM'unu okuyamaz · Tarayıcının temel güvenlik sınırı
+Site izolasyonu;Site isolation — Her site kendi renderer process'inde · Siteler arası Spectre tarzı sızıntıları sınırlar
+CSRF;Cross-Site Request Forgery — Başka bir site cookie'lerinle durum değiştiren bir istek tetikler · SameSite, token'lar, Origin kontrolleriyle önlenir
+SameSite;Cookie özniteliği: Strict / Lax / None · Siteler arası isteklerde cookie gönderimini kontrol eder
+Clickjacking;Sayfan bir yemin altında görünmez çerçevede · frame-ancestors / X-Frame-Options
+SRI;"Subresource Integrity — Dış script'ler için hash sabitleme · integrity=""sha384-…"""
+Trusted Types;DOM XSS noktalarını kısıtlayan CSP özelliği · innerHTML sadece onaylı değerleri kabul eder
+COOP / COEP;Cross-Origin Opener / Embedder Policy — İzolasyon header'ları · SharedArrayBuffer ve daha güçlü izolasyon için
+DOM;Document Object Model — Bellekteki HTML eleman ağacı · HTML ayrıştırıcısı kurar, JS değiştirir
+CSSOM;"CSS Object Model — Stil kuralları ağacı · Stil dosyalarından kurulur; render'ı bloklar"
+Render tree;Hesaplanmış stilleriyle görünür düğümler · DOM + CSSOM, display:none hariç
+Paint / composite;Çizim komutlarını kaydetmek / katmanları GPU'da üst üste koymak · Sadece composite değişiklikler (transform/opacity) ucuzdur
+Main thread;Renderer'ın JS + render için tek thread'i · Uzun görevler girdiyi ve kareleri bloklar
+V8;Chrome'un JavaScript motoru · Bytecode yorumlayıcı + optimize eden JIT
+defer / async;"Script yükleme öznitelikleri · Paralel indir; ayrıştırmadan sonra / hazır olunca çalıştır"
+LCP / INP / CLS;Largest Contentful Paint / Interaction to Next Paint / Cumulative Layout Shift — Core Web Vitals · Yükleme hızı / tepki süresi / görsel kararlılık
+SPA / SSR;Single-Page Application / Server-Side Rendering — İstemci sayfayı kurar / sunucu tam HTML gönderir · SSR sonra JS ile hydrate eder
+OCI;Open Container Initiative — İmajlar, runtime'lar, dağıtım için standartlar · Docker, Podman, containerd hepsi uyar
+İmaj;"Image — Dosya sistemi katmanları + config (entrypoint, env, user) · Değişmez; digest ile tanımlanır"
+Katman;Layer — Dosya sistemi değişikliklerinin tar arşivi · İmajlar arasında paylaşılır ve önbelleğe alınır
+Manifest / index;Katmanlar + config listesi / platform başına manifest listesi · Çok mimarili imajlar index kullanır
+Digest;İçeriğin sha256: hash'i · Aynı digest = byte byte aynı imaj
+Etiket;Tag — Bir digest'e işaret eden insan dostu ad · Değişebilir (:latest, :1.4)
+Registry;İmajları saklayan sunucu · Docker Hub, GHCR, ECR, GAR, Harbor
+BuildKit / buildx;Modern Docker build motoru · Paralel aşamalar, cache mount'ları, çok platform
+Çok aşamalı build;Multi-stage build — Bir aşamada derle, artefaktları küçük son aşamaya kopyala · Daha küçük, daha güvenli imajlar
+Distroless / scratch;Minimal taban imajlar · Shell ya da paket yöneticisi yok
+SBOM;Software Bill of Materials — Bir imajdaki paketlerin listesi · Syft, docker buildx --sbom
+cosign / Sigstore;İmaj imzalama ve doğrulama · Admission politikaları imzaları doğrular
+CRI / containerd / runc;Container Runtime Interface — kubelet'in runtime API'si / runtime / düşük seviyeli OCI runtime'ı · kubelet → containerd → shim → runc
+Control plane;Cluster'ı yöneten bileşenler · API server, etcd, scheduler, controller-manager
+kube-apiserver;"Tek giriş noktası; REST API · Authn → authz (RBAC) → admission → etcd"
+etcd;"Tutarlı anahtar-değer deposu (Raft) · Tüm cluster durumunu tutar; yedekle"
+kube-scheduler;Bekleyen her pod için bir node seçer · Filtrele (sığar mı?) sonra puanla (en iyisi?)
+Controller;Bir kaynak tipi için uzlaştırma döngüsü · İzle → karşılaştır → harekete geç (9a)
+kubelet;Node ajanı · Pod'ları CRI ile çalıştırır, probe'lar, durum bildirir
+Pod;En küçük birim: ağ/IPC paylaşan bir ya da daha çok container · Kendi IP'si var
+Deployment / ReplicaSet;Rolling update'li durumsuz replikalar · Sürüm başına ReplicaSet
+StatefulSet;Replika başına sabit adlar + depolama · Veritabanları, Kafka
+DaemonSet / Job / CronJob;Node başına bir pod / bitene kadar çalış / zamanlanmış · Ajanlar, batch, periyodik görevler
+Request / limit;Zamanlama rezervasyonu / sert tavan · CPU throttle olur, bellek OOM olur (3.2, 3.3)
+QoS sınıfı;Quality of Service — Guaranteed, Burstable, BestEffort · Node baskısında tahliye sırası
+Taint / toleration, affinity;Pod'ları node'lardan uzak tut / çek · Özel node'lar, yayma
+CRD / operator;Custom Resource Definition — API'yi genişlet / bir uygulama için controller · kind: PostgresCluster otomatik yönetilir
+Admission webhook;Oluşturma/güncellemede nesneleri doğrula ya da değiştir · Politikalar (Kyverno), sidecar enjeksiyonu
+CNI;Container Network Interface — Pod ağı için eklenti API'si · Bir pod başlarken runtime çağırır
+Pod CIDR;Pod'lar için IP aralığı (node başına) · ör. 3. node'da 10.244.3.0/24
+Overlay;Node'dan node'a tünellere sarılmış pod trafiği · VXLAN / Geneve / IPIP
+Native routing;Pod IP'leri doğrudan yönlendirilir (tünel yok) · BGP (Calico), bulut rotaları, VPC CNI
+eBPF dataplane;"İletim ve politika için kernel programları · Cilium; kube-proxy'nin yerini alabilir"
+Service (ClusterIP);Pod'lar için sabit sanal IP + port · Bir endpoint'e DNAT (5.3)
+EndpointSlice;Bir Service'in arkasındaki hazır pod IP'leri listesi · Readiness ile güncellenir
+NodePort / LoadBalancer;Bir Service'i node portlarında / bir bulut LB'siyle aç · Dış erişim için
+Headless Service;clusterIP: None · DNS doğrudan pod IP'lerini döner
+Ingress / Gateway API;Cluster'a L7 giriş · Gateway + HTTPRoute modern API'dir
+Service mesh;Servisler arası trafik için proxy'ler (sidecar ya da node/ambient) · mTLS, yeniden deneme, trafik bölme, metrikler
+CI;Continuous Integration — Her değişikliği derle + test et · Her push/PR'da pipeline
+CD;Continuous Delivery / Deployment — Her an yayınlanabilir / otomatik yayınlanır · Ortamlar arasında terfi
+Artefakt;Artifact — Deploy ettiğin şey · İmaj digest'i, Helm chart'ı, binary
+IaC;Infrastructure as Code — Kodda tanımlanan altyapı · Terraform/OpenTofu, Pulumi, Crossplane
+GitOps;Git = doğruluk kaynağı, bir ajan çeker · Argo CD, Flux cluster'ı git'e uzlaştırır
+Sapma;Drift — Canlı durum ≠ git · Tespit edilir ve (isteğe bağlı) otomatik düzeltilir
+Helm / Kustomize;Manifest'ler için şablon / overlay araçları · Ortam başına yapılandırma
+Rolling / blue-green / canary;Deploy stratejileri · Kademeli değiştir / anahtarla / önce küçük %
+Kademeli teslim;Progressive delivery — Metrik analizli otomatik canary · Argo Rollouts, Flagger
+Feature flag;Kod yollarını çalışma anında aç/kapat · Deploy'u yayından ayır
+SLSA;Supply-chain Levels for Software Artifacts — Build bütünlüğü için çerçeve · Provenance, hermetik build'ler
+DORA metrikleri;DevOps Research and Assessment — Teslim performansı · Deploy sıklığı, teslim süresi, değişiklik hata oranı, kurtarma süresi
+Recreate;Tüm eskileri durdur, yenileri başlat — Basit · Kesinti
+Blue-green;Yeni sürümü tamamen çalıştır, trafiği bir anda geçir — Anında geçiş ve geri alma · Geçiş sırasında çift kapasite
+Canary;Kontrollerle %1 → %10 → %50 → %100 — Etki alanını sınırlar · Trafik bölme + metrik ister
+Feature flag'ler;Karanlıkta deploy et, kullanıcı/yüzde bazında aç — Deploy'suz yayın · Flag borcu, karmaşıklık
+Metrik;"Metric — Etiketli sayısal zaman serisi · http_requests_total{route=""/cart"",code=""500""}"
+Counter / gauge / histogram;Metrik tipleri · Sadece artar / artar ve azalır / kovalarda dağılım
+Kardinalite;Cardinality — Farklı etiket kombinasyonlarının sayısı · Yüksek kardinalite (user_id) maliyeti patlatır
+Log;Zaman damgalı olay kaydı · Yapılandırılmış (JSON) serbest metni yener
+Trace / span;Bir isteğin yolu / içindeki tek bir işlem · Span'ler bir trace kimliği paylaşır (traceparent, 6.1)
+Örnekleme;Sampling — Trace'lerin sadece bir kısmını tutmak · Baştan ya da kuyruktan (hataları/yavaşları tut)
+Profil;Profile — Kodda CPU/belleğin nereye harcandığı · Sürekli profilleme (Pyroscope, Parca)
+OTel;OpenTelemetry — Sağlayıcıdan bağımsız API'ler, SDK'lar, protokol (OTLP), collector · Bir kez enstrümante et, her yere gönder
+Exemplar;Bir metrik örneğine eklenmiş trace kimliği · Gecikme sıçramasından örnek bir trace'e atla
+RED / USE;Rate, Errors, Duration / Utilization, Saturation, Errors — Servisler / kaynaklar için kontrol listeleri · Panolara ne konacağı
+SLI;Service Level Indicator — Ölçülen iyi olaylar / toplam olaylar · ör. 300 ms altı ve 5xx olmayan isteklerin %'si
+SLO;Service Level Objective — Bir pencere için SLI hedefi · 30 günde %99,9
+Hata bütçesi;Error budget — İzin verilen güvenilmezlik = 1 − SLO · 30 günün %0,1'i ≈ 43 dakika
+Burn rate;Bütçenin ne kadar hızlı tüketildiği · İzin verilenden 14× hızlı yanınca alarm
+Metrikler;Bir sorun var mı? Trendler, alarmlar — Düşük (toplanmış) · /checkout'un p99 gecikmesi fırladı
+Trace'ler;Çağrı zincirinin neresinde? — Orta (örneklenmiş) · 1 sn'nin 900 ms'si inventory → postgres'te
+Loglar;Tam olarak ne oldu? — Yüksek (hacim) · deadlock detected on table orders
+Profiller;CPU/belleği hangi kod kullanıyor? — Düşük–orta · CPU'nun %40'ı JSON serileştirmede
+Container;Namespace'lerle izole, cgroup'larla sınırlandırılmış process · Bir runtime (containerd/runc) imajdan başlatır
+OCI image;Open Container Initiative — Standart container imaj formatı · Manifest + katmanlar + config, digest ile adreslenir
+CRI / CNI;Container Runtime Interface / Container Network Interface — Kubernetes'in eklenti API'leri · kubelet ↔ runtime / pod ağ eklentileri
+API server / etcd;Kubernetes'in ön kapısı / veritabanı · Her şey cluster durumunu API üzerinden okur/yazar
+Scheduler / kubelet;Node seçer / node'da pod çalıştırır · Node'ları filtrele + puanla / runtime ile konuş
+Controller / reconcile;Gerçek durumu istenen duruma eşitleyen döngü · İzle → karşılaştır → harekete geç → tekrar
+Service / Ingress;"Pod'lar için sabit sanal IP / cluster'a HTTP yönlendirme · kube-proxy/eBPF dağıtır; ingress host/yola göre yönlendirir"
+CI / CD;"Continuous Integration / Continuous Delivery — Otomatik derle-test et / otomatik sürüm · Her push'ta pipeline; ortamlara rollout"
+AI;Artificial Intelligence (Yapay Zekâ) — Normalde insan zekâsı gerektiren işleri yapan yazılım · Bugün çoğunlukla makine öğrenmesiyle eğitilmiş modeller demek
+ML;Machine Learning (Makine Öğrenmesi) — Davranışı elle yazılmış kurallar yerine veriden öğrenen programlar · Çıktılar örneklerle eşleşene kadar sayıları (parametreleri) ayarlar
+NN;Neural Network (Sinir Ağı) — Basit matematik birimlerinden oluşan katmanlı bir model · Her katman girdiyi ağırlıklarla çarpar ve doğrusal olmayan bir fonksiyon uygular
+LLM;Large Language Model (Büyük Dil Modeli) — Metni sürdürmek için metin üzerinde eğitilmiş devasa bir sinir ağı · Sıradaki token'ı tahmin eder, sona ekler, tekrarlar
+GPT;Generative Pre-trained Transformer — Decoder-only transformer LLM'lerin aile adı · Metin üzerinde ön eğitilir, sonra token token üretir
+Token;Bir metin parçası (kelime, kelime parçası, sembol) · Modelin okuduğu ve yazdığı birim
+BPE;Byte-Pair Encoding — Yaygın tokenizer algoritması · En sık görülen karakter çiftlerini tekrar tekrar birleştirip token yapar
+Embedding;Bir token'ı ya da metni temsil eden sayı vektörü · Benzer anlam → yakın vektörler
+Parametre / ağırlık;"Modelin içinde öğrenilmiş tek bir sayı · Milyarlarcası = modelin ""bilgisi"""
+Transformer;Modern LLM'lerin arkasındaki sinir ağı mimarisi · Attention + MLP katmanları yığını
+Attention;Bir token'ın diğer token'lara bakmasını sağlayan mekanizma · Query·Key skorları, her Value'dan ne kadar karıştırılacağına karar verir
+Q / K / V;Query / Key / Value — Her token için hesaplanan üç vektör · Q sorar, K, Q ile eşleştirilir, V aktarılan içeriktir
+RoPE;Rotary Position Embedding — Konumun (kelime sırasının) kodlanma şekli · Q ve K'yi konuma bağlı bir açıyla döndürür
+MLP / FFN;Multi-Layer Perceptron / Feed-Forward Network — Her katmandaki token başına sinir ağı · Genişletir, doğrusal olmayan fonksiyon uygular, geri daraltır
+MoE;Mixture of Experts (Uzmanlar Karışımı) — Birçok uzmana bölünmüş bir MLP ve bir router · Her token için sadece en iyi k uzman çalışır
+Logit;Olası her sıradaki token için ham skor · Softmax bunları olasılığa çevirir
+Bağlam penceresi;Context window — Modelin aynı anda işleyebildiği azami token · Prompt + çıktı sığmalı
+SFT;Supervised Fine-Tuning (Gözetimli İnce Ayar) — Örnek prompt → cevap çiftleri üzerinde eğitim · Modele talimat takip etmeyi öğretir
+RLHF;Reinforcement Learning from Human Feedback — İnsan tercihleriyle eğitim · Bir ödül modeli cevapları puanlar, LLM bunu en üst düzeye çıkaracak şekilde ayarlanır
+DPO;"Direct Preference Optimization — Daha basit tercih eğitimi · Doğrudan ""A, B'den iyi"" çiftlerinden öğrenir"
+LoRA / QLoRA;Low-Rank Adaptation / Quantized LoRA — Ucuz fine-tuning · Dondurulmuş ağırlıkların yanında küçük adaptör matrisleri eğitir (QLoRA: temel model 4-bit)
+VLM;Vision-Language Model — Görüntü ve metin okuyan model · Görüntü encoder'ının çıktısı ek token'lar olarak verilir
+ASR / TTS;Automatic Speech Recognition / Text-to-Speech — Ses → metin / metin → ses · Ses modelleri, genelde akış halinde
+KV cache;Key-Value cache — Geçmiş token'ların saklanan K ve V'leri · Her adımda yeniden hesaplanmalarını önler (10.5)
+GPU;Graphics Processing Unit (Grafik İşlem Birimi) — Devasa paralel bir işlemci · Aynı komutu aynı anda binlerce veri üzerinde çalıştırır
+SM;Streaming Multiprocessor — GPU'nun 100+ işlem bloğundan biri · CUDA core'ları, Tensor Core'ları, register'ları ve shared memory'yi barındırır
+CUDA core;— (CUDA = Compute Unified Device Architecture) — Basit, skaler bir hesap şeridi · Saat döngüsü başına bir FP32/INT işlemi
+Tensor Core;Her SM'nin içindeki matris çarpım birimi · FP16/BF16/FP8/FP4'te saat başına küçük matris parçalarını çarpar
+Warp;32 GPU thread'inden oluşan grup · 32'si birlikte aynı komutu çalıştırır
+SIMT;Single Instruction, Multiple Threads — NVIDIA'nın çalıştırma modeli · Tek bir komut farklı veriler üzerindeki çok sayıda thread'i sürer
+HBM;High Bandwidth Memory (Yüksek Bant Genişlikli Bellek) — GPU çipinin yanına istiflenmiş DRAM · Çok geniş veri yolu → TB/sn bant genişliği
+SRAM / L2;Static RAM / Level-2 cache — Çip üstü bellek · Minik ama HBM'den çok daha hızlı
+FLOP / FLOPS;Floating-Point Operation (per Second) — Hesap işinin / hızının birimi · Saniyede TFLOPS = 10¹², PFLOPS = 10¹⁵
+PCIe;Peripheral Component Interconnect Express — CPU ile cihazlar arasındaki standart veri yolu · Seri bağlantı şeritleri, Gen5 x16 için yön başına ~64 GB/sn
+NVLink;NVIDIA'nın GPU'dan GPU'ya bağlantısı · PCIe'den çok daha hızlı, GPU belleğine doğrudan erişim
+NVSwitch;NVLink için bir switch çipi · Her GPU'yu diğer her GPU'ya tam hızda bağlar
+NVL72;NVLink 72 — 72 GPU'nun tek bir NVLink alanını paylaştığı raf · İletişim açısından tek dev bir GPU gibi davranır
+HGX / DGX;NVIDIA'nın 8 GPU'luk ana kartı / komple sunucusu · Çoğu AI sunucusunun üzerine kurulduğu referans tasarım
+NIC;Network Interface Card (Ağ Arayüz Kartı) — Ağ adaptörü · AI sunucularında tipik olarak GPU başına bir adet 400–800 Gb/sn NIC
+RDMA;Remote Direct Memory Access — Başka bir makinenin belleğine onun CPU'su olmadan okuma/yazma · NIC veriyi doğrudan bellekler arasında taşır
+GPUDirect RDMA;Doğrudan GPU belleğine RDMA · NIC ↔ GPU HBM, CPU'yu ve sistem RAM'ini atlar
+GPUDirect Storage;Depolamadan doğrudan GPU belleğine · NVMe / ağ depolamadan HBM'e DMA
+IB;InfiniBand — Düşük gecikmeli bir HPC ağı · Kayıpsız, doğal RDMA, kredi tabanlı akış kontrolü
+RoCE;RDMA over Converged Ethernet — Ethernet üzerinde RDMA · Kayıpsız ayar gerektirir (PFC, ECN)
+DPU;Data Processing Unit — Kendi çekirdekleri olan akıllı bir NIC (ör. BlueField) · Ağ, depolama ve güvenlik işlerini host'tan devralır
+TDP;Thermal Design Power — Bir çipin tasarlandığı güç/ısı miktarı · Modern GPU başına 700 W–1,4 kW+
+TPU / ASIC;Tensor Processing Unit / Application-Specific IC — Google'ın (ve başkalarının) özel AI çipleri · Matris hesabı için sabit işlevli donanım
+ROCm;Radeon Open Compute — AMD'nin CUDA karşılığı · AMD Instinct GPU'ları için yazılım yığını
+CUDA;Compute Unified Device Architecture — NVIDIA'nın GPU programlama platformu · GPU'da kod çalıştırmak için dil eklentileri + runtime + sürücü
+PTX;"Parallel Thread Execution — Taşınabilir bir GPU ""assembly""si · Sürücü tarafından tam olarak o GPU'ya JIT ile derlenir"
+SASS;— (Streaming ASSembler) — Belirli bir GPU neslinin gerçek makine kodu · SM'lerin gerçekte çalıştırdığı şey
+Compute capability;GPU nesil numarası (ör. 8.0, 9.0, 10.0) · GPU'nun hangi özellikleri ve binary'leri desteklediğini belirler
+cuBLAS;CUDA Basic Linear Algebra Subprograms — Matris hesabı kütüphanesi · Çok iyi ayarlanmış GEMM (matris çarpımı) kernel'leri
+GEMM;General Matrix Multiply — C = A × B (+ C) · Sinir ağlarının temel işlemi
+cuDNN;CUDA Deep Neural Network library — Konvolüsyon, attention, normalizasyon kernel'leri · Framework'ler tarafından otomatik çağrılır
+CUTLASS;CUDA Templates for Linear Algebra Subroutines — Özel GEMM kernel'leri kurmak için C++ şablonları · Kütüphaneler ve motorlar birleşik kernel'ler için kullanır
+FlashAttention;Hızlı ve bellek dostu bir attention kernel'i · Hesabı parçalara bölerek çip üstü SRAM'de tutar
+NCCL;NVIDIA Collective Communications Library — Çoklu GPU / çoklu node iletişimi · NVLink / InfiniBand üzerinden all-reduce, all-gather
+TensorRT;NVIDIA'nın inference optimize edicisi/derleyicisi · Katmanları birleştirir ve bir model için en hızlı kernel'leri seçer
+torch.compile;PyTorch'un derleyicisi · Model grafiğini yakalar ve optimize kernel'ler üretir
+CUDA Graphs;Bir kernel başlatma dizisini bir kez kaydet, tekrar oynat · Adım başına CPU başlatma yükünü kaldırır
+UMD / KMD;User-Mode Driver / Kernel-Mode Driver — libcuda.so / nvidia.ko · Sürücünün user space yarısı ve kernel yarısı
+NVML;NVIDIA Management Library — GPU durumu ve kontrolü için API · nvidia-smi'nin kullandığı şey
+DCGM;Data Center GPU Manager — Filo düzeyinde GPU izleme ve teşhis · Sağlık/metrikleri dışa aktarır (DCGM exporter → Prometheus)
+XID;"Sürücünün logladığı GPU hata kodları · Hatalarda dmesg ""NVRM: Xid …"" gösterir"
+NVIDIA Container Toolkit;GPU'ları container içinde kullanılabilir yapar · Cihaz dosyalarını ve host sürücü kütüphanelerini enjekte eder
+CDI;Container Device Interface — Container'lar için cihazları tanımlayan standart bir spec · Runtime bir JSON/YAML spec okur ve cihazları bağlar
+MIG;Multi-Instance GPU — Tek bir GPU'nun donanım düzeyinde bölünmesi · Kendi SM'leri ve belleği olan en fazla 7 izole örnek
+MPS;Multi-Process Service — Process'lerin tek bir GPU bağlamını paylaşmasını sağlar · Birden fazla process'in kernel'leri eşzamanlı çalışır
+Zaman dilimleme;Time-slicing — GPU'ya aşırı abonelik · Process'ler sırayla çalışır, bellek izolasyonu yok
+vGPU;virtual GPU — VM'ler için GPU paylaşımı · Hypervisor düzeyinde dilimleme (lisanslı)
+ROCm / HIP;Radeon Open Compute / Heterogeneous-compute Interface for Portability — AMD'nin yığını / CUDA benzeri API · AMD GPU'ları için CUDA'yla aynı katmanlama
+Tüm GPU;Tek bir iş yükü cihazın tamamını alır — Tam · Büyük modeller, eğitim
+Forward / backward pass;Tahminleri hesapla / gradyanları hesapla · Backward katmanları ters sırada dolaşır (backpropagation)
+Loss;Tahminlerin ne kadar yanlış olduğunu ölçen tek sayı · LLM'lerde: gerçek sıradaki token'ın cross-entropy'si
+Gradyan;Gradient — Her parametrenin ne yönde ve ne kadar değişeceği · Her parametre için backpropagation ile hesaplanır
+Batch / global batch;Adım başına işlenen örnekler / tüm GPU'larda toplam · Büyük batch = daha az ama daha büyük adım
+Karma hassasiyet;Mixed precision — BF16/FP8'de hesapla, ana ağırlıkları FP32'de tut · Düşük hassasiyetin hızı, yüksek hassasiyetin kararlılığı
+Aktivasyon checkpointing;Tüm aktivasyonları saklama, backward'da yeniden hesapla · ~%30 fazla hesaplama karşılığında çok daha az bellek
+DP;Data Parallel — Her GPU'da modelin tam kopyası, farklı veri · Gradyanların ortalaması her adımda all-reduce ile alınır
+FSDP / ZeRO;Fully Sharded Data Parallel / Zero Redundancy Optimizer — Ağırlık, gradyan ve optimizer durumlarının parçalandığı DP · Bir katmanın ağırlıklarını tam zamanında topla, sonra serbest bırak
+TP;Tensor Parallel — Her katmanın matrisleri GPU'lara bölünür · Kısmi sonuçlar her katmanda değiş tokuş edilir → NVLink gerekir
+PP;Pipeline Parallel — Katmanlar farklı GPU'lardaki aşamalara bölünür · Mikro-batch'ler aşamalardan montaj hattı gibi geçer
+EP;Expert Parallel — MoE uzmanları farklı GPU'lara yerleştirilir · Token'lar all-to-all ile uzmanlarına gönderilir
+CP / SP;Context / Sequence Parallel — Uzun diziler GPU'lara bölünür · Her GPU token'ların bir kısmını işler, attention K/V değiş tokuş eder
+Collective;Toplu işlem — Çok sayıda GPU arasında bir iletişim deseni · All-reduce, all-gather, reduce-scatter, broadcast, all-to-all
+All-reduce;Herkes bir tensör katkısı verir, herkes toplamı alır · NCCL'de ring/tree algoritmaları
+Gang scheduling;Bir işin tüm pod/process'lerini ya hep birlikte başlat ya hiç · Yarım başlamış işlerin GPU'ları sonsuza dek tutmasını önler
+Slurm;Simple Linux Utility for Resource Management — Klasik HPC batch zamanlayıcısı · Node tahsisleri üzerinde sbatch / srun işleri
+Kueue / JobSet / KAI;Kubernetes kuyruklama, çok pod'lu işler, AI zamanlayıcısı · Kotalar, gang kabulü, topolojiye duyarlı yerleştirme
+torchrun;PyTorch'un dağıtık başlatıcısı · GPU başına bir process başlatır ve rank'leri bağlar
+Rank / world size;Bir process'in kimliği / toplam process sayısı · Loglamayı ve checkpoint kaydını genelde rank 0 yapar
+Checkpoint;Ağırlık + optimizer + veri konumunun kaydedilmiş anlık görüntüsü · Arızalardan sonra devam etmek için
+MFU;Model FLOPs Utilization — Elde edilen faydalı FLOP ÷ tepe FLOPS · İyi ayarlanmış büyük koşularda %35–55 tipiktir
+Paralel FS;Parallel File System (Lustre, GPFS…) — Birçok sunucuya dağıtılmış depolama · Binlerce istemci yüksek toplam hızla okur/yazar
+Inference / servis;Eğitilmiş bir modeli kullanıcılar için çalıştırmak · Bir motor ağırlıkları yükler, istekleri kabul eder, token'ları akıtır
+Prefill;Tüm prompt'u işlemek · Tüm prompt token'ları paralel işlenir, KV cache kurulur
+Decode;Çıktı token'larını üretmek · Adım başına istek başına bir token
+TTFT;Time To First Token — İlk çıktı token'ına kadar geçen gecikme · Kuyruk + prefill
+TPOT / ITL;Time Per Output Token / Inter-Token Latency — Çıktı token'ları arası süre · Bu istek için bir decode adımı
+E2E gecikme;End-to-End — Toplam istek süresi · TTFT + TPOT × (çıktı token sayısı − 1)
+Verim (throughput);Bir kurulumun toplam token/sn'si (ya da istek/sn) · Gecikme SLO'ları bozulana kadar batch boyutuyla büyür
+Goodput;Gecikme SLO'sunu karşılayan verim · Kullanıcı için gerçekten sayılan şey
+GQA / MQA;Grouped-Query / Multi-Query Attention — Q head'lerinden daha az K/V head'i · KV cache'i birkaç kat küçültür
+PagedAttention;Sabit boyutlu bloklarda saklanan KV cache · Bir blok tablosu mantıksal blokları fiziksellere eşler (page table gibi)
+Sürekli batching;Continuous batching — Batch'i her decode adımında yeniden kur · Yeni istekler katılır, bitenler hemen ayrılır
+Parçalı prefill;Chunked prefill — Uzun prompt'ları parçalara böl · Prefill parçalarını decode adımlarıyla karıştırır, decode'lar durmaz
+Prefix caching;Ortak bir prompt önekinin KV'sini yeniden kullan · Sistem prompt'u / sohbet geçmişi bir kez hesaplanır
+Quantization;Ağırlıkları (belki KV/aktivasyonları da) daha az bitle sakla · FP8, INT8, INT4 (AWQ, GPTQ), FP4
+Speculative decoding;Birkaç token'ı ucuza taslak olarak çıkar, tek büyük adımda doğrula · Çıktı normal decode'la aynı, daha az yavaş adım
+MTP;Multi-Token Prediction — Sıradaki birkaç token'ı tahmin eden ek head'ler · Speculative decoding için yerleşik taslak
+P/D ayrıştırma;Prefill/Decode disaggregation — Prefill ve decode farklı worker'larda · KV cache aralarında RDMA ile aktarılır
+KV'ye duyarlı yönlendirme;KV-aware routing — İsteği önekinin KV'sinin zaten bulunduğu yere gönder · Router hangi pod'da hangi önek olduğunu takip eder
+EPP;Endpoint Picker — Gateway API Inference Extension'daki yönlendirme beyni · Pod'ları KV cache isabeti, kuyruk ve yüke göre puanlar
+NIXL;NVIDIA Inference Xfer Library — Hızlı KV cache aktarım kütüphanesi · KV'yi GPU'lar/node'lar/depolama katmanları arasında taşır
+Multi-LoRA;Tek temel modelin üstünde çok sayıda ince ayarlı adaptör · Adaptör istek başına seçilir, temel ağırlıklar ortak
+OpenAI uyumlu API;/v1/chat/completions, /v1/completions, /v1/embeddings · Fiilî standart istek/cevap formatı
+GPU Operator;Tüm GPU node yığınını yöneten operator · Sürücü, container toolkit, device plugin / DRA sürücüsü, DCGM exporter, MIG manager kurar
+NFD / GFD;Node Feature Discovery / GPU Feature Discovery — Node'ları donanımlarıyla etiketler · ör. nvidia.com/gpu.product=H100-SXM
+Device plugin;Cihazları açmanın klasik yolu · Bir sayıyı (nvidia.com/gpu: 8) extended resource olarak ilan eder
+DRA;"Dynamic Resource Allocation — Yeni cihaz API'si (v1.34'ten beri GA, resource.k8s.io/v1) · Pod'lar cihazları özelliklerine göre talep eder; scheduler eşler ve ayırır"
+ResourceSlice;Bir sürücünün yayınladığı DRA nesnesi · Bir node'daki cihazları özellikleriyle listeler
+DeviceClass;Yöneticilerin tanımladığı DRA nesnesi · Bir cihaz türünü ve seçim kurallarını adlandırır
+ResourceClaim / Template;"Bir pod'un istediği şey · ""≥80 GB'lık 1 GPU"" ya da ""aynı NVLink'te 2 GPU"""
+Taint / toleration;"Normal pod'ları GPU node'larından uzak tutar · GPU node'ları taint'lenir; sadece GPU iş yükleri tolere eder"
+Kueue;Kubernetes'e özgü iş kuyruklama · LocalQueue → kotaları, ödünç alma ve öncelikle kesme olan ClusterQueue
+KAI Scheduler;NVIDIA'nın açık kaynak, AI'a duyarlı zamanlayıcısı · Hiyerarşik kuyruklar, gang scheduling, GPU paylaşımı
+JobSet;Tek birim olarak yönetilen bir Job grubu · Ortak yaşam döngülü çok pod'lu dağıtık eğitim
+LWS;LeaderWorkerSet — Tek replika olarak pod grupları (lider + worker'lar) · Tek node'a sığmayan modellerin çok node'lu inference'ı
+KubeRay;Ray cluster'ları için operator · Kubernetes üzerinde Ray Train / Ray Serve
+KServe;Kubernetes üzerinde model servis platformu · InferenceService CRD'leri, otomatik ölçekleme, canary
+Gateway API Inference Extension;LLM yönlendirmesi için Kubernetes SIG projesi · InferencePool + pod'ları KV cache ve yüke göre puanlayan bir endpoint seçici (EPP)
+llm-d;Dağıtık LLM inference için CNCF projesi · vLLM/SGLang + inference gateway + P/D ayrıştırma + KV duyarlı yönlendirme
+KEDA;Kubernetes Event-Driven Autoscaling — Dış metriklerle sürülen otomatik ölçekleyici · Kuyruk uzunluğu, KV kullanımı, Prometheus sorgularına göre ölçekler
+HPA;Horizontal Pod Autoscaler — Yerleşik otomatik ölçekleyici · Replikaları CPU/bellek ya da özel metriklere göre ölçekler
+Model önbelleği;Model cache — Model ağırlıklarını GPU'lara yakın tut · Node'a yerel NVMe, ortak PVC ya da OCI imaj volume'ları
+DCGM exporter;Data Center GPU Manager exporter — Prometheus için GPU metrikleri · GPU/pod başına kullanım, bellek, güç, XID hataları
+OpenCost;Kubernetes maliyet dağıtımı · GPU'lar dahil namespace/ekip başına maliyet
+RAG;Retrieval-Augmented Generation — Prompt'a getirilen dokümanlarla cevap vermek · Verinde ara, en iyi parçaları bağlama yapıştır, sonra üret
+Embedding modeli;Metni anlamı yakalayan bir vektöre çevirir · Benzer metinler → yakın vektörler (kosinüs benzerliği)
+Vector DB;Vektörleri saklamak ve aramak için veritabanı · pgvector, Qdrant, Milvus, Weaviate, OpenSearch
+ANN;"Approximate Nearest Neighbour — Hızlı ""en yakın vektörler"" araması · Biraz doğruluğu muazzam hız karşılığında verir"
+HNSW;Hierarchical Navigable Small World — En yaygın ANN indeksi · Sorguya doğru açgözlü yürünen katmanlı bir grafik
+IVF / PQ;Inverted File / Product Quantization — Diğer ANN indeks/sıkıştırma yöntemleri · Vektörleri kümele / bellek için sıkıştır
+BM25;Best Matching 25 — Klasik anahtar kelime arama sıralaması · Terim sıklığını doküman sıklığına göre puanlar
+Hibrit arama;Hybrid search — Vektör + anahtar kelime aramasının birleşimi · Hem anlamı hem tam terimleri (ID'ler, hata kodları) yakalar
+Parçalama;Chunking — Dokümanları parçalara bölmek · Boyut, örtüşme ve sınırlar getirme kalitesini belirler
+Reranker;Getirilen parçaları yeniden puanlayan bir model · (sorgu, parça) çiftlerini birlikte okur, vektörlerden daha isabetli
+Grounding / kaynak gösterme;Citations — Cevapları kaynaklara bağlamak · Model kullandığı parçaları belirtmeli
+Halüsinasyon;Hallucination — Kendinden emin ama yanlış çıktı · Grounding, eval ve guardrail'lerle azaltılır
+Araç / fonksiyon çağırma;"Tool / function calling — Model metin yerine yapılandırılmış bir çağrı üretir · {""name"":""get_weather"",""arguments"":{...}}, uygulama onu çalıştırır"
+Yapılandırılmış çıktılar;Structured outputs — Bir JSON şemasına kısıtlanmış çıktı · Decode kısıtlanır, JSON her zaman geçerli olur
+Ajan;Agent — Araçları ve bir hedefi olan, döngüdeki bir LLM · Düşün → araç çağır → sonucu gözlemle → bitene kadar tekrarla
+MCP;Model Context Protocol — AI uygulamalarını araçlara ve veriye bağlayan açık standart · Host uygulamanın MCP istemcisi, araç/kaynak/prompt sunan MCP sunucularıyla JSON-RPC konuşur
+A2A;Agent2Agent protocol — Ajanların başka ajanlarla konuşması için açık protokol · Ajanlar yeteneklerini tanımlar ve görev alışverişi yapar
+AI gateway;Tüm model sağlayıcılarının önündeki bir proxy · Kimlik doğrulama, kota, yönlendirme, yedek, önbellek, loglama
+Guardrail;Girdi/çıktı güvenlik kontrolleri · PII maskeleme, prompt injection tespiti, konu ve politika filtreleri
+Prompt injection;"Girdiye ya da getirilen içeriğe gizlenmiş kötü niyetli talimatlar · Bir web sayfasının ya da dokümanın içinde ""Önceki talimatları yok say…"""
+PII;Personally Identifiable Information (Kişisel Veri) — İsimler, e-postalar, kimlik numaraları… · Politikaya göre tespit edilmeli, maskelenmeli ya da engellenmeli
+Anlamsal önbellek;Semantic cache — Tam metne değil anlama göre anahtarlanan önbellek · Benzer sorular önceki bir cevabı yeniden kullanır
+Eval;Evaluations (Değerlendirmeler) — LLM davranışı için sistematik testler · Test setleri + metrikler + değerlendiriciler (kurallar ya da LLM-hakem)
+LLM-hakem;LLM-as-judge — Çıktıları puanlamak için bir model kullanmak · Rubrik tabanlı puanlama, insan etiketleriyle doğrulanır
+OTel GenAI;OpenTelemetry Generative AI semantic conventions — LLM çağrılarını izlemek için standart öznitelikler · Model, token, gecikme, araç çağrıları span olarak
+Prefill / decode;Üretimin iki aşaması · Tüm prompt birden / adımda bir token
+TTFT / TPOT;Time To First Token / Time Per Output Token — Gecikme metrikleri · Kuyruk + prefill / bir decode adımı
+CUDA / NCCL;Compute Unified Device Architecture / NVIDIA Collective Communications Library — GPU programlama platformu / çoklu GPU iletişimi · GPU'da kernel'ler / NVLink & IB üzerinde all-reduce
+Bir kesme handler'ı neden uyuyamaz ya da ağır iş yapamaz?;"Kesmeler (en azından o hatta/çekirdekte) bloklu ve herhangi bir process bağlamı dışında çalışır; uyumak o çekirdeğin kesme işlemesini dondurur. Ağır iş alt yarıya gider."
+NAPI ne yapar ve neden?;"İlk kesmeden sonra NIC'in kesmesini kapatır ve kuyruk boşalana kadar paket gruplarını yoklar; yüksek paket hızlarında kesme fırtınasını önler."
+Linux yeni takılan bir cihaz için hangi sürücüyü yükleyeceğini nasıl bilir?;"Bus cihaz kimliklerini okur, kernel modalias içeren bir uevent yayar, udev bunu bir modülle eşler ve modprobe çalıştırır; sonra sürücünün probe()'u cihazı sahiplenir."
+Bir node'da bir çekirdek si'de %100, diğerleri boş. Neye bakarsın?;/proc/interrupts: NIC kuyruk IRQ'ları muhtemelen tek çekirdeğe düşüyor. Kuyruk / RSS ekle, IRQ affinity'yi düzelt ya da irqbalance'ı aç, RPS'i düşün.
+GPU sürücüleri neden sadece container'a değil node'a kurulmalı?;"Sürücüler kernel kodudur. Container'lar host kernel'ini paylaşır; sadece host'un sürücüsüyle konuşan user-space kütüphanelerini taşırlar."
+USB cihazları önce konuşamıyorsa bir tuşa basış bilgisayara nasıl ulaşır?;"Host klavyenin interrupt endpoint'ini her 1–8 ms'de yoklar; basıştan sonraki ilk yoklama NAK yerine bir rapor döner."
+Neden tek bir genel sürücü neredeyse her klavye ve fare için çalışır?;"HID cihazları rapor düzenlerini bir rapor tanımlayıcısında tarif eder; HID çekirdeği hepsini ayrıştırabilir."
+Klavye 'a' harfini mi gönderir?;"Hayır. Bir tuş konumu olan 0x04 usage'ını gönderir. Bunun ""a"" mı, ""q"" mu ya da başka bir şey mi olduğuna düzen (user space'teki xkb) karar verir."
+125 Hz yoklama hızı ne kadar gecikme ekleyebilir?;Host raporu görmeden önce 8 ms'ye kadar (ortalama ~4 ms).
+Bazı sıkılaştırılmış sunucular neden bilinmeyen USB cihazlarını engeller?;Bir cihaz kendini klavye olarak tanıtıp komut yazabilir (BadUSB). USBGuard ile izin listesi bunu önler.
+Wayland masaüstünde harfe (tuş konumunun aksine) nerede karar verilir?;"Uygulamada; xkbcommon compositor'ın gönderdiği keymap'i mevcut değiştirici durumuyla uygular."
+/dev/input/event dosyaları neden normal kullanıcılar tarafından okunamaz?;Onları okumak herhangi bir programın sistem genelinde her tuş vuruşunu yakalamasına izin verirdi (keylogger).
+Neden her X11 uygulaması şifrelerini yakalayabiliyordu ama Wayland'da yakalayamaz?;"X11 her istemcinin tüm girdiyi dinlemesine izin veriyordu; Wayland'da compositor girdiyi sadece odaktaki yüzeye gönderir."
+Bir oyun her düzende WASD kullanmalı. Hangi KeyboardEvent alanını okumalı?;event.key değil, fiziksel tuş konumu olan event.code.
+Bir tuşu basılı tuttuğunda tuş tekrarını kim üretir?;"Compositor'ın duyurduğu hız ve gecikmeyle istemci/toolkit; klavye sadece tuşun hâlâ basılı olduğunu bildirir."
+Türkçe-F klavyede aynı fiziksel tuşa basınca USB'den giden kod değişir mi?;Hayır. Kod (0x04) tuşun konumunu gösterir. Çeviriyi işletim sistemi ya da uygulama klavye düzenine göre yapar.
+Polling 8 ms ise bir tuş basışı en kötü ihtimalle ne kadar bekler?;Yaklaşık 8 ms. Basış, bir yoklamanın hemen ardından gelirse bir sonraki yoklamaya kadar bekler.
+CPU başka bir programı çalıştırırken kesme gelirse o programa ne olur?;CPU elindeki komutu bitirir. Program durumunu (RIP, RFLAGS, …) stack'e kaydeder, handler'ı çalıştırır ve iretq ile programı kaldığı yerden devam ettirir. Program bunu fark etmez.
+Uygulama klavyeyi neden doğrudan /dev/input'tan okumuyor?;Güvenlik ve odak yüzünden. Her uygulama tüm tuşları okuyabilseydi her uygulama bir keylogger olurdu. Compositor olayı sadece odaktaki pencereye verir.
+X11'de 'A' tuşunun keycode'u neden 38, Wayland'de neden 30?;X11 tarihsel nedenlerle evdev koduna 8 ekler (30 + 8 = 38). Wayland evdev kodunu olduğu gibi gönderir.
+Bir amd64 imajı neden Graviton node'unda başarısız olur?;"Graviton ARM64'tür; binary'nin komutları farklı bir ISA'ya aittir. Kernel onu çalıştırmayı reddeder (exec format error)."
+x86'yı çözmek neden ARM64'ten zordur?;"x86 komutları 1–15 byte uzunluğundadır, CPU önce komut sınırlarını bulmalıdır; ARM64 komutları her zaman 4 byte'tır."
+Bir gdb oturumunda bir fonksiyon çöktü. İlk iki argümanını nerede bulursun?;RDI ve RSI'da (System V çağrı kuralı), henüz üzerine yazılmadıysa.
+Bir program başka bir VM tipine taşındıktan sonra SIGILL ile ölüyor. Muhtemel sebep?;Yeni CPU'nun desteklemediği eklentiler (AVX-512, AVX2) için derlenmiş.
+xor eax, eax ne yapar, derleyiciler neden tercih eder?;"EAX'i sıfırlar; mov eax, 0'dan kısadır ve CPU tarafından bağımlılığı kıran bir sıfırlama deyimi olarak tanınır."
+RAM'den bir byte okumak neden 64 byte okumak kadar tutar?;"Bellek 64 byte'lık cache line'larla taşınır; her durumda tüm satır getirilir."
+Bağlı bir listeyi gezmek neden aynı uzunluktaki bir diziden çok daha yavaştır?;"Her düğüm bellekte herhangi bir yerde olabilir; her adım bir önbellek ıskası olabilir ve prefetcher sıradaki adresi tahmin edemez."
+İki thread iki farklı sayacı artırıyor ve tek thread'den yavaş. Neden?;"Sayaçlar aynı cache line'ı paylaşıyor (false sharing); her yazma diğer çekirdeğin kopyasını geçersiz kılıyor."
+2 soketli bir sunucudaki bir veritabanı için NUMA ne demek?;"Diğer sokete bağlı bellek daha yavaş; thread'ler ve verileri aynı node'da kalmalı (ya da bellek dağıtılmalı)."
+Huge page'ler büyük heap'lere neden yardımcı olur?;"Bir TLB girdisi 4 KB yerine 2 MB'ı (ya da 1 GB'ı) kapsar; çok daha az TLB ıskası ve page table yürüyüşü olur."
+Her komut 15+ döngü sürüyorsa CPU döngü başına bir komutu nasıl bitirebilir?;Boru hattı: çok sayıda komut aynı anda farklı aşamalardadır.
+Bir diziyi sıralamak, üzerinde dallı bir döngüyü neden hızlandırır?;"if tahmin edilebilir hale gelir (önce hep yanlış, sonra hep doğru); yanlış tahminler ve boru hattı boşaltmaları neredeyse kaybolur."
+Spectre neyi istismar eder?;"Spekülatif çalıştırma önbellekte geri alınmayan izler bırakır; önbellek erişimlerini zamanlamak spekülatif olarak okunan veriyi açığa çıkarır."
+Bulut VM'inde 8 vCPU var. Bu muhtemelen kaç fiziksel çekirdek?;Sağlayıcıya ve instance tipine göre değişir ama genelde SMT ile 4 fiziksel çekirdek (her biri 2 donanım thread'i).
+Ortalama CPU'su düşük bir pod gecikme sıçramaları ve artan cfs_throttled_periods gösteriyor. Ne oluyor?;Thread'leri her 100 ms'lik periyodun başında CPU limitinin kotasını tüketiyor ve bir sonrakine kadar throttle ediliyor. Limiti artır ya da kaldır, veya thread patlamalarını azalt.
+Aynı sayıda elemanı olan bir diziyi gezmek neden bağlı listeyi gezmekten hızlıdır?;Dizinin elemanları yan yana durur. Tek bir 64 byte'lık cache line birkaçını birden getirir ve önceden getirici (prefetcher) sıradakini tahmin edebilir. Bağlı listenin düğümleri dağınıktır, her biri ~100 ns'lik bir RAM yolculuğu gerektirebilir.
+RIP register'ı ne tutar ve onu kim değiştirir?;Sıradaki komutun adresini tutar. Normalde komutun uzunluğu kadar ilerler. Atlama (jump), call, ret ve kesmeler onu doğrudan değiştirir.
+ret aslında ne yapar?;call'un stack'e koyduğu dönüş adresini alır ve RIP'e yazar. Böylece çalışma çağrının hemen sonrasından devam eder.
+GCC ile derlenmiş bir program, Clang ile derlenmiş bir kütüphaneyi neden çağırabilir?;İkisi de aynı çağırma kuralına (System V ABI) uyar: argümanlar ve dönüş değeri hangi register'larda taşınır, hangi register'ları hangi taraf korumak zorundadır.
+3 GHz'de bir RAM erişimi kabaca kaç CPU döngüsüne mal olur?;Yaklaşık 300 döngü (~100 ns × 3 döngü/ns). Bu sürede çekirdek yüzlerce komut çalıştırabilirdi.
+fork() gigabaytlarca belleği olan bir process için bile neden hızlıdır?;"Copy-on-write: ebeveyn ve çocuk biri yazana kadar sayfaları paylaşır; başta sadece page table'lar kopyalanır."
+Zombi ile yetim arasındaki fark ne?;"Zombi bitmiştir ama ebeveyni tarafından toplanmamıştır. Yetim hâlâ çalışıyordur ama ebeveyni ölmüştür; PID 1 onu sahiplenir."
+Pod'un durması hep 30 sn sürüyor. Neden?;"Uygulama (PID 1) SIGTERM'i işlemiyor; kubelet bekleme süresinden sonra SIGKILL gönderene kadar hiçbir şey olmuyor."
+Çıkış kodu 137 ne demek?;"128 + 9: process SIGKILL ile öldürüldü; genelde OOM killer ya da sonlanma bekleme süresinden sonra."
+Thread yerine ne zaman process kullanırsın?;İzolasyon gerektiğinde (bir çökme ya da bellek sızıntısı her şeyi düşürmesin) ya da Python'un GIL'i gibi bir kilitten kaçınmak için.
+Verisi olmayan bir sokette read() çağıran task'a ne olur?;"Bloklanır: çalışma kuyruğundan çıkar ve veri gelene kadar uyur; zamanlayıcı başka bir şey çalıştırır."
+16 çekirdekli bir sunucuda load average 16 ama CPU %20. Ne oluyor?;"Yük D durumundaki task'ları da sayar; muhtemelen çok sayıda task kesilemez I/O'da (disk, NFS) takılı."
+Kubernetes'te CPU request ile CPU limit arasındaki fark ne?;"Request cpu.weight'i ayarlar (çekişmede pay, zamanlamada kullanılır); limit cpu.max'i ayarlar (sert kota, throttling'e yol açar)."
+Ortalama CPU kullanımı limitin çok altındayken bile CPU limiti gecikmeye neden zarar verebilir?;Birden fazla thread periyodun tüm kotasını erken yakabilir, sonra container periyodun geri kalanında throttle edilir.
+JVM ya da Go gibi runtime'lar container'ın CPU limitini neden bilmeli?;"Thread havuzlarını ve GC worker'larını CPU sayısına göre boyutlarlar; 2 CPU limitiyle 64 host çekirdeği görmek ağır throttling'e yol açar."
+Bir process 4 GB ayırıyor ama RSS sadece 50 MB. Bir sorun mu var?;"Hayır. Sayfalar ancak dokunulunca RAM ile desteklenir (talep üzerine sayfalama); dokunulmamış ayırmalar bir şeye mal olmaz."
+64 GB'lık bir sunucuda free 1 GB boş gösteriyor. Endişelenmeli misin?;"available'a bak. RAM'in çoğu muhtemelen page cache; uygulamalar bellek isteyince kernel onu bırakır."
+Minor ve major page fault arasındaki fark ne?;Minor: veri zaten RAM'de, sadece eşleme eklenir. Major: veri diskten okunmalı.
+-Xmx limitin altında olduğu halde JVM pod'um neden OOMKilled oldu?;"JVM heap dışında da bellek kullanır (metaspace, thread stack'leri, direct buffer'lar, JIT kodu, native kütüphaneler); heap + bunların hepsi memory.max'i aştı."
+Kubernetes belleği neden CPU gibi throttle edemez?;"CPU zamanı geciktirilebilir; kullanımdaki bellek ise geri alma (cache/swap) ya da process'i öldürmeden geri alınamaz."
+read() çağırmak ile kernel'in kodunu çalıştırması arasında ne olur?;"libc syscall numarasını ve argümanları register'lara koyup syscall çalıştırır; CPU ring 0'a geçer ve kernel girişine atlar, o da read handler'ına yönlendirir."
+write() başarılı döndü. Veri diskte mi?;Şart değil: page cache'te kirli sayfa olarak duruyor. Ancak fsync()'ten (ya da writeback'ten) sonra kalıcı depolamada olur.
+nginx birkaç worker process'le 50.000 bağlantıyı nasıl yönetir?;Bloklamayan soketler + epoll: her worker tüm soketlerinde hazır olmayı bekler ve sadece hazır olanları işler.
+20 GB'lık bir log'u sildin ama disk hâlâ dolu. Neden?;"Bir process dosyayı hâlâ açık tutuyor; son fd kapanana kadar inode serbest kalmaz. Process'i yeniden başlat/reload et ya da /proc/PID/fd üzerinden truncate et."
+/dev/shm kullanımı bir pod'da neden OOMKill'e yol açabilir?;tmpfs'tir, yani RAM'dir ve container'ın bellek cgroup'una sayılır.
+Container hafif bir VM mi?;Hayır. Host kernel'inde namespace'lerle izole edilmiş ve cgroup'larla sınırlandırılmış normal bir process'tir. VM kendi kernel'ini çalıştırır.
+Aynı pod'daki iki container neden localhost üzerinden birbirine ulaşabilir?;Tek bir ağ namespace'ini (pause container'ının tuttuğu) paylaşırlar.
+Bellek limitini hangi kernel özelliği uygular, aşılınca ne olur?;"Bellek cgroup'u (memory.max); OOM killer o cgroup içindeki bir process'i öldürür."
+privileged: true neden tehlikeli?;"Tüm capability'leri verir, seccomp/AppArmor kısıtlamasını kapatır ve host cihazlarını açar; container genelde host'u kontrol edebilir."
+Container içindeki bir uygulama /proc/meminfo'yu okuyup 2 GB limitle 256 GB görüyor. Neden?;"/proc/meminfo namespace'lenmemiştir; uygulama gerçek limitini öğrenmek için cgroup dosyalarını (memory.max) okumalı."
+Aynı process'in iki thread'i de iki ayrı process de paralel çalışır. Temel fark ne?;Thread'ler tek bir adres alanını (bellek, açık dosyalar) paylaşır ve birbirinin verisini doğrudan okuyabilir. Ayrı process'lerin page table'ları ayrıdır, açık bir paylaşım (pipe, soket, shared memory) olmadan birbirlerinin belleğini göremezler.
+Hatalı bir process neden başka bir process'in belleğinin üstüne yazamaz?;Her process'in kendi page table'ı vardır. Sanal adresleri sadece kernel'in ona verdiği fiziksel çerçevelere eşlenebilir ve MMU bunu her erişimde denetler.
+Programın write() çağırdığında adım adım ne olur?;libc syscall numarasını RAX'e, argümanları RDI/RSI/RDX'e koyar ve syscall çalıştırır. CPU ring 0'a geçer, kernel'in VFS'i fd'nin neyi gösterdiğini bulup doğru sürücüyü çağırır. Sonuç RAX'te döner ve CPU ring 3'e geri geçer.
+Bir container sürekli OOMKilled ile öldürülüyor. Bunu hangi kernel mekanizması yapıyor?;Bellek cgroup limiti ve kernel'in OOM killer'ı. Container limitinden fazla bellek kullandı, kernel de içindeki bir process'i öldürdü.
+Container'ındaki PID 1 neden SIGTERM'i işlemeli?;Kubernetes düzgün kapanışa izin vermek için önce SIGTERM gönderir: istekleri bitir, bağlantıları kapat. PID 1 bunu yok sayarsa pod grace period sonuna kadar bekler, sonra SIGKILL ile öldürülür ve yarım kalan işler kaybolur.
+Derleyicinin IR'ı neyi mümkün kılar?;"Birçok dil ve birçok hedef için tek bir optimizer; ön ve arka uçlar karıştırılabilir (LLVM)."
+nm çıktısındaki U puts ne demek?;"Object dosyası puts'u kullanıyor ama tanımlamıyor; linker (ya da yükleyici) onu bulmalı, burada libc'de."
+Go binary'leri neden FROM scratch imajları için popüler?;CGO_ENABLED=0 ile statik linklenirler: libc ya da yükleyici gerekmez, sadece kernel.
+OpenSSL'e bir güvenlik düzeltmesi geldi. Statik ve dinamik linklenmiş uygulamalar için fark ne?;Dinamik: paylaşımlı kütüphaneyi (taban imajı) bir kez güncelle. Statik: her binary yeniden derlenip deploy edilmeli.
+Tekrarlanabilir build'ler tedarik zinciri güvenliği için neden önemli?;"Herkes kaynaktan yeniden derleyip binary'nin bit bit aynı olduğunu kontrol edebilir; build sırasında hiçbir şeyin enjekte edilmediğini kanıtlar."
+ELF segmentleri ile bölümleri arasındaki fark ne?;"Segmentler yükleyicinin belleğe neyi hangi izinlerle eşleyeceğini tarif eder; bölümler linker, debugger ve araçlar içindir ve strip edilebilir."
+Bir C programında ilk çalışan kod main mi?;Hayır. Önce ld.so çalışır (dinamik binary'lerde), sonra _start → __libc_start_main ve constructor'lar, sonra main.
+Bir container exec /app: no such file or directory ile başarısız oluyor ama /app var. Neden?;Yorumlayıcısı (PT_INTERP, ör. glibc'nin ld-linux'u) imajda yok ya da başka bir mimari için derlenmiş.
+ASLR nedir ve neden PIE gerektirir?;"Kodun, heap'in, stack'in ve kütüphanelerin her çalışmada nereye yükleneceğini rastgele yapmak; çalıştırılabilirin kendisi ancak konumdan bağımsızsa taşınabilir."
+Tam RELRO neyi korur?;"Tüm sembolleri başlangıçta çözer ve GOT'u salt okunur yapar; saldırgan içindeki fonksiyon pointer'larının üzerine yazamaz."
+JVM servisleri deploy'dan sonraki ilk dakika neden yavaştır?;"Kod yorumlanarak başlar; JIT sıcak metotları ancak onları profilledikten sonra derler (ısınma)."
+Thread eklemek CPU yoğun saf Python kodunu neden hızlandırmaz?;GIL aynı anda sadece bir thread'in Python bytecode'u çalıştırmasına izin verir (free-threaded build hariç).
+Bir Node.js pod'unun 4 CPU limiti var ama hiç 1 CPU'nun üstüne çıkmıyor. Neden?;"JavaScript tek thread'de çalışır; worker thread'ler ya da daha çok, daha küçük replica kullan."
+1 GiB limitli bir container'da GOMEMLIMIT ne olmalı, neden?;900 MiB civarı: GC limite ulaşmadan önce daha çok çalışır, OOMKill'den kaçınır ve heap dışı bellek için pay bırakır.
+JVM'in varsayılan azami heap'i container belleğinin %25'i. Neyi değiştirirsin?;-XX:MaxRAMPercentage'ı ayarla (ör. %70–75), heap dışı bellek için yer bırak.
+printf gerçek adresini hangi aşamada alır?;Derleyicide ya da assembler'da değil. Onlar tanımsız bir sembol bırakır. Statik bağlamada linker doldurur. Dinamik bağlamada dinamik bağlayıcı başlangıçta (ya da ilk çağrıda, tembel olarak) çözer.
+fork() ile execve() arasındaki fark ne?;fork(), mevcut process'in kopyası olan yeni bir process oluşturur. execve(), mevcut process'in programını yenisiyle değiştirir: PID aynı, bellek yeni. Bir program başlatmak = fork + execve.
+İmajın laptopunda çalışıyor ama cluster'da exec format error veriyor. Neden?;Binary başka bir CPU mimarisi için derlenmiş, örneğin arm64 (Apple Silicon) ile amd64 node'lar. Çözüm: çok mimarili imaj üret (docker buildx --platform linux/amd64,linux/arm64).
+Bir Go binary'si neden FROM scratch imajında çalışabiliyor da tipik bir C programı çalışamıyor?;Statik bir Go binary'si ihtiyacı olan her şeyi içerir ve PT_INTERP'i yoktur. Dinamik bağlanmış bir C programının ld-linux.so ve libc.so.6'ya ihtiyacı vardır, scratch imajında bunlar yoktur.
+Bir JIT derleyicisi ne yapar?;"Hangi kodun sık çalıştığını (""sıcak"" kod) izler ve program çalışırken o bytecode'u native makine koduna derler. Böylece o kısımlar native'e yakın hızda çalışır."
+Switch hedef MAC'ini öğrenmediği bir çerçeveyle ne yapar?;Geldiği port hariç o VLAN'daki tüm portlara taşır.
+8.8.8.8'e ping atıyorsun. Laptopun kimin MAC adresi için ARP yapar?;"Default gateway'in; MAC'ler sadece yerel bağlantıda önemlidir."
+VXLAN overlay'leri neden genelde daha küçük bir MTU ister?;"VXLAN kapsüllemesi ~50 byte başlık ekler; dış paket hâlâ 1500'e sığsın diye iç paketler küçülmeli."
+Gratuitous ARP ile failover AWS/GCP VPC'lerinde neden genelde çalışmaz?;"Bulut ağı gerçek bir L2 segmenti değildir; hangi IP'nin hangi arayüze ait olduğunu SDN kontrol eder ve GARP'ı yok sayar."
+STP hangi sorunu çözer?;"Yedek bağlantıları kapatır; yayınlar sonsuza dek dönüp yayın fırtınasına yol açamaz."
+Bir /22'de kaç adres var, 10.1.4.0/22 hangi aralığı kapsar?;1024 adres: 10.1.4.0 – 10.1.7.255.
+Bir makinede A üzerinden 10.0.0.0/8 ve B üzerinden 10.0.5.0/24 rotası var. 10.0.5.20 nereye gider?;B üzerinden: /24 en uzun eşleşen önek.
+Paket router'ları geçerken kaynak ve hedef IP'ler değişir mi?;Hayır (NAT yoksa). Her durakta sadece TTL/sağlama toplamı ve L2 (MAC) başlığı değişir.
+Tüm ICMP'yi engellemek neden bazı kullanıcılar için HTTPS'i bozabilir?;"PMTU keşfi ICMP ""fragmentation needed""a dayanır; o olmadan büyük paketler sessizce atılır ve bağlantılar takılır."
+Pod CIDR'ları neden şirket ağınla çakışmamalı?;Rotalar belirsizleşir: şirket IP'lerine giden trafik cluster'a gönderilir (ya da tersi) ve peering/VPN kurulamaz.
+Durumlu bir firewall HTTPS için neden tek kurala ihtiyaç duyarken bir NACL iki kural ister?;"conntrack izin verilen bir akışın cevaplarını otomatik geçirir; durumsuz bir NACL ephemeral portlara dönen trafiğe açıkça izin vermelidir."
+Hiçbir arayüzde o IP yokken ClusterIP'ye giden bir paket pod'a nasıl ulaşır?;"kube-proxy kuralları PREROUTING/OUTPUT'ta hedefi seçilen bir pod IP'sine DNAT yapar; conntrack eşlemeyi bağlantı boyunca tutar."
+Çok sayıda pod bir NAT gateway üzerinden tek bir dış API'yi çağırıyor ve rastgele zaman aşımları alıyor. Muhtemel sebep?;O tek hedef IP:port'a SNAT kaynak port tükenmesi. NAT IP'si ekle, bağlantıları yeniden kullan ya da hedefleri dağıt.
+Bir NetworkPolicy bir pod'u ingress için seçince diğer trafiğe ne olur?;Hiçbir politikanın açıkça izin vermediği tüm gelen trafik o pod için reddedilir.
+externalTrafficPolicy: Local istemci IP'sini neden korur?;"Trafik sadece onu alan node'daki pod'lara gider; başka bir node'a SNAT gerekmez."
+Bir subnet'i 'public' yapan nedir?;Route table'ında bir internet gateway'e default rota olması (ve instance'ların genel IP'si olması).
+Private subnet'teki instance'lar paket indiremiyor. Neyi kontrol edersin?;Subnet'in route table'ında 0.0.0.0/0 → public subnet'teki bir NAT gateway var mı, NAT gateway sağlıklı mı, SG/NACL dışa ve dönüş trafiğine izin veriyor mu.
+"VPC A, B ile; B de C ile peer edilmiş. A, C'ye ulaşabilir mi?";"Hayır. Peering geçişli değildir; transit gateway kullan ya da A ile C'yi doğrudan peer et."
+Kurallarda CIDR yerine security group referans almak neden daha iyi?;Kurallar IP'leri değil rolleri takip eder: otomatik ölçeklemeyle IP'ler değişse de uygulama SG'sindeki her instance'a (ya da SG-for-pods ile pod'a) izin verilir.
+NAT gateway faturan çok büyük. Yaygın bir çözüm?;Trafiğin NAT gateway'i atlaması için S3/ECR/diğer AWS servislerine VPC endpoint'leri ekle.
+Bir paket 12 router'dan geçiyor. Hedef IP kaç kez değişir? Ya hedef MAC?;Hedef IP yol boyunca aynı kalır (sunucu tarafındaki NAT'ı saymazsak). Hedef MAC her hop'ta değişir, çünkü her L2 çerçevesi sadece sıradaki cihaza gider.
+Laptopun 192.168.1.50'ye ve 8.8.8.8'e ulaşmak istiyor. Her çerçeveye hangi MAC adresini koyar?;192.168.1.50 için (aynı /24): o makinenin kendi MAC'ini, ARP ile bulur. 8.8.8.8 için (subnet dışında): ağ geçidinin MAC'ini.
+Switch neye bakar, router neye bakar?;Switch MAC adreslerine bakar (L2). Router IP adreslerine (L3) ve yönlendirme tablosuna bakar.
+İnternetteki bir sunucu neden evdeki laptopuna bağlantı açamaz?;Laptopunun NAT arkasında sadece özel bir IP'si var. Router gelen paketleri sadece senin tarafının başlattığı konuşmalar (conntrack girdileri) için nereye göndereceğini bilir. İstenmeden gelen trafiğin bir eşleşmesi yoktur, port yönlendirme ayarlamadığın sürece.
+Evdeki router'ının NAT'ının AWS'deki karşılığı nedir?;NAT gateway: özel subnet'teki instance'lar dışarı giden trafiklerini onun üzerinden gönderir, o da özel IP'leri genel bir IP ile değiştirir.
+Cache-Control: no-cache aslında ne demek?;Cevap saklanabilir ama her kullanımdan önce sunucuyla yeniden doğrulanmalıdır (ör. If-None-Match). Saklamayı yasaklamak için no-store kullanılır.
+API'n curl ile çalışıyor ama tarayıcı CORS hatası veriyor. Neden, düzeltme nerede?;CORS'u sadece tarayıcılar uygular. API'nin (ya da önündeki ingress'in) o origin için Access-Control-Allow-Origin döndürmesi ve OPTIONS preflight'ına izin verilen metot ve header'larla cevap vermesi gerekir.
+Load balancer arkasında her log satırı aynı istemci IP'sini gösteriyor. Sorun ne?;Uygulama TCP karşı tarafını (LB'yi) logluyor. İstemci IP'sini X-Forwarded-For / Forwarded'dan oku ve sadece kendi proxy'lerinin eklediği girdilere güven.
+Bir CDN neden Vary: Accept-Encoding görmeli?;Aynı URL birden fazla kodlamada var (br, gzip, sıkıştırmasız). Vary olmadan CDN, brotli çözemeyen bir istemciye brotli gövde sunabilir.
+Hangi cookie öznitelikleri oturum cookie'sinin JavaScript ile okunmasını ve HTTP üzerinden gönderilmesini engeller?;HttpOnly (JS erişimi yok) ve Secure (sadece HTTPS). CSRF'e karşı SameSite=Lax ya da Strict ekle.
+Kök → TLD → yetkili zincirini aslında kim yürür: laptopun mu, çözücü mü?;Özyinelemeli çözücü. Laptopundaki stub çözücü tek bir sorgu gönderir ve son cevabı alır.
+On dakika önce TTL'i 3600 olan bir A kaydını değiştirdin. Bazı kullanıcılar neden hâlâ eski IP'yi görüyor?;"Değişiklikten önce önbelleğe alan çözücüler kopyalarının TTL'i dolana kadar (bir saate kadar) onu tutar; bazı uygulamalar daha da uzun tutar."
+Bir pod'un api.stripe.com sorgusu neden yavaş olabilir, iki çözüm nedir?;ndots:5 önce her search ekini, A ve AAAA için ayrı ayrı denetir. Sonunda nokta olan tam ismi kullan, ndots'u düşür ve/veya NodeLocal DNSCache çalıştır.
+DNSSEC neye karşı korur, neye karşı korumaz?;"Sahte ya da değiştirilmiş cevaplara karşı (gerçeklik ve bütünlük). Hangi isimleri sorguladığını gizlemez; o iş DoH/DoT'nin."
+Subdomain takeover nedir?;Bir CNAME hâlâ silinmiş bir bulut kaynağını (bucket, uygulama, CDN) gösteriyordur. Saldırgan o kaynak adını alır ve artık senin subdomain'inde içerik sunar.
+TCP neden veri göndermeden önce el sıkışmaya ihtiyaç duyar?;İki taraf başlangıç sıra numaralarında anlaşmalı ve karşı tarafın ulaşılabilir ve istekli olduğunu doğrulamalıdır.
+Akış kontrolü ile tıkanıklık kontrolü arasındaki fark ne?;Akış kontrolü alıcıyı korur (rwnd, tamponu). Tıkanıklık kontrolü ağı korur (cwnd, kayıptan ya da bant genişliği/RTT'den tahmin edilir).
+Servisinde CLOSE_WAIT'te 20.000 soket var. Neyi düzeltirsin?;Uygulamayı: karşı tarafın FIN'ini alıyor ama soketini hiç kapatmıyor (sızan bağlantılar, eksik close() / kapatılmamış response body).
+LB boşta süresi 60 sn, backend keep-alive süresi 30 sn iken neden ara sıra 502 alırsın?;"Backend boştaki bağlantıları önce kapatır; LB az önce kapanan bir bağlantıya yeni istek yollayabilir. Backend'in süresini LB'ninkinden uzun yap."
+Tek bir gRPC istemcisi neden bir Kubernetes Service arkasındaki tek pod'u boğabilir?;kube-proxy TCP bağlantısı başına dağıtır, gRPC ise tüm istekleri tek bir uzun ömürlü HTTP/2 bağlantısından yollar. L7 dağıtım (mesh, gateway) ya da istemci tarafı dağıtım kullan.
+TLS neden tüm veriyi RSA/ECDSA ile şifrelemiyor?;"Asimetrik kripto yavaştır. Bir kez anahtar anlaşması ve kimlik kanıtı için kullanılır; veri hızlı simetrik şifrelerle şifrelenir."
+CertificateVerify imzası, sertifikanın tek başına kanıtlamadığı neyi kanıtlar?;"Sunucunun özel anahtara sahip olduğunu. Açık sertifikayı herkes kopyalayabilir; anahtarla sadece sahibi imza atabilir."
+Siten Chrome'da çalışıyor ama curl 'unable to get local issuer certificate' diyor. Neden?;Sunucu ara sertifikayı göndermiyor. Chrome onu önbellekte tutuyordu, curl tutmuyordu. Tam zinciri sun.
+Sektör neden 47 günlük sertifikalara geçiyor?;"İptal mekanizmaları güvenilir çalışmıyor; kısa ömür, çalınmış ya da hatalı verilmiş bir sertifikanın ne kadar süre işe yarayacağını sınırlar ve otomasyonu zorunlu kılar."
+.example.com için hangi ACME challenge'ı gerekir?;DNS-01: wildcard sertifikalar _acme-challenge.example.com altında bir TXT kaydı ister.
+HTTP/2 akışları çokluyor. Neden yine de head-of-line blocking yaşayabilir?;"Akışlar tek bir TCP bağlantısını paylaşır; kayıp bir TCP segmenti sonraki tüm byte'ların teslimini bekletir, her akış bekler."
+Tarayıcı bir sitenin HTTP/3 desteklediğini nasıl öğrenir?;"Önceki bir cevaptaki Alt-Svc: h3="":443"" ya da bir HTTPS DNS kaydıyla. Sonra QUIC'i dener, UDP kapalıysa TCP'ye döner."
+0-RTT verisi neden güvenli isteklerle sınırlı?;"Saldırgan ilk uçuşu tekrar oynatabilir. Bir GET'i tekrarlamak zararsızdır; bir ödeme POST'unu tekrarlamak değildir."
+Bir Kubernetes Service arkasındaki gRPC servisinde tek bir pod sıcak. Neden?;"gRPC tek bir uzun ömürlü HTTP/2 bağlantısı tutar; kube-proxy istekleri değil bağlantıları dağıtır."
+Telefon Wi-Fi'dan 5G'ye geçince bir QUIC bağlantısına ne olur?;"IP değişir ama Connection ID değişmez; bağlantı yeniden kurulmak yerine göç eder."
+Bir proxy hangi metotları otomatik olarak güvenle yeniden deneyebilir, neden?;İdempotent olanları (GET, HEAD, PUT, DELETE, OPTIONS): tekrarlamak sonucu değiştirmez. POST bir kopya oluşturabilir.
+401 ile 403 arasındaki fark ne?;401: kim olduğunu bilmiyoruz (eksik/geçersiz kimlik bilgisi). 403: kim olduğunu biliyoruz ve iznin yok.
+90 sn süren bir rapor uç noktasında kullanıcılar 504 alıyor. Önce nereye bakarsın?;Proxy/ingress/LB okuma zaman aşımına (çoğu zaman 60 sn). O route için artır ya da uç noktayı asenkron yap (202 + yoklama).
+LLM sohbet arayüzleri neden çoğu zaman WebSocket yerine SSE kullanır?;"Akış tek yönlü (sunucu → istemci); SSE düz HTTP'dir, proxy ve CDN'lerden geçer, otomatik yeniden bağlanır."
+gRPC çağrı başarısız olsa bile neden HTTP 200 döner?;"gRPC kendi durumunu akışın sonundaki grpc-status trailer'ında bildirir; HTTP durumu sadece taşımanın çalıştığını söyler."
+Özyinelemeli çözücün .com sunucularını zaten biliyor. example.com için yine de köke sorar mı?;Hayır. Kökün yönlendirmesini (.com NS kayıtlarını) TTL'leri boyunca önbellekte tutar ve doğrudan .com sunucularına gider. Köke sadece o önbelleğin süresi dolduğunda sorulur.
+Yeni bir HTTPS isteği (TCP üzerinde TLS 1.3) neden HTTP verisi akmadan önce en az 2 RTT'ye mal olur?;TCP el sıkışması için 1 RTT, ardından TLS 1.3 el sıkışması için 1 RTT. HTTP isteği ancak bundan sonra gönderilebilir. HTTP/3, taşıma ve TLS el sıkışmalarını birleştirerek bunlardan birini kazandırır.
+Tarayıcı, sunucunun gerçekten example.com olduğunu ve bir saldırgan olmadığını nereden bilir?;Sunucu, tarayıcının güvendiği bir CA tarafından imzalanmış example.com sertifikası gönderir ve eşleşen özel anahtara sahip olduğunu kanıtlar (CertificateVerify). Tarayıcı zinciri, hostname'i ve geçerlilik tarihlerini kontrol eder.
+SNI nedir ve neden gerekir?;Server Name Indication: ClientHello içinde gönderilen hostname. Tek bir IP (bir load balancer, bir CDN) binlerce siteye hizmet verebilir, şifreleme başlamadan hangi sertifikayı sunacağını bilmesi gerekir.
+Load balancer'ından gelen 502 ile 504 arasındaki fark ne?;502 Bad Gateway: LB arka uçtan geçersiz bir cevap aldı ya da hiç cevap alamadı (çöktü, bağlantı reddedildi). 504 Gateway Timeout: arka uç zamanında cevap vermedi.
+L4 bir load balancer gRPC trafiğini neden dengesiz bırakabilir?;"Bağlantıları dengeler; gRPC tüm istekleri tek bir uzun ömürlü HTTP/2 bağlantısında çoklar, o istemciden gelen her şeyi tek backend alır."
+Readiness ve liveness probe'ları arasındaki fark ne?;Readiness: bu pod şu an trafik almalı mı? Liveness: takıldı mı, yeniden başlatılmalı mı?
+Derin bir liveness kontrolü (DB'yi sorgulayan) neden tehlikeli?;"DB'deki bir aksaklık her pod'un liveness'ını düşürür ve Kubernetes hepsini aynı anda yeniden başlatır; küçük bir sorun kesintiye dönüşür."
+Consistent hashing ne zaman işe yarar?;Aynı anahtarın aynı backend'e gitmesi gerektiğinde (önbellek yakınlığı, shard'lar) ve backend'ler değişince az anahtarın taşınmasını istediğinde.
+Kullanıcılar her rollout'ta birkaç saniye 502 görüyor. Neyi kontrol edersin?;Düzgün kapanışı: çıkıştan önce readiness'ın false olması, endpoint'ler güncellensin diye preStop sleep, SIGTERM işleme ve LB deregistration gecikmesi.
+Cache-aside'da yazmada anahtarı güncellemek yerine neden silersin?;"Eşzamanlı yazanlar önbelleği yanlış sırayla güncelleyip eski bir değer bırakabilir; silmek bir sonraki okumanın güncel değeri getirmesini sağlar."
+Önbellek izdihamı nedir, nasıl önlenir?;Çok sayıda istek süresi dolmuş aynı sıcak anahtarı aynı anda ıskalayıp DB'ye gider. İstek birleştirme/kilitler, stale-while-revalidate ya da jitter'lı TTL'lerle erken yenileme kullan.
+Redis'in bir çekirdeği %100 CPU'da, diğerleri boş. Olası sebepler?;"Yavaş bir komut (KEYS, dev set'ler, Lua) ya da sıcak bir anahtar; Redis komutları tek thread'de çalıştırır."
+Write-behind ne zaman kabul edilebilir?;Son birkaç yazmayı kaybetmek tolere edilebiliyorsa (sayaçlar, metrikler) ve yazma hızı kalıcılıktan önemliyse.
+Önbellek cluster'ı boş olarak yeniden başlayınca veritabanına ne olur, nasıl hazırlanırsın?;Tüm okuma yükünü alır (soğuk önbellek). Kritik anahtarları ısıt, trafiği kademeli artır ve DB'yi hız sınırları/circuit breaker'larla koru.
+WAL neden veri sayfalarından önce yazılır?;Commit edilmiş bir transaction çökme sonrası log yeniden oynatılarak her zaman kurtarılabilsin, veri sayfaları da tembelce flush edilebilsin diye.
+Replikasyon neden yedeklerin yerini tutmaz?;"Hatalar ve kötü niyetli silmeler dahil her değişikliği saniyeler içinde replikalara kopyalar; geri dönmek için zaman noktası yedeklerine ihtiyacın var."
+Bir sorgu created_at'e göre filtreliyor ama tek indeks (tenant_id, created_at) üzerinde. Verimli kullanılır mı?;"Genelde hayır: B-tree bileşik indeksleri soldan sağa kullanılır; filtrede tenant_id yoksa verimli arama yapamaz."
+Senkron ve asenkron replikasyon arasındaki ödünleşim ne?;Senkron: failover'da veri kaybı yok ama daha yüksek commit gecikmesi ve erişilebilirlik bağımlılığı. Asenkron: hızlı commit'ler ama son transaction'ların olası kaybı ve eski replika okumaları.
+Uygulamanı 10'dan 100 pod'a çıkardın ve Postgres bağlantı reddetmeye başladı. Neden, çözüm ne?;"Her pod'un havuzu N bağlantı açar; toplam max_connections'ı aşar. Bir bağlantı havuzlayıcı (PgBouncer/RDS Proxy) ve pod başına daha küçük havuzlar kullan."
+Tüketiciler neden idempotent olmalı?;"En az bir kez teslimde işleme ile ack arasındaki bir çökme yeniden teslime yol açar; handler iki kez aynı sonucu üretmeli."
+6 partition'lı bir topic'in var ve tüketicileri 10'a çıkarıyorsun. Ne olur?;"Sadece 6 tüketici partition alır; 4'ü boşta oturur. Paralelliği partition sayısı sınırlar."
+Uygulama kodunda 'DB'ye yaz, sonra Kafka'ya yayınla' yapmanın sorunu ne?;İkisi atomik değil: commit'ten sonraki bir çökme ya da yayınlama hatası olayı kaybettirir (ya da ters sırada geri alınmış veri için olay yayınlanır). Outbox/CDC kullan.
+Büyüyen tüketici gecikmesi sana ne söyler, ne yaparsın?;Tüketiciler üreticilerin yazdığından yavaş işliyor. Tüketicileri ölçekle (partition sayısına kadar), yavaş handler'ları düzelt ya da partition ekle.
+'Son 7 günün olaylarını yeni bir analitik servisine yeniden oynat' için kuyruk mu log mu?;"≥ 7 gün saklamalı bir log (Kafka); kuyruk tüketilince mesajları siler."
+Uygulama sunucuları neden stateless olmalı?;Böylece her instance her isteğe hizmet verebilir ve herhangi bir instance istendiği an eklenip öldürülebilir. Yatay ölçekleme, kademeli deploy ve kendi kendini iyileştirme bu sayede mümkün olur.
+L4 ile L7 load balancer arasındaki fark ne?;L4, TCP/UDP bağlantılarını içeriği okumadan IP ve porta göre iletir. L7 HTTP'yi anlar: host'a, yola ya da başlığa göre yönlendirebilir, TLS'i sonlandırabilir, tek tek istekleri tekrar deneyebilir.
+Bir kullanıcı profilini güncelliyor ve hemen ardından eski halini görüyor. Sebebi ne olabilir?;Replikasyon gecikmesi (okuma henüz yetişmemiş bir replikaya gitti) ya da yazma sırasında geçersiz kılınmamış eski bir cache girdisi.
+Kuyruk worker'ları neden idempotent olmalı?;"Çoğu kuyruk ""en az bir kez"" teslim eder. Bir iş iki kez çalışabilir; örneğin worker işi yaptıktan sonra ama onaylamadan önce çökerse. İki kez çalışınca kartı iki kez çekmemeli."
+API'n bazen 30 sn süren bir ödeme sağlayıcısını çağırıyor. Ne eklersin?;Çağrıya bir zaman aşımı, backoff ile tekrar deneme (sadece çağrı idempotent ise), bir circuit breaker. En iyisi de çağrıyı asenkron bir işe taşımak, kullanıcının isteği beklemesin.
+CSS neden render engelleyici de görseller değil?;"CSSOM olmadan tarayıcı hiçbir şeyin nasıl görüneceğini ya da nereye gideceğini bilemez; onsuz boyamak stilsiz içerik yanıp sönmesine yol açar. Görseller sonra yerine oturabilir."
+defer ile async arasındaki fark ne?;"İkisi de paralel indirir. defer HTML ayrıştırmasından sonra, belge sırasıyla çalışır; async iner inmez, herhangi bir sırada çalışır."
+Neden left yerine transform animasyonu yapılır?;"left her karede layout ve paint tetikler; transform layout olmadan GPU'da compositor tarafından işlenebilir."
+Layout thrashing nedir?;"DOM yazmaları ile layout okumalarını iç içe yapmak; tarayıcı kare başına birçok kez layout'u senkron yeniden hesaplamak zorunda kalır."
+Altyapı ekibi render hızı için ne yapabilir?;TTFB'yi düşürmek (CDN, önbellek, akış), sıkıştırma, HTTP/2-3, early hints, doğru cache header'ları ve uçta görsel optimizasyonu.
+setTimeout(f,0), Promise.resolve().then(g) ve senkron bir console.log hangi sırayla çalışır?;Önce senkron log, sonra g (mikro görev), sonra f (görev).
+500 ms'lik bir döngü neden tıklamaların yok sayıldığı hissini verir?;"Tıklama handler'ı ancak mevcut görev bitince çalışabilen bir görevdir; render da bekler."
+await ana thread'i bloklar mı?;"Hayır. O async fonksiyonu duraklatır ve kontrolü event loop'a verir; CPU yoğun kod yine bloklar."
+Web Worker ne zaman kullanılmalı?;Aksi halde ana thread'de uzun görevler oluşturacak CPU yoğun işler için (ayrıştırma, görsel/kripto işleme, arama).
+Uzun görevin sunucu tarafındaki karşılığı ne, nasıl tespit edilir?;"Node.js event loop'unda bloklayan bir işlem; event loop gecikme/kullanım metrikleriyle tespit edilir."
+Lighthouse neden INP bildiremez, onun yerine ne gösterir?;"INP sayfanın ömrü boyunca gerçek kullanıcı etkileşimleri ister; Lighthouse laboratuvar vekili olarak Total Blocking Time gösterir."
+LCP 4 sn ama TTFB 3 sn. Nereden başlarsın?;Sunucu tarafından: HTML'i CDN'de önbelleğe almak, backend/veritabanı gecikmesi, yönlendirmeler, origin mesafesi. Ön uç 3 sn'lik bir TTFB'yi düzeltemez.
+'p75 LCP = 2,3 sn' ne demek?;"Gerçek sayfa yüklemelerinin %75'inde LCP 2,3 sn ya da altındaydı; en yavaş %25 daha kötüydü."
+Bir cookie banner'ı yüklemeden sonra sayfayı aşağı itiyor. Hangi metrik zarar görür, nasıl düzeltirsin?;CLS. Yerini baştan ayır, üstüne bindir ya da mevcut içeriği kaydırmadan göster.
+Core Web Vitals'ı iyileştiren üç altyapı değişikliği say.;HTML/dosyaların CDN'de önbelleğe alınması, HTTP/3 + Brotli sıkıştırma, uçta görsel optimizasyonu (ayrıca: Early Hints, yönlendirme zincirlerini kaldırmak).
+Same-origin policy tam olarak neyi engeller?;"Başka bir origin'in cevaplarını, DOM'unu, cookie'lerini ve depolamasını okumayı; ona istek göndermeyi engellemez."
+SOP yerindeyken bile XSS neden bu kadar tehlikeli?;"Saldırganın script'i senin origin'inde çalışır; SOP onu senin kodun sayar: sayfaları okuyabilir ve kullanıcı olarak API çağırabilir."
+SameSite=Lax çoğu CSRF'i nasıl durdurur?;"Cookie'ler siteler arası POST'lara ya da alt isteklere eklenmez; başka bir siteden gelen sahte form gönderimi oturumsuz ulaşır."
+CORS API'ni koruyan bir güvenlik özelliği mi?;"Hayır. Tarayıcı okumaları için SOP'nin kontrollü bir gevşetilmesidir; tarayıcı olmayan istemcileri durdurmaz ve kimlik doğrulama değildir."
+CSP neden önce Report-Only modunda yayına alınır?;Uygulamaya koymadan önce hangi meşru script/stillerin engelleneceğini görmek ve siteyi bozmamak için.
+<head> içindeki düz bir <script src> neden tüm sayfayı geciktirebilir?;Ayrıştırıcıyı bloklar: HTML ayrıştırıcısı durur, script'in inmesini ve çalışmasını bekler, DOM'u kurmaya ancak ondan sonra devam eder. defer ya da async bunu önler.
+left ile transform: translateX() arasında animasyonu hangisi daha ucuz? Neden?;transform. left değişikliği her karede ana thread'de layout ve paint tetikler. transform, layout ya da paint olmadan GPU'daki compositor tarafından halledilebilir.
+Bir butona tıklamanın herhangi bir etkisi 400 ms sonra görünüyor. Hangi metrik kötüleşir ve olağan sebep nedir?;INP (Interaction to Next Paint). Olağan sebep, ana thread'de olay işleyicisini ya da sonraki render adımını bloklayan uzun bir JavaScript görevidir.
+View Source ile Elements paneli arasındaki fark ne?;View Source, sunucunun gönderdiği orijinal HTML byte'larını gösterir. Elements ise ayrıştırıcının düzelttiği ve JavaScript'in değiştirdiği mevcut DOM'u gösterir.
+Neden her site kendi renderer process'ini alır?;Güvenlik ve kararlılık. Ele geçirilmiş ya da çöken bir sayfa kendi sandbox'lı process'inde izole edilir (Site Isolation). Diğer sitelerin belleğini okuyamaz, onları da çökertemez.
+Kötü sıralanmış bir Dockerfile'da tek satır kaynak kodu değiştirmek neden npm install'ı yeniden çalıştırır?;"COPY . . install adımından önce geliyor; herhangi bir kaynak değişikliği o katmanı ve sonraki her katmanı geçersiz kılar."
+Sonraki bir adımda RUN rm secret.key yapıyorsun. Secret imajdan gitti mi?;"Hayır. Hâlâ önceki katmanda; imaja sahip herkes onu çıkarabilir. Build secret'ları kullan."
+Etiket ile digest arasındaki fark ne?;"Etiket taşınabilir bir addır; digest her zaman aynı imaj byte'larını tanımlayan bir içerik hash'idir."
+Container'ın namespace'lerini oluşturmak için clone()'u aslında hangi bileşen çağırır?;kubelet adına containerd'nin shim'inin başlattığı runc (ya da başka bir OCI runtime'ı).
+Yeni node'larda pod'ların başlaması 2 dakika sürüyor. Nereye bakarsın?;"İmaj çekme süresine: imaj boyutu, registry kısıtlaması/gecikmesi, taze node'larda önbellek olmaması; daha küçük imajlar, aynalar, önceden çekme ya da tembel çekme kullan."
+etcd'ye hangi bileşen yazar?;"Sadece API server; diğer her şey onun üzerinden okur ve yazar."
+Bir pod sonsuza dek Pending'de kalıyor. Neyi kontrol edersin?;kubectl describe pod olaylarını: yetersiz CPU/bellek request'leri, tolere edilmeyen taint'ler, karşılanamayan affinity, bağlanmamış PVC ya da zone uyumsuzluğu.
+Sildiğin bir pod neden geri geldi?;ReplicaSet controller'ı istenenden az pod gördü ve bir yenisini oluşturdu.
+Scheduler bir pod'un sığıp sığmadığına neyle karar verir: request'ler mi gerçek kullanım mı?;Request'lerle.
+Operator nedir?;Belirli bir uygulamayı çalıştırmayı (oluştur, ölçekle, yedekle, yükselt, failover) bir insan operatörün yapacağı gibi otomatikleştiren bir controller artı CRD'ler.
+Kubernetes ağ modelinin üç kuralı nedir?;"Her pod kendi IP'sini alır; pod'lar diğer tüm pod'lara NAT'sız ulaşabilir; bir node'daki ajanlar o node'daki tüm pod'lara ulaşabilir."
+Bir pod başlarken CNI eklentisi ne yapar?;Pod'un arayüzünü (veth) oluşturur, bir IP atar, rotaları ayarlar ve IP'yi diğer node'lardan erişilebilir yapar.
+Bir Service var ama ona curl zaman aşımına düşüyor. İlk kontrol?;EndpointSlice'ı: boşsa seçici eşleşmiyor ya da hiçbir pod Ready değil.
+Yeni kurulumlarda neden Ingress yerine Gateway API tercih edilir?;Daha zengin, taşınabilir özelliklere (trafik bölme, header eşleştirme, rol ayrımı) sahip bakımı süren standarttır ve topluluk ingress-nginx controller'ı emekliye ayrıldı.
+Default-deny bir NetworkPolicy uyguladıktan sonra hiçbir şey DNS çözemiyor. Neden?;"kube-dns'e (53 portu) çıkış da artık reddediliyor; DNS için açık bir izin kuralı ekle."
+Neden ortam başına yeniden üretmek yerine 'bir kez üret, her yere terfi ettir'?;"Production tam olarak test edilen byte'ları çalıştırsın diye; yeniden üretmek farklı bağımlılıklar ya da taban imajlar çekebilir."
+Pull tabanlı GitOps'un temel güvenlik avantajı ne?;"CI'ın cluster kimlik bilgisine ihtiyacı yok; cluster git'ten çeker ve sadece okuma erişimine ihtiyaç duyar."
+Biri production'da kubectl edit çalıştırıyor. selfHeal açık Argo CD ne yapar?;Git'ten sapmayı tespit eder ve canlı nesneyi git durumuna geri döndürür.
+Blue-green ne zaman canary'den iyidir?;Anında, hepsi birden bir geçiş ve anında geri alma gerektiğinde, kısa süre çift kapasiteyi karşılayabildiğinde (ya da trafiği ince bölemediğinde).
+Rolling ya da canary deploy'larda DB migration'ları neden geriye uyumlu olmalı?;Eski ve yeni uygulama sürümleri aynı veritabanına karşı aynı anda çalışır.
+Neden user_id'yi bir Prometheus etiketi olarak kullanmamalısın?;"Her farklı değer yeni bir zaman serisi oluşturur; milyonlarca kullanıcı = milyonlarca seri, bellek, depolama ve sorgu maliyetini patlatır."
+SLI ile SLO arasındaki fark ne?;"SLI ölçümdür (iyi olayların oranı); SLO bir zaman penceresi için onun hedefidir."
+SLO'n 30 günde %99,9. Hata bütçesi ne kadar tam kesintiye izin verir?;30 günün %0,1'i ≈ 43,2 dakika.
+'Hata oranı 5 dakika boyunca > %1' yerine neden burn rate'e alarm kurulur?;Burn rate alarmları bütçeye ve kullanıcı etkisine bağlar: hızlı yanmalar çabuk sayfalar, yavaş yanmalar bilet açar ve kısa zararsız sıçramalar kimseyi uyandırmaz.
+Kuyruk tabanlı örnekleme, baş tabanlının vermediği neyi verir?;"Karar trace tamamlandıktan sonra verilir; tüm hataları ve yavaş trace'leri tutup normallerin çoğunu atabilirsin."
+Container küçük bir sanal makine midir?;Hayır. Host kernel'ini paylaşan, namespace'lerle izole edilmiş ve cgroup'larla sınırlandırılmış normal bir Linux process'idir. VM ise bir hypervisor üzerinde kendi kernel'ini çalıştırır.
+Bir pod Pending'de takılı kaldı. Hangi bileşen henüz işini yapmadı ve neden olabilir?;Scheduler onu bir node'a atamadı. Genelde sebebi, hiçbir node'da isteklerine (requests) yetecek boş CPU/bellek olmaması ya da taint'ler, affinity kuralları veya bağlanmamış bir PersistentVolumeClaim'dir. kubectl describe pod sebebi event'lerde gösterir.
+Bir Deployment'a ait pod'u siliyorsun ve yenisi beliriyor. Onu kim oluşturdu?;ReplicaSet controller (kube-controller-manager içinde). Gerçek replika sayısının istenenden az olduğunu gördü ve yeni bir Pod nesnesi oluşturdu. Scheduler ve kubelet de onu hayata geçirdi.
+Push tabanlı CD ile GitOps arasındaki fark ne?;Push tabanlı CD'de pipeline, cluster kimlik bilgileriyle cluster'a karşı kubectl apply/helm upgrade çalıştırır. GitOps'ta cluster içindeki bir ajan (Argo CD, Flux) istenen durumu git'ten çeker ve sürekli uzlaştırır. Böylece git doğruluk kaynağı olur ve sapmalar düzeltilir.
+Servisin yavaş ama CPU ve bellek iyi görünüyor. Hangi sinyale başvurursun?;Trace'lere: servisler arasında hangi aşağı akış çağrısının ya da span'in zaman aldığını görmek için. Sonra o istek için loglara.
+LLM altyapısında neden her şey token cinsinden ölçülür?;Model karakterleri ya da kelimeleri değil, token'ları işler. İstek başına hesaplama, adım başına gecikme, KV cache belleği ve API maliyeti, girdi ve çıktı token sayısıyla ölçeklenir.
+Bir MoE modelin toplam 120B parametresi var ama token başına sadece 5B'si aktif. Belleği ve hesaplamayı neye göre boyutlandırırsın?;Belleği 120B'nin tamamına göre (her uzman yüklenmeli), hesaplamayı token başına kabaca 5B'ye göre. MoE modellerinin token başına ucuz çalışmasına rağmen hâlâ çok GPU belleği istemesinin sebebi budur.
+Decoder-only bir modelde geçmiş key ve value'lar neden önbelleğe alınabilir?;Her token sadece önceki token'lara bakar ve önceki token'lar üretildikten sonra asla değişmez. Bu yüzden K ve V vektörleri geçerli kalır ve sonraki her adımda yeniden kullanılabilir.
+Temperature 0 ne demek?;Greedy decoding: her zaman en olası sıradaki token'ı seç. Çıktı deterministik olur (aynı girdi ve kurulum verildiğinde).
+Altyapı açısından LoRA ile fine-tuning ve tam fine-tuning arasındaki fark ne?;LoRA, temel ağırlıklar dondurulmuşken küçük adaptör matrislerini eğitir. Bu yüzden çok daha az GPU belleği gerektirir ve küçük dosyalar üretir. Hatta birçok LoRA adaptörü, ortak tek bir temel modelin üstünde servis edilebilir.
+Decode sırasında LLM'ler neden genelde FLOPS ile değil de bellek bant genişliğiyle sınırlıdır?;Her decode adımı her ağırlığı bir kez okur ama dizi başına ağırlık başına sadece ~2 FLOP yapar. Bu, GPU'nun hesaplama sınırlı olması için gereken byte başına ~300 FLOP'un çok altında kalır. Bu yüzden GPU HBM'i bekler.
+4,8 TB/sn'lik tek bir GPU'da FP8'deki 70B'lik bir modelin teorik azami decode hızı nedir?;70 GB ağırlık ÷ 4,8 TB/sn ≈ token başına 15 ms → tek akış için ~70 token/sn (KV cache okumalarını saymazsak). Batching tek akış hızını değil, toplam verimi artırır.
+NVLink ile InfiniBand arasındaki fark ne?;NVLink, bir sunucu ya da raf içindeki GPU'lar arasındaki scale-up bağlantısıdır (TB/sn, bellek benzeri). InfiniBand (ya da RoCE), sunucular arasındaki scale-out ağıdır (NIC başına yüzlerce Gb/sn).
+GPUDirect RDMA neyi kazandırır?;CPU ve sistem RAM'i üzerinden yapılan kopyaları. NIC doğrudan GPU belleğinden okur ve ona yazar. Bu gecikmeyi düşürür ve CPU'yu serbest bırakır.
+Bir AI sunucusunda neden her GPU'nun kendi NIC'i vardır?;"Toplu işlemler (all-reduce gibi) tüm GPU'ların aynı anda veri göndermesine yol açar. GPU başına bir NIC, her biri kendi ""rail""inde olunca, her GPU'ya paylaşmadan tam ağ bant genişliği verir."
+"Pod'un \""CUDA driver version is insufficient for CUDA runtime version\"" hatasıyla düşüyor. Sorun nerede?";Host'un sürücüsü, imajın içindeki CUDA runtime'ın ihtiyaç duyduğundan daha eski. Ya node sürücüsünü yükselt (GPU Operator / node imajı) ya da daha eski bir CUDA versiyonu için hazırlanmış bir imaj kullan.
+Bir CUDA container imajı neden GPU sürücüsünü içermez?;Sürücü, host kernel'iyle eşleşmesi gereken ve host'ta yüklenen bir kernel modülü (nvidia.ko) içerir. Toolkit, eşleşen user space kısmını (libcuda.so) container başlarken host'tan container'a bağlar.
+Zaman dilimleme yerine ne zaman MIG seçersin?;Farklı ekiplerin ya da kiracıların iş yükleri bir GPU'yu paylaşıyor ve tahmin edilebilir performansla garantili bellek ve hata izolasyonuna ihtiyaç duyuyorsa. Zaman dilimleme ne izolasyon ne de bellek limiti verir.
+nvidia-smi %100 kullanım gösteriyor ama verim düşük. Neye bakarsın?;"SM activity, tensor pipe activity ve bellek bant genişliği gibi DCGM metriklerine. %100 ""kullanım"", örnekleme süresinde bir kernel'in çalıştığı anlamına gelir. O kernel minik olabilir, bellek sınırlı olabilir ya da bekliyor olabilir."
+NCCL ne yapar ve hangi donanım yollarını kullanır?;GPU'lar arasında toplu iletişimi (all-reduce, all-gather, reduce-scatter…) uygular. Node içinde NVLink/NVSwitch'i, node'lar arasında GPUDirect RDMA ile InfiniBand/RoCE'yi seçer.
+Tensor parallelism neden genelde tek bir sunucunun (ya da NVLink alanının) içinde tutulur?;TP, kısmi sonuçları her katmanda, forward ve backward'da değiş tokuş eder. Bu, NVLink'in TB/sn bant genişliğini ve düşük gecikmesini gerektirir. Ağ üzerinden yapılsa her adımı bekletirdi.
+AdamW ve karma hassasiyetle 13B'lik bir modelin tam eğitim durumu kabaca ne kadar bellek ister?;Parametre başına yaklaşık 16 byte → aktivasyonlar hariç ~208 GB. Bu tek bir GPU'dan fazla, bu yüzden birkaç GPU üzerinde FSDP/ZeRO kullanırsın.
+Gang scheduling nedir ve dağıtık eğitim neden ona ihtiyaç duyar?;Bir işin tüm process'lerini ya hep birlikte başlatmak ya da hiç başlatmamak. Rank'lerin sadece bir kısmı başlarsa, pahalı GPU'ları tutarken diğerlerini bekleyerek kilitlenirler. Böyle iki iş cluster'ı kilitleyebilir.
+512 GPU'luk bir işteki bir node'un NIC'i yavaş. Tüm işe ne olur?;Her toplu işlem en yavaş katılımcıyı bekler, bu yüzden her adım o node'un hızına düşer. Yavaş kalanları tespit etmek ve node'u değiştirmek önemlidir.
+1.000 GPU'luk koşun her 3 saatte bir checkpoint alıyor ve ortalama her 4 saatte bir node arızalanıyor. Bu neden kötü?;Her arıza 3 saate kadar × 1.000 GPU'luk işi artı yeniden başlatma süresini kaybettirir ve arızalar neredeyse checkpoint'ler kadar sık olur. Goodput'u artırmak için daha sık (asenkron) checkpoint al.
+Kullanıcılar ilk kelimenin 4 saniyede çıktığından ama sonra metnin hızlı aktığından şikâyet ediyor. Hangi metrik ve hangi aşama?;Yüksek TTFT: ya kuyrukta bekleme (yetersiz kapasite ya da kötü yönlendirme) ya da yavaş prefill (çok uzun prompt'lar). Prefix caching, parçalı prefill, daha fazla replika ya da P/D ayrıştırma yardımcı olur.
+Round-robin yük dağıtımı LLM servisine neden zarar verir?;Her sohbetin KV cache'inin (önekinin) nerede durduğunu yok sayar. Bu yüzden istekler prefill'i yeniden hesaplamak zorunda olan pod'lara düşmeye devam eder. KV duyarlı yönlendirme onları öneki zaten tutan pod'a gönderir.
+8 KV head'li, head boyutu 128 olan 32 katmanlı bir model, BF16'da 4k token'lık 100 eşzamanlı istek için ne kadar KV cache'e ihtiyaç duyar?;2 × 32 × 8 × 128 × 2 byte = token başına 128 KB → × 4.096 token × 100 istek ≈ 54 GB.
+Speculative decoding modelin cevaplarını değiştirir mi?;Hayır. Kabul edilen token'lar tam olarak hedef modelin üreteceği token'lardır. Taslak sadece birkaçının tek bir forward pass'te onaylanmasını sağlar.
+Prefill ve decode neden farklı GPU'lara ayrılır?;Farklı kaynakları zorlarlar (hesaplama ve bellek bant genişliği). Bir arada olduklarında uzun prefill'ler herkesin decode adımlarını takılmaya uğratır. Ayrı havuzlar bağımsız olarak boyutlandırılabilir, ölçeklenebilir ve kendi darboğazlarına göre ayarlanabilir.
+DRA, nvidia.com/gpu: 1'in ifade edemediği neyi ifade edebilir?;Özellikleri ve ilişkileri: belirli bir model ya da bellek boyutu, bir MIG profili, aynı NVLink alanındaki birkaç GPU, pod'lar arasında ortak talepler. Device plugin sadece bir sayı açar.
+64 GPU'luk bir eğitim işinin 40 pod'u zamanlanıyor ve geri kalanı Pending'de kalıyor. Sorun ne ve ne düzeltir?;Gang scheduling yok: varsayılan scheduler pod'ları tek tek yerleştirdi. Çalışan 40 pod, diğerlerini beklerken GPU'ları tutuyor. Kueue (ya da KAI/Volcano) işi ancak 64 GPU'nun hepsi müsait olduğunda kabul eder.
+GPU node'ları neden taint'lenmeli?;Sıradan pod'lar (web uygulamaları, sidecar'lar, sistem işleri) çok pahalı GPU node'larına düşüp GPU iş yüklerinin ihtiyaç duyduğu CPU/belleği almasın diye. Oraya sadece taint'i tolere eden ve GPU isteyen pod'lar gider.
+LLM Deployment'ın ölçekleniyor ama yeni pod'ların Ready olması 8 dakika sürüyor. Neyi değiştirirsin?;Model ağırlıklarını node'a yakın önbellekle (yerel NVMe'ye önceden çekme, ortak PVC, OCI artifact'ler), akış halinde bir yükleyici kullan, asgari sayıda sıcak replika tut ve daha erken ölçekle (SLO ihlallerine değil kuyruk uzunluğuna göre).
+Gateway API Inference Extension'daki endpoint seçici, normal bir Service'in yapmadığı neyi yapar?;İstek başına bir model sunucusu pod'unu LLM'e özgü sinyallere göre seçer: önek/KV cache yerelliği, kuyruk uzunluğu, KV cache kullanımı, yüklü LoRA adaptörleri. Bir Service sadece bağlantıları dağıtır.
+Neden sadece vektör araması yerine hibrit arama kullanılır?;Vektörler anlamı yakalar ama hata kodları, ticket ID'leri ya da ürün isimleri gibi tam token'larda zayıftır. BM25 anahtar kelime araması bunları yakalar. İkisini birleştirmek geri çağırmayı (recall) artırır.
+Bir RAG sisteminde izinler nerede uygulanmalı?;Getirme anında: her parçayla birlikte ACL üst verisini sakla ve aramayı kullanıcının kimliğine göre filtrele. Böylece model, kullanıcının okumaya yetkisi olmayan dokümanları hiç görmez.
+Araç çağırmada model tam olarak ne üretir ve aracı kim çalıştırır?;Model, aracın adını ve JSON argümanlarını belirten yapılandırılmış bir mesaj üretir. Uygulama (ya da MCP istemcisi) çağrıyı doğrular ve çalıştırır, sonra sonucu modele geri gönderir.
+Prompt injection nedir ve ajanlar için neden daha büyük bir risktir?;Kullanıcı girdisine, dokümanlara ya da araç sonuçlarına gizlenmiş, sistemin talimatlarını geçersiz kılmaya çalışan talimatlardır. Ajanlar kimlik bilgileriyle sistemler üzerinde iş yapar. Başarılı bir injection sadece kötü bir cevaba değil, gerçek yan etkilere yol açabilir.
+Bir şikâyeti düzeltmek için sistem prompt'unu değiştiriyorsun. Başka bir şeyi bozmadığını nereden bilirsin?;Değişiklikten önce ve sonra eval setini (değerlendiricileri olan versiyonlu bir test seti) çalıştır, puanları kategori bazında karşılaştır ve canlı trafikten örnekleyip puanlayarak kademeli dağıt.
+Decode neden genelde hesaplamayla değil de bellek bant genişliğiyle sınırlıdır?;Her decode adımı istek başına tek bir token üretir, ama yine de tüm model ağırlıklarını (ve KV cache'i) HBM'den okumak zorundadır. Okunan byte başına az hesap düşer, bu yüzden GPU belleği bekler. Birçok isteği bir araya toplamak (batching), her ağırlık okumasını daha fazla token için kullandırır.
+FP16'daki 70B'lik bir model tek bir 80 GB GPU'da çalışabilir mi?;"Hayır. Sadece ağırlıklar ~140 GB. Seçenekler: quantize etmek (FP8 ≈ 70 GB, KV cache ile hâlâ sıkışık; INT4 ≈ 35 GB) ya da modeli tensor parallelism ile birkaç GPU'ya bölmek."
+KV cache nedir ve eşzamanlılığı neden sınırlar?;Her aktif isteğin önceki tüm token'larının attention key ve value'larını saklar ki her adımda yeniden hesaplanmasınlar. Bağlam uzunluğu ve eşzamanlı istek sayısıyla büyür ve ağırlıkların yanında GPU belleğine sığmak zorundadır.
+Bir LLM servisi neden CPU'ya göre değil de kuyruk uzunluğu ya da KV cache kullanımına göre ölçeklenir?;İş GPU'da yapılır. GPU doyduğunda ve istekler kuyrukta beklerken bile CPU kullanımı düşük kalır. CPU tabanlı otomatik ölçekleme hiç tepki vermezdi.
+RAG'de embedding modeli ne yapar, vector DB ne yapar?;Embedding modeli metni (parçaları ve soruları) anlamı yakalayan vektörlere çevirir. Vector DB parça vektörlerini saklar ve sorunun vektörüne en yakın olanları hızlıca bulur. Bunlar sonra prompt'a eklenir.
