@@ -2428,5 +2428,140 @@
 "url": "10-ai/",
 "q": "In RAG, what does the embedding model do, and what does the vector DB do?",
 "a": "The embedding model turns text (chunks and questions) into vectors that capture meaning. The vector DB stores the chunk vectors and quickly finds the ones closest to the question's vector, which are then added to the prompt."
+},
+{
+"id": "e94d671e8f",
+"ch": "11-security",
+"chTitle": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"page": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"url": "11-security/",
+"q": "What's the difference between authentication and authorization?",
+"a": "Authentication proves who you are (login, token, certificate); authorization decides what that identity may do (roles, policies)."
+},
+{
+"id": "7fa97bafd6",
+"ch": "11-security",
+"chTitle": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"page": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"url": "11-security/",
+"q": "Why is OIDC federation from CI to the cloud safer than storing an access key as a CI secret?",
+"a": "There's no long-lived secret to leak: each job gets a signed token describing exactly which repo/branch it is, exchanged for credentials that expire in about an hour and only for a scoped role."
+},
+{
+"id": "5d698d6f13",
+"ch": "11-security",
+"chTitle": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"page": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"url": "11-security/",
+"q": "Are Kubernetes Secrets encrypted?",
+"a": "Only base64-encoded by default; anyone with RBAC get secrets can read them, and etcd stores them in plain text unless encryption at rest is configured."
+},
+{
+"id": "4822e22615",
+"ch": "11-security",
+"chTitle": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"page": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"url": "11-security/",
+"q": "What does 'zero trust' change compared to a classic perimeter network?",
+"a": "Being inside the network grants nothing: every request is authenticated and authorized by identity, typically with mTLS and policies, so one compromised host can't reach everything."
+},
+{
+"id": "830cfe11c5",
+"ch": "11-security",
+"chTitle": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"page": "Chapter 11 — Security: identity, secrets, zero trust & supply chain",
+"url": "11-security/",
+"q": "What does an SBOM help you answer during a new critical CVE?",
+"a": "Which of your images and services contain the affected package and version, so you know what to patch within minutes instead of days."
+},
+{
+"id": "290313954f",
+"ch": "12-distributed",
+"chTitle": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"page": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"url": "12-distributed/",
+"q": "Why can't you reliably tell a crashed node from a slow one?",
+"a": "Both look like \"no answer yet\". The only tool is a timeout, which is a guess; that's why systems must handle false failure detection."
+},
+{
+"id": "fc151a204c",
+"ch": "12-distributed",
+"chTitle": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"page": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"url": "12-distributed/",
+"q": "What does CAP force you to choose, and when?",
+"a": "During a network partition, either stay consistent (refuse some requests) or stay available (accept requests that may conflict). Without a partition, both are possible (but PACELC says consistency still costs latency)."
+},
+{
+"id": "72680b6055",
+"ch": "12-distributed",
+"chTitle": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"page": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"url": "12-distributed/",
+"q": "Why does etcd need a majority to commit a write?",
+"a": "Any two majorities overlap, so a committed entry is always known to at least one member of any future majority, which prevents two leaders committing conflicting histories."
+},
+{
+"id": "ce70a4a6b2",
+"ch": "12-distributed",
+"chTitle": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"page": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"url": "12-distributed/",
+"q": "Why is a 4-member etcd cluster no better than 3 for failures?",
+"a": "Quorum of 4 is 3, so it still tolerates only 1 failure, while costing more and adding latency."
+},
+{
+"id": "368dec4ae3",
+"ch": "12-distributed",
+"chTitle": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"page": "Chapter 12 — Distributed systems: consensus, consistency & resilience",
+"url": "12-distributed/",
+"q": "How does a retry storm happen, and how do you prevent it?",
+"a": "Multiple layers retry without backoff, multiplying load on a struggling dependency. Retry at one layer with exponential backoff, jitter and a retry budget, plus circuit breakers and load shedding."
+},
+{
+"id": "5fe373934d",
+"ch": "13-finops",
+"chTitle": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"page": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"url": "13-finops/",
+"q": "Why can a Kubernetes cluster be 'full' while CPU usage is 15%?",
+"a": "The scheduler packs by requests, not usage. If pods request far more than they use, nodes fill up on paper and the autoscaler adds nodes that stay mostly idle."
+},
+{
+"id": "2d95ee82e4",
+"ch": "13-finops",
+"chTitle": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"page": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"url": "13-finops/",
+"q": "When should you buy Savings Plans or committed use discounts?",
+"a": "For the steady baseline you are confident you'll run for 1–3 years, and only after right-sizing; otherwise you commit to paying for waste."
+},
+{
+"id": "651622d882",
+"ch": "13-finops",
+"chTitle": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"page": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"url": "13-finops/",
+"q": "Which workloads are good candidates for spot instances?",
+"a": "Stateless, fault-tolerant or retryable ones: web replicas behind a load balancer, batch jobs, CI runners, checkpointed training. Not single-instance databases."
+},
+{
+"id": "2ef4453bf9",
+"ch": "13-finops",
+"chTitle": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"page": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"url": "13-finops/",
+"q": "Why can traffic to S3 from private subnets be expensive, and how do you fix it?",
+"a": "Without a VPC endpoint it goes through the NAT gateway, which charges per GB processed. A gateway endpoint for S3 is free and keeps traffic private."
+},
+{
+"id": "7daf2433c7",
+"ch": "13-finops",
+"chTitle": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"page": "Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it",
+"url": "13-finops/",
+"q": "What is unit economics and why does it matter more than the total bill?",
+"a": "Cost per business unit (per 1,000 requests, per customer). A growing bill can be healthy if unit cost falls; a flat bill can hide falling efficiency."
 }
 ]

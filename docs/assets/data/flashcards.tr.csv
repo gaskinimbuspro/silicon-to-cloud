@@ -763,6 +763,43 @@ OTel GenAI;OpenTelemetry Generative AI semantic conventions — LLM çağrılar�
 Prefill / decode;Üretimin iki aşaması · Tüm prompt birden / adımda bir token
 TTFT / TPOT;Time To First Token / Time Per Output Token — Gecikme metrikleri · Kuyruk + prefill / bir decode adımı
 CUDA / NCCL;Compute Unified Device Architecture / NVIDIA Collective Communications Library — GPU programlama platformu / çoklu GPU iletişimi · GPU'da kernel'ler / NVLink & IB üzerinde all-reduce
+AuthN / AuthZ;Authentication / Authorization — Kimsin? / Ne yapabilirsin? · Giriş, token'lar / roller, politikalar
+IAM;Identity and Access Management — Bulutun kimlik ve yetki sistemi · Kullanıcılara, rollere, servis hesaplarına bağlı politikalar
+SSO / MFA;Single Sign-On / Multi-Factor Authentication — Çok uygulama için tek giriş / şifreden fazlası · IdP + ikinci faktör (passkey, TOTP)
+IdP;Identity Provider — Kullanıcıların kimliğini doğrulayan servis · Entra ID, Okta, Google, Keycloak
+OIDC;OpenID Connect — OAuth 2.0 üzerinde kimlik katmanı · İmzalı kimlik token'ları (JWT)
+JWT;JSON Web Token — İmzalı iddialar (sub, aud, exp) · Yayıncının açık anahtarıyla doğrulanır
+RBAC;Role-Based Access Control — Rollere gruplanmış yetkiler · Kubernetes Role/RoleBinding, bulut rolleri
+En az yetki;Least privilege — Sadece gerçekten gereken yetkiler · Etki alanını sınırlar
+İş yükü kimliği;Workload identity — İnsanlar için değil yazılım için kimlik · Statik anahtar yerine federe token'lar
+KMS / HSM;Key Management Service / Hardware Security Module — Yönetilen şifreleme anahtarları · Zarf şifreleme, anahtarlar asla çıkmaz
+Zero trust;Ağdaki konuma asla güvenme · Her isteği doğrula ve yetkilendir
+SPIFFE;Secure Production Identity Framework For Everyone — Standart iş yükü kimliği (spiffe://…) · SPIRE kısa ömürlü SVID'ler verir
+SBOM / SLSA;Software Bill of Materials / Supply-chain Levels for Software Artifacts — İçerik listesi / build bütünlüğü çerçevesi · CI'da üretilir ve onaylanır
+CVE / CVSS;Common Vulnerabilities and Exposures / Common Vulnerability Scoring System — Açık kimlikleri / önem puanları · Tarayıcılar paketleri CVE'lerle eşler
+SIEM;Security Information and Event Management — Merkezi güvenlik log analizi · Denetim loglarını ilişkilendirir, alarm verir
+Node / replika;Bir makine / verinin bir kopyası · Çok replika = erişilebilirlik + okuma ölçekleme
+Kısmi hata;Partial failure — Bazı parçalar çalışırken diğerleri çöker · Yavaşı ölüden ayıramazsın
+Ağ bölünmesi;Network partition — Node'lar canlı ama konuşamıyor · İki taraf da yazmaya devam ederse split brain
+CAP;Consistency, Availability, Partition tolerance — Bölünme sırasında C ya da A'yı seç · Bölünmeler olur, seçim gerçektir
+PACELC;Partition → A/C, Else → Latency/Consistency — CAP + normal durumdaki ödünleşim · Hata olmasa bile tutarlılık gecikmeye mal olur
+Linearizability;En güçlü tutarlılık: tek kopya gibi görünür · Her okuma en son commit edilen yazmayı görür
+Nihai tutarlılık;"Eventual consistency — Replikalar ""eninde sonunda"" yakınsar · Eski okumalar mümkün, yüksek erişilebilirlik"
+Uzlaşı;Consensus — Node'ların hatalara rağmen bir değer/sırada anlaşması · Raft, Paxos, Zab
+Çoğunluk (quorum);Oy verenlerin yarısından fazlası · 3'te 2, 5'te 3
+Lider / dönem;Leader / term — Yazmaları sıralayan node / seçim dönemi · Yüksek dönem kazanır
+Split brain;İki node'un da lider gibi davranması · Çoğunluklar ve fencing ile önlenir
+Geri basınç / yük atma;Backpressure / load shedding — Üreticileri yavaşlat / fazla işi erkenden reddet · Aşırı yükte sistemi korur
+FinOps;Financial Operations — Bulut maliyetini birlikte yönetme pratiği · Bilgilendir → Optimize et → İşlet
+On-demand;Saniye/saat başına öde, taahhüt yok · En esnek, en pahalı
+RI / Savings Plan / CUD;Reserved Instance / — / Committed Use Discount — ~%30–70 indirim için 1–3 yıl taahhüt · Kullanılmasa da taahhüdü ödersin
+Spot / preemptible;Boş kapasite, ~%60–90 indirimli · ~2 dk uyarıyla geri alınabilir
+Zone'lar arası trafik;Availability Zone — Bir bölgedeki zone'lar arası veri · İki yönde de ücretli (her yön ~$0.01/GB)
+Doğru boyutlandırma;Right-sizing — Kaynakları gerçek kullanıma eşlemek · p95 kullanım + pay temelinde
+Bin packing;Pod'ları node'lara sıkı yerleştirmek · Daha az, daha dolu node
+Showback / chargeback;Ekip başına maliyeti göstermek / faturalamak · Etiket ve dağıtım gerekir
+Birim ekonomisi;Unit economics — İş birimi başına maliyet · €/1000 istek, €/müşteri, €/eğitim çalıştırması
+FOCUS;FinOps Open Cost and Usage Specification — Standart faturalama veri formatı · Bulutlar arasında aynı kolonlar
 Bir kesme handler'ı neden uyuyamaz ya da ağır iş yapamaz?;"Kesmeler (en azından o hatta/çekirdekte) bloklu ve herhangi bir process bağlamı dışında çalışır; uyumak o çekirdeğin kesme işlemesini dondurur. Ağır iş alt yarıya gider."
 NAPI ne yapar ve neden?;"İlk kesmeden sonra NIC'in kesmesini kapatır ve kuyruk boşalana kadar paket gruplarını yoklar; yüksek paket hızlarında kesme fırtınasını önler."
 Linux yeni takılan bir cihaz için hangi sürücüyü yükleyeceğini nasıl bilir?;"Bus cihaz kimliklerini okur, kernel modalias içeren bir uevent yayar, udev bunu bir modülle eşler ve modprobe çalıştırır; sonra sürücünün probe()'u cihazı sahiplenir."
@@ -1033,3 +1070,18 @@ FP16'daki 70B'lik bir model tek bir 80 GB GPU'da çalışabilir mi?;"Hayır. Sad
 KV cache nedir ve eşzamanlılığı neden sınırlar?;Her aktif isteğin önceki tüm token'larının attention key ve value'larını saklar ki her adımda yeniden hesaplanmasınlar. Bağlam uzunluğu ve eşzamanlı istek sayısıyla büyür ve ağırlıkların yanında GPU belleğine sığmak zorundadır.
 Bir LLM servisi neden CPU'ya göre değil de kuyruk uzunluğu ya da KV cache kullanımına göre ölçeklenir?;İş GPU'da yapılır. GPU doyduğunda ve istekler kuyrukta beklerken bile CPU kullanımı düşük kalır. CPU tabanlı otomatik ölçekleme hiç tepki vermezdi.
 RAG'de embedding modeli ne yapar, vector DB ne yapar?;Embedding modeli metni (parçaları ve soruları) anlamı yakalayan vektörlere çevirir. Vector DB parça vektörlerini saklar ve sorunun vektörüne en yakın olanları hızlıca bulur. Bunlar sonra prompt'a eklenir.
+Kimlik doğrulama ile yetkilendirme arasındaki fark ne?;"Kimlik doğrulama kim olduğunu kanıtlar (giriş, token, sertifika); yetkilendirme o kimliğin ne yapabileceğine karar verir (roller, politikalar)."
+CI'dan buluta OIDC federasyonu, erişim anahtarını CI secret'ı olarak saklamaktan neden daha güvenli?;Sızacak uzun ömürlü bir secret yok: her iş tam olarak hangi repo/branch olduğunu tarif eden imzalı bir token alır, bu da yaklaşık bir saatte dolan ve sadece kapsamlı bir rol için geçerli kimlik bilgileriyle değiştirilir.
+Kubernetes Secret'ları şifreli mi?;"Varsayılan olarak sadece base64 kodlu; RBAC'ta get secrets yetkisi olan herkes okuyabilir ve durağan şifreleme yapılandırılmazsa etcd onları düz metin saklar."
+'Zero trust' klasik bir çevre ağına göre neyi değiştirir?;"Ağın içinde olmak hiçbir şey kazandırmaz: her istek genelde mTLS ve politikalarla kimliğe göre doğrulanır ve yetkilendirilir; ele geçirilmiş tek bir makine her şeye ulaşamaz."
+Yeni bir kritik CVE sırasında SBOM hangi soruyu cevaplamana yardım eder?;"Hangi imajlarının ve servislerinin etkilenen paketi ve sürümü içerdiğini; böylece neyi yamalayacağını günler yerine dakikalar içinde bilirsin."
+Çökmüş bir node'u yavaş olandan neden güvenilir şekilde ayıramazsın?;"İkisi de ""henüz cevap yok"" gibi görünür. Tek araç bir tahmin olan zaman aşımıdır; sistemlerin yanlış hata tespitini ele alması gerekmesinin sebebi bu."
+CAP seni neyi seçmeye zorlar ve ne zaman?;Bir ağ bölünmesi sırasında ya tutarlı kal (bazı istekleri reddet) ya da erişilebilir kal (çakışabilecek istekleri kabul et). Bölünme yoksa ikisi de mümkün (ama PACELC tutarlılığın yine de gecikmeye mal olduğunu söyler).
+etcd bir yazmayı commit etmek için neden çoğunluğa ihtiyaç duyar?;"Herhangi iki çoğunluk kesişir; commit edilmiş bir girdi gelecekteki her çoğunluğun en az bir üyesi tarafından bilinir, bu da iki liderin çelişen geçmişleri commit etmesini önler."
+4 üyeli bir etcd cluster'ı hatalar için neden 3'ten daha iyi değil?;"4'ün çoğunluğu 3'tür; yine sadece 1 hatayı tolere eder, üstelik daha pahalıdır ve gecikme ekler."
+Bir yeniden deneme fırtınası nasıl olur, nasıl önlersin?;"Birden fazla katman backoff olmadan yeniden dener ve zorlanan bir bağımlılık üzerindeki yükü katlar. Tek bir katmanda üstel backoff, jitter ve yeniden deneme bütçesiyle yeniden dene; circuit breaker ve yük atma ekle."
+CPU kullanımı %15'ken bir Kubernetes cluster'ı neden 'dolu' olabilir?;Scheduler kullanıma göre değil request'lere göre yerleştirir. Pod'lar kullandıklarından çok daha fazlasını isterse node'lar kâğıt üzerinde dolar ve autoscaler çoğunlukla boşta kalan node'lar ekler.
+Savings Plan ya da taahhütlü kullanım indirimi ne zaman alınmalı?;"1–3 yıl çalıştıracağından emin olduğun sabit taban için ve sadece doğru boyutlandırmadan sonra; yoksa israfın parasını ödemeyi taahhüt edersin."
+Hangi iş yükleri spot instance için iyi adaydır?;Durumsuz, hataya dayanıklı ya da yeniden denenebilir olanlar: load balancer arkasındaki web replikaları, batch işler, CI runner'ları, checkpoint'li eğitim. Tek instance'lı veritabanları değil.
+Private subnet'lerden S3'e trafik neden pahalı olabilir ve nasıl düzeltilir?;VPC endpoint olmadan işlenen GB başına ücret alan NAT gateway'den geçer. S3 için gateway endpoint ücretsizdir ve trafiği özel tutar.
+Birim ekonomisi nedir ve neden toplam faturadan daha önemlidir?;"İş birimi başına maliyet (1.000 istek başına, müşteri başına). Birim maliyet düşüyorsa büyüyen fatura sağlıklı olabilir; sabit bir fatura düşen verimliliği gizleyebilir."

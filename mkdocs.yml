@@ -107,6 +107,9 @@ nav:
       - "10.6 · AI platform on Kubernetes": 10-ai/06-kubernetes.md
       - "10.7 · Applications: RAG & agents": 10-ai/07-applications.md
       - "📖 AI glossary": 10-ai/glossary.md
+  - "11 · Security": 11-security/index.md
+  - "12 · Distributed systems": 12-distributed/index.md
+  - "13 · Cloud cost (FinOps)": 13-finops/index.md
   - "🆕 What's new": changelog.md
 
 markdown_extensions:

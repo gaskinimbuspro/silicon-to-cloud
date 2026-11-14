@@ -16,7 +16,7 @@ How computers, the internet and modern infrastructure <b>really</b> work — exp
 <a class="s2c-btn ghost" href="paths/">🧭 Pick a learning path</a>
 <a class="s2c-btn ghost" href="practice/">🎯 Practice</a>
 </div>
-<div class="s2c-chips"><span>📚 10 chapters</span><span>📄 55 pages</span><span>🗺️ 99 diagrams</span><span>❓ 270 questions</span><span>🇬🇧 / 🇹🇷</span></div>
+<div class="s2c-chips"><span>📚 13 chapters</span><span>📄 58 pages</span><span>🗺️ 107 diagrams</span><span>❓ 285 questions</span><span>🇬🇧 / 🇹🇷</span></div>
 </div>
 
 <div class="s2c-you">
@@ -39,6 +39,9 @@ Each card is a chapter. Your progress fills the bar as you mark pages as read.
 <a class="s2c-card s2c-app" href="07-server/" data-chapter="07-server/" data-pages="5"><span class="s2c-num">7</span><span class="s2c-pill">Applications</span><span class="s2c-ico">🖥️</span><strong>Server side</strong><small>Load balancers, caches, databases, queues</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-app" href="08-browser/" data-chapter="08-browser/" data-pages="5"><span class="s2c-num">8</span><span class="s2c-pill">Applications</span><span class="s2c-ico">🎨</span><strong>The browser</strong><small>Rendering, event loop, Web Vitals, browser security</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-cloud" href="09-infra/" data-chapter="09-infra/" data-pages="6"><span class="s2c-num">9</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">☸️</span><strong>Modern infrastructure</strong><small>Containers, Kubernetes, GitOps, observability</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="11-security/" data-chapter="11-security/" data-pages="1"><span class="s2c-num">11</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">🔐</span><strong>Security</strong><small>Identity, secrets, zero trust, supply chain</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="12-distributed/" data-chapter="12-distributed/" data-pages="1"><span class="s2c-num">12</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">🕸️</span><strong>Distributed systems</strong><small>Consensus, CAP, consistency, resilience</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="13-finops/" data-chapter="13-finops/" data-pages="1"><span class="s2c-num">13</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">💰</span><strong>Cloud cost (FinOps)</strong><small>Where the money goes and how to save it</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-ai" href="10-ai/" data-chapter="10-ai/" data-pages="9"><span class="s2c-num">10</span><span class="s2c-pill">AI</span><span class="s2c-ico">🤖</span><strong>AI infrastructure</strong><small>LLMs, GPUs, training, inference, K8s, RAG & agents</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 </div>
 

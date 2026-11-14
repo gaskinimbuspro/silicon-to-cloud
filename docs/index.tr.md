@@ -16,7 +16,7 @@ Bilgisayarlar, internet ve modern altyapı <b>gerçekte</b> nasıl çalışır: 
 <a class="s2c-btn ghost" href="paths/">🧭 Bir öğrenme yolu seç</a>
 <a class="s2c-btn ghost" href="practice/">🎯 Pratik yap</a>
 </div>
-<div class="s2c-chips"><span>📚 10 bölüm</span><span>📄 55 sayfa</span><span>🗺️ 99 diagram</span><span>❓ 270 soru</span><span>🇬🇧 / 🇹🇷</span></div>
+<div class="s2c-chips"><span>📚 13 bölüm</span><span>📄 58 sayfa</span><span>🗺️ 107 diagram</span><span>❓ 285 soru</span><span>🇬🇧 / 🇹🇷</span></div>
 </div>
 
 <div class="s2c-you">
@@ -39,6 +39,9 @@ Her kart bir bölüm. Sayfaları okundu olarak işaretledikçe çubuk dolar.
 <a class="s2c-card s2c-app" href="07-server/" data-chapter="07-server/" data-pages="5"><span class="s2c-num">7</span><span class="s2c-pill">Uygulamalar</span><span class="s2c-ico">🖥️</span><strong>Sunucu tarafı</strong><small>Load balancer'lar, önbellekler, veritabanları, kuyruklar</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-app" href="08-browser/" data-chapter="08-browser/" data-pages="5"><span class="s2c-num">8</span><span class="s2c-pill">Uygulamalar</span><span class="s2c-ico">🎨</span><strong>Tarayıcı</strong><small>Render, event loop, Web Vitals, tarayıcı güvenliği</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-cloud" href="09-infra/" data-chapter="09-infra/" data-pages="6"><span class="s2c-num">9</span><span class="s2c-pill">Bulut</span><span class="s2c-ico">☸️</span><strong>Modern altyapı</strong><small>Container'lar, Kubernetes, GitOps, gözlemlenebilirlik</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="11-security/" data-chapter="11-security/" data-pages="1"><span class="s2c-num">11</span><span class="s2c-pill">Bulut</span><span class="s2c-ico">🔐</span><strong>Güvenlik</strong><small>Kimlik, secret'lar, zero trust, tedarik zinciri</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="12-distributed/" data-chapter="12-distributed/" data-pages="1"><span class="s2c-num">12</span><span class="s2c-pill">Bulut</span><span class="s2c-ico">🕸️</span><strong>Dağıtık sistemler</strong><small>Consensus, CAP, tutarlılık, dayanıklılık</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="13-finops/" data-chapter="13-finops/" data-pages="1"><span class="s2c-num">13</span><span class="s2c-pill">Bulut</span><span class="s2c-ico">💰</span><strong>Bulut maliyeti (FinOps)</strong><small>Para nereye gidiyor, nasıl tasarruf edilir</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-ai" href="10-ai/" data-chapter="10-ai/" data-pages="9"><span class="s2c-num">10</span><span class="s2c-pill">AI</span><span class="s2c-ico">🤖</span><strong>AI altyapısı</strong><small>LLM'ler, GPU'lar, eğitim, çıkarım, K8s, RAG ve ajanlar</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 </div>
 

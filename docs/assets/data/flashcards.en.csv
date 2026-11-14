@@ -757,6 +757,43 @@ OTel GenAI;OpenTelemetry Generative AI semantic conventions — Standard attribu
 Prefill / decode;The two phases of generation · Whole prompt at once / one token per step
 TTFT / TPOT;Time To First Token / Time Per Output Token — Latency metrics · Queue + prefill / one decode step
 CUDA / NCCL;Compute Unified Device Architecture / NVIDIA Collective Communications Library — GPU programming platform / multi-GPU communication · Kernels on the GPU / all-reduce over NVLink & IB
+AuthN / AuthZ;Authentication / Authorization — Who are you? / What may you do? · Login, tokens / roles, policies
+IAM;Identity and Access Management — Cloud system of identities and permissions · Policies attached to users, roles, service accounts
+SSO / MFA;Single Sign-On / Multi-Factor Authentication — One login for many apps / more than a password · IdP + second factor (passkey, TOTP)
+IdP;Identity Provider — Service that authenticates users · Entra ID, Okta, Google, Keycloak
+OIDC;OpenID Connect — Identity layer on OAuth 2.0 · Signed ID tokens (JWTs)
+JWT;JSON Web Token — Signed claims (sub, aud, exp) · Verified with the issuer's public key
+RBAC;Role-Based Access Control — Permissions grouped into roles · Kubernetes Role/RoleBinding, cloud roles
+Least privilege;Only the permissions actually needed · Limits blast radius
+Workload identity;Identity for software, not humans · Federated tokens instead of static keys
+KMS / HSM;Key Management Service / Hardware Security Module — Managed encryption keys · Envelope encryption, keys never leave
+Zero trust;Never trust the network location · Authenticate and authorize every request
+SPIFFE;Secure Production Identity Framework For Everyone — Standard workload identity (spiffe://…) · SPIRE issues short-lived SVIDs
+SBOM / SLSA;Software Bill of Materials / Supply-chain Levels for Software Artifacts — Ingredient list / build-integrity framework · Generated and attested in CI
+CVE / CVSS;Common Vulnerabilities and Exposures / Common Vulnerability Scoring System — Vulnerability IDs / severity scores · Scanners match packages against CVEs
+SIEM;Security Information and Event Management — Central security log analysis · Correlates audit logs, alerts
+Node / replica;One machine / one copy of the data · Many replicas = availability + read scaling
+Partial failure;Some parts fail while others work · You can't tell slow from dead
+Network partition;Nodes alive but unable to talk · Split brain if both sides keep writing
+CAP;Consistency, Availability, Partition tolerance — During a partition, choose C or A · Partitions happen, so the choice is real
+PACELC;Partition → A/C, Else → Latency/Consistency — CAP + the normal-case trade-off · Even without failures, consistency costs latency
+Linearizability;Strongest consistency: looks like one copy · Every read sees the latest committed write
+Eventual consistency;"Replicas converge ""eventually"" · Stale reads possible, high availability"
+Consensus;Nodes agreeing on a value/order despite failures · Raft, Paxos, Zab
+Quorum / majority;More than half of the voters · 2 of 3, 3 of 5
+Leader / term;Node ordering writes / election epoch · Higher term wins
+Split brain;Two nodes both acting as leader · Prevented by quorums and fencing
+Backpressure / load shedding;Slow producers / reject excess work early · Protects the system under overload
+FinOps;Financial Operations — Practice of managing cloud cost together · Inform → Optimize → Operate
+On-demand;Pay per second/hour, no commitment · Most flexible, most expensive
+RI / Savings Plan / CUD;Reserved Instance / — / Committed Use Discount — Commit 1–3 years for ~30–70% off · Pay for commitment even if unused
+Spot / preemptible;Spare capacity at ~60–90% off · Can be reclaimed with ~2 min notice
+Cross-AZ traffic;Availability Zone — Data between zones in a region · Charged both directions (~$0.01/GB each way)
+Right-sizing;Matching resources to real usage · Based on p95 usage + headroom
+Bin packing;Fitting pods tightly onto nodes · Fewer, fuller nodes
+Showback / chargeback;Showing / billing cost per team · Needs tags and allocation
+Unit economics;Cost per business unit · €/1000 requests, €/customer, €/training run
+FOCUS;FinOps Open Cost and Usage Specification — Standard billing data format · Same columns across clouds
 Why can't an interrupt handler sleep or do heavy work?;"It runs with interrupts (at least on that line/core) blocked and outside any process context; sleeping would freeze that core's interrupt handling. Heavy work goes to a bottom half."
 What does NAPI do and why?;After the first interrupt it disables the NIC's interrupt and polls batches of packets until the queue is empty, avoiding an interrupt storm at high packet rates.
 How does Linux know which driver to load for a newly plugged device?;"The bus reads the device IDs, the kernel emits a uevent with a modalias, udev matches it to a module and runs modprobe; the driver's probe() then claims the device."
@@ -1027,3 +1064,18 @@ Can a 70B model in FP16 run on a single 80 GB GPU?;"No. The weights alone are ~1
 What is the KV cache, and why does it limit concurrency?;It stores the attention keys and values of all previous tokens of each active request so they aren't recomputed every step. It grows with context length and the number of concurrent requests, and it has to fit in GPU memory next to the weights.
 Why scale an LLM service on queue length or KV cache usage instead of CPU?;The work happens on the GPU. CPU usage stays low even when the GPU is saturated and requests are queuing, so CPU-based autoscaling would never react.
 In RAG, what does the embedding model do, and what does the vector DB do?;The embedding model turns text (chunks and questions) into vectors that capture meaning. The vector DB stores the chunk vectors and quickly finds the ones closest to the question's vector, which are then added to the prompt.
+What's the difference between authentication and authorization?;"Authentication proves who you are (login, token, certificate); authorization decides what that identity may do (roles, policies)."
+Why is OIDC federation from CI to the cloud safer than storing an access key as a CI secret?;There's no long-lived secret to leak: each job gets a signed token describing exactly which repo/branch it is, exchanged for credentials that expire in about an hour and only for a scoped role.
+Are Kubernetes Secrets encrypted?;"Only base64-encoded by default; anyone with RBAC get secrets can read them, and etcd stores them in plain text unless encryption at rest is configured."
+What does 'zero trust' change compared to a classic perimeter network?;Being inside the network grants nothing: every request is authenticated and authorized by identity, typically with mTLS and policies, so one compromised host can't reach everything.
+What does an SBOM help you answer during a new critical CVE?;Which of your images and services contain the affected package and version, so you know what to patch within minutes instead of days.
+Why can't you reliably tell a crashed node from a slow one?;"Both look like ""no answer yet"". The only tool is a timeout, which is a guess; that's why systems must handle false failure detection."
+What does CAP force you to choose, and when?;During a network partition, either stay consistent (refuse some requests) or stay available (accept requests that may conflict). Without a partition, both are possible (but PACELC says consistency still costs latency).
+Why does etcd need a majority to commit a write?;Any two majorities overlap, so a committed entry is always known to at least one member of any future majority, which prevents two leaders committing conflicting histories.
+Why is a 4-member etcd cluster no better than 3 for failures?;Quorum of 4 is 3, so it still tolerates only 1 failure, while costing more and adding latency.
+How does a retry storm happen, and how do you prevent it?;Multiple layers retry without backoff, multiplying load on a struggling dependency. Retry at one layer with exponential backoff, jitter and a retry budget, plus circuit breakers and load shedding.
+Why can a Kubernetes cluster be 'full' while CPU usage is 15%?;The scheduler packs by requests, not usage. If pods request far more than they use, nodes fill up on paper and the autoscaler adds nodes that stay mostly idle.
+When should you buy Savings Plans or committed use discounts?;"For the steady baseline you are confident you'll run for 1–3 years, and only after right-sizing; otherwise you commit to paying for waste."
+Which workloads are good candidates for spot instances?;Stateless, fault-tolerant or retryable ones: web replicas behind a load balancer, batch jobs, CI runners, checkpointed training. Not single-instance databases.
+Why can traffic to S3 from private subnets be expensive, and how do you fix it?;Without a VPC endpoint it goes through the NAT gateway, which charges per GB processed. A gateway endpoint for S3 is free and keeps traffic private.
+What is unit economics and why does it matter more than the total bill?;"Cost per business unit (per 1,000 requests, per customer). A growing bill can be healthy if unit cost falls; a flat bill can hide falling efficiency."

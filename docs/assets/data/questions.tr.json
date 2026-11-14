@@ -2428,5 +2428,140 @@
 "url": "10-ai/",
 "q": "RAG'de embedding modeli ne yapar, vector DB ne yapar?",
 "a": "Embedding modeli metni (parçaları ve soruları) anlamı yakalayan vektörlere çevirir. Vector DB parça vektörlerini saklar ve sorunun vektörüne en yakın olanları hızlıca bulur. Bunlar sonra prompt'a eklenir."
+},
+{
+"id": "b18ee5f507",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "Kimlik doğrulama ile yetkilendirme arasındaki fark ne?",
+"a": "Kimlik doğrulama kim olduğunu kanıtlar (giriş, token, sertifika); yetkilendirme o kimliğin ne yapabileceğine karar verir (roller, politikalar)."
+},
+{
+"id": "e6208f5992",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "CI'dan buluta OIDC federasyonu, erişim anahtarını CI secret'ı olarak saklamaktan neden daha güvenli?",
+"a": "Sızacak uzun ömürlü bir secret yok: her iş tam olarak hangi repo/branch olduğunu tarif eden imzalı bir token alır, bu da yaklaşık bir saatte dolan ve sadece kapsamlı bir rol için geçerli kimlik bilgileriyle değiştirilir."
+},
+{
+"id": "66c1884e89",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "Kubernetes Secret'ları şifreli mi?",
+"a": "Varsayılan olarak sadece base64 kodlu; RBAC'ta get secrets yetkisi olan herkes okuyabilir ve durağan şifreleme yapılandırılmazsa etcd onları düz metin saklar."
+},
+{
+"id": "134b9be147",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "'Zero trust' klasik bir çevre ağına göre neyi değiştirir?",
+"a": "Ağın içinde olmak hiçbir şey kazandırmaz: her istek genelde mTLS ve politikalarla kimliğe göre doğrulanır ve yetkilendirilir; ele geçirilmiş tek bir makine her şeye ulaşamaz."
+},
+{
+"id": "6fc445ac6b",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "Yeni bir kritik CVE sırasında SBOM hangi soruyu cevaplamana yardım eder?",
+"a": "Hangi imajlarının ve servislerinin etkilenen paketi ve sürümü içerdiğini; böylece neyi yamalayacağını günler yerine dakikalar içinde bilirsin."
+},
+{
+"id": "31e7b6a2e6",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "Çökmüş bir node'u yavaş olandan neden güvenilir şekilde ayıramazsın?",
+"a": "İkisi de \"henüz cevap yok\" gibi görünür. Tek araç bir tahmin olan zaman aşımıdır; sistemlerin yanlış hata tespitini ele alması gerekmesinin sebebi bu."
+},
+{
+"id": "e5fa085fac",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "CAP seni neyi seçmeye zorlar ve ne zaman?",
+"a": "Bir ağ bölünmesi sırasında ya tutarlı kal (bazı istekleri reddet) ya da erişilebilir kal (çakışabilecek istekleri kabul et). Bölünme yoksa ikisi de mümkün (ama PACELC tutarlılığın yine de gecikmeye mal olduğunu söyler)."
+},
+{
+"id": "7a0cb3c944",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "etcd bir yazmayı commit etmek için neden çoğunluğa ihtiyaç duyar?",
+"a": "Herhangi iki çoğunluk kesişir; commit edilmiş bir girdi gelecekteki her çoğunluğun en az bir üyesi tarafından bilinir, bu da iki liderin çelişen geçmişleri commit etmesini önler."
+},
+{
+"id": "e46926f289",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "4 üyeli bir etcd cluster'ı hatalar için neden 3'ten daha iyi değil?",
+"a": "4'ün çoğunluğu 3'tür; yine sadece 1 hatayı tolere eder, üstelik daha pahalıdır ve gecikme ekler."
+},
+{
+"id": "c2e34aa145",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "Bir yeniden deneme fırtınası nasıl olur, nasıl önlersin?",
+"a": "Birden fazla katman backoff olmadan yeniden dener ve zorlanan bir bağımlılık üzerindeki yükü katlar. Tek bir katmanda üstel backoff, jitter ve yeniden deneme bütçesiyle yeniden dene; circuit breaker ve yük atma ekle."
+},
+{
+"id": "52daf77db2",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "CPU kullanımı %15'ken bir Kubernetes cluster'ı neden 'dolu' olabilir?",
+"a": "Scheduler kullanıma göre değil request'lere göre yerleştirir. Pod'lar kullandıklarından çok daha fazlasını isterse node'lar kâğıt üzerinde dolar ve autoscaler çoğunlukla boşta kalan node'lar ekler."
+},
+{
+"id": "280454d5ee",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Savings Plan ya da taahhütlü kullanım indirimi ne zaman alınmalı?",
+"a": "1–3 yıl çalıştıracağından emin olduğun sabit taban için ve sadece doğru boyutlandırmadan sonra; yoksa israfın parasını ödemeyi taahhüt edersin."
+},
+{
+"id": "18b55d2b1b",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Hangi iş yükleri spot instance için iyi adaydır?",
+"a": "Durumsuz, hataya dayanıklı ya da yeniden denenebilir olanlar: load balancer arkasındaki web replikaları, batch işler, CI runner'ları, checkpoint'li eğitim. Tek instance'lı veritabanları değil."
+},
+{
+"id": "e748db9ba0",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Private subnet'lerden S3'e trafik neden pahalı olabilir ve nasıl düzeltilir?",
+"a": "VPC endpoint olmadan işlenen GB başına ücret alan NAT gateway'den geçer. S3 için gateway endpoint ücretsizdir ve trafiği özel tutar."
+},
+{
+"id": "1ab319cbd6",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Birim ekonomisi nedir ve neden toplam faturadan daha önemlidir?",
+"a": "İş birimi başına maliyet (1.000 istek başına, müşteri başına). Birim maliyet düşüyorsa büyüyen fatura sağlıklı olabilir; sabit bir fatura düşen verimliliği gizleyebilir."
 }
 ]

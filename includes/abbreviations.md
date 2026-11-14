@@ -17,11 +17,14 @@
 *[AST]: Abstract Syntax Tree
 *[AZ]: Availability Zone
 *[Alt-Svc]: Alternative Service
+*[AuthN]: Authentication
+*[AuthZ]: Authorization
 *[BBR]: Bottleneck Bandwidth and RTT
 *[BGP]: Border Gateway Protocol
 *[BM25]: Best Matching 25
 *[BPE]: Byte-Pair Encoding
 *[CA]: Certificate Authority
+*[CAP]: Consistency, Availability, Partition tolerance
 *[CD]: Continuous Delivery / Deployment
 *[CDC]: Change Data Capture
 *[CDI]: Container Device Interface
@@ -46,8 +49,11 @@
 *[CSRF]: Cross-Site Request Forgery
 *[CSSOM]: CSS Object Model
 *[CUBIC]: —
+*[CUD]: Committed Use Discount
 *[CUDA]: Compute Unified Device Architecture
 *[CUTLASS]: CUDA Templates for Linear Algebra Subroutines
+*[CVE]: Common Vulnerabilities and Exposures
+*[CVSS]: Common Vulnerability Scoring System
 *[CrUX]: Chrome UX Report
 *[DCGM]: Data Center GPU Manager
 *[DLQ]: Dead-Letter Queue
@@ -74,9 +80,11 @@
 *[FCP]: First Contentful Paint
 *[FFN]: Feed-Forward Network
 *[FIN]: finish
+*[FOCUS]: FinOps Open Cost and Usage Specification
 *[FOIT]: Flash Of Invisible
 *[FOUT]: Unstyled Text
 *[FSDP]: Fully Sharded Data Parallel
+*[FinOps]: Financial Operations
 *[GARP]: Gratuitous ARP
 *[GC]: Garbage Collector
 *[GEMM]: General Matrix Multiply
@@ -93,8 +101,10 @@
 *[HIP]: Heterogeneous-compute Interface for Portability
 *[HNSW]: Hierarchical Navigable Small World
 *[HPA]: Horizontal Pod Autoscaler
+*[HSM]: Hardware Security Module
 *[HSTS]: HTTP Strict Transport Security
 *[HTTP]: HyperText Transfer Protocol
+*[IAM]: Identity and Access Management
 *[IB]: InfiniBand
 *[ICMP]: Internet Control Message Protocol
 *[IDT]: Interrupt Descriptor Table
@@ -110,9 +120,12 @@
 *[ITL]: Inter-Token Latency
 *[IVF]: Inverted File
 *[IaC]: Infrastructure as Code
+*[IdP]: Identity Provider
 *[JIT]: Just-In-Time compiler
+*[JWT]: JSON Web Token
 *[KEDA]: Kubernetes Event-Driven Autoscaling
 *[KMD]: Kernel-Mode Driver
+*[KMS]: Key Management Service
 *[LB]: Load Balancer
 *[LCP]: Largest Contentful Paint
 *[LLM]: Large Language Model
@@ -122,6 +135,7 @@
 *[LoRA]: Low-Rank Adaptation
 *[MCP]: Model Context Protocol
 *[MCU]: Microcontroller Unit
+*[MFA]: Multi-Factor Authentication
 *[MFU]: Model FLOPs Utilization
 *[MIG]: Multi-Instance GPU
 *[ML]: Machine Learning
@@ -151,10 +165,12 @@
 *[NVML]: NVIDIA Management Library
 *[OCI]: Open Container Initiative
 *[OCSP]: Online Certificate Status Protocol
+*[OIDC]: OpenID Connect
 *[OOM]: Out Of Memory
 *[OTel]: OpenTelemetry
 *[OoO]: Out-of-Order execution
 *[P2C]: Power of Two Choices
+*[PACELC]: Partition → A/C, Else → Latency/Consistency
 *[PCIe]: Peripheral Component Interconnect Express
 *[PGO]: Profile-Guided Optimization
 *[PID]: Product ID
@@ -172,10 +188,12 @@
 *[QLoRA]: Quantized LoRA
 *[QUIC]: — (originally "Quick UDP Internet Connections")
 *[RAG]: Retrieval-Augmented Generation
+*[RBAC]: Role-Based Access Control
 *[RDBMS]: Relational DB Management System
 *[RDMA]: Remote Direct Memory Access
 *[RED]: Rate, Errors, Duration
 *[REST]: REpresentational State Transfer
+*[RI]: Reserved Instance
 *[RIP]: Instruction Pointer
 *[RISC]: Reduced Instruction Set Computer
 *[RLHF]: Reinforcement Learning from Human Feedback
@@ -195,6 +213,7 @@
 *[SDN]: Software-Defined Networking
 *[SFT]: Supervised Fine-Tuning
 *[SIB]: Scale-Index-Base
+*[SIEM]: Security Information and Event Management
 *[SIMD]: Single Instruction, Multiple Data
 *[SIMT]: Single Instruction, Multiple Threads
 *[SLI]: Service Level Indicator
@@ -205,12 +224,14 @@
 *[SOP]: Same-Origin Policy
 *[SP]: Sequence Parallel
 *[SPA]: Single-Page Application
+*[SPIFFE]: Secure Production Identity Framework For Everyone
 *[SQL]: Structured Query Language
 *[SRAM]: Static RAM
 *[SRI]: Subresource Integrity
 *[SSA]: Static Single Assignment
 *[SSE]: Server-Sent Events
 *[SSL]: Secure Sockets Layer
+*[SSO]: Single Sign-On
 *[SSR]: Server-Side Rendering
 *[STP]: Spanning Tree Protocol
 *[SYN]: synchronize

@@ -18,6 +18,7 @@ From a keypress to AI in the cloud, in order. Best if you want the complete ment
 1. [Networking](05-network/index.md) → [DNS, TCP, TLS, HTTP](06-internet/index.md)
 1. [Server side](07-server/index.md) → [Browser](08-browser/index.md)
 1. [Modern infrastructure](09-infra/index.md) → [AI infrastructure](10-ai/index.md)
+1. [Security](11-security/index.md) → [Distributed systems](12-distributed/index.md) → [Cloud cost](13-finops/index.md)
 
 </div>
 
@@ -41,6 +42,7 @@ The topics interviewers love, with the failure modes they ask about.
 1. [Kubernetes networking](09-infra/03-kubernetes-networking.md)
 1. [CI/CD & GitOps](09-infra/04-cicd-gitops.md)
 1. [Observability & SLOs](09-infra/05-observability.md)
+1. [Security & zero trust](11-security/index.md) → [Retries, timeouts & quorums](12-distributed/index.md)
 1. Finish with [🎯 Practice](practice.md) until the "to review" counter is zero.
 
 </div>
@@ -85,5 +87,18 @@ What the kernel does for every program you run.
 1. [Instruction sets & assembly](02-cpu/01-isa-assembly.md) → [Pipelines & speculation](02-cpu/03-pipeline-speculation.md)
 1. [Processes](03-os/01-processes-threads.md) → [Scheduler](03-os/02-scheduler.md) → [Virtual memory](03-os/03-virtual-memory.md) → [I/O & filesystems](03-os/04-io-filesystems.md)
 1. [Compiling & linking](04-program/01-compile-link.md) → [ELF & the loader](04-program/02-elf-loader.md) → [Runtimes](04-program/03-runtimes.md)
+
+</div>
+
+<div class="s2c-path" markdown>
+
+### 🏗️ Production-ready platform engineer · ~6 hours
+
+The "senior" topics: what keeps a platform secure, available and affordable.
+
+1. [Security: identity, secrets, zero trust & supply chain](11-security/index.md)
+1. [Distributed systems: consensus, consistency & resilience](12-distributed/index.md)
+1. [Cloud cost (FinOps)](13-finops/index.md)
+1. Then test yourself in [🎯 Practice](practice.md) with the chapter filter.
 
 </div>

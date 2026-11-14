@@ -18,6 +18,7 @@ Tuş basımından buluttaki yapay zekâya, sırayla. Eksiksiz bir zihinsel model
 1. [Ağ](05-network/index.md) → [DNS, TCP, TLS, HTTP](06-internet/index.md)
 1. [Sunucu tarafı](07-server/index.md) → [Tarayıcı](08-browser/index.md)
 1. [Modern altyapı](09-infra/index.md) → [AI altyapısı](10-ai/index.md)
+1. [Güvenlik](11-security/index.md) → [Dağıtık sistemler](12-distributed/index.md) → [Bulut maliyeti](13-finops/index.md)
 
 </div>
 
@@ -41,6 +42,7 @@ Mülakatçıların sevdiği konular, sordukları hata modlarıyla birlikte.
 1. [Kubernetes ağı](09-infra/03-kubernetes-networking.md)
 1. [CI/CD ve GitOps](09-infra/04-cicd-gitops.md)
 1. [Gözlemlenebilirlik ve SLO'lar](09-infra/05-observability.md)
+1. [Güvenlik ve zero trust](11-security/index.md) → [Yeniden denemeler, zaman aşımları ve çoğunluk](12-distributed/index.md)
 1. "Tekrar edilecek" sayacı sıfırlanana kadar [🎯 Pratik](practice.md) ile bitir.
 
 </div>
@@ -85,5 +87,18 @@ Herkese açık bir web sitesi ya da API'si olan herkes için.
 1. [Komut setleri ve assembly](02-cpu/01-isa-assembly.md) → [Boru hatları ve spekülasyon](02-cpu/03-pipeline-speculation.md)
 1. [Process'ler](03-os/01-processes-threads.md) → [Zamanlayıcı](03-os/02-scheduler.md) → [Sanal bellek](03-os/03-virtual-memory.md) → [I/O ve dosya sistemleri](03-os/04-io-filesystems.md)
 1. [Derleme ve linkleme](04-program/01-compile-link.md) → [ELF ve yükleyici](04-program/02-elf-loader.md) → [Runtime'lar](04-program/03-runtimes.md)
+
+</div>
+
+<div class="s2c-path" markdown>
+
+### 🏗️ Production'a hazır platform mühendisi · ~6 saat
+
+"Kıdemli" konular: bir platformu güvenli, erişilebilir ve uygun maliyetli tutan şeyler.
+
+1. [Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri](11-security/index.md)
+1. [Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık](12-distributed/index.md)
+1. [Bulut maliyeti (FinOps)](13-finops/index.md)
+1. Sonra [🎯 Pratik](practice.md) sayfasında bölüm filtresiyle kendini test et.
 
 </div>
