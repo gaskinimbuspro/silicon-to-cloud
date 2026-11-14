@@ -114,6 +114,15 @@ The server's NIC accepts the frame because it's addressed to its MAC. The kernel
 
 ---
 
+## 🧭 Go deeper
+
+| Page | What's inside |
+|---|---|
+| **[5.1 — Ethernet, ARP & VLANs (Layer 2)](01-ethernet-arp-vlan.md)** | How Ethernet frames, MAC addresses and switches work, MAC learning and flooding, ARP and its cache, broadcast domains and VLANs (802.1Q), MTU and jumbo frames, loops and STP, and how Layer 2 appears in Linux bridges, Docker and Kubernetes CNIs. |
+| **[5.2 — IP addressing, subnets & routing](02-ip-routing.md)** | IPv4 and IPv6 addresses, CIDR and subnet math, private ranges, routing tables and longest-prefix match, default gateways, ICMP, traceroute, TTL, fragmentation and PMTU, and how routing works between Kubernetes pods and across VPCs. |
+| **[5.3 — NAT, firewalls & conntrack](03-nat-firewall.md)** | Stateless vs stateful firewalls, netfilter hooks, iptables vs nftables, connection tracking, SNAT, DNAT and masquerading, port exhaustion, how kube-proxy implements Services with NAT, eBPF alternatives (Cilium), NetworkPolicies and cloud security groups. |
+| **[5.4 — Cloud networking (VPC)](04-cloud-networking.md)** | How cloud networks are built on SDN, VPCs, subnets and availability zones, route tables, internet and NAT gateways, security groups and NACLs, private endpoints, peering, transit gateways, VPN and Direct Connect, cloud load balancers, egress costs and Kubernetes networking in the cloud. |
+
 ## 🧪 Try it yourself (Linux / macOS)
 
 ```bash

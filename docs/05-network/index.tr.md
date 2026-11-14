@@ -114,6 +114,15 @@ Sunucunun NIC'i çerçeveyi kabul eder, çünkü çerçeve onun MAC'ine gönderi
 
 ---
 
+## 🧭 Daha derine in
+
+| Sayfa | Neler var |
+|---|---|
+| **[5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)](01-ethernet-arp-vlan.md)** | Ethernet çerçeveleri, MAC adresleri ve switch'ler nasıl çalışır, MAC öğrenme ve taşırma, ARP ve önbelleği, yayın alanları ve VLAN'lar (802.1Q), MTU ve jumbo çerçeveler, döngüler ve STP; Katman 2'nin Linux bridge'lerinde, Docker'da ve Kubernetes CNI'larında nasıl göründüğü. |
+| **[5.2 — IP adresleme, subnet'ler ve routing](02-ip-routing.md)** | IPv4 ve IPv6 adresleri, CIDR ve subnet hesabı, özel aralıklar, routing tabloları ve en uzun önek eşleşmesi, default gateway'ler, ICMP, traceroute, TTL, parçalanma ve PMTU, Kubernetes pod'ları arasında ve VPC'ler arasında routing. |
+| **[5.3 — NAT, firewall'lar ve conntrack](03-nat-firewall.md)** | Durumsuz ve durumlu firewall'lar, netfilter kancaları, iptables ve nftables, bağlantı izleme, SNAT, DNAT ve masquerading, port tükenmesi, kube-proxy'nin Service'leri NAT ile nasıl uyguladığı, eBPF alternatifleri (Cilium), NetworkPolicy'ler ve bulut security group'ları. |
+| **[5.4 — Bulut ağları (VPC)](04-cloud-networking.md)** | Bulut ağlarının SDN üzerine nasıl kurulduğu, VPC'ler, subnet'ler ve availability zone'lar, route table'lar, internet ve NAT gateway'leri, security group'lar ve NACL'ler, private endpoint'ler, peering, transit gateway'ler, VPN ve Direct Connect, bulut load balancer'ları, çıkış maliyetleri ve bulutta Kubernetes ağı. |
+
 ## 🧪 Kendin dene (Linux / macOS)
 
 ```bash

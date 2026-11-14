@@ -55,7 +55,12 @@ nav:
       - "4.1 · Compiling & linking": 04-program/01-compile-link.md
       - "4.2 · ELF & the loader": 04-program/02-elf-loader.md
       - "4.3 · Language runtimes": 04-program/03-runtimes.md
-  - "5 · Networking": 05-network/index.md
+  - "5 · Networking":
+      - "Overview": 05-network/index.md
+      - "5.1 · Ethernet, ARP & VLANs": 05-network/01-ethernet-arp-vlan.md
+      - "5.2 · IP & routing": 05-network/02-ip-routing.md
+      - "5.3 · NAT, firewalls & conntrack": 05-network/03-nat-firewall.md
+      - "5.4 · Cloud networking (VPC)": 05-network/04-cloud-networking.md
   - "6 · DNS, TCP, TLS, HTTP":
       - "Overview": 06-internet/index.md
       - "6.1 · HTTP headers": 06-internet/01-headers.md
