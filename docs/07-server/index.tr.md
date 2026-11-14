@@ -109,6 +109,25 @@ Akış şöyle: uygulama kuyruğa bir **iş (job)** koyar ve hemen `202 Accepted
 
 ---
 
+## 🚨 Olay hikâyesi: her deploy'da 502'ler
+
+!!! failure "Alarm"
+    Ödeme servisinin her rollout'u 5–10 saniye boyunca bir **502 Bad Gateway** patlaması üretiyor. Uygulama logları olağandışı bir şey göstermiyor; hatalar ingress'ten geliyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    Ingress logları: **Terminating** durumdaki pod'ların IP'lerine `upstream prematurely closed connection` / `connect() failed (111: Connection refused)`.
+
+??? info "🔍 İpucu 2"
+    Pod'da `preStop` hook'u yok ve uygulama SIGTERM'de hemen çıkıyor. Endpoint'ten çıkarma ve SIGTERM art arda değil **paralel** oluyor.
+
+??? success "🎯 Kök neden"
+    Bir pod silinince Kubernetes aynı anda SIGTERM gönderir ve pod'u EndpointSlice'lardan çıkarır. Ingress/kube-proxy çıkarmayı bir an sonra öğrenir; birkaç saniye boyunca zaten çıkmış bir process'e istek göndermeye devam ederler.
+
+??? tip "🛠️ Çözüm ve ders"
+    Bir `preStop` sleep'i (5–10 sn) ekle, SIGTERM'i düzgün işle (kabul etmeyi bırak, işlemdekileri bitir, sonra çık), kapanışta readiness'ı başarısız yap ve `terminationGracePeriodSeconds`'ı buna göre ayarla. **Ders:** kesintisiz deploy uygulama, Kubernetes ve load balancer arasında bir sözleşmedir.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

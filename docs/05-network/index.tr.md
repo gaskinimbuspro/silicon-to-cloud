@@ -114,6 +114,25 @@ Sunucunun NIC'i çerçeveyi kabul eder, çünkü çerçeve onun MAC'ine gönderi
 
 ---
 
+## 🚨 Olay hikâyesi: cluster'ın yarısını bozan peering
+
+!!! failure "Alarm"
+    Veri ekibinin VPC'sine yeni bir VPC peering devreye giriyor. Dakikalar sonra bazı pod'lar birbirine ulaşamıyor; veri ekibi servislerinin *bazılarına* ulaşabiliyor, diğerlerine ulaşamıyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    Cluster'ının pod CIDR'ı `10.244.0.0/16`. Veri VPC'si de `10.244.0.0/16` (iki ekip de yaygın bir varsayılanı kullanmış).
+
+??? info "🔍 İpucu 2"
+    Bir node'da `ip route get 10.244.3.8` artık aralığın bir kısmı için peering rotasını seçiyor: en uzun önek eşleşmesi az önce eklenen daha özel rotaları tercih ediyor.
+
+??? success "🎯 Kök neden"
+    Çakışan adres aralıkları routing'i belirsizleştirir: pod IP'lerine giden paketler, hangi rota daha özelse ona göre diğer VPC'ye gönderilir (ve tersi).
+
+??? tip "🛠️ Çözüm ve ders"
+    Peering'i kaldır, bir tarafı yeniden numaralandır (yeni pod CIDR'ı ya da ikincil VPC CIDR'ı) ve merkezi bir IPAM planı tut. **Ders:** VPC, pod, service, şirket içi ve peer CIDR'ları asla çakışmamalı; ilk cluster'dan önce planla.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

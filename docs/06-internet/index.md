@@ -149,6 +149,25 @@ Before the first byte of HTML: one RTT for the **TCP** handshake, one for the **
 
 ---
 
+## 🚨 Incident story: the mysterious +5 seconds
+
+!!! failure "The alarm"
+    Calls from pods to an external payment API sometimes take **exactly 5 seconds longer** than usual. It's random, about 1 in 50 requests, and never happens from developers' laptops.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    The extra time is spent before the TCP connect: it's DNS. `/etc/resolv.conf` in the pod: `options ndots:5`, `timeout:5` is the resolver default.
+
+??? info "🔍 Clue 2"
+    `conntrack -S` on the nodes shows `insert_failed` increasing. The resolver sends the A and AAAA queries in parallel over the same UDP socket.
+
+??? success "🎯 Root cause"
+    Two parallel UDP DNS packets with the same 5-tuple race in conntrack; one gets dropped, and the client waits the full 5 s timeout before retrying. `ndots:5` multiplies the number of lookups, so the race happens often.
+
+??? tip "🛠️ Fix and lesson"
+    Run **NodeLocal DNSCache**, use FQDNs with a trailing dot or lower `ndots`, and/or `single-request-reopen`. **Lesson:** exact multiples of a timeout (5 s, 1 s, 3 s) are a fingerprint: find the timeout, then find what's being dropped.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

@@ -151,6 +151,25 @@ add:
 
 ---
 
+## 🚨 Olay hikâyesi: sadece yeni node'larda çöken servis
+
+!!! failure "Alarm"
+    Platform ekibi daha ucuz bir instance tipiyle yeni bir node havuzu ekliyor. Oraya zamanlanan pod'lar anında **çıkış kodu 132** ile ölüyor; aynı imaj eski node'larda sorunsuz çalışıyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    132 = 128 + 4 → **SIGILL**, *illegal instruction*. Node'da `dmesg`: `traps: app[...] trap invalid opcode`.
+
+??? info "🔍 İpucu 2"
+    Dockerfile, AVX-512'li bir CI runner'ında `-march=native` ile derliyor. Yeni node'larda `grep -o avx512f /proc/cpuinfo` → hiçbir şey.
+
+??? success "🎯 Kök neden"
+    *Build* makinesinde AVX-512 olduğu için derleyici AVX-512 komutları üretti. Yeni CPU'lar bu komutları uygulamıyor; çalıştırılan ilki trap ediyor.
+
+??? tip "🛠️ Çözüm ve ders"
+    Bir taban seviye için derle (`-march=x86-64-v3` ya da v2) veya varyantlar gönderip çalışma anında seç; gerçekten AVX-512 gerekiyorsa node affinity kullan. **Ders:** ISA bir sözleşmedir; binary'ler çalışabilecekleri en eski CPU'yu hedeflemeli.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

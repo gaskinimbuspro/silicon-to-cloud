@@ -145,6 +145,25 @@ The CPU is busy running a program. A device raises an **IRQ**; at the next instr
 
 ---
 
+## 🚨 Incident story: one core drowning in interrupts
+
+!!! failure "The alarm"
+    After a traffic increase, p99 latency of a busy API node doubles. Average CPU is only 35%, but `top` shows one core at **100% `si`**, and `ksoftirqd/0` sits at the top of the process list.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    `/proc/interrupts`: the NIC's queue interrupts all increase only in the **CPU0** column; the other 15 columns barely move.
+
+??? info "🔍 Clue 2"
+    `ethtool -l eth0` shows `Combined: 1`: the NIC runs with **one queue**. `systemctl status irqbalance` → not installed in the minimal image.
+
+??? success "🎯 Root cause"
+    All packet processing (hard IRQ + NET_RX softirq) lands on a single core. That core saturates while the others idle, so packets wait in the queue and latency climbs, even though *average* CPU looks fine.
+
+??? tip "🛠️ Fix and lesson"
+    Enable multiple queues (`ethtool -L eth0 combined 8`), spread their IRQs (irqbalance or `smp_affinity`), and consider RPS/RFS. **Lesson:** average CPU hides per-core saturation; check `mpstat -P ALL` and the `si` column.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

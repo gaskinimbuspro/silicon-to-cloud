@@ -107,6 +107,25 @@ The main thread repeats: take **one task** (a click handler, a timer, a network 
 
 ---
 
+## 🚨 Incident story: the release that tripled LCP
+
+!!! failure "The alarm"
+    Field data shows LCP p75 jumping from **1.2 s to 3.8 s** right after a frontend release. Lighthouse in CI still looks green; nothing changed on the servers.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    The release added a lazy-loading library and applied `loading="lazy"` to **all** images, including the hero image at the top of the page.
+
+??? info "🔍 Clue 2"
+    DevTools waterfall: the hero image request now starts only after the JS bundle has run, ~2.4 s after navigation.
+
+??? success "🎯 Root cause"
+    The LCP element (the hero image) is no longer discovered by the preload scanner and is deliberately deferred, so the browser downloads it late and the largest paint happens late.
+
+??? tip "🛠️ Fix and lesson"
+    Load the hero eagerly with `fetchpriority="high"` (and `<link rel=preload>` if it's in CSS), lazy-load only offscreen images, and add a RUM alert on LCP p75. **Lesson:** lab tools can miss what real users see; watch field data per release.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

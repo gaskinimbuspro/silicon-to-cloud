@@ -109,6 +109,25 @@ Flow: the app puts a **job** on the queue and immediately replies `202 Accepted`
 
 ---
 
+## 🚨 Incident story: 502s on every deploy
+
+!!! failure "The alarm"
+    Every rollout of the checkout service produces a burst of **502 Bad Gateway** errors for 5–10 seconds. The app logs show nothing unusual; the errors come from the ingress.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    Ingress logs: `upstream prematurely closed connection` / `connect() failed (111: Connection refused)` to IPs of pods that are **Terminating**.
+
+??? info "🔍 Clue 2"
+    The pod has no `preStop` hook, and the app exits immediately on SIGTERM. Endpoint removal and SIGTERM happen **in parallel**, not one after the other.
+
+??? success "🎯 Root cause"
+    When a pod is deleted, Kubernetes sends SIGTERM and removes the pod from EndpointSlices at the same time. The ingress/kube-proxy learn about the removal a moment later, so for a few seconds they keep sending requests to a process that has already exited.
+
+??? tip "🛠️ Fix and lesson"
+    Add a `preStop` sleep (5–10 s), handle SIGTERM gracefully (stop accepting, finish in-flight, then exit), make readiness fail on shutdown, and set `terminationGracePeriodSeconds` accordingly. **Lesson:** zero-downtime deploys are a contract between app, Kubernetes and load balancer.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

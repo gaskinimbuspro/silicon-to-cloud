@@ -124,6 +124,25 @@ Files, terminals, pipes, sockets and devices (`/dev/input/event3` from Chapter 1
 
 ---
 
+## 🚨 Incident story: p99 spikes with 30% CPU
+
+!!! failure "The alarm"
+    A Go API has p99 latency spikes of 80–100 ms every few seconds. Dashboards show **30% average CPU** of its 2-CPU limit. Adding replicas doesn't help.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    `container_cpu_cfs_throttled_periods_total` rises constantly: the container is **throttled** in most 100 ms periods.
+
+??? info "🔍 Clue 2"
+    The node has 64 cores; the Go version is older than 1.25, so `GOMAXPROCS=64`: 64 threads burn the 200 ms quota in ~3 ms.
+
+??? success "🎯 Root cause"
+    The CPU limit is a quota per 100 ms period across all threads. With 64 runnable threads the quota is exhausted almost immediately, then the whole container is frozen until the next period: average usage stays low, tail latency explodes.
+
+??? tip "🛠️ Fix and lesson"
+    Set `GOMAXPROCS` to the limit (automaxprocs, or upgrade to Go 1.25+), or remove the CPU limit and rely on requests. **Lesson:** watch throttling, not average CPU, for latency-sensitive services.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

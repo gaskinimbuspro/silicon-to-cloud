@@ -27,6 +27,25 @@ description: Bir LLM nasıl servis edilir? GPU'lar, HBM ve tensor core'lar, pref
 
 > A–Z tam liste [📖 AI sözlüğü](glossary.md) sayfasında.
 
+## 🚨 Olay hikâyesi: daha uzun bağlam, çöken throughput
+
+!!! failure "Alarm"
+    Uzun dokümanları desteklemek için ekip bir vLLM deployment'ının `--max-model-len` değerini 8k'dan 128k token'a çıkarıyor. GPU belleği öncekinden dolu olmasa da throughput %70 düşüyor, gecikme patlıyor ve loglar *preempted* dizilerle doluyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    vLLM'in başlangıç logu: KV-cache blok sayısı değişmemiş ama *istek başına 131072 token için azami eşzamanlılık* ~1,5×'e düşmüş.
+
+??? info "🔍 İpucu 2"
+    İsteklerin çoğu hâlâ kısa ama birkaç uzun istek KV cache'in büyük kısmını kapıyor ve zamanlayıcı yer açmak için diğerlerini preempt edip yeniden hesaplıyor.
+
+??? success "🎯 Kök neden"
+    Ağırlıklardan sonra kalan GPU belleği KV cache'tir. Token başınadır (FP16'da 8B'lik bir model için ~128 KB/token); birkaç çok uzun dizi onlarca normal dizinin kullanacağı kadarını tüketir ve batch'leme çöker.
+
+??? tip "🛠️ Çözüm ve ders"
+    Uzun bağlamlı istekleri ayrı bir havuza yönlendir, `--max-num-seqs`/`--max-num-batched-tokens`'ı bilinçli ayarla, FP8 KV cache ve prefix caching kullan ya da daha büyük/daha çok GPU kullan (tensor parallel). **Ders:** LLM servis etmede kapasite planlaması KV-cache planlamasıdır.
+
 ## 🧭 Derinleş
 
 | Sayfa | Ne öğreneceksin |

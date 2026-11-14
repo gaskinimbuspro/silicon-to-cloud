@@ -27,6 +27,25 @@ description: How an LLM is served — GPUs, HBM and tensor cores, prefill and de
 
 > The full A–Z list is in the [📖 AI glossary](glossary.md).
 
+## 🚨 Incident story: longer context, collapsing throughput
+
+!!! failure "The alarm"
+    To support long documents, the team raises `--max-model-len` of a vLLM deployment from 8k to 128k tokens. Throughput drops by 70%, latency explodes and logs fill with *preempted* sequences, although GPU memory isn't fuller than before.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    vLLM's startup log: the number of KV-cache blocks is unchanged, but *maximum concurrency for 131072 tokens per request* dropped to ~1.5×.
+
+??? info "🔍 Clue 2"
+    Most requests are still short, but a few long ones grab huge parts of the KV cache, and the scheduler preempts and recomputes others to make room.
+
+??? success "🎯 Root cause"
+    GPU memory after the weights is the KV cache. It's per token (~128 KB/token for an 8B model in FP16), so a few very long sequences consume what dozens of normal ones would use, and batching collapses.
+
+??? tip "🛠️ Fix and lesson"
+    Route long-context requests to a separate pool, set `--max-num-seqs`/`--max-num-batched-tokens` deliberately, use FP8 KV cache and prefix caching, or use a larger/more GPUs (tensor parallel). **Lesson:** in LLM serving, capacity planning means KV-cache planning.
+
 ## 🧭 Go deeper
 
 | Page | What you'll learn |

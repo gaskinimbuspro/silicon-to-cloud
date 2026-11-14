@@ -107,6 +107,25 @@ Ana thread şunu tekrarlar: **bir görev** al (tıklama handler'ı, zamanlayıc�
 
 ---
 
+## 🚨 Olay hikâyesi: LCP'yi üçe katlayan sürüm
+
+!!! failure "Alarm"
+    Saha verisi, bir ön uç sürümünden hemen sonra LCP p75'in **1,2 sn'den 3,8 sn'ye** fırladığını gösteriyor. CI'daki Lighthouse hâlâ yeşil; sunucularda bir şey değişmedi.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    Sürüm bir tembel yükleme kütüphanesi ekledi ve sayfanın tepesindeki ana görsel dahil **tüm** görsellere `loading="lazy"` uyguladı.
+
+??? info "🔍 İpucu 2"
+    DevTools şelalesi: ana görsel isteği artık sadece JS bundle'ı çalıştıktan sonra, gezinmeden ~2,4 sn sonra başlıyor.
+
+??? success "🎯 Kök neden"
+    LCP elemanı (ana görsel) artık preload tarayıcısı tarafından keşfedilmiyor ve bilerek erteleniyor; tarayıcı onu geç indiriyor ve en büyük boyama geç oluyor.
+
+??? tip "🛠️ Çözüm ve ders"
+    Ana görseli `fetchpriority="high"` ile hemen yükle (CSS'teyse `<link rel=preload>` ekle), sadece ekran dışı görselleri tembel yükle ve LCP p75 için bir RUM alarmı ekle. **Ders:** laboratuvar araçları gerçek kullanıcıların gördüğünü kaçırabilir; sürüm başına saha verisini izle.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

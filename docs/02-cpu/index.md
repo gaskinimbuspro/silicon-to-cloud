@@ -151,6 +151,25 @@ add:
 
 ---
 
+## 🚨 Incident story: the service that only crashes on new nodes
+
+!!! failure "The alarm"
+    The platform team adds a new node pool with a cheaper instance type. Pods scheduled there die instantly with **exit code 132**; the same image runs fine on the old nodes.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    132 = 128 + 4 → **SIGILL**, *illegal instruction*. `dmesg` on the node: `traps: app[...] trap invalid opcode`.
+
+??? info "🔍 Clue 2"
+    The Dockerfile builds with `-march=native` on a CI runner with AVX-512. `grep -o avx512f /proc/cpuinfo` on the new nodes → nothing.
+
+??? success "🎯 Root cause"
+    The compiler emitted AVX-512 instructions because the *build* machine had them. The new CPUs don't implement those instructions, so the first one executed traps.
+
+??? tip "🛠️ Fix and lesson"
+    Build for a baseline (`-march=x86-64-v3`, or v2), or ship variants and select at runtime; use node affinity if you truly need AVX-512. **Lesson:** the ISA is a contract: binaries must target the oldest CPU they may run on.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

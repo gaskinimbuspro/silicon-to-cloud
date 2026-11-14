@@ -125,6 +125,25 @@ Dosyalar, terminaller, pipe'lar, soketler ve cihazlar (Bölüm 1'deki `/dev/inpu
 
 ---
 
+## 🚨 Olay hikâyesi: %30 CPU ile p99 sıçramaları
+
+!!! failure "Alarm"
+    Bir Go API'sinin p99 gecikmesi birkaç saniyede bir 80–100 ms sıçrıyor. Panolar 2 CPU'luk limitinin **ortalama %30'unu** gösteriyor. Replika eklemek işe yaramıyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    `container_cpu_cfs_throttled_periods_total` sürekli artıyor: container 100 ms'lik periyotların çoğunda **throttle** ediliyor.
+
+??? info "🔍 İpucu 2"
+    Node 64 çekirdekli; Go sürümü 1.25'ten eski, yani `GOMAXPROCS=64`: 64 thread 200 ms'lik kotayı ~3 ms'de yakıyor.
+
+??? success "🎯 Kök neden"
+    CPU limiti, tüm thread'lerin toplamı için 100 ms'lik periyot başına bir kotadır. 64 çalışabilir thread ile kota neredeyse hemen tükenir, sonra tüm container bir sonraki periyoda kadar donar: ortalama kullanım düşük kalır, kuyruk gecikmesi patlar.
+
+??? tip "🛠️ Çözüm ve ders"
+    `GOMAXPROCS`'u limite eşitle (automaxprocs ya da Go 1.25+'e yükselt) veya CPU limitini kaldırıp request'lere güven. **Ders:** gecikmeye hassas servislerde ortalama CPU'yu değil throttling'i izle.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

@@ -145,6 +145,25 @@ CPU bir programı çalıştırıyor. Bir cihaz **IRQ** üretir; bir sonraki komu
 
 ---
 
+## 🚨 Olay hikâyesi: bir çekirdek kesmelerde boğuluyor
+
+!!! failure "Alarm"
+    Trafik artışından sonra yoğun bir API node'unun p99 gecikmesi ikiye katlanıyor. Ortalama CPU sadece %35 ama `top` bir çekirdeği **%100 `si`**'de gösteriyor, `ksoftirqd/0` process listesinin tepesinde.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    `/proc/interrupts`: NIC kuyruk kesmelerinin hepsi sadece **CPU0** sütununda artıyor; diğer 15 sütun neredeyse kıpırdamıyor.
+
+??? info "🔍 İpucu 2"
+    `ethtool -l eth0` `Combined: 1` gösteriyor: NIC **tek kuyrukla** çalışıyor. `systemctl status irqbalance` → minimal imajda kurulu değil.
+
+??? success "🎯 Kök neden"
+    Tüm paket işleme (hard IRQ + NET_RX softirq) tek bir çekirdeğe düşüyor. O çekirdek doyarken diğerleri boşta; paketler kuyrukta bekliyor ve *ortalama* CPU iyi görünse de gecikme artıyor.
+
+??? tip "🛠️ Çözüm ve ders"
+    Çoklu kuyruk aç (`ethtool -L eth0 combined 8`), IRQ'larını dağıt (irqbalance ya da `smp_affinity`), RPS/RFS'i düşün. **Ders:** ortalama CPU çekirdek başı doygunluğu gizler; `mpstat -P ALL`'a ve `si` sütununa bak.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

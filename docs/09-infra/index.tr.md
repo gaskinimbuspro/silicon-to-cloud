@@ -119,6 +119,25 @@ Cluster dışındaki bulut kaynakları (VPC'ler, veritabanları, DNS) da aynı b
 
 ---
 
+## 🚨 Olay hikâyesi: sürekli kaybolan hotfix
+
+!!! failure "Alarm"
+    Bir olay sırasında bir mühendis bir Deployment'ın bellek limitini `kubectl edit` ile artırıyor. Pod'lar yeni limitle yeniden başlıyor… ve iki dakika sonra eski limite dönüp yine OOMKill oluyorlar.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    `kubectl get deploy -o yaml` GitOps aracının anotasyonunu gösteriyor; Argo CD arayüzü düzenlemeden hemen sonra uygulamayı *OutOfSync → Synced* olarak gösteriyor.
+
+??? info "🔍 İpucu 2"
+    Application'da `syncPolicy.automated.selfHeal: true` var.
+
+??? success "🎯 Kök neden"
+    Argo CD cluster'ı sürekli git'e uzlaştırır. Elle yapılan düzenleme bir sapmadır ve self-heal onu tasarlandığı gibi bildirilen duruma geri döndürür.
+
+??? tip "🛠️ Çözüm ve ders"
+    Değişikliği git'te yap (hızlandırılmış bir PR) ya da olay sırasında o uygulama için otomatik senkronu geçici olarak durdur ve sonra commit et. **Ders:** GitOps'ta değişikliklerin kalıcı olduğu tek yer git'tir; belgelenmiş bir acil durum prosedürün olsun.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

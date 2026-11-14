@@ -108,6 +108,25 @@ gcc main.c -o app        # tek komut, dört aşama:
 
 ---
 
+## 🚨 Olay hikâyesi: var olan bir dosya için “no such file or directory”
+
+!!! failure "Alarm"
+    İmajları küçültmek için bir ekip çalışma aşamasını `debian:bookworm-slim`'den `alpine`'e geçiriyor. Yeni pod'lar `exec /app/server: no such file or directory` ile crash-loop'a giriyor; oysa imajın içinde `ls -l /app/server` dosyayı gösteriyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    `file /app/server` → *dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2*.
+
+??? info "🔍 İpucu 2"
+    Alpine imajında `ls /lib64/ld-linux-x86-64.so.2` → yok. Alpine musl kullanır ve yükleyicisi `/lib/ld-musl-x86_64.so.1`'dir.
+
+??? success "🎯 Kök neden"
+    `execve` dosyayı buluyor ama kernel önce ELF'in **yorumlayıcısını** (PT_INTERP) başlatmak zorunda ve o yol yok. Hata senin binary'ni değil eksik yükleyiciyi kastediyor.
+
+??? tip "🛠️ Çözüm ve ders"
+    Statik derle (Go için `CGO_ENABLED=0`, Rust için musl hedefleri) ya da glibc tabanlı slim/distroless bir taban kullan. **Ders:** dinamik bir binary yükleyicisini ve libc ABI'sini de yanında taşır; `readelf -l` ve `ldd` ile kontrol et.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

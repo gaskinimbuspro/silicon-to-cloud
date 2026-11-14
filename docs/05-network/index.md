@@ -114,6 +114,25 @@ The server's NIC accepts the frame because it's addressed to its MAC. The kernel
 
 ---
 
+## 🚨 Incident story: peering that broke half the cluster
+
+!!! failure "The alarm"
+    A new VPC peering to the data team's VPC goes live. Minutes later, some pods can no longer reach each other, and the data team can reach *some* of your services but not others.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    Your cluster's pod CIDR is `10.244.0.0/16`. The data VPC is `10.244.0.0/16` too (both teams used a common default).
+
+??? info "🔍 Clue 2"
+    `ip route get 10.244.3.8` on a node now picks the peering route for part of the range: longest-prefix match prefers the more specific routes that were just added.
+
+??? success "🎯 Root cause"
+    Overlapping address ranges make routing ambiguous: packets for pod IPs are sent to the other VPC (and vice versa), depending on which route is more specific.
+
+??? tip "🛠️ Fix and lesson"
+    Remove the peering, renumber one side (new pod CIDR or secondary VPC CIDR), and keep a central IPAM plan. **Lesson:** VPC, pod, service, on-prem and peered CIDRs must never overlap; plan them before the first cluster.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

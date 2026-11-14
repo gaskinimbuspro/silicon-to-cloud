@@ -149,6 +149,25 @@ HTML'in ilk byte'ından önce: **TCP** el sıkışması için bir RTT, **TLS 1.3
 
 ---
 
+## 🚨 Olay hikâyesi: gizemli +5 saniye
+
+!!! failure "Alarm"
+    Pod'lardan harici bir ödeme API'sine yapılan çağrılar bazen normalden **tam 5 saniye daha uzun** sürüyor. Rastgele, yaklaşık 50 istekte bir, ve geliştiricilerin laptoplarından hiç olmuyor.
+
+Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.
+
+??? info "🔍 İpucu 1"
+    Ek süre TCP bağlantısından önce harcanıyor: DNS. Pod'daki `/etc/resolv.conf`: `options ndots:5`, `timeout:5` çözücü varsayılanı.
+
+??? info "🔍 İpucu 2"
+    Node'larda `conntrack -S`, `insert_failed`'ın arttığını gösteriyor. Çözücü A ve AAAA sorgularını aynı UDP soketinden paralel gönderiyor.
+
+??? success "🎯 Kök neden"
+    Aynı 5'liye sahip iki paralel UDP DNS paketi conntrack'te yarışır; biri düşer ve istemci yeniden denemeden önce 5 sn'lik zaman aşımının tamamını bekler. `ndots:5` sorgu sayısını katladığı için yarış sık olur.
+
+??? tip "🛠️ Çözüm ve ders"
+    **NodeLocal DNSCache** çalıştır, sonunda nokta olan tam isimler kullan ya da `ndots`'u düşür ve/veya `single-request-reopen`. **Ders:** bir zaman aşımının tam katları (5 sn, 1 sn, 3 sn) bir parmak izidir: zaman aşımını bul, sonra neyin düştüğünü bul.
+
 ## 🧭 Daha derine in
 
 | Sayfa | Neler var |

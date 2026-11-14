@@ -108,6 +108,25 @@ gcc main.c -o app        # one command, four stages:
 
 ---
 
+## 🚨 Incident story: “no such file or directory” for a file that exists
+
+!!! failure "The alarm"
+    To shrink images, a team switches the runtime stage from `debian:bookworm-slim` to `alpine`. The new pods crash-loop with `exec /app/server: no such file or directory`, yet `ls -l /app/server` inside the image shows the file.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    `file /app/server` → *dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2*.
+
+??? info "🔍 Clue 2"
+    `ls /lib64/ld-linux-x86-64.so.2` in the Alpine image → missing. Alpine uses musl and its loader is `/lib/ld-musl-x86_64.so.1`.
+
+??? success "🎯 Root cause"
+    `execve` succeeds in finding the file, but the kernel must start the ELF's **interpreter** (PT_INTERP) first, and that path doesn't exist. The error refers to the missing loader, not to your binary.
+
+??? tip "🛠️ Fix and lesson"
+    Build statically (`CGO_ENABLED=0` for Go, musl targets for Rust), or use a glibc-based slim/distroless base. **Lesson:** a dynamic binary drags its loader and libc ABI with it; check with `readelf -l` and `ldd`.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |

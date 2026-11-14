@@ -119,6 +119,25 @@ Useful habits: the **RED** method for services (Rate, Errors, Duration), **USE**
 
 ---
 
+## 🚨 Incident story: the hotfix that kept disappearing
+
+!!! failure "The alarm"
+    During an incident, an engineer raises a Deployment's memory limit with `kubectl edit`. The pods restart with the new limit… and two minutes later they're back on the old one and OOMKill again.
+
+Try to diagnose it yourself first, then open the clues one by one.
+
+??? info "🔍 Clue 1"
+    `kubectl get deploy -o yaml` shows the annotation of the GitOps tool; the Argo CD UI shows the app as *OutOfSync → Synced* right after the edit.
+
+??? info "🔍 Clue 2"
+    The Application has `syncPolicy.automated.selfHeal: true`.
+
+??? success "🎯 Root cause"
+    Argo CD continuously reconciles the cluster to git. The manual edit is drift, and self-heal reverts it to the declared state, exactly as designed.
+
+??? tip "🛠️ Fix and lesson"
+    Make the change in git (a fast-tracked PR), or temporarily pause auto-sync for that app during the incident and commit afterwards. **Lesson:** with GitOps, git is the only place where changes stick; have a documented break-glass procedure.
+
 ## 🧭 Go deeper
 
 | Page | What's inside |
