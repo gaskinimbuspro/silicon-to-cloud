@@ -14,7 +14,7 @@ description: What happens after you press Enter on a URL — DNS resolution, the
 
 | Term | Stands for | What it is | How it works (one line) |
 |---|---|---|---|
-| **URL** | Uniform Resource Locator | Address of a resource | scheme://host:port/path?query |
+| **URL** | Uniform Resource Locator | Address of a resource | `scheme://host:port/path?query` |
 | **DNS** | Domain Name System | Turns names into IP addresses | Recursive resolver walks root → TLD → authoritative |
 | **TLD** | Top-Level Domain | The last label of a name (.com, .org, .tr) | TLD servers point to each domain's authoritative servers |
 | **TTL (DNS)** | Time To Live | How long a DNS answer may be cached | Lower it before migrations |

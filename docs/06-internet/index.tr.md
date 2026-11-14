@@ -14,7 +14,7 @@ description: Bir URL'de Enter'a bastıktan sonra ne olur? DNS çözümleme, TCP 
 
 | Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
 |---|---|---|---|
-| **URL** | Uniform Resource Locator | Bir kaynağın adresi | şema://host:port/yol?sorgu |
+| **URL** | Uniform Resource Locator | Bir kaynağın adresi | `şema://host:port/yol?sorgu` |
 | **DNS** | Domain Name System | İsimleri IP adreslerine çevirir | Özyinelemeli çözücü kök → TLD → yetkili yolunu yürür |
 | **TLD** | Top-Level Domain | Bir ismin son etiketi (.com, .org, .tr) | TLD sunucuları her alan adının yetkili sunucularını gösterir |
 | **TTL (DNS)** | Time To Live | Bir DNS cevabının ne kadar önbellekte tutulabileceği | Taşımalardan önce düşür |
