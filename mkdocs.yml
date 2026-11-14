@@ -40,6 +40,7 @@ nav:
   - "5 · Networking": 05-network/index.md
   - "6 · DNS, TCP, TLS, HTTP": 06-internet/index.md
   - "7 · Server side": 07-server/index.md
+  - "8 · The browser": 08-browser/index.md
 
 markdown_extensions:
   - admonition
@@ -74,4 +75,5 @@ plugins:
             "5 · Networking": "5 · Ağın temelleri"
             "6 · DNS, TCP, TLS, HTTP": "6 · DNS, TCP, TLS, HTTP"
             "7 · Server side": "7 · Sunucu tarafı"
+            "8 · The browser": "8 · Tarayıcı"
   - glightbox   # click a diagram to zoom

@@ -15,6 +15,8 @@ const icon = (name) =>
     .replace(/width="24"/, 'width="30"').replace(/height="24"/, 'height="30"')
     .replace(/stroke-width="2"/, 'stroke-width="1.6"');
 
+const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const C = {
   orange: ['#F97316', '#FFF4EC'], amber: ['#D97706', '#FFF8E6'], red: ['#E11D48', '#FFF0F3'],
   purple: ['#7C3AED', '#F5F0FF'], blue: ['#2563EB', '#EEF4FF'], green: ['#059669', '#ECFBF4'],
@@ -24,9 +26,9 @@ const C = {
 const nodeHtml = (n, color) => `
   <div class="node" id="${n.id}" style="--c:${C[color][0]};--bg:${C[color][1]}">
     <div class="ico">${icon(n.icon)}</div>
-    <div class="t">${n.title}</div>
-    <div class="s">${n.sub}</div>
-    ${n.tag ? `<div class="tag">${n.tag}</div>` : ''}
+    <div class="t">${esc(n.title)}</div>
+    <div class="s">${esc(n.sub)}</div>
+    ${n.tag ? `<div class="tag">${esc(n.tag)}</div>` : ''}
   </div>`;
 
 const itemHtml = (it, color) => Array.isArray(it)
@@ -91,7 +93,7 @@ ${spec.rows.map((r) => `<div class="row ${r.dir || ''}">${r.groups.map(groupHtml
 <path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs></svg><div id="labels"></div>
 </div>
 <script>
-const edges=${JSON.stringify(spec.edges)}, boundaries=${JSON.stringify(spec.boundaries || [])};
+const edges=${JSON.stringify(spec.edges.map((e) => e.map((v, i) => (i === 5 ? esc(v) : v))))}, boundaries=${JSON.stringify(spec.boundaries || [])};
 const cv=document.getElementById('canvas').getBoundingClientRect();
 const R=id=>{const r=document.getElementById(id).getBoundingClientRect();return{l:r.left-cv.left,r:r.right-cv.left,t:r.top-cv.top,b:r.bottom-cv.top,cx:(r.left+r.right)/2-cv.left,cy:(r.top+r.bottom)/2-cv.top}};
 const P=(r,s)=>({l:[r.l,r.cy],r:[r.r,r.cy],t:[r.cx,r.t],b:[r.cx,r.b]})[s];
