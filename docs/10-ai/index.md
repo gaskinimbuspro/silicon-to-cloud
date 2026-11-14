@@ -12,6 +12,35 @@ description: How an LLM is served — GPUs, HBM and tensor cores, prefill and de
     GPU's **HBM** memory. An **inference server** batches many users together to keep the very expensive GPU busy.
     Everything from Chapters 1–9 is still underneath.
 
+## 📖 Key terms & abbreviations
+
+| Term | Stands for | What it is | How it works (one line) |
+|---|---|---|---|
+| **LLM** | Large Language Model | Neural network that generates text | Predicts the next token, appends it, repeats |
+| **GPU** | Graphics Processing Unit | Massively parallel processor | Thousands of lanes + Tensor Cores doing matrix math |
+| **HBM** | High Bandwidth Memory | The GPU's own memory | Holds weights and KV cache, read at TB/s |
+| **Prefill / decode** | — | The two phases of generation | Whole prompt at once / one token per step |
+| **KV cache** | Key-Value cache | Saved attention state of past tokens | Avoids recomputation, grows with context × users |
+| **TTFT / TPOT** | Time To First Token / Time Per Output Token | Latency metrics | Queue + prefill / one decode step |
+| **RAG** | Retrieval-Augmented Generation | Answering with your documents | Embed → vector search → put chunks in the prompt |
+| **CUDA / NCCL** | Compute Unified Device Architecture / NVIDIA Collective Communications Library | GPU programming platform / multi-GPU communication | Kernels on the GPU / all-reduce over NVLink & IB |
+
+> The full A–Z list is in the [📖 AI glossary](glossary.md).
+
+## 🧭 Go deeper
+
+| Page | What you'll learn |
+|---|---|
+| [10.1 AI fundamentals](01-fundamentals.md) | What an LLM is, tokens, embeddings, attention, MoE, the model lifecycle |
+| [10.2 GPU hardware](02-gpu.md) | Inside a GPU, HBM and the roofline, number formats, NVLink, scale-up vs scale-out |
+| [10.3 Software stack](03-software.md) | CUDA, cuBLAS/cuDNN/NCCL, drivers, containers, MIG/MPS, DCGM |
+| [10.4 Distributed training](04-training.md) | Parallelism, all-reduce, clusters, checkpoints, gang scheduling |
+| [10.5 Inference & serving](05-inference.md) | KV cache paging, continuous batching, quantization, speculative decoding, P/D disaggregation |
+| [10.6 AI platform on Kubernetes](06-kubernetes.md) | GPU Operator, DRA, Kueue, JobSet/LWS, inference gateway, autoscaling, cost |
+| [10.7 Applications](07-applications.md) | RAG, vector DBs, agents, MCP, AI gateways, guardrails, evals |
+
+## 🗺️ Big picture
+
 ![Serving an LLM](../assets/diagrams/10-ai.png)
 
 ---

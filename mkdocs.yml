@@ -42,7 +42,16 @@ nav:
   - "7 · Server side": 07-server/index.md
   - "8 · The browser": 08-browser/index.md
   - "9 · Modern infrastructure": 09-infra/index.md
-  - "10 · AI infrastructure": 10-ai/index.md
+  - "10 · AI infrastructure":
+      - "Overview": 10-ai/index.md
+      - "10.1 · AI fundamentals": 10-ai/01-fundamentals.md
+      - "10.2 · GPU hardware": 10-ai/02-gpu.md
+      - "10.3 · Software stack": 10-ai/03-software.md
+      - "10.4 · Distributed training": 10-ai/04-training.md
+      - "10.5 · Inference & serving": 10-ai/05-inference.md
+      - "10.6 · AI platform on Kubernetes": 10-ai/06-kubernetes.md
+      - "10.7 · Applications: RAG & agents": 10-ai/07-applications.md
+      - "📖 AI glossary": 10-ai/glossary.md
 
 markdown_extensions:
   - admonition
@@ -80,4 +89,13 @@ plugins:
             "8 · The browser": "8 · Tarayıcı"
             "9 · Modern infrastructure": "9 · Modern altyapı"
             "10 · AI infrastructure": "10 · AI altyapısı"
+            "Overview": "Genel bakış"
+            "10.1 · AI fundamentals": "10.1 · AI temelleri"
+            "10.2 · GPU hardware": "10.2 · GPU donanımı"
+            "10.3 · Software stack": "10.3 · Yazılım yığını"
+            "10.4 · Distributed training": "10.4 · Dağıtık eğitim"
+            "10.5 · Inference & serving": "10.5 · Inference ve servis"
+            "10.6 · AI platform on Kubernetes": "10.6 · Kubernetes üzerinde AI platformu"
+            "10.7 · Applications: RAG & agents": "10.7 · Uygulamalar: RAG ve ajanlar"
+            "📖 AI glossary": "📖 AI sözlüğü"
   - glightbox   # click a diagram to zoom

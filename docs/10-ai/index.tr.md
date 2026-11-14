@@ -12,6 +12,35 @@ description: Bir LLM nasıl servis edilir? GPU'lar, HBM ve tensor core'lar, pref
     belleğinden okunur. Bir **inference sunucusu**, çok pahalı GPU'yu meşgul tutmak için birçok kullanıcıyı bir araya toplar (batch).
     Bölüm 1–9'daki her şey hâlâ altta çalışıyor.
 
+## 📖 Terimler ve kısaltmalar
+
+| Terim | Açılımı | Nedir | Nasıl çalışır (tek satır) |
+|---|---|---|---|
+| **LLM** | Large Language Model (Büyük Dil Modeli) | Metin üreten sinir ağı | Sıradaki token'ı tahmin eder, sona ekler, tekrarlar |
+| **GPU** | Graphics Processing Unit | Devasa paralel işlemci | Matris hesabı yapan binlerce şerit + Tensor Core |
+| **HBM** | High Bandwidth Memory | GPU'nun kendi belleği | Ağırlıkları ve KV cache'i tutar, TB/sn hızında okunur |
+| **Prefill / decode** | — | Üretimin iki aşaması | Tüm prompt birden / adımda bir token |
+| **KV cache** | Key-Value cache | Geçmiş token'ların saklanan attention durumu | Yeniden hesaplamayı önler, bağlam × kullanıcı ile büyür |
+| **TTFT / TPOT** | Time To First Token / Time Per Output Token | Gecikme metrikleri | Kuyruk + prefill / bir decode adımı |
+| **RAG** | Retrieval-Augmented Generation | Kendi dokümanlarınla cevap vermek | Embed et → vektör arama → parçaları prompt'a koy |
+| **CUDA / NCCL** | Compute Unified Device Architecture / NVIDIA Collective Communications Library | GPU programlama platformu / çoklu GPU iletişimi | GPU'da kernel'ler / NVLink & IB üzerinde all-reduce |
+
+> A–Z tam liste [📖 AI sözlüğü](glossary.md) sayfasında.
+
+## 🧭 Derinleş
+
+| Sayfa | Ne öğreneceksin |
+|---|---|
+| [10.1 AI temelleri](01-fundamentals.md) | LLM nedir, token'lar, embedding'ler, attention, MoE, model yaşam döngüsü |
+| [10.2 GPU donanımı](02-gpu.md) | GPU'nun içi, HBM ve roofline, sayı formatları, NVLink, scale-up ve scale-out |
+| [10.3 Yazılım yığını](03-software.md) | CUDA, cuBLAS/cuDNN/NCCL, sürücüler, container'lar, MIG/MPS, DCGM |
+| [10.4 Dağıtık eğitim](04-training.md) | Paralellik, all-reduce, cluster'lar, checkpoint'ler, gang scheduling |
+| [10.5 Inference ve servis](05-inference.md) | KV cache sayfalama, sürekli batching, quantization, speculative decoding, P/D ayrıştırma |
+| [10.6 Kubernetes üzerinde AI platformu](06-kubernetes.md) | GPU Operator, DRA, Kueue, JobSet/LWS, inference gateway, otomatik ölçekleme, maliyet |
+| [10.7 Uygulamalar](07-applications.md) | RAG, vector DB'ler, ajanlar, MCP, AI gateway'ler, guardrail'ler, eval'ler |
+
+## 🗺️ Büyük resim
+
 ![Bir LLM'i servis etmek](../assets/diagrams/10-ai.png)
 
 ---

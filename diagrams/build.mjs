@@ -43,7 +43,7 @@ const groupHtml = (g) => `
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>
 *{box-sizing:border-box;margin:0}
-body{font-family:Inter,sans-serif;background:#fff;color:#0f172a;width:${spec.width}px}
+body{font-family:Inter,sans-serif;background:#fff;color:#0f172a;width:max-content;min-width:${spec.width}px}
 #canvas{position:relative;padding:44px 48px 36px;background:
   radial-gradient(circle at 1px 1px,#e2e8f0 1px,transparent 0) 0 0/22px 22px,#fbfcfe}
 h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
@@ -80,9 +80,9 @@ svg#wires{position:absolute;inset:0;z-index:1;overflow:visible;pointer-events:no
 .boundary{position:absolute;z-index:3;border-left:2.5px dashed #94a3b8}
 .boundary span{position:absolute;top:-14px;left:50%;transform:translate(-50%,-100%);white-space:nowrap;font-size:11px;font-weight:700;
   color:#475569;background:#fff;border:1.5px dashed #94a3b8;border-radius:8px;padding:3px 8px}
-.foot{display:flex;gap:18px;align-items:center;border-top:1px solid #e2e8f0;padding-top:18px;color:#475569;font-size:13px}
+.foot{display:flex;flex-wrap:wrap;row-gap:10px;gap:18px;align-items:center;border-top:1px solid #e2e8f0;padding-top:18px;color:#475569;font-size:13px}
 .foot .lat{margin-left:auto;font-weight:700;color:#0f172a;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:8px 14px}
-.foot .k{display:inline-flex;align-items:center;gap:6px}
+.foot .k{white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .foot .k i{width:12px;height:12px;border-radius:4px;display:inline-block}
 </style></head><body><div id="canvas">
 <h1>${spec.title}</h1><div class="sub">${spec.subtitle}</div>
@@ -107,8 +107,9 @@ for(const e of edges){const [f,t,fs,ts,n,txt,opt={}]=e;const a=P(R(f),fs),b=P(R(
  svg+='<path d="'+d+'" fill="none" stroke="#334155" stroke-width="1.6" stroke-linejoin="round" '+(opt.dash?'stroke-dasharray="5 4" ':'')+'marker-end="url(#ah)"/>';
  // place the label at the middle of the longest segment
  let best=0,bi=0;for(let i=0;i<pts.length-1;i++){const L=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);if(L>best){best=L;bi=i}}
- const lx=opt.lx??(pts[bi][0]+pts[bi+1][0])/2, ly=opt.ly??(pts[bi][1]+pts[bi+1][1])/2;
- lab+='<div class="lbl" style="left:'+lx+'px;top:'+ly+'px">'+(n?'<b>'+n+'</b>':'')+txt+'</div>';}
+ let lx=opt.lx??(pts[bi][0]+pts[bi+1][0])/2, ly=opt.ly??(pts[bi][1]+pts[bi+1][1])/2;
+ if(opt.via&&opt.lx==null&&opt.ly==null&&pts.length===4){lx=(pts[1][0]+pts[2][0])/2;ly=pts[1][1];}
+ if(n||txt) lab+='<div class="lbl" style="left:'+lx+'px;top:'+ly+'px">'+(n?'<b>'+n+'</b>':'')+txt+'</div>';}
 document.getElementById('wires').insertAdjacentHTML('beforeend',svg);
 document.getElementById('labels').innerHTML=lab;
 for(const bd of boundaries){const A=R(bd.left),B=R(bd.right);const x=(A.l>B.r)?(A.l+B.r)/2:(A.r+B.l)/2;
@@ -119,7 +120,7 @@ for(const bd of boundaries){const A=R(bd.left),B=R(bd.right);const x=(A.l>B.r)?(
 fs.mkdirSync(path.dirname(outBase), { recursive: true });
 fs.writeFileSync(outBase + '.html', html);
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
-const page = await browser.newPage({ viewport: { width: spec.width, height: 800 }, deviceScaleFactor: 2 });
+const page = await browser.newPage({ viewport: { width: spec.width + 800, height: 800 }, deviceScaleFactor: 2 });
 await page.goto('file://' + path.resolve(outBase + '.html'));
 await page.waitForTimeout(300);
 await (await page.$('#canvas')).screenshot({ path: outBase + '.png' });
