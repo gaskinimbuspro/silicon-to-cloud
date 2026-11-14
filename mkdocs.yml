@@ -39,6 +39,7 @@ nav:
   - "4 · How a program runs": 04-program/index.md
   - "5 · Networking": 05-network/index.md
   - "6 · DNS, TCP, TLS, HTTP": 06-internet/index.md
+  - "7 · Server side": 07-server/index.md
 
 markdown_extensions:
   - admonition
@@ -72,4 +73,5 @@ plugins:
             "4 · How a program runs": "4 · Program nasıl çalışır"
             "5 · Networking": "5 · Ağın temelleri"
             "6 · DNS, TCP, TLS, HTTP": "6 · DNS, TCP, TLS, HTTP"
+            "7 · Server side": "7 · Sunucu tarafı"
   - glightbox   # click a diagram to zoom
