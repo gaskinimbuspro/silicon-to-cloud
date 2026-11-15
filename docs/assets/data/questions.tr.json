@@ -2563,5 +2563,230 @@
 "url": "13-finops/",
 "q": "Birim ekonomisi nedir ve neden toplam faturadan daha önemlidir?",
 "a": "İş birimi başına maliyet (1.000 istek başına, müşteri başına). Birim maliyet düşüyorsa büyüyen fatura sağlıklı olabilir; sabit bir fatura düşen verimliliği gizleyebilir."
+},
+{
+"id": "4d45010528",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "m7g.xlarge'ın her parçası ne anlama geliyor?",
+"a": "m = genel amaçlı aile, 7 = nesil, g = Graviton (ARM) işlemci, xlarge = boyut (bu ailede 4 vCPU, 16 GiB)."
+},
+{
+"id": "7216cd1530",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Sunucuları boot'tan sonra SSH betikleriyle yapılandırmak yerine neden imaj pişirmeli?",
+"a": "Pişirilmiş imajlar özdeş, test edilmiş ve hızlı boot eder; elle yapılandırılan sunucular yeniden üretilemeyen ve güvenle değiştirilemeyen benzersiz kar tanelerine dönüşür."
+},
+{
+"id": "e502452298",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Bir Auto Scaling grubu bozuk bir instance'ı nasıl iyileştirir?",
+"a": "Sağlık kontrolleri (instance durumu ve load balancer kontrolleri) onu sağlıksız işaretler; grup onu sonlandırır ve istenen sayıyı korumak için launch template'ten yenisini başlatır."
+},
+{
+"id": "6a96e19ed3",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Soğuk başlangıç nedir ve nasıl azaltılır?",
+"a": "Yeni bir çalışma ortamı başlarken oluşan gecikme (runtime boot + başlatma). Küçük paketler ve hızlı runtime'lar, tembel başlatma, provisioned/minimum instance'lar ya da snapshot tabanlı başlatmayla azaltılır."
+},
+{
+"id": "6aff0da826",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Fonksiyonlar container'lardan ne zaman daha pahalıdır?",
+"a": "Sabit, yüksek trafikli iş yüklerinde: istek ve ms başına fiyatlandırma, aynı anda çok isteğe hizmet veren sürekli açık container ya da VM'lerin maliyetini aşar."
+},
+{
+"id": "390dfaddde",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Bir EBS volume'u neden başka bir erişilebilirlik zone'undaki instance'a bağlanamaz?",
+"a": "Blok volume'lar tek bir AZ'nin depolama ağı içinde replike edilir; veriyi zone'lar arasında taşımak için (bölgesel saklanan) snapshot'lar ya da uygulama seviyesinde replikasyon kullanılır."
+},
+{
+"id": "424faa2be0",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "S3 için dayanıklılık ile erişilebilirlik arasındaki fark ne?",
+"a": "Dayanıklılık verinin kaybolmama olasılığıdır (11 dokuz); erişilebilirlik belli bir anda ona ulaşabilme olasılığıdır (Standard için %99,99)."
+},
+{
+"id": "e798c48604",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Multi-AZ bir veritabanı okuma replikasının vermediği neyi verir?",
+"a": "Otomatik failover'lı ve veri kaybı olmayan senkron bir yedek; okuma replikası asenkrondur, okuma ölçeklemesi için kullanılır ve geride kalabilir."
+},
+{
+"id": "447cad0e62",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Kubernetes'te PostgreSQL'in önünde neden bir bağlantı havuzlayıcısına ihtiyaç var?",
+"a": "Her bağlantı bellek maliyeti olan bir backend sürecidir; çok bağlantılı çok sayıda pod veritabanını tüketebilir. Havuzlayıcı onları daha az bağlantıya çoğullar."
+},
+{
+"id": "3206a82a7d",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Yedekler neden başka bir hesaba kopyalanmalı?",
+"a": "Saldırganlar ya da kötü bir betik production hesabında admin erişimi elde ederse orada saklanan yedekleri silebilir; ayrı, kilitli bir hesap onları korur."
+},
+{
+"id": "ebf52fd5d3",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Terraform neden bir state dosyasına ihtiyaç duyar?",
+"a": "Koddaki her kaynağı oluşturduğu gerçek nesneye (ID'ler ve özellikler) eşlemek için; böylece farkları hesaplayabilir, doğru şeyleri güncelleyip yok edebilir. Bulut API'si tek başına hangi kaynakların senin yapılandırmana ait olduğunu bilmez."
+},
+{
+"id": "52809f91c2",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Bir planda -/+ ne demek ve neden tehlikeli?",
+"a": "Değiştirme: değişmez bir özellik değiştiği için kaynak yok edilip yeniden oluşturulacak. Veritabanı ya da disk gibi durum tutan kaynaklarda veri kaybı ya da kesinti demektir."
+},
+{
+"id": "2303ed4b5d",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Neden kilitli uzak state kullanılır?",
+"a": "Bütün ekip ve CI tek bir doğruluk kaynağını paylaşsın ve iki apply aynı anda çalışıp state'i bozamasın diye."
+},
+{
+"id": "5146b1176d",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Elle oluşturulmuş bir bucket'ı yeniden oluşturmadan Terraform yönetimine nasıl alırsın?",
+"a": "Eşleşen kaynak bloğunu ve bir import bloğunu yaz (ya da terraform import), sonra plan değişiklik göstermeyene kadar çalıştır."
+},
+{
+"id": "b15fa191a7",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Bir Terraform pull request'inde CI pipeline'ı ne yapmalı?",
+"a": "Biçimlendir ve doğrula, lint ve politika/güvenlik taraması yap, planı çalıştırıp (maliyet farkıyla birlikte) incelenmek üzere PR'a yaz; merge'den sonra kısa ömürlü OIDC kimlik bilgileriyle sadece incelenen planı uygula."
+},
+{
+"id": "bf16ac12b8",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Neden etiketli tek bir hesap yerine prod ve dev için ayrı hesaplar kullanılır?",
+"a": "Hesaplar IAM, kotalar ve etki alanı için sert izolasyon sınırlarıdır; etiketler ve isimlendirme kuralları dev tarafındaki bir hatanın ya da ele geçirilmiş bir anahtarın prod'a dokunmasını durdurmaz."
+},
+{
+"id": "fa067e0570",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Bir SCP, hesaptaki IAM politikalarının yapamadığı neyi yapabilir?",
+"a": "Hesaptaki herkes için, admin'leri dahil, bir tavan koyar; böylece \"CloudTrail'i asla kapatma\" ya da \"sadece AB bölgeleri\" gibi kurallar yerel olarak aşılamaz."
+},
+{
+"id": "2992ac03c3",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Pilot ışığı ile ılık yedek arasındaki fark ne?",
+"a": "Pilot ışığı veriyi replike ve altyapıyı hazır tutar ama compute çoğunlukla kapalıdır; ılık yedek tüm yığının küçük çalışan bir kopyasını çalıştırır; daha hızlı kurtarır ama daha pahalıdır."
+},
+{
+"id": "b7d83cafb1",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Hangi felaketler tam bir bölge kesintisinden daha yaygındır ve onlara karşı ne korur?",
+"a": "Kötü deploy'lar, yanlışlıkla silmeler, veri bozulması ve fidye yazılımı. Zamanda geri dönüş, versiyonlama ve ayrı bir hesaptaki değişmez yedekler onlara karşı korur."
+},
+{
+"id": "d255342695",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Neden game day yapılır?",
+"a": "Test edilmemiş DR planları detaylarda başarısız olur (süresi dolmuş kimlik bilgileri, eksik kotalar, sabit kodlanmış endpoint'ler); tatbikatlar bunları ortaya çıkarır ve gerçek RTO ile RPO'yu ölçer."
+},
+{
+"id": "b456583c22",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Bölge ile erişilebilirlik zone'u arasındaki fark ne?",
+"a": "Bölge bağımsız API'lere ve veriye sahip coğrafi bir alandır; erişilebilirlik zone'u bir bölge içinde kendi enerji ve ağına sahip, senkron replikasyon için diğerlerine yeterince yakın izole bir veri merkezidir (ya da grubu)."
+},
+{
+"id": "2655fe86a4",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Paylaşılan sorumluluk modelinde herkese açık bir S3 bucket'ından veri sızmasından kim sorumlu?",
+"a": "Müşteri. Sağlayıcı altyapıyı korur; yapılandırma, erişim kontrolü ve veri her zaman müşterinin sorumluluğundadır."
+},
+{
+"id": "19216e1312",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Yüksek erişilebilirlik için 'çok AZ' neden genelde yeterli ve ne zaman çok bölge gerekir?",
+"a": "AZ'lerin bağımsız hata alanları vardır; onlara yaymak veri merkezi hatalarından düşük gecikme ve maliyetle sağ çıkarır. Çok bölge; bölgesel kesintiler, sıkı RTO/RPO, veri yerelliği ya da global gecikme için gerekir ve çok daha karmaşıktır."
+},
+{
+"id": "ce59cc126c",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Production değişiklikleri neden konsol yerine kod olarak altyapıyla yapılmalı?",
+"a": "Kod incelenir, sürümlenir, tekrarlanabilir ve bir felaketten sonra ortamı yeniden kurabilir; konsol değişiklikleri görünmez, tekrar üretilemez ve herkesin var sandığından uzaklaşır."
+},
+{
+"id": "5c89caefdb",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "RPO ve RTO ne demek?",
+"a": "RPO ne kadar veri (zaman) kaybetmeyi göze alabileceğindir; RTO servisin ne kadar süre erişilemez kalabileceğidir. Birlikte yedek ve DR stratejisini ve maliyetini belirlerler."
 }
 ]

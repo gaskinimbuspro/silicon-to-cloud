@@ -794,6 +794,67 @@ Bin packing;Fitting pods tightly onto nodes · Fewer, fuller nodes
 Showback / chargeback;Showing / billing cost per team · Needs tags and allocation
 Unit economics;Cost per business unit · €/1000 requests, €/customer, €/training run
 FOCUS;FinOps Open Cost and Usage Specification — Standard billing data format · Same columns across clouds
+Instance type;VM size and shape · m7i.large = family m (general), gen 7, Intel, size large
+vCPU;virtual CPU — One hardware thread on the host · 2 vCPU ≈ 1 physical core with SMT
+Instance family;CPU:RAM ratio and specialty · General (m), compute (c), memory (r), GPU (p/g), burstable (t)
+AMI / image;Amazon Machine Image — Disk template a VM boots from · Built by Packer/image pipelines
+user-data / cloud-init;Script run at first boot · Bootstraps config, joins a cluster
+ASG / MIG / VMSS;Auto Scaling Group / Managed Instance Group / VM Scale Set — Self-healing fleet of identical VMs · min/desired/max + health checks
+Immutable infrastructure;Never change running servers · New image → rolling replace
+Spot;Spare capacity at a discount · ~2 min interruption notice (13)
+Graviton / Axion / Cobalt;Cloud providers' ARM CPUs · Often better price-performance (4.x multi-arch)
+FaaS;Function as a Service — Code run per event · Lambda, Cloud Run functions, Azure Functions
+Cold start;"Delay when a new instance starts · Runtime boot + code init; ms to seconds"
+Nitro / hypervisor;Virtualization layer · Offloads network/storage to cards (3.x, 2.x)
+Block storage;"Network-attached virtual disk · EBS, Persistent Disk; one VM (mostly)"
+IOPS;I/O Operations Per Second — Small random I/O capacity · gp3: baseline 3,000, provisioned up to 16,000
+File storage;Shared filesystem over NFS/SMB · EFS, Filestore, Azure Files
+Durability / availability;Chance data survives / is reachable · S3 Standard: 11 nines / 99.99%
+Storage class;Price/latency tier for objects · Standard → Infrequent Access → Glacier/Archive
+Lifecycle rule;"Automatic transition or deletion by age · ""Move to IA after 30 days, delete after 365"""
+Multi-AZ (DB);Synchronous standby in another zone · Automatic failover, ~1–2 min
+Read replica;Asynchronous copy for reads · Scales reads, may lag (12)
+Snapshot;Incremental copy of a volume/DB · Stored in object storage
+Valkey;Open-source Redis fork · Default engine in several managed caches
+HCL;HashiCorp Configuration Language — Terraform's declarative language · Blocks: resource, variable, output, module
+Provider;Plugin that talks to an API · aws, google, azurerm, kubernetes, github
+Resource;One managed object · aws_s3_bucket.logs
+Data source;Read-only lookup · Find an AMI, an existing VPC
+State;Map from code to real resource IDs + attributes · terraform.tfstate, JSON
+Backend;Where state is stored · S3 (+ lock), GCS, Azure Blob, HCP Terraform
+Lock;Prevents two applies at once · S3 lockfile / DynamoDB, GCS native
+Plan / apply;Preview diff / execute it · + create, ~ update, -/+ replace, - destroy
+Module;Reusable group of resources · Inputs (variables) → outputs
+Import;Adopt an existing resource into state · import block, then plan shows no changes
+OpenTofu;Linux Foundation fork of Terraform (MPL) · Same language, drop-in for most uses
+Policy as code;Rules checked on plans · OPA/Conftest, Checkov, Sentinel
+Organization;Top container for all accounts · AWS Organizations, GCP Organization, Azure Management Groups
+OU;Organizational Unit — Folder of accounts sharing policies · Prod, NonProd, Security, Sandbox
+Account / project / subscription;Isolation and billing boundary · Separate IAM, quotas, resources
+SCP / Org Policy;"Service Control Policy — Guardrail on everything in an OU · ""Deny leaving eu- regions"", even for admins"
+IAM Identity Center;SSO into many accounts · Permission sets → short-lived roles
+Account vending;Automated creation of new accounts · Control Tower AFT, Terraform
+Hub-and-spoke;Central network hub, workload VPCs as spokes · Transit Gateway, Shared VPC, Virtual WAN
+Log archive;Central, immutable audit logs · Org-wide CloudTrail, write-once bucket
+RPO;"Recovery Point Objective — Max acceptable data loss · ""≤ 5 minutes of transactions"""
+RTO;"Recovery Time Objective — Max acceptable downtime · ""Back within 1 hour"""
+Pilot light / warm standby;DR with minimal / scaled-down copy · Cheaper than active-active, slower
+Active-active;Two+ regions serving traffic · Lowest RTO/RPO, hardest data story
+Game day;Planned failure exercise · Practise failover, measure real RTO
+Backup & restore;"Nothing; backups copied there — Hours (last backup) · Hours–days | $"
+Pilot light;"Data replicated; core infra defined in IaC, scaled to zero — Minutes · Tens of minutes–hours | $$"
+Warm standby;Small but working copy of the whole stack — Seconds–minutes · Minutes | $$$
+Region;A geographic area with several data centers · eu-central-1 (Frankfurt), europe-west4 (Netherlands)
+AZ;Availability Zone — One or more isolated data centers in a region · Own power/cooling/network, low-latency links between AZs
+Edge / PoP;Point of Presence — Small sites close to users · CDN, DNS, WAF, DDoS protection
+IaaS / PaaS / SaaS;Infrastructure / Platform / Software as a Service — How much of the stack the provider runs · VM → managed runtime → finished app
+Serverless;You don't manage servers or capacity · Pay per request/duration, scales to zero
+Shared responsibility;"Split of security duties · Provider: ""of"" the cloud; you: ""in"" the cloud"
+Control plane / data plane;APIs that manage resources / the traffic itself · Control plane outages block changes, not always traffic
+Managed service;Provider runs the software for you · RDS, EKS, Pub/Sub: patching, backups, HA included
+Landing zone;Pre-built multi-account foundation · Accounts, SSO, networking, logging, guardrails
+Quota / limit;"Max resources per account/region · vCPUs, IPs, API rate limits; raise before launch"
+SLA;"Service Level Agreement — Provider's uptime promise · e.g. 99.99% for multi-AZ; credits, not compensation"
 Why can't an interrupt handler sleep or do heavy work?;"It runs with interrupts (at least on that line/core) blocked and outside any process context; sleeping would freeze that core's interrupt handling. Heavy work goes to a bottom half."
 What does NAPI do and why?;After the first interrupt it disables the NIC's interrupt and polls batches of packets until the queue is empty, avoiding an interrupt storm at high packet rates.
 How does Linux know which driver to load for a newly plugged device?;"The bus reads the device IDs, the kernel emits a uevent with a modalias, udev matches it to a module and runs modprobe; the driver's probe() then claims the device."
@@ -1079,3 +1140,28 @@ When should you buy Savings Plans or committed use discounts?;"For the steady ba
 Which workloads are good candidates for spot instances?;Stateless, fault-tolerant or retryable ones: web replicas behind a load balancer, batch jobs, CI runners, checkpointed training. Not single-instance databases.
 Why can traffic to S3 from private subnets be expensive, and how do you fix it?;Without a VPC endpoint it goes through the NAT gateway, which charges per GB processed. A gateway endpoint for S3 is free and keeps traffic private.
 What is unit economics and why does it matter more than the total bill?;"Cost per business unit (per 1,000 requests, per customer). A growing bill can be healthy if unit cost falls; a flat bill can hide falling efficiency."
+What does each part of m7g.xlarge mean?;m = general purpose family, 7 = generation, g = Graviton (ARM) processor, xlarge = size (4 vCPUs, 16 GiB for this family).
+Why bake images instead of configuring servers after boot with SSH scripts?;"Baked images are identical, tested and fast to boot; servers configured by hand drift into unique snowflakes that can't be reproduced or safely replaced."
+How does an Auto Scaling group heal a broken instance?;"Health checks (instance status and load balancer checks) mark it unhealthy; the group terminates it and launches a replacement from the launch template to keep the desired count."
+What is a cold start and how can you reduce it?;The delay when a new execution environment starts (runtime boot + initialization). Reduce it with small packages and fast runtimes, lazy initialization, provisioned/minimum instances or snapshot-based start.
+When are functions more expensive than containers?;For steady, high-traffic workloads: per-request and per-ms pricing adds up beyond the cost of always-on containers or VMs that serve many requests concurrently.
+Why can't an EBS volume attach to an instance in another availability zone?;"Block volumes are replicated within a single AZ's storage network; to move data across zones you use snapshots (stored regionally) or application-level replication."
+What's the difference between durability and availability for S3?;"Durability is the probability your data isn't lost (11 nines); availability is the probability you can access it at a given moment (99.99% for Standard)."
+What does a Multi-AZ database give you that a read replica doesn't?;"A synchronous standby with automatic failover and no data loss; a read replica is asynchronous, used for read scaling, and may lag behind."
+Why do you need a connection pooler in front of PostgreSQL in Kubernetes?;"Each connection is a backend process with memory cost; many pods with many connections can exhaust the database. A pooler multiplexes them onto fewer connections."
+Why must backups be copied to another account?;"If attackers or a bad script get admin access to the production account, they can delete backups stored there; a separate, locked account preserves them."
+Why does Terraform need a state file?;"To map each resource in code to the real object it created (IDs and attributes), so it can compute diffs, update and destroy the right things; the cloud API alone doesn't know which resources belong to your configuration."
+What does -/+ in a plan mean and why is it dangerous?;Replacement: the resource will be destroyed and recreated because an immutable attribute changed. On stateful resources like databases or disks it means data loss or downtime.
+Why use remote state with locking?;So the whole team and CI share one source of truth, and two applies can't run at the same time and corrupt state.
+How do you bring a manually created bucket under Terraform management without recreating it?;Write the matching resource block and an import block (or terraform import), then run plan until it shows no changes.
+What should a CI pipeline do on a Terraform pull request?;"Format and validate, lint and policy/security scan, run plan and post it (plus cost diff) on the PR for review; apply only the reviewed plan after merge, using short-lived OIDC credentials."
+Why use separate accounts for prod and dev instead of one account with tags?;"Accounts are hard isolation boundaries for IAM, quotas and blast radius; tags and naming conventions don't stop a dev-side mistake or compromised key from touching prod."
+What can an SCP do that IAM policies in the account can't?;"It sets a ceiling for everyone in the account, including its administrators, so rules like ""never disable CloudTrail"" or ""only EU regions"" can't be bypassed locally."
+What's the difference between pilot light and warm standby?;"Pilot light keeps data replicated and infrastructure ready but compute mostly off; warm standby runs a small working copy of the whole stack, so it recovers faster but costs more."
+Which disasters are more common than a full region outage, and what protects against them?;Bad deployments, accidental deletes, data corruption and ransomware. Point-in-time recovery, versioning, and immutable backups in a separate account protect against them.
+Why run game days?;"Untested DR plans fail on details (expired credentials, missing quotas, hard-coded endpoints); exercises reveal them and measure the real RTO and RPO."
+What's the difference between a region and an availability zone?;"A region is a geographic area with independent APIs and data; an availability zone is an isolated data center (or group) inside a region with its own power and network, close enough to the others for synchronous replication."
+Under the shared responsibility model, who is responsible for a public S3 bucket leaking data?;"The customer. The provider secures the infrastructure; configuration, access control and data are always the customer's responsibility."
+Why is 'multi-AZ' usually enough for high availability, and when do you need multi-region?;AZs have independent failure domains, so spreading across them survives data-center failures at low latency and cost. Multi-region is needed for regional outages, strict RTO/RPO, data residency or global latency, at much higher complexity.
+Why should production changes go through Infrastructure as Code instead of the console?;"Code is reviewed, versioned, repeatable and can rebuild the environment after a disaster; console changes are invisible, unreproducible and drift from what everyone thinks exists."
+What do RPO and RTO mean?;"RPO is how much data (time) you can afford to lose; RTO is how long the service can be unavailable. Together they decide the backup and DR strategy and its cost."

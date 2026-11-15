@@ -800,6 +800,71 @@ Bin packing;Pod'ları node'lara sıkı yerleştirmek · Daha az, daha dolu node
 Showback / chargeback;Ekip başına maliyeti göstermek / faturalamak · Etiket ve dağıtım gerekir
 Birim ekonomisi;Unit economics — İş birimi başına maliyet · €/1000 istek, €/müşteri, €/eğitim çalıştırması
 FOCUS;FinOps Open Cost and Usage Specification — Standart faturalama veri formatı · Bulutlar arasında aynı kolonlar
+Instance tipi;Instance type — VM boyutu ve şekli · m7i.large = m ailesi (genel), 7. nesil, Intel, large boyut
+vCPU;virtual CPU — Sunucudaki bir donanım thread'i · 2 vCPU ≈ SMT ile 1 fiziksel çekirdek
+Instance ailesi;Instance family — CPU:RAM oranı ve uzmanlık · Genel (m), compute (c), bellek (r), GPU (p/g), patlamalı (t)
+AMI / imaj;Amazon Machine Image — Bir VM'in boot ettiği disk şablonu · Packer/imaj pipeline'larıyla üretilir
+user-data / cloud-init;İlk boot'ta çalışan betik · Yapılandırmayı kurar, cluster'a katılır
+ASG / MIG / VMSS;Auto Scaling Group / Managed Instance Group / VM Scale Set — Kendini iyileştiren özdeş VM filosu · min/istenen/max + sağlık kontrolleri
+Sağlık kontrolü;Health check — Bir instance'ın iyi olup olmadığına karar veren yoklama · Başarısız instance'lar değiştirilir
+Değişmez altyapı;Immutable infrastructure — Çalışan sunucuları asla değiştirme · Yeni imaj → kademeli değiştirme
+Spot;İndirimli boş kapasite · ~2 dk kesinti uyarısı (13)
+Graviton / Axion / Cobalt;Bulut sağlayıcılarının ARM CPU'ları · Genelde daha iyi fiyat-performans (4.x çok mimari)
+FaaS;Function as a Service — Olay başına çalışan kod · Lambda, Cloud Run functions, Azure Functions
+Soğuk başlangıç;"Cold start — Yeni bir instance başlarken oluşan gecikme · Runtime boot + kod başlatma; ms'den saniyelere"
+Nitro / hypervisor;Sanallaştırma katmanı · Ağ/depolamayı kartlara devreder (3.x, 2.x)
+Blok depolama;"Block storage — Ağa bağlı sanal disk · EBS, Persistent Disk; (çoğunlukla) tek VM"
+IOPS;I/O Operations Per Second — Küçük rastgele I/O kapasitesi · gp3: taban 3.000, 16.000'e kadar provizyonlanır
+Throughput;Büyük sıralı I/O için MB/s · IOPS'tan ayrı bir limit
+Dosya depolama;File storage — NFS/SMB üzerinden paylaşılan dosya sistemi · EFS, Filestore, Azure Files
+Nesne depolama;Object storage — HTTP API ile düz bir nesne bucket'ı · S3, GCS, Azure Blob
+Dayanıklılık / erişilebilirlik;Durability / availability — Verinin hayatta kalma / ulaşılabilme olasılığı · S3 Standard: 11 dokuz / %99,99
+Depolama sınıfı;Storage class — Nesneler için fiyat/gecikme katmanı · Standard → Seyrek Erişim → Glacier/Arşiv
+Yaşam döngüsü kuralı;"Lifecycle rule — Yaşa göre otomatik geçiş ya da silme · ""30 gün sonra IA'ya taşı, 365 gün sonra sil"""
+Multi-AZ (DB);Başka bir zone'da senkron yedek · Otomatik failover, ~1–2 dk
+Okuma replikası;Read replica — Okumalar için asenkron kopya · Okumaları ölçekler, geride kalabilir (12)
+Snapshot;Bir volume/DB'nin artımlı kopyası · Nesne depolamada saklanır
+Valkey;Açık kaynak Redis fork'u · Birçok yönetilen önbellekte varsayılan motor
+HCL;HashiCorp Configuration Language — Terraform'un bildirimsel dili · Bloklar: resource, variable, output, module
+Provider;Bir API ile konuşan eklenti · aws, google, azurerm, kubernetes, github
+Kaynak;Resource — Yönetilen tek bir nesne · aws_s3_bucket.logs
+Data source;Salt okunur sorgu · Bir AMI'yi, var olan bir VPC'yi bul
+State;Koddan gerçek kaynak ID'lerine + özelliklere eşleme · terraform.tfstate, JSON
+Backend;State'in saklandığı yer · S3 (+ kilit), GCS, Azure Blob, HCP Terraform
+Kilit;Lock — Aynı anda iki apply'ı engeller · S3 lockfile / DynamoDB, GCS yerel
+Plan / apply;Farkı önizle / uygula · + oluştur, ~ güncelle, -/+ değiştir, - yok et
+Modül;Module — Yeniden kullanılabilir kaynak grubu · Girdiler (değişkenler) → çıktılar
+Kayma;Drift — Gerçeğin koddan farklı olması · Konsol değişiklikleri, başka araçlar
+Import;Var olan bir kaynağı state'e almak · import bloğu, sonra plan değişiklik göstermez
+OpenTofu;Terraform'un Linux Foundation fork'u (MPL) · Aynı dil, çoğu kullanımda doğrudan yerine geçer
+Kod olarak politika;Policy as code — Planlar üzerinde kontrol edilen kurallar · OPA/Conftest, Checkov, Sentinel
+Organizasyon;Organization — Tüm hesapların en üst kabı · AWS Organizations, GCP Organization, Azure Management Groups
+OU;Organizational Unit — Politikaları paylaşan hesap klasörü · Prod, NonProd, Security, Sandbox
+Hesap / proje / abonelik;Account / project / subscription — İzolasyon ve faturalama sınırı · Ayrı IAM, kotalar, kaynaklar
+SCP / Org Policy;"Service Control Policy — Bir OU'daki her şey üzerinde korkuluk · ""eu- bölgeleri dışına çıkmayı reddet"", admin'ler için bile"
+IAM Identity Center;Çok hesaba SSO · Yetki setleri → kısa ömürlü roller
+Hesap üretimi;Account vending — Yeni hesapların otomatik oluşturulması · Control Tower AFT, Terraform
+Hub-and-spoke;Merkezi ağ hub'ı, iş yükü VPC'leri kollar · Transit Gateway, Shared VPC, Virtual WAN
+Log arşivi;Log archive — Merkezi, değişmez denetim logları · Org çapında CloudTrail, tek yazımlık bucket
+RPO;"Recovery Point Objective — Kabul edilebilir en fazla veri kaybı · ""≤ 5 dakikalık transaction"""
+RTO;"Recovery Time Objective — Kabul edilebilir en uzun kesinti · ""1 saat içinde geri"""
+Pilot ışığı / ılık yedek;Pilot light / warm standby — Minimal / küçültülmüş kopyalı DR · Aktif-aktiften ucuz, daha yavaş
+Aktif-aktif;Active-active — Trafiğe hizmet veren iki+ bölge · En düşük RTO/RPO, en zor veri hikâyesi
+Game day;Planlı hata tatbikatı · Failover'ı pratik et, gerçek RTO'yu ölç
+Yedekle ve geri yükle;"Hiçbir şey; yedekler oraya kopyalanır — Saatler (son yedek) · Saatler–günler | $"
+Pilot ışığı;"Veri replike; temel altyapı IaC'de tanımlı, sıfıra ölçeklenmiş — Dakikalar · Onlarca dakika–saatler | $$"
+Ilık yedek;Tüm yığının küçük ama çalışan bir kopyası — Saniyeler–dakikalar · Dakikalar | $$$
+Bölge;Region — Birkaç veri merkezi olan coğrafi alan · eu-central-1 (Frankfurt), europe-west4 (Hollanda)
+AZ;Availability Zone — Bir bölgedeki bir ya da daha fazla izole veri merkezi · Kendi enerji/soğutma/ağı, AZ'ler arası düşük gecikmeli bağlantı
+Edge / PoP;Point of Presence — Kullanıcılara yakın küçük noktalar · CDN, DNS, WAF, DDoS koruması
+IaaS / PaaS / SaaS;Infrastructure / Platform / Software as a Service — Yığının ne kadarını sağlayıcı çalıştırır · VM → yönetilen runtime → hazır uygulama
+Sunucusuz;Serverless — Sunucu ya da kapasite yönetmezsin · İstek/süre başına öde, sıfıra ölçeklenir
+Paylaşılan sorumluluk;"Shared responsibility — Güvenlik görevlerinin paylaşımı · Sağlayıcı: bulutun güvenliği; sen: buluttaki güvenlik"
+Control plane / data plane;Kaynakları yöneten API'ler / trafiğin kendisi · Control plane kesintisi değişiklikleri engeller, trafiği her zaman değil
+Yönetilen servis;Managed service — Yazılımı senin için sağlayıcı çalıştırır · RDS, EKS, Pub/Sub: yama, yedek, HA dahil
+Landing zone;Önceden kurulmuş çok hesaplı temel · Hesaplar, SSO, ağ, loglama, korkuluklar
+Kota / limit;"Quota / limit — Hesap/bölge başına en fazla kaynak · vCPU, IP, API hız limitleri; lansmandan önce artır"
+SLA;"Service Level Agreement — Sağlayıcının erişilebilirlik sözü · Örn. çok AZ için %99,99; tazminat değil kredi"
 Bir kesme handler'ı neden uyuyamaz ya da ağır iş yapamaz?;"Kesmeler (en azından o hatta/çekirdekte) bloklu ve herhangi bir process bağlamı dışında çalışır; uyumak o çekirdeğin kesme işlemesini dondurur. Ağır iş alt yarıya gider."
 NAPI ne yapar ve neden?;"İlk kesmeden sonra NIC'in kesmesini kapatır ve kuyruk boşalana kadar paket gruplarını yoklar; yüksek paket hızlarında kesme fırtınasını önler."
 Linux yeni takılan bir cihaz için hangi sürücüyü yükleyeceğini nasıl bilir?;"Bus cihaz kimliklerini okur, kernel modalias içeren bir uevent yayar, udev bunu bir modülle eşler ve modprobe çalıştırır; sonra sürücünün probe()'u cihazı sahiplenir."
@@ -1085,3 +1150,28 @@ Savings Plan ya da taahhütlü kullanım indirimi ne zaman alınmalı?;"1–3 y�
 Hangi iş yükleri spot instance için iyi adaydır?;Durumsuz, hataya dayanıklı ya da yeniden denenebilir olanlar: load balancer arkasındaki web replikaları, batch işler, CI runner'ları, checkpoint'li eğitim. Tek instance'lı veritabanları değil.
 Private subnet'lerden S3'e trafik neden pahalı olabilir ve nasıl düzeltilir?;VPC endpoint olmadan işlenen GB başına ücret alan NAT gateway'den geçer. S3 için gateway endpoint ücretsizdir ve trafiği özel tutar.
 Birim ekonomisi nedir ve neden toplam faturadan daha önemlidir?;"İş birimi başına maliyet (1.000 istek başına, müşteri başına). Birim maliyet düşüyorsa büyüyen fatura sağlıklı olabilir; sabit bir fatura düşen verimliliği gizleyebilir."
+m7g.xlarge'ın her parçası ne anlama geliyor?;m = genel amaçlı aile, 7 = nesil, g = Graviton (ARM) işlemci, xlarge = boyut (bu ailede 4 vCPU, 16 GiB).
+Sunucuları boot'tan sonra SSH betikleriyle yapılandırmak yerine neden imaj pişirmeli?;"Pişirilmiş imajlar özdeş, test edilmiş ve hızlı boot eder; elle yapılandırılan sunucular yeniden üretilemeyen ve güvenle değiştirilemeyen benzersiz kar tanelerine dönüşür."
+Bir Auto Scaling grubu bozuk bir instance'ı nasıl iyileştirir?;"Sağlık kontrolleri (instance durumu ve load balancer kontrolleri) onu sağlıksız işaretler; grup onu sonlandırır ve istenen sayıyı korumak için launch template'ten yenisini başlatır."
+Soğuk başlangıç nedir ve nasıl azaltılır?;Yeni bir çalışma ortamı başlarken oluşan gecikme (runtime boot + başlatma). Küçük paketler ve hızlı runtime'lar, tembel başlatma, provisioned/minimum instance'lar ya da snapshot tabanlı başlatmayla azaltılır.
+Fonksiyonlar container'lardan ne zaman daha pahalıdır?;Sabit, yüksek trafikli iş yüklerinde: istek ve ms başına fiyatlandırma, aynı anda çok isteğe hizmet veren sürekli açık container ya da VM'lerin maliyetini aşar.
+Bir EBS volume'u neden başka bir erişilebilirlik zone'undaki instance'a bağlanamaz?;"Blok volume'lar tek bir AZ'nin depolama ağı içinde replike edilir; veriyi zone'lar arasında taşımak için (bölgesel saklanan) snapshot'lar ya da uygulama seviyesinde replikasyon kullanılır."
+S3 için dayanıklılık ile erişilebilirlik arasındaki fark ne?;"Dayanıklılık verinin kaybolmama olasılığıdır (11 dokuz); erişilebilirlik belli bir anda ona ulaşabilme olasılığıdır (Standard için %99,99)."
+Multi-AZ bir veritabanı okuma replikasının vermediği neyi verir?;"Otomatik failover'lı ve veri kaybı olmayan senkron bir yedek; okuma replikası asenkrondur, okuma ölçeklemesi için kullanılır ve geride kalabilir."
+Kubernetes'te PostgreSQL'in önünde neden bir bağlantı havuzlayıcısına ihtiyaç var?;"Her bağlantı bellek maliyeti olan bir backend sürecidir; çok bağlantılı çok sayıda pod veritabanını tüketebilir. Havuzlayıcı onları daha az bağlantıya çoğullar."
+Yedekler neden başka bir hesaba kopyalanmalı?;"Saldırganlar ya da kötü bir betik production hesabında admin erişimi elde ederse orada saklanan yedekleri silebilir; ayrı, kilitli bir hesap onları korur."
+Terraform neden bir state dosyasına ihtiyaç duyar?;"Koddaki her kaynağı oluşturduğu gerçek nesneye (ID'ler ve özellikler) eşlemek için; böylece farkları hesaplayabilir, doğru şeyleri güncelleyip yok edebilir. Bulut API'si tek başına hangi kaynakların senin yapılandırmana ait olduğunu bilmez."
+Bir planda -/+ ne demek ve neden tehlikeli?;Değiştirme: değişmez bir özellik değiştiği için kaynak yok edilip yeniden oluşturulacak. Veritabanı ya da disk gibi durum tutan kaynaklarda veri kaybı ya da kesinti demektir.
+Neden kilitli uzak state kullanılır?;Bütün ekip ve CI tek bir doğruluk kaynağını paylaşsın ve iki apply aynı anda çalışıp state'i bozamasın diye.
+Elle oluşturulmuş bir bucket'ı yeniden oluşturmadan Terraform yönetimine nasıl alırsın?;Eşleşen kaynak bloğunu ve bir import bloğunu yaz (ya da terraform import), sonra plan değişiklik göstermeyene kadar çalıştır.
+Bir Terraform pull request'inde CI pipeline'ı ne yapmalı?;"Biçimlendir ve doğrula, lint ve politika/güvenlik taraması yap, planı çalıştırıp (maliyet farkıyla birlikte) incelenmek üzere PR'a yaz; merge'den sonra kısa ömürlü OIDC kimlik bilgileriyle sadece incelenen planı uygula."
+Neden etiketli tek bir hesap yerine prod ve dev için ayrı hesaplar kullanılır?;"Hesaplar IAM, kotalar ve etki alanı için sert izolasyon sınırlarıdır; etiketler ve isimlendirme kuralları dev tarafındaki bir hatanın ya da ele geçirilmiş bir anahtarın prod'a dokunmasını durdurmaz."
+Bir SCP, hesaptaki IAM politikalarının yapamadığı neyi yapabilir?;"Hesaptaki herkes için, admin'leri dahil, bir tavan koyar; böylece ""CloudTrail'i asla kapatma"" ya da ""sadece AB bölgeleri"" gibi kurallar yerel olarak aşılamaz."
+Pilot ışığı ile ılık yedek arasındaki fark ne?;"Pilot ışığı veriyi replike ve altyapıyı hazır tutar ama compute çoğunlukla kapalıdır; ılık yedek tüm yığının küçük çalışan bir kopyasını çalıştırır; daha hızlı kurtarır ama daha pahalıdır."
+Hangi felaketler tam bir bölge kesintisinden daha yaygındır ve onlara karşı ne korur?;Kötü deploy'lar, yanlışlıkla silmeler, veri bozulması ve fidye yazılımı. Zamanda geri dönüş, versiyonlama ve ayrı bir hesaptaki değişmez yedekler onlara karşı korur.
+Neden game day yapılır?;"Test edilmemiş DR planları detaylarda başarısız olur (süresi dolmuş kimlik bilgileri, eksik kotalar, sabit kodlanmış endpoint'ler); tatbikatlar bunları ortaya çıkarır ve gerçek RTO ile RPO'yu ölçer."
+Bölge ile erişilebilirlik zone'u arasındaki fark ne?;"Bölge bağımsız API'lere ve veriye sahip coğrafi bir alandır; erişilebilirlik zone'u bir bölge içinde kendi enerji ve ağına sahip, senkron replikasyon için diğerlerine yeterince yakın izole bir veri merkezidir (ya da grubu)."
+Paylaşılan sorumluluk modelinde herkese açık bir S3 bucket'ından veri sızmasından kim sorumlu?;"Müşteri. Sağlayıcı altyapıyı korur; yapılandırma, erişim kontrolü ve veri her zaman müşterinin sorumluluğundadır."
+Yüksek erişilebilirlik için 'çok AZ' neden genelde yeterli ve ne zaman çok bölge gerekir?;"AZ'lerin bağımsız hata alanları vardır; onlara yaymak veri merkezi hatalarından düşük gecikme ve maliyetle sağ çıkarır. Çok bölge; bölgesel kesintiler, sıkı RTO/RPO, veri yerelliği ya da global gecikme için gerekir ve çok daha karmaşıktır."
+Production değişiklikleri neden konsol yerine kod olarak altyapıyla yapılmalı?;"Kod incelenir, sürümlenir, tekrarlanabilir ve bir felaketten sonra ortamı yeniden kurabilir; konsol değişiklikleri görünmez, tekrar üretilemez ve herkesin var sandığından uzaklaşır."
+RPO ve RTO ne demek?;"RPO ne kadar veri (zaman) kaybetmeyi göze alabileceğindir; RTO servisin ne kadar süre erişilemez kalabileceğidir. Birlikte yedek ve DR stratejisini ve maliyetini belirlerler."

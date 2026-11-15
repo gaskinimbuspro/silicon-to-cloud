@@ -112,6 +112,12 @@ nav:
   - "11 · Security": 11-security/index.md
   - "12 · Distributed systems": 12-distributed/index.md
   - "13 · Cloud cost (FinOps)": 13-finops/index.md
+  - "14 · Cloud platforms":
+      - 14-cloud/index.md
+      - "14.1 · Compute: VMs, containers & serverless": 14-cloud/01-compute.md
+      - "14.2 · Storage & databases": 14-cloud/02-storage-databases.md
+      - "14.3 · Infrastructure as Code (Terraform)": 14-cloud/03-terraform.md
+      - "14.4 · Accounts, landing zones & DR": 14-cloud/04-landing-zones-dr.md
 
 markdown_extensions:
   - admonition

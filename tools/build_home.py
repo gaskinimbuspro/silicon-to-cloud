@@ -27,6 +27,9 @@ CHAPTERS = [
     ("11-security", "cloud", "🔐", "Security", "Identity, secrets, zero trust, supply chain", "Güvenlik", "Kimlik, secret'lar, zero trust, tedarik zinciri"),
     ("12-distributed", "cloud", "🕸️", "Distributed systems", "Consensus, CAP, consistency, resilience", "Dağıtık sistemler", "Consensus, CAP, tutarlılık, dayanıklılık"),
     ("13-finops", "cloud", "💰", "Cloud cost (FinOps)", "Where the money goes and how to save it", "Bulut maliyeti (FinOps)", "Para nereye gidiyor, nasıl tasarruf edilir"),
+    ("14-cloud", "cloud", "☁️", "Cloud platforms", "Regions, compute, storage, Terraform, landing zones, DR", "Bulut platformları", "Bölgeler, compute, depolama, Terraform, landing zone, DR"),
+    ("15-kubernetes", "cloud", "☸️", "Kubernetes in depth", "Workloads, storage, Helm, autoscaling, troubleshooting", "Derinlemesine Kubernetes", "Workload'lar, depolama, Helm, ölçekleme, sorun giderme"),
+    ("16-devops", "cloud", "🔁", "DevOps practices", "Git flow, safe releases, incidents, platform engineering", "DevOps pratikleri", "Git akışı, güvenli sürümler, olaylar, platform mühendisliği"),
     ("10-ai", "ai", "🤖", "AI infrastructure", "LLMs, GPUs, training, inference, K8s, RAG & agents", "AI altyapısı", "LLM'ler, GPU'lar, eğitim, çıkarım, K8s, RAG ve ajanlar"),
 ]
 

@@ -11,6 +11,7 @@
 *[APIC]: Advanced Programmable Interrupt Controller
 *[ARP]: Address Resolution Protocol
 *[AS]: Autonomous System
+*[ASG]: Auto Scaling Group
 *[ASIC]: Application-Specific IC
 *[ASLR]: Address Space Layout Randomization
 *[ASR]: Automatic Speech Recognition
@@ -84,6 +85,7 @@
 *[FOIT]: Flash Of Invisible
 *[FOUT]: Unstyled Text
 *[FSDP]: Fully Sharded Data Parallel
+*[FaaS]: Function as a Service
 *[FinOps]: Financial Operations
 *[GARP]: Gratuitous ARP
 *[GC]: Garbage Collector
@@ -97,6 +99,7 @@
 *[GQA]: Grouped-Query
 *[GSLB]: Global Server Load Balancing
 *[HBM]: High Bandwidth Memory
+*[HCL]: HashiCorp Configuration Language
 *[HID]: Human Interface Device
 *[HIP]: Heterogeneous-compute Interface for Portability
 *[HNSW]: Hierarchical Navigable Small World
@@ -111,6 +114,7 @@
 *[IGW]: Internet Gateway
 *[IME]: Input Method Editor
 *[INP]: Interaction to Next Paint
+*[IOPS]: I/O Operations Per Second
 *[IP]: Internet Protocol
 *[IPC]: Instructions Per Cycle
 *[IR]: Intermediate Representation
@@ -120,6 +124,7 @@
 *[ITL]: Inter-Token Latency
 *[IVF]: Inverted File
 *[IaC]: Infrastructure as Code
+*[IaaS]: Infrastructure
 *[IdP]: Identity Provider
 *[JIT]: Just-In-Time compiler
 *[JWT]: JSON Web Token
@@ -168,6 +173,7 @@
 *[OIDC]: OpenID Connect
 *[OOM]: Out Of Memory
 *[OTel]: OpenTelemetry
+*[OU]: Organizational Unit
 *[OoO]: Out-of-Order execution
 *[P2C]: Power of Two Choices
 *[PACELC]: Partition → A/C, Else → Latency/Consistency
@@ -185,6 +191,7 @@
 *[PSI]: Pressure Stall Information
 *[PSS]: Proportional
 *[PTX]: Parallel Thread Execution
+*[PaaS]: Platform
 *[QLoRA]: Quantized LoRA
 *[QUIC]: — (originally "Quick UDP Internet Connections")
 *[RAG]: Retrieval-Augmented Generation
@@ -216,6 +223,7 @@
 *[SIEM]: Security Information and Event Management
 *[SIMD]: Single Instruction, Multiple Data
 *[SIMT]: Single Instruction, Multiple Threads
+*[SLA]: Service Level Agreement
 *[SLI]: Service Level Indicator
 *[SLO]: Service Level Objective
 *[SLSA]: Supply-chain Levels for Software Artifacts
@@ -235,6 +243,7 @@
 *[SSR]: Server-Side Rendering
 *[STP]: Spanning Tree Protocol
 *[SYN]: synchronize
+*[SaaS]: Software as a Service
 *[TBT]: Total Blocking Time
 *[TCP]: Transmission Control Protocol
 *[TDP]: Thermal Design Power
@@ -260,6 +269,7 @@
 *[VID]: Vendor ID
 *[VLM]: Vision-Language Model
 *[VM]: Virtual Machine (language runtime)
+*[VMSS]: VM Scale Set
 *[VNet]: Virtual Network
 *[VPC]: Virtual Private Cloud
 *[VSZ]: Virtual Size
