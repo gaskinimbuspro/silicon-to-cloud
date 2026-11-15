@@ -1,0 +1,2258 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Derleyicilerin içinde ne olur (ön uç, IR, optimizer, arka uç), optimizasyon seviyeleri, object dosyaları ve semboller, statik ve dinamik linkleme, LTO, çapraz derleme, tekrarlanabilir build'ler ve build önbelleği; Go, Rust ve C örnekleriyle.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/01-compile-link/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-elf-loader/">
+      
+      
+        
+          <link rel="alternate" href="../../../04-program/01-compile-link/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>4.1 — Derleme ve linkleme - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="4.1 — Derleme ve linkleme - Silicon to Cloud">
+<meta property="og:description" content="Derleyicilerin içinde ne olur (ön uç, IR, optimizer, arka uç), optimizasyon seviyeleri, object dosyaları ve semboller, statik ve dinamik linkleme, LTO, çapraz derleme, tekrarlanabilir build'ler ve build önbelleği; Go, Rust ve C örnekleriyle.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/04-program/01-compile-link.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/01-compile-link/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="4.1 — Derleme ve linkleme - Silicon to Cloud">
+<meta property="twitter:description" content="Derleyicilerin içinde ne olur (ön uç, IR, optimizer, arka uç), optimizasyon seviyeleri, object dosyaları ve semboller, statik ve dinamik linkleme, LTO, çapraz derleme, tekrarlanabilir build'ler ve build önbelleği; Go, Rust ve C örnekleriyle.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/04-program/01-compile-link.png">
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#41-derleme-ve-linkleme" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              4.1 — Derleme ve linkleme
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../04-program/01-compile-link/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4 · How a program runs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.1 · Compiling &amp; linking
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.1 · Compiling &amp; linking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-derleyicinin-ici" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Derleyicinin içi
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · Derleyicinin içi">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-object-dosyalar-semboller-ve-linker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Object dosyaları, semboller ve linker
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-statik-ve-dinamik-linkleme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Statik ve dinamik linkleme
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-buildleri-hzl-ve-guvenilir-yapmak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Build'leri hızlı ve güvenilir yapmak
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-elf-loader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.2 · ELF &amp; the loader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-runtimes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.3 · Language runtimes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-derleyicinin-ici" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Derleyicinin içi
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · Derleyicinin içi">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-object-dosyalar-semboller-ve-linker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Object dosyaları, semboller ve linker
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-statik-ve-dinamik-linkleme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Statik ve dinamik linkleme
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-buildleri-hzl-ve-guvenilir-yapmak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Build'leri hızlı ve güvenilir yapmak
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    4 · How a program runs
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="41-derleme-ve-linkleme">4.1 — Derleme ve linkleme<a class="headerlink" href="#41-derleme-ve-linkleme" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p>Bir <strong>derleyici</strong> kaynak kodu okur, kontrol eder, bir <strong>ara gösterime (<abbr title="Intermediate Representation">IR</abbr>)</strong> çevirir, <strong>optimize eder</strong> ve tek bir
+hedef için makine kodunu <strong>object dosyalarına</strong> yazar. <strong>Linker</strong> ise bu dosyalar ve kütüphaneler arasındaki
+<strong>sembolleri</strong> çözer ve her şeyi tek bir çalıştırılabilir dosyaya yerleştirir. Kütüphaneleri ya içine kopyalar
+(<strong>statik</strong>) ya da çalışma anında yüklenmeye bırakır (<strong>dinamik</strong>).</p>
+</div>
+<h2 id="temel-terimler-ve-ksaltmalar">📖 Temel terimler ve kısaltmalar<a class="headerlink" href="#temel-terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Derleyici</strong></td>
+<td>Compiler</td>
+<td>Kaynağı makine koduna çevirir</td>
+<td>gcc, clang/LLVM, rustc, go build, javac (bytecode'a)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Abstract Syntax Tree">AST</abbr></strong></td>
+<td>Abstract Syntax Tree</td>
+<td>Ayrıştırılmış kodun ağaç hali</td>
+<td>Parser kurar, tip kontrolünden geçer</td>
+</tr>
+<tr>
+<td><strong><abbr title="Intermediate Representation">IR</abbr></strong></td>
+<td>Intermediate Representation</td>
+<td>Dilden ve <abbr title="Central Processing Unit">CPU</abbr>'dan bağımsız kod</td>
+<td>LLVM <abbr title="Intermediate Representation">IR</abbr>, GCC GIMPLE, Go <abbr title="Static Single Assignment">SSA</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="Static Single Assignment">SSA</abbr></strong></td>
+<td>Static Single Assignment</td>
+<td>Her değişkenin bir kez atandığı <abbr title="Intermediate Representation">IR</abbr> biçimi</td>
+<td>Optimizasyonları basitleştirir</td>
+</tr>
+<tr>
+<td><strong>Optimizasyon seviyesi</strong></td>
+<td>—</td>
+<td>Derleyicinin ne kadar optimize ettiği</td>
+<td><code>-O0</code> debug … <code>-O2</code> varsayılan … <code>-O3</code>, <code>-Os</code> boyut</td>
+</tr>
+<tr>
+<td><strong>Object dosyası (.o)</strong></td>
+<td>—</td>
+<td>Makine kodu + semboller + relocation'lar</td>
+<td>Kaynak dosya başına bir tane</td>
+</tr>
+<tr>
+<td><strong>Sembol</strong></td>
+<td>Symbol</td>
+<td>İsimli fonksiyon ya da değişken</td>
+<td>Tanımlı (<code>T</code>) ya da tanımsız (<code>U</code>)</td>
+</tr>
+<tr>
+<td><strong>Relocation</strong></td>
+<td>—</td>
+<td>"Bu adresi sonra düzelt" notu</td>
+<td>Linker ya da yükleyici doldurur</td>
+</tr>
+<tr>
+<td><strong>Linker</strong></td>
+<td>—</td>
+<td>Object'leri bir çalıştırılabilire birleştirir</td>
+<td>ld (bfd), gold, lld, mold</td>
+</tr>
+<tr>
+<td><strong>Statik kütüphane (.a)</strong></td>
+<td>archive</td>
+<td>Link sırasında içine kopyalanan .o paketi</td>
+<td>Daha büyük binary, çalışma anı bağımlılığı yok</td>
+</tr>
+<tr>
+<td><strong>Paylaşımlı kütüphane (.so)</strong></td>
+<td>shared object</td>
+<td>Çalışma anında yüklenir, bellekte paylaşılır</td>
+<td>Daha küçük binary'ler, kütüphaneleri ayrı güncelle</td>
+</tr>
+<tr>
+<td><strong><abbr title="Link-Time Optimization">LTO</abbr> / <abbr title="Profile-Guided Optimization">PGO</abbr></strong></td>
+<td>Link-Time Optimization / Profile-Guided Optimization</td>
+<td>Tüm program / veriye dayalı optimizasyon</td>
+<td>Daha hızlı binary'ler, daha yavaş build'ler</td>
+</tr>
+<tr>
+<td><strong>Çapraz derleme</strong></td>
+<td>Cross-compiling</td>
+<td>Başka bir OS/<abbr title="Central Processing Unit">CPU</abbr> için build</td>
+<td><code>GOOS=linux GOARCH=arm64</code>, <code>--target</code></td>
+</tr>
+<tr>
+<td><strong>Tekrarlanabilir build</strong></td>
+<td>Reproducible build</td>
+<td>Aynı kaynak → bit bit aynı çıktı</td>
+<td>Tedarik zincirini doğrulamak için gerekli</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/04-1-build.png" data-desc-position="bottom"><img alt="Bir derleyici ve linker'ın içi" src="../../assets/diagrams/04-1-build.png"></a></p>
+<hr>
+<h2 id="1-derleyicinin-ici">1 · Derleyicinin içi<a class="headerlink" href="#1-derleyicinin-ici" title="Permanent link">¶</a></h2>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Ön uç:</strong> lexer metni token'lara böler, parser bir <strong><abbr title="Abstract Syntax Tree">AST</abbr></strong> kurar, anlamsal analiz isimleri çözer ve tipleri kontrol eder. Derleme hataların buradan gelir.</li>
+<li><strong>Orta uç:</strong> <abbr title="Abstract Syntax Tree">AST</abbr> <strong><abbr title="Intermediate Representation">IR</abbr></strong>'a (çoğu zaman <abbr title="Static Single Assignment">SSA</abbr>) indirgenir. Onlarca geçiş onu optimize eder: sabit katlama, ölü kod eleme, <strong>inline</strong>, döngü açma, <strong>vektörleştirme</strong>, escape analizi (Go: bu değer heap'e mi gitmeli?).</li>
+<li><strong>Arka uç:</strong> hedef <abbr title="Instruction Set Architecture">ISA</abbr> için komut seçimi, <strong>register ayırma</strong>, komut zamanlama, sonra makine kodunu bir object dosyasına yazma.</li>
+</ol>
+<p>Ön ve arka uçlar ayrı olduğu için <strong>LLVM</strong> C, C++, Rust, Swift, Zig ve daha fazlasını tek bir optimizer ile x86, ARM, <abbr title="Reduced Instruction Set Computer">RISC</abbr>-V, WebAssembly ve <abbr title="Graphics Processing Unit">GPU</abbr>'lara derler.</p>
+<h2 id="2-object-dosyalar-semboller-ve-linker">2 · Object dosyaları, semboller ve linker<a class="headerlink" href="#2-object-dosyalar-semboller-ve-linker" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>nm<span class="w"> </span>hello.o
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                 </span>U<span class="w"> </span>puts<span class="w">        </span><span class="c1"># tanımsız: başka bir yerden lazım</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="m">0000000000000000</span><span class="w"> </span>T<span class="w"> </span>main<span class="w">        </span><span class="c1"># burada, .text içinde tanımlı</span>
+</code></pre></div>
+<p>Linker:</p>
+<ol>
+<li>Tüm <code>.o</code> dosyalarını ve kütüphaneleri (<code>-lssl</code>, <code>.a</code>, <code>.so</code>) toplar.</li>
+<li><strong>Sembolleri çözer:</strong> her <code>U</code> tam olarak bir tanımla eşleşmeli. "<strong>undefined reference to …</strong>" = eksik kütüphane ya da yanlış sıra; "<strong>multiple definition</strong>" = iki kez tanımlı.</li>
+<li><strong>Bölümleri</strong> (<code>.text</code>, <code>.rodata</code>, <code>.data</code>, <code>.bss</code>) segmentlere <strong>yerleştirir</strong> ve <strong>relocation</strong>'ları uygular.</li>
+<li>Bir <strong><abbr title="Executable and Linkable Format">ELF</abbr></strong> çalıştırılabilir dosyası yazar (4.2).</li>
+</ol>
+<h2 id="3-statik-ve-dinamik-linkleme">3 · Statik ve dinamik linkleme<a class="headerlink" href="#3-statik-ve-dinamik-linkleme" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Statik</th>
+<th>Dinamik</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kütüphaneler</td>
+<td>Binary'nin içine kopyalanır</td>
+<td>Başlangıçta <code>ld.so</code> yükler</td>
+</tr>
+<tr>
+<td>Binary boyutu</td>
+<td>Daha büyük</td>
+<td>Daha küçük</td>
+</tr>
+<tr>
+<td>Çalışma anı bağımlılıkları</td>
+<td>Yok (sadece kernel)</td>
+<td>Uyumlu <code>.so</code> sürümleri bulunmalı</td>
+</tr>
+<tr>
+<td>Güvenlik yamaları</td>
+<td>Her binary'yi yeniden derle</td>
+<td>Kütüphaneyi bir kez güncelle</td>
+</tr>
+<tr>
+<td>Container'lar</td>
+<td><code>FROM scratch</code> / distroless için mükemmel</td>
+<td>libc'li bir taban imaj ister</td>
+</tr>
+<tr>
+<td>Örnekler</td>
+<td>Go (<code>CGO_ENABLED=0</code>), musl ile Rust</td>
+<td>Çoğu C/C++ programı, Python, Node</td>
+</tr>
+</tbody>
+</table>
+<p><strong>glibc ve musl:</strong> Alpine musl kullanır; glibc'ye karşı derlenmiş binary'ler orada çalışmaz (var olan bir dosya için "not found" = eksik yükleyici). cgo kapalı Go bu sorunu tamamen atlar.</p>
+<h2 id="4-buildleri-hzl-ve-guvenilir-yapmak">4 · Build'leri hızlı ve güvenilir yapmak<a class="headerlink" href="#4-buildleri-hzl-ve-guvenilir-yapmak" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Artımlı + önbellekli build'ler:</strong> C/C++/Rust için <code>ccache</code>/<code>sccache</code>, Go'nun build önbelleği, Bazel/Buck2 uzak önbellekleri, <abbr title="Continuous Integration">CI</abbr>'da Docker katman önbelleği.</li>
+<li><strong>Hızlı linker'lar:</strong> <code>mold</code> ya da <code>lld</code> büyük C++/Rust projelerinde link süresini dakikalardan saniyelere indirebilir.</li>
+<li><strong><abbr title="Link-Time Optimization">LTO</abbr> / <abbr title="Profile-Guided Optimization">PGO</abbr>:</strong> dosyalar arası ve gerçek profillerle optimize et; Go <code>default.pgo</code>'dan <abbr title="Profile-Guided Optimization">PGO</abbr> destekler (çoğu zaman %2–14 daha hızlı).</li>
+<li><strong>Tekrarlanabilir build'ler:</strong> araç zincirlerini sabitle, zaman damgalarını/yolları çıkar (<code>-trimpath</code>, <code>SOURCE_DATE_EPOCH</code>); herkes bir binary'nin kaynağıyla eşleştiğini doğrulayabilsin. <strong><abbr title="Supply-chain Levels for Software Artifacts">SLSA</abbr></strong> tedarik zinciri seviyelerinin temeli.</li>
+</ul>
+<h2 id="devops-baglants">🔧 <abbr title="Development + Operations">DevOps</abbr> bağlantısı<a class="headerlink" href="#devops-baglants" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Çok aşamalı Dockerfile'lar:</strong> büyük bir builder imajında derle, sadece statik binary'yi <code>scratch</code>/distroless'e kopyala → shell'i olmayan, az <abbr title="Common Vulnerabilities and Exposures">CVE</abbr>'li minik imajlar.</li>
+<li><strong><abbr title="Continuous Integration">CI</abbr>'da çapraz derleme</strong> (<code>GOARCH=arm64</code>, <code>cargo build --target</code>, <code>docker buildx</code>), ARM'ı QEMU ile taklit etmekten çok daha hızlı.</li>
+<li><strong>Debug sembolleri:</strong> release imajlarından çıkar (<code>-ldflags="-s -w"</code>, <code>strip</code>) ama crash dump'ları ve profilleri sembolize etmek için sakla (ayrı debuginfo).</li>
+<li><strong><abbr title="Software Bill of Materials">SBOM</abbr>'lar</strong> (<code>syft</code>, <code>go version -m</code>) içine neyin linklendiğini listeler: "<abbr title="Common Vulnerabilities and Exposures">CVE</abbr>-X'ten etkileniyor muyuz?" sorusunu cevaplamak için şart.</li>
+</ul>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>hello.c<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s">#include &lt;stdio.h&gt;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="s">int main(void) { puts("hello"); return 0; }</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="s">EOF</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>gcc<span class="w"> </span>-E<span class="w"> </span>hello.c<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-3<span class="w">                         </span><span class="c1"># preprocessor sonrası</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>gcc<span class="w"> </span>-O2<span class="w"> </span>-S<span class="w"> </span>hello.c<span class="w"> </span>-o<span class="w"> </span>-<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20<span class="w">               </span><span class="c1"># assembly</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>gcc<span class="w"> </span>-c<span class="w"> </span>hello.c<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>nm<span class="w"> </span>hello.o<span class="w">                     </span><span class="c1"># semboller: U puts, T main</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>gcc<span class="w"> </span>hello.o<span class="w"> </span>-o<span class="w"> </span>hello-dyn<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ldd<span class="w"> </span>hello-dyn<span class="w">        </span><span class="c1"># dinamik: libc.so.6 ister</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>gcc<span class="w"> </span>-static<span class="w"> </span>hello.o<span class="w"> </span>-o<span class="w"> </span>hello-static<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls<span class="w"> </span>-lh<span class="w"> </span>hello-dyn<span class="w"> </span>hello-static<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ldd<span class="w"> </span>hello-static
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>clang<span class="w"> </span>-O2<span class="w"> </span>-S<span class="w"> </span>-emit-llvm<span class="w"> </span>hello.c<span class="w"> </span>-o<span class="w"> </span>-<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20<span class="w">   </span><span class="c1"># LLVM IR (clang kuruluysa)</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1"># Go: statik, çapraz derlenmiş, strip edilmiş, gömülü build bilgisiyle</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o app-arm64 .</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># go version -m app-arm64</span>
+</code></pre></div>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Hata / ihtiyaç</th>
+<th>Anlamı / çözümü</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>undefined reference to X</code></td>
+<td>Eksik kütüphane ya da link sırası</td>
+</tr>
+<tr>
+<td><code>multiple definition of X</code></td>
+<td>Sembol iki kez tanımlı (ör. bir header'da)</td>
+</tr>
+<tr>
+<td><code>cannot find -lfoo</code></td>
+<td><code>libfoo-dev</code> kur, <code>-L</code>'yi kontrol et</td>
+</tr>
+<tr>
+<td>Alpine'de binary "not found"</td>
+<td>musl üzerinde glibc binary'si → statik derle ya da glibc taban kullan</td>
+</tr>
+<tr>
+<td>Daha küçük imaj</td>
+<td>Statik binary + <code>FROM scratch</code>/distroless</td>
+</tr>
+<tr>
+<td>Daha hızlı C++/Rust link</td>
+<td>mold / lld</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Derleyicinin <abbr title="Intermediate Representation">IR</abbr>'ı neyi mümkün kılar?</summary>
+<p>Birçok dil ve birçok hedef için tek bir optimizer; ön ve arka uçlar karıştırılabilir (LLVM).</p>
+</details>
+<details class="question">
+<summary>2. <code>nm</code> çıktısındaki <code>U puts</code> ne demek?</summary>
+<p>Object dosyası <code>puts</code>'u kullanıyor ama tanımlamıyor; linker (ya da yükleyici) onu bulmalı, burada libc'de.</p>
+</details>
+<details class="question">
+<summary>3. Go binary'leri neden <code>FROM scratch</code> imajları için popüler?</summary>
+<p><code>CGO_ENABLED=0</code> ile statik linklenirler: libc ya da yükleyici gerekmez, sadece kernel.</p>
+</details>
+<details class="question">
+<summary>4. OpenSSL'e bir güvenlik düzeltmesi geldi. Statik ve dinamik linklenmiş uygulamalar için fark ne?</summary>
+<p>Dinamik: paylaşımlı kütüphaneyi (taban imajı) bir kez güncelle. Statik: her binary yeniden derlenip deploy edilmeli.</p>
+</details>
+<details class="question">
+<summary>5. Tekrarlanabilir build'ler tedarik zinciri güvenliği için neden önemli?</summary>
+<p>Herkes kaynaktan yeniden derleyip binary'nin bit bit aynı olduğunu kontrol edebilir; build sırasında hiçbir şeyin enjekte edilmediğini kanıtlar.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://llvm.org/docs/GettingStarted.html">LLVM — Getting started / architecture</a></li>
+<li><a href="https://www.airs.com/blog/archives/38">Ian Lance Taylor — Linkers (20 bölümlük seri)</a></li>
+<li><a href="https://go.dev/doc/pgo">Go — Profile-guided optimization</a></li>
+<li><a href="https://reproducible-builds.org/">reproducible-builds.org</a> · <a href="https://slsa.dev/"><abbr title="Supply-chain Levels for Software Artifacts">SLSA</abbr></a></li>
+<li><a href="https://github.com/rui314/mold">mold linker</a></li>
+</ul>
+<h2 id="notlarm">✍️ Notlarım<a class="headerlink" href="#notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Servislerinden birini al: statik mi dinamik mi linklenmiş? İmajdaki binary'de <code>ldd</code> (ya da <code>go version -m</code>) çalıştır.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Önceki: Bölüm 4 — Bir program nasıl çalışır">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                Bölüm 4 — Bir program nasıl çalışır
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-elf-loader/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 4.2 · ELF &amp; the loader">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                4.2 · ELF &amp; the loader
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

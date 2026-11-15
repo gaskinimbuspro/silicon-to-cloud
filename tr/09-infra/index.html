@@ -1,0 +1,2332 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Container'lar (namespace, cgroup, imaj katmanları), Kubernetes (control plane, node'lar, kubectl apply'da ne olur), GitOps ile CI/CD ve gözlemlenebilirlik.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/">
+      
+      
+        <link rel="prev" href="../08-browser/04-browser-security/">
+      
+      
+        <link rel="next" href="01-containers-images/">
+      
+      
+        
+          <link rel="alternate" href="../../09-infra/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Bölüm 9 — Modern altyapı - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bölüm 9 — Modern altyapı - Silicon to Cloud">
+<meta property="og:description" content="Container'lar (namespace, cgroup, imaj katmanları), Kubernetes (control plane, node'lar, kubectl apply'da ne olur), GitOps ile CI/CD ve gözlemlenebilirlik.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/09-infra/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Bölüm 9 — Modern altyapı - Silicon to Cloud">
+<meta property="twitter:description" content="Container'lar (namespace, cgroup, imaj katmanları), Kubernetes (control plane, node'lar, kubectl apply'da ne olur), GitOps ile CI/CD ve gözlemlenebilirlik.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/09-infra/index.png">
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bolum-9-modern-altyap" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bölüm 9 — Modern altyapı
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../09-infra/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_13" id="__nav_13_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    9 · Modern infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-containers-images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9.1 · Containers &amp; images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-kubernetes-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9.2 · Kubernetes architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-kubernetes-networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9.3 · Kubernetes networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-cicd-gitops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9.4 · CI/CD &amp; GitOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9.5 · Observability &amp; SLOs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-container-ekstra-duvarlar-olan-bir-processtir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Container, ekstra duvarları olan bir process'tir
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-kubernetes-bir-dizi-kontrol-dongusu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Kubernetes: bir dizi kontrol döngüsü
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · Kubernetes: bir dizi kontrol döngüsü">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kubectl-apply-f-deploymentyaml-dediginde-ne-olur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kubectl apply -f deployment.yaml dediğinde ne olur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uzlastrma-reconcile-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uzlaştırma (reconcile) nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cicd-ve-gitops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · CI/CD ve GitOps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-gozlemlenebilirlik-metrikler-loglar-traceler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Gözlemlenebilirlik: metrikler, loglar, trace'ler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#olay-hikayesi-surekli-kaybolan-hotfix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Olay hikâyesi: sürekli kaybolan hotfix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#daha-derine-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧭 Daha derine in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene-linux-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene (Linux + Docker)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    9 · Modern infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="bolum-9-modern-altyap">Bölüm 9 — Modern altyapı<a class="headerlink" href="#bolum-9-modern-altyap" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p>Bir <strong>container</strong>, katmanlı bir <strong>imajdan</strong> başlatılmış, <strong>namespace</strong>'lerle (ne görebileceği) ve <strong>cgroup</strong>'larla
+(ne kullanabileceği) sarılmış sıradan bir Linux process'idir (Bölüm 3). <strong>Kubernetes</strong>, YAML'da yazdığın <strong>istenen
+durumu</strong> cluster'ın <strong>gerçek durumuyla</strong> sürekli karşılaştırır ve farkı sonsuza kadar düzeltir. <strong><abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Delivery / Deployment">CD</abbr></strong> imajları
+üretir, <strong>GitOps</strong> cluster'a neyin çalışması gerektiğini söyler, <strong>gözlemlenebilirlik</strong> de gerçekten çalışıp
+çalışmadığını gösterir.</p>
+</div>
+<h2 id="temel-terimler-ve-ksaltmalar">📖 Temel terimler ve kısaltmalar<a class="headerlink" href="#temel-terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Container</strong></td>
+<td>—</td>
+<td>Namespace'lerle izole, cgroup'larla sınırlandırılmış process</td>
+<td>Bir runtime (containerd/runc) imajdan başlatır</td>
+</tr>
+<tr>
+<td><strong>Namespace</strong></td>
+<td>—</td>
+<td>Bir process'in neyi görebileceği</td>
+<td>pid, net, mnt, uts, ipc, user, cgroup</td>
+</tr>
+<tr>
+<td><strong>cgroup</strong></td>
+<td>control group</td>
+<td>Bir process'in neyi kullanabileceği</td>
+<td><abbr title="Central Processing Unit">CPU</abbr> kotası, bellek limiti, I/O, pid sayısı</td>
+</tr>
+<tr>
+<td><strong><abbr title="Open Container Initiative">OCI</abbr> image</strong></td>
+<td>Open Container Initiative</td>
+<td>Standart container imaj formatı</td>
+<td>Manifest + katmanlar + config, digest ile adreslenir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Container Runtime Interface">CRI</abbr> / <abbr title="Container Network Interface">CNI</abbr></strong></td>
+<td>Container Runtime Interface / Container Network Interface</td>
+<td>Kubernetes'in eklenti API'leri</td>
+<td>kubelet ↔ runtime / pod ağ eklentileri</td>
+</tr>
+<tr>
+<td><strong>API server / etcd</strong></td>
+<td>—</td>
+<td>Kubernetes'in ön kapısı / veritabanı</td>
+<td>Her şey cluster durumunu API üzerinden okur/yazar</td>
+</tr>
+<tr>
+<td><strong>Scheduler / kubelet</strong></td>
+<td>—</td>
+<td>Node seçer / node'da pod çalıştırır</td>
+<td>Node'ları filtrele + puanla / runtime ile konuş</td>
+</tr>
+<tr>
+<td><strong>Controller / reconcile</strong></td>
+<td>—</td>
+<td>Gerçek durumu istenen duruma eşitleyen döngü</td>
+<td>İzle → karşılaştır → harekete geç → tekrar</td>
+</tr>
+<tr>
+<td><strong>Service / Ingress</strong></td>
+<td>—</td>
+<td>Pod'lar için sabit sanal <abbr title="Internet Protocol">IP</abbr> / cluster'a <abbr title="HyperText Transfer Protocol">HTTP</abbr> yönlendirme</td>
+<td>kube-proxy/eBPF dağıtır; ingress host/yola göre yönlendirir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Continuous Integration">CI</abbr> / <abbr title="Continuous Delivery / Deployment">CD</abbr></strong></td>
+<td>Continuous Integration / Continuous Delivery</td>
+<td>Otomatik derle-test et / otomatik sürüm</td>
+<td>Her push'ta pipeline; ortamlara rollout</td>
+</tr>
+<tr>
+<td><strong>GitOps</strong></td>
+<td>—</td>
+<td>Deploy'lar için doğruluk kaynağı olarak git</td>
+<td>Cluster içindeki ajan (Argo <abbr title="Continuous Delivery / Deployment">CD</abbr>, Flux) git'ten senkronlar</td>
+</tr>
+<tr>
+<td><strong><abbr title="Infrastructure as Code">IaC</abbr></strong></td>
+<td>Infrastructure as Code</td>
+<td>Kodda tanımlanan bulut kaynakları</td>
+<td>Terraform/OpenTofu, Pulumi, Crossplane plan &amp; apply</td>
+</tr>
+<tr>
+<td><strong><abbr title="Service Level Objective">SLO</abbr></strong></td>
+<td>Service Level Objective</td>
+<td>Bir güvenilirlik/gecikme hedefi</td>
+<td>ör. isteklerin %99,9'u &lt; 300 ms</td>
+</tr>
+<tr>
+<td><strong><abbr title="OpenTelemetry">OTel</abbr></strong></td>
+<td>OpenTelemetry</td>
+<td>Metrik, log, trace için açık standart</td>
+<td>SDK'lar + collector, her backend'e aktarır</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/09-infra.png" data-desc-position="bottom"><img alt="git push'tan çalışan pod'a" src="../assets/diagrams/09-infra.png"></a></p>
+<hr>
+<h2 id="1-container-ekstra-duvarlar-olan-bir-processtir">1 · Container, ekstra duvarları olan bir process'tir<a class="headerlink" href="#1-container-ekstra-duvarlar-olan-bir-processtir" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Kernel özelliği</th>
+<th>Neyi izole eder</th>
+<th>Örnekler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Namespace'ler</strong></td>
+<td>Process'in neyi <strong>görebileceğini</strong></td>
+<td><code>pid</code> (kendi <abbr title="Product ID">PID</abbr> 1'i), <code>net</code> (kendi ağ yığını ve <abbr title="Internet Protocol">IP</abbr>'si), <code>mnt</code> (kendi dosya sistemi görünümü), <code>uts</code> (hostname), <code>ipc</code>, <code>user</code> (içerideki root ≠ dışarıdaki root), <code>cgroup</code></td>
+</tr>
+<tr>
+<td><strong>cgroups v2</strong></td>
+<td>Process'in neyi <strong>kullanabileceğini</strong></td>
+<td><code>cpu.max</code> (<abbr title="Central Processing Unit">CPU</abbr> kotası → kısma), <code>memory.max</code> (limit → <abbr title="Out Of Memory">OOM</abbr> kill), <code>io.max</code>, <code>pids.max</code></td>
+</tr>
+<tr>
+<td><strong>İmaj + overlayfs</strong></td>
+<td><strong>Dosya sistemini</strong></td>
+<td>Salt okunur katmanlar (Dockerfile adımı başına bir tane) ve en üstte ince bir yazılabilir katman. Container'lar arasında paylaşılır.</td>
+</tr>
+<tr>
+<td><strong>Seccomp, capabilities, AppArmor/SELinux</strong></td>
+<td>Neyi yapmaya <strong>izni olduğunu</strong></td>
+<td>Tehlikeli syscall'ları engelle, root yetkilerini bırak</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Sanal makine</th>
+<th>Container</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>İzolasyon sınırı</td>
+<td>Hypervisor, ayrı kernel</td>
+<td>Ortak host kernel'i, namespace'ler</td>
+</tr>
+<tr>
+<td>Başlama süresi</td>
+<td>Saniyeler ile dakikalar</td>
+<td>Milisaniyeler</td>
+</tr>
+<tr>
+<td>Ek yük</td>
+<td><abbr title="Virtual Machine (language runtime)">VM</abbr> başına koca bir OS</td>
+<td>Tek bir process</td>
+</tr>
+<tr>
+<td>Güvenlik izolasyonu</td>
+<td>Daha güçlü</td>
+<td>Daha zayıf (ortak kernel), gVisor/Kata/microVM'lerle sağlamlaştırılır</td>
+</tr>
+</tbody>
+</table>
+<p>Bir <strong>imaj</strong> <abbr title="Open Container Initiative">OCI</abbr> standardına uyar: bir manifest + katmanlar (tarball'lar) + yapılandırma (entrypoint, env). Bir <strong>registry</strong>'de saklanır ve değişmez bir <strong>digest</strong> (<code>sha256:…</code>) ile tanımlanır.</p>
+<h2 id="2-kubernetes-bir-dizi-kontrol-dongusu">2 · Kubernetes: bir dizi kontrol döngüsü<a class="headerlink" href="#2-kubernetes-bir-dizi-kontrol-dongusu" title="Permanent link">¶</a></h2>
+<p><strong>Control plane</strong> (beyin):</p>
+<table>
+<thead>
+<tr>
+<th>Bileşen</th>
+<th>Görevi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>kube-apiserver</strong></td>
+<td>Tek ön kapı. Her istemci (<code>kubectl</code>, controller'lar, kubelet'ler) onunla <abbr title="REpresentational State Transfer">REST</abbr> üzerinden konuşur. Kimlik doğrular, yetkilendirir, doğrular, kaydeder.</td>
+</tr>
+<tr>
+<td><strong>etcd</strong></td>
+<td>Tüm cluster durumunu tutan tutarlı bir key-value deposu.</td>
+</tr>
+<tr>
+<td><strong>kube-scheduler</strong></td>
+<td>Yerleştirilmemiş her pod için bir node seçer: önce <strong>filtrele</strong> (yeterli <abbr title="Central Processing Unit">CPU</abbr>/bellek var mı? taint'ler, affinity), sonra <strong>puanla</strong>.</td>
+</tr>
+<tr>
+<td><strong>kube-controller-manager</strong></td>
+<td>Birçok kontrol döngüsü: Deployment → ReplicaSet → Pod'lar, node sağlığı, endpoint'ler, job'lar…</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Worker node'lar</strong> (kas gücü):</p>
+<table>
+<thead>
+<tr>
+<th>Bileşen</th>
+<th>Görevi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>kubelet</strong></td>
+<td>Kendi node'una atanmış pod'lar için API'yi izler ve onları hayata geçirir. Probe'ları çalıştırır, durum bildirir.</td>
+</tr>
+<tr>
+<td><strong>Container runtime</strong> (containerd + runc)</td>
+<td><strong><abbr title="Container Runtime Interface">CRI</abbr></strong> arayüzü üzerinden imajları çeker ve container'ları başlatır.</td>
+</tr>
+<tr>
+<td><strong><abbr title="Container Network Interface">CNI</abbr> eklentisi</strong> (Cilium, Calico, …)</td>
+<td>Her pod'a bir <abbr title="Internet Protocol">IP</abbr> verir ve node'lar arası pod ağlarını birbirine bağlar.</td>
+</tr>
+<tr>
+<td><strong>kube-proxy / eBPF</strong></td>
+<td><strong>Service</strong>'leri uygular: arkasındaki pod'lara yük dağıtan sabit bir sanal <abbr title="Internet Protocol">IP</abbr>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="kubectl-apply-f-deploymentyaml-dediginde-ne-olur"><code>kubectl apply -f deployment.yaml</code> dediğinde ne olur<a class="headerlink" href="#kubectl-apply-f-deploymentyaml-dediginde-ne-olur" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Adım</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td><code>kubectl</code>, Deployment'ı <strong>API server</strong>'a gönderir, API server onu doğrular.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>API server onu <strong>etcd</strong>'ye kaydeder. Henüz hiçbir şey çalışmıyor, sadece <em>istenen durum</em> var.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Deployment controller</strong> bir <strong>ReplicaSet</strong> oluşturur, ReplicaSet controller da <strong>Pod</strong> nesnelerini oluşturur (durum <code>Pending</code>, node yok). <strong>Scheduler</strong> onları görür, her biri için bir node seçer ve atamayı geri yazar.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>O node'daki <strong>kubelet</strong> kendisine atanmış bir pod görür.</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Runtime</strong>'dan (<abbr title="Container Runtime Interface">CRI</abbr>) pod sandbox'ını oluşturmasını ister. <strong><abbr title="Container Network Interface">CNI</abbr></strong> pod <abbr title="Internet Protocol">IP</abbr>'sini atar.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Runtime <strong>imajı çeker</strong> ve <strong>container'ları başlatır</strong>: yeni namespace'lerle <code>clone()</code>, cgroup'lara yerleştirme, entrypoint'i <code>execve</code> (Bölüm 3–4!).</td>
+</tr>
+<tr>
+<td>—</td>
+<td><strong>Readiness probe</strong> geçer → pod, Service'in <strong>EndpointSlice</strong>'ına eklenir → trafik akmaya başlar.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Bunu hatırla</p>
+<p>Kubernetes asla "bir komutu bir kez çalıştırmaz". Her bileşen API'yi <strong>izler</strong> ve <strong>uzlaştırır (reconcile)</strong>: "Gerçek = istenen mi?
+Değilse bir adım yaklaş." Bir Deployment'ın pod'unu sil, yenisi belirir. Bu, controller'ın işini yapmasıdır.</p>
+</div>
+<h3 id="uzlastrma-reconcile-nasl-calsr">Uzlaştırma (reconcile) nasıl çalışır?<a class="headerlink" href="#uzlastrma-reconcile-nasl-calsr" title="Permanent link">¶</a></h3>
+<p>Her controller API server'ı izler, <strong>istenen</strong> durumu (spec) <strong>gerçek</strong> durumla (status) karşılaştırır ve farkı kapatmak için bir adım atar; sonra her değişiklikte ve periyodik olarak tekrar eder. Deployment'ın yönettiği bir pod'u silince geri gelmesinin sebebi bu.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/09a-reconcile.png" data-desc-position="bottom"><img alt="Uzlaştırma (reconcile) nasıl çalışır?" src="../assets/diagrams/09a-reconcile.png"></a></p>
+<h2 id="3-cicd-ve-gitops">3 · <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Delivery / Deployment">CD</abbr> ve GitOps<a class="headerlink" href="#3-cicd-ve-gitops" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aşama</th>
+<th>Tipik araçlar</th>
+<th>Çıktı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Continuous Integration">CI</abbr></strong>: her push'ta test et, derle, tara</td>
+<td>GitHub Actions, GitLab <abbr title="Continuous Integration">CI</abbr>, Jenkins</td>
+<td>Registry'de değişmez bir imaj: <code>app:1.4.2</code> (ya da <code>@sha256:…</code>)</td>
+</tr>
+<tr>
+<td><strong>Terfi (promote)</strong>: istenen versiyonu güncelle</td>
+<td>Manifest reposuna bir commit/<abbr title="Pull">PR</abbr> (Helm values, Kustomize)</td>
+<td>Git = tek doğruluk kaynağı</td>
+</tr>
+<tr>
+<td><strong><abbr title="Continuous Delivery / Deployment">CD</abbr> / GitOps</strong>: cluster değişiklikleri çeker</td>
+<td><strong>Argo <abbr title="Continuous Delivery / Deployment">CD</abbr></strong>, Flux</td>
+<td>Cluster, git'teki duruma yakınsar. Sapmalar (drift) tespit edilir ve düzeltilir.</td>
+</tr>
+<tr>
+<td><strong>Rollout stratejisi</strong></td>
+<td>Rolling update, blue/green, canary (Argo Rollouts)</td>
+<td>Güvenli, geri alınabilir sürümler (<code>git revert</code> = rollback)</td>
+</tr>
+</tbody>
+</table>
+<p>Cluster dışındaki bulut kaynakları (<abbr title="Virtual Private Cloud">VPC</abbr>'ler, veritabanları, <abbr title="Domain Name System">DNS</abbr>) da aynı bildirimsel yolla, <strong>Infrastructure as Code</strong> ile yönetilir: Terraform/OpenTofu, Pulumi, Crossplane.</p>
+<h2 id="4-gozlemlenebilirlik-metrikler-loglar-traceler">4 · Gözlemlenebilirlik: metrikler, loglar, trace'ler<a class="headerlink" href="#4-gozlemlenebilirlik-metrikler-loglar-traceler" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sinyal</th>
+<th>Cevapladığı soru</th>
+<th>Araçlar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Metrikler</strong></td>
+<td>Ne kadar / ne sıklıkta? (oranlar, gecikmeler, doygunluk)</td>
+<td>Prometheus, Grafana</td>
+</tr>
+<tr>
+<td><strong>Loglar</strong></td>
+<td>Bu istekte tam olarak ne oldu?</td>
+<td>Loki, Elasticsearch/OpenSearch</td>
+</tr>
+<tr>
+<td><strong>Trace'ler</strong></td>
+<td>Servisler arasında zaman nereye gitti?</td>
+<td>OpenTelemetry, Tempo, Jaeger</td>
+</tr>
+</tbody>
+</table>
+<p>İşe yarayan alışkanlıklar: servisler için <strong><abbr title="Rate, Errors, Duration">RED</abbr></strong> yöntemi (Rate, Errors, Duration), kaynaklar için <strong><abbr title="Utilization, Saturation, Errors">USE</abbr></strong> (Utilization, Saturation, Errors) ve kullanıcının hissettiği şeye göre alarm üreten <strong><abbr title="Service Level Objective">SLO</abbr></strong>'lar ("isteklerin %99,9'u &lt; 300 ms").</p>
+<hr>
+<h2 id="olay-hikayesi-surekli-kaybolan-hotfix">🚨 Olay hikâyesi: sürekli kaybolan hotfix<a class="headerlink" href="#olay-hikayesi-surekli-kaybolan-hotfix" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">Alarm</p>
+<p>Bir olay sırasında bir mühendis bir Deployment'ın bellek limitini <code>kubectl edit</code> ile artırıyor. Pod'lar yeni limitle yeniden başlıyor… ve iki dakika sonra eski limite dönüp yine OOMKill oluyorlar.</p>
+</div>
+<p>Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.</p>
+<details class="info">
+<summary>🔍 İpucu 1</summary>
+<p><code>kubectl get deploy -o yaml</code> GitOps aracının anotasyonunu gösteriyor; Argo <abbr title="Continuous Delivery / Deployment">CD</abbr> arayüzü düzenlemeden hemen sonra uygulamayı <em>OutOfSync → Synced</em> olarak gösteriyor.</p>
+</details>
+<details class="info">
+<summary>🔍 İpucu 2</summary>
+<p>Application'da <code>syncPolicy.automated.selfHeal: true</code> var.</p>
+</details>
+<details class="success">
+<summary>🎯 Kök neden</summary>
+<p>Argo <abbr title="Continuous Delivery / Deployment">CD</abbr> cluster'ı sürekli git'e uzlaştırır. Elle yapılan düzenleme bir sapmadır ve self-heal onu tasarlandığı gibi bildirilen duruma geri döndürür.</p>
+</details>
+<details class="tip">
+<summary>🛠️ Çözüm ve ders</summary>
+<p>Değişikliği git'te yap (hızlandırılmış bir <abbr title="Pull">PR</abbr>) ya da olay sırasında o uygulama için otomatik senkronu geçici olarak durdur ve sonra commit et. <strong>Ders:</strong> GitOps'ta değişikliklerin kalıcı olduğu tek yer git'tir; belgelenmiş bir acil durum prosedürün olsun.</p>
+</details>
+<h2 id="daha-derine-in">🧭 Daha derine in<a class="headerlink" href="#daha-derine-in" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sayfa</th>
+<th>Neler var</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="01-containers-images/">9.1 — Container'lar ve imajlar</a></strong></td>
+<td><abbr title="Open Container Initiative">OCI</abbr> imajı nedir (katmanlar, manifest'ler, digest'ler, çok mimarili index'ler), build'ler ve önbellek nasıl çalışır, küçük ve güvenli Dockerfile yazmak, registry'ler, etiket ve digest, imzalama ve <abbr title="Software Bill of Materials">SBOM</abbr>'lar, kubelet'ten containerd ve runc'ye runtime zinciri.</td>
+</tr>
+<tr>
+<td><strong><a href="02-kubernetes-architecture/">9.2 — Kubernetes mimarisi</a></strong></td>
+<td>Control plane (API server, etcd, scheduler, controller'lar) ve node bileşenleri, bildirimsel model ve uzlaştırma, kubectl apply'dan sonra ne olduğu, zamanlama (request'ler, affinity, taint'ler), iş yükü tipleri, QoS ve tahliye, operator'ler ve <abbr title="CustomResourceDefinition">CRD</abbr>'ler, pod'larda sorun giderme.</td>
+</tr>
+<tr>
+<td><strong><a href="03-kubernetes-networking/">9.3 — Kubernetes ağı</a></strong></td>
+<td>Kubernetes ağ modeli, <abbr title="Container Network Interface">CNI</abbr> eklentilerinin pod'lara nasıl <abbr title="Internet Protocol">IP</abbr> verdiği ve node'ları bağladığı (rotalar, overlay'ler, eBPF), Service'ler ve kube-proxy, cluster <abbr title="Domain Name System">DNS</abbr>'i, Ingress ve Gateway API, NetworkPolicy'ler, service mesh'ler ve pod bağlantısında hata ayıklama.</td>
+</tr>
+<tr>
+<td><strong><a href="04-cicd-gitops/">9.4 — <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Delivery / Deployment">CD</abbr> ve GitOps</a></strong></td>
+<td>Sürekli entegrasyon ve teslim aşamaları, pipeline tasarımı ve önbellek, artefakt ve tedarik zinciri güvenliği (<abbr title="Software Bill of Materials">SBOM</abbr>, imzalama, <abbr title="Supply-chain Levels for Software Artifacts">SLSA</abbr>), ortamlar ve terfi, Argo <abbr title="Continuous Delivery / Deployment">CD</abbr> ve Flux ile GitOps, deploy stratejileri (rolling, blue-green, canary), kademeli teslim, geri alma ve DORA metrikleri.</td>
+</tr>
+<tr>
+<td><strong><a href="05-observability/">9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve <abbr title="Service Level Objective">SLO</abbr>'lar</a></strong></td>
+<td>Üç sinyal (metrikler, loglar, trace'ler) ve profiller, OpenTelemetry ve collector, Prometheus ve PromQL temelleri, <abbr title="Rate, Errors, Duration">RED</abbr> ve <abbr title="Utilization, Saturation, Errors">USE</abbr> yöntemleri, yapılandırılmış loglama, dağıtık trace ve örnekleme, <abbr title="Service Level Indicator">SLI</abbr>, <abbr title="Service Level Objective">SLO</abbr>, hata bütçeleri ve burn-rate alarmları, nöbet pratikleri.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kendin-dene-linux-docker">🧪 Kendin dene (Linux + Docker)<a class="headerlink" href="#kendin-dene-linux-docker" title="Permanent link">¶</a></h2>
+<div class="admonition example">
+<p class="admonition-title">🧪 Hazır lab</p>
+<p>Bu bölümün deneyleri tek komutla: <code>./labs/run.sh 09-infra</code> (<a href="https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/09-infra/">script'ler</a>). Kurulum istemiyorsan <a href="https://codespaces.new/gaskinimbuspro/silicon-to-cloud">Codespaces'te aç</a>. <!-- s2c-lab --></p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1) Sadece unshare ile bir "container": yeni PID + mount namespace</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>unshare<span class="w"> </span>--pid<span class="w"> </span>--fork<span class="w"> </span>--mount-proc<span class="w"> </span>bash
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ps<span class="w"> </span>aux<span class="w">            </span><span class="c1"># PID 1 sensin ve yalnızsın</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">exit</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># 2) Gerçek bir container, host'ta bir process'tir</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web<span class="w"> </span>--memory<span class="w"> </span>64m<span class="w"> </span>--cpus<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span>nginx:alpine
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nv">PID</span><span class="o">=</span><span class="k">$(</span>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{.State.Pid}}'</span><span class="w"> </span>web<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$PID</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>ps<span class="w"> </span>-o<span class="w"> </span>pid,cmd<span class="w"> </span>-p<span class="w"> </span><span class="nv">$PID</span><span class="w">                      </span><span class="c1"># host'ta tam orada</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/proc/<span class="nv">$PID</span>/ns<span class="w">                   </span><span class="c1"># namespace'leri</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>cat<span class="w"> </span>/sys/fs/cgroup/system.slice/docker-<span class="k">$(</span>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{.Id}}'</span><span class="w"> </span>web<span class="k">)</span>.scope/memory.max<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w">   </span><span class="c1"># 67108864 (cgroup v2 + systemd sürücüsü)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>docker<span class="w"> </span>image<span class="w"> </span><span class="nb">history</span><span class="w"> </span>nginx:alpine<span class="w">          </span><span class="c1"># katmanlar</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>web
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># 3) kind ile yerelde Kubernetes, kontrol döngülerini izle</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>kind<span class="w"> </span>create<span class="w"> </span>cluster
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>kubectl<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>hello<span class="w"> </span>--image<span class="o">=</span>nginx<span class="w"> </span>--replicas<span class="o">=</span><span class="m">2</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>-w<span class="w"> </span><span class="p">&amp;</span><span class="w">                    </span><span class="c1"># Scheduled → Pulling → Created → Started</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>hello<span class="w"> </span>--wait<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w<span class="w">   </span><span class="c1"># yeni pod'lar belirir</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>kind<span class="w"> </span>delete<span class="w"> </span>cluster
+</code></pre></div>
+<p><strong>Görev:</strong> <code>--memory 32m</code> ile başlatılmış ve daha fazlasını kullanmaya çalışan bir container çalıştır (<code>docker run --rm --memory 32m python:3-alpine python -c "x=bytearray(100_000_000)"</code>). Çıkış koduna ve <code>docker inspect</code> çıktısındaki <code>OOMKilled</code> alanına bak. Bunu Bölüm 3'teki hangi kernel özelliği yaptı?</p>
+<hr>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Container = process + namespace'ler (görme) + cgroup'lar (kullanma) + imaj katmanları (overlayfs) + seccomp/caps
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>İmaj = OCI manifest + katmanlar + config, digest ile, registry'de
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>K8s control plane: API server (ön kapı) · etcd (durum) · scheduler (node seç) · controller'lar (döngüler)
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>K8s node: kubelet (ajan) · containerd/runc (CRI) · CNI (pod IP) · kube-proxy/eBPF (Service'ler)
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>kubectl apply → API → etcd → controller'lar pod oluşturur → scheduler atar → kubelet → CRI çek+başlat → ready → endpoint'ler
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>CI değişmez imajlar üretir → GitOps (Argo CD) istenen durumu git'ten senkronlar → rollout'lar
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Gözlem: metrik (ne kadar) · log (ne oldu) · trace (nerede) · SLO'lar
+</code></pre></div>
+<hr>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Container küçük bir sanal makine midir?</summary>
+<p>Hayır. Host kernel'ini paylaşan, namespace'lerle izole edilmiş ve cgroup'larla sınırlandırılmış normal bir Linux process'idir. <abbr title="Virtual Machine (language runtime)">VM</abbr> ise bir hypervisor üzerinde kendi kernel'ini çalıştırır.</p>
+</details>
+<details class="question">
+<summary>2. Bir pod <code>Pending</code>'de takılı kaldı. Hangi bileşen henüz işini yapmadı ve neden olabilir?</summary>
+<p>Scheduler onu bir node'a atamadı. Genelde sebebi, hiçbir node'da isteklerine (requests) yetecek boş <abbr title="Central Processing Unit">CPU</abbr>/bellek olmaması ya da taint'ler, affinity kuralları veya bağlanmamış bir PersistentVolumeClaim'dir. <code>kubectl describe pod</code> sebebi event'lerde gösterir.</p>
+</details>
+<details class="question">
+<summary>3. Bir Deployment'a ait pod'u siliyorsun ve yenisi beliriyor. Onu kim oluşturdu?</summary>
+<p>ReplicaSet controller (kube-controller-manager içinde). Gerçek replika sayısının istenenden az olduğunu gördü ve yeni bir Pod nesnesi oluşturdu. Scheduler ve kubelet de onu hayata geçirdi.</p>
+</details>
+<details class="question">
+<summary>4. Push tabanlı <abbr title="Continuous Delivery / Deployment">CD</abbr> ile GitOps arasındaki fark ne?</summary>
+<p>Push tabanlı <abbr title="Continuous Delivery / Deployment">CD</abbr>'de pipeline, cluster kimlik bilgileriyle cluster'a karşı <code>kubectl apply</code>/<code>helm upgrade</code> çalıştırır. GitOps'ta cluster içindeki bir ajan (Argo <abbr title="Continuous Delivery / Deployment">CD</abbr>, Flux) istenen durumu git'ten çeker ve sürekli uzlaştırır. Böylece git doğruluk kaynağı olur ve sapmalar düzeltilir.</p>
+</details>
+<details class="question">
+<summary>5. Servisin yavaş ama <abbr title="Central Processing Unit">CPU</abbr> ve bellek iyi görünüyor. Hangi sinyale başvurursun?</summary>
+<p>Trace'lere: servisler arasında hangi aşağı akış çağrısının ya da span'in zaman aldığını görmek için. Sonra o istek için loglara.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/overview/components/">Kubernetes dokümanları: bileşenler</a></li>
+<li><a href="https://man7.org/linux/man-pages/man7/namespaces.7.html">man7.org: namespaces(7)</a> · <a href="https://man7.org/linux/man-pages/man7/cgroups.7.html">cgroups(7)</a></li>
+<li><a href="https://github.com/opencontainers/image-spec"><abbr title="Open Container Initiative">OCI</abbr> image spec</a></li>
+<li><a href="https://argo-cd.readthedocs.io/">Argo <abbr title="Continuous Delivery / Deployment">CD</abbr> dokümanları</a> · <a href="https://opengitops.dev/">OpenGitOps ilkeleri</a></li>
+<li><a href="https://opentelemetry.io/docs/">OpenTelemetry dokümanları</a> · <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google <abbr title="Site Reliability Engineering">SRE</abbr> kitabı: izleme</a></li>
+</ul>
+<h2 id="kendi-notlarm">✍️ Kendi notlarım<a class="headerlink" href="#kendi-notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p><code>kubectl apply</code> dediğinde gerçekte ne olduğunu ve bir container'ın neden "sadece bir process" olduğunu kendi cümlelerinle 5 satırda anlat.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../08-browser/04-browser-security/" class="md-footer__link md-footer__link--prev" aria-label="Önceki: 8.4 · Browser security">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                8.4 · Browser security
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-containers-images/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 9.1 · Containers &amp; images">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                9.1 · Containers &amp; images
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

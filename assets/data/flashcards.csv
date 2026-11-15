@@ -1,0 +1,1337 @@
+#separator:semicolon;
+Interrupt;"Signal that makes the CPU pause and run a handler · Hardware raises it; CPU jumps via the IDT"
+IRQ;Interrupt Request — An interrupt line/number · cat /proc/interrupts lists them
+Polling;"CPU repeatedly checks a device · Wastes CPU when idle; great at very high load"
+DMA;Direct Memory Access — Device copies data to RAM itself · Driver gives it buffer addresses (rings)
+MSI / MSI-X;Message Signaled Interrupts — Interrupt sent as a memory write · One vector per queue, can target any core
+APIC;Advanced Programmable Interrupt Controller — Delivers interrupts to cores · Local APIC per core + I/O APIC
+ISR / top half;Interrupt Service Routine — Code run immediately on the interrupt · Must be very short, can't sleep
+Bottom half;Deferred part of interrupt work · softirq, tasklet, workqueue, threaded IRQ
+softirq;"software interrupt — Kernel's high-priority deferred work · si in top; NET_RX, BLOCK, TIMER"
+Driver;Kernel code for one kind of device · probe() when matched, then serves a subsystem
+Kernel module;Loadable piece of the kernel (.ko) · modprobe, lsmod
+udev;userspace device manager — Reacts to kernel device events · Loads modules, creates /dev nodes, names devices
+IRQ affinity;Which cores handle an IRQ · /proc/irq/N/smp_affinity, irqbalance
+NAPI;New API — Network drivers switch to polling under load · Interrupt once, then poll a batch of packets
+Interrupts;"Device signals; CPU runs a handler — Low/irregular load, latency-sensitive input · Interrupt storms at very high rates"
+DMA + interrupts;Device writes data to RAM itself, then interrupts once per batch — Disks, NICs, GPUs · Needs careful buffer management
+USB;"Universal Serial Bus — Host-controlled peripheral bus · Host schedules all traffic; devices only answer"
+Host controller (xHCI);eXtensible Host Controller Interface — Chip that runs the USB bus · Executes transfer rings in RAM, raises interrupts
+Hub;Port multiplier · Reports attach/detach to the host
+Enumeration;Discovering a newly attached device · Reset → descriptors → address → configuration
+Descriptor;Self-description data a device returns · Device, configuration, interface, endpoint, HID report
+VID / PID;Vendor ID / Product ID — 16-bit IDs of maker and model · 046d:c31c = Logitech keyboard
+Endpoint;A data channel on a device · EP0 control + others (IN/OUT)
+Transfer types;"Control, interrupt, bulk, isochronous · Keyboard: interrupt; disk: bulk; audio: isochronous"
+Polling interval;How often the host asks an interrupt endpoint · 1–8 ms for keyboards (125–1000 Hz), faster for gaming
+HID;Human Interface Device — Device class for input devices · Self-describing reports, no special driver needed
+Report descriptor;Describes the layout of the device's reports · Usage pages, sizes, counts
+Usage;"Meaning of a field (e.g. ""Keyboard A"") · Numbers from the HID Usage Tables"
+Boot protocol;Fixed simple 8-byte keyboard format · Works in BIOS/UEFI without parsing descriptors
+NKRO;N-Key RollOver — Any number of simultaneous keys · Uses a bitmap report instead of 6 slots
+Input subsystem;"Kernel layer for all input devices · Drivers report events; it fans them out"
+evdev;event device — Generic interface /dev/input/eventN · struct input_event: time, type, code, value
+EV_KEY / EV_SYN;"Event types · Key press/release/repeat; ""end of this batch"""
+Keycode;Number for a physical key · KEY_A = 30 in Linux (+8 in xkb)
+libinput;Library handling input devices · Device setup, pointer accel, gestures, key state
+Compositor;Display server in Wayland (GNOME Mutter, KDE KWin, Sway) · Owns input + output, composes windows
+Wayland / X11;"Display protocols · Wayland: compositor routes input; X11: X server does"
+Focus;Which surface receives keyboard input · Chosen by the compositor
+Keymap;Rules from keycodes to symbols · Layout, variant, options (e.g. tr, us, caps:escape)
+xkbcommon;X Keyboard Extension common library — Keymap engine used by apps and compositors · Tracks modifier state, returns keysym + UTF-8
+Keysym;key symbol — Meaning of a key in a layout · XKB_KEY_a, XKB_KEY_A, XKB_KEY_Return
+Modifier / level;Shift, AltGr, Ctrl… / which symbol on a key · Shift = level 2, AltGr = level 3
+IME;Input Method Editor — Composes text for complex scripts · ibus/fcitx via text-input protocol
+KeyboardEvent;Browser's key event · key (meaning), code (physical position)
+MCU;Microcontroller Unit — Tiny computer inside the keyboard · Scans the key matrix, debounces, builds HID reports
+xHCI;eXtensible Host Controller Interface — The USB host controller chip · Polls devices, DMAs data to RAM, raises interrupts
+IRQ / MSI;Interrupt Request / Message Signaled Interrupt — A device's signal to the CPU · MSI = a write to a special address that the APIC turns into an interrupt
+IDT / ISR;Interrupt Descriptor Table / Interrupt Service Routine — Table of handlers / the handler itself · CPU looks up the vector in the IDT and jumps to the ISR
+Ring 0 / ring 3;"Kernel mode / user mode · CPU privilege levels; syscalls and interrupts cross them"
+xkb;X Keyboard Extension — Keyboard layout database/library · Maps keycode + layout + modifiers to a character
+GPU / framebuffer;Graphics Processing Unit — Graphics chip / memory holding the final frame · Composes windows into the framebuffer, sent to the monitor
+vsync;vertical synchronization — The monitor's refresh tick · New frames are shown only at each refresh (16.7 ms at 60 Hz)
+ISA;Instruction Set Architecture — The instructions + registers a CPU family understands · x86-64, ARM64 (AArch64), RISC-V
+CISC / RISC;Complex / Reduced Instruction Set Computer — Two design philosophies · Many variable-length instructions vs few fixed-length ones
+Opcode;operation code — The bytes that say which instruction · 8d = LEA, c3 = RET
+Operand;What an instruction works on · Register, memory address, immediate value
+Addressing mode;How a memory operand is computed · [base + indexscale + disp]
+ModRM / SIB;Mod-Reg-R/M / Scale-Index-Base — x86 bytes encoding operands · Pick registers and address form
+Immediate;A constant inside the instruction · mov eax, 42
+Flags (RFLAGS);Bits set by arithmetic · ZF (zero), CF (carry), SF (sign), OF (overflow)
+Jump / branch;Changes RIP · jmp, conditional je, jne, jl … after cmp
+SIMD;"Single Instruction, Multiple Data — One instruction on many values · SSE, AVX2, AVX-512 (x86); NEON, SVE (ARM)"
+µop;micro-operation — Internal simpler operation · x86 decodes instructions into µops
+ABI;Application Binary Interface — Binary-level rules between compiled code · Calling convention, struct layout, syscalls
+Calling convention;How args/returns/registers are handled in calls · System V on Linux/macOS, Microsoft x64 on Windows
+Disassembler;Turns bytes back into assembly · objdump -d, gdb, Compiler Explorer
+Cache;Small fast memory holding recent data · Checked before going to the next, slower level
+L1 / L2 / L3 (LLC);Level 1/2/3 (Last-Level Cache) — Cache levels · L1/L2 per core, L3 shared by cores
+Cache line;Unit of transfer: 64 bytes · Reading 1 byte loads its whole line
+Hit / miss;Found / not found in a cache · Miss → ask the next level
+Locality;Temporal (reuse soon) + spatial (neighbours) · Caches exploit both
+Prefetcher;Hardware that guesses the next lines · Great for sequential/strided access
+Associativity;Where a line may live in a cache · 8-way = one of 8 slots in its set
+Coherence / MESI;Modified, Exclusive, Shared, Invalid — Keeping cores' copies consistent · Writing invalidates other cores' copies
+False sharing;Different variables in the same line written by different cores · The line ping-pongs between cores
+NUMA;"Non-Uniform Memory Access — Each socket has its ""own"" RAM · Remote memory is slower than local"
+TLB;Translation Lookaside Buffer — Cache of virtual→physical translations · Misses cost a page-table walk
+Huge pages;2 MB / 1 GB pages instead of 4 KB · Fewer TLB entries needed
+Memory bandwidth;GB/s RAM can deliver · Often the real limit for data-heavy code
+Cache-miss / IPC;Instructions Per Cycle — Key perf counters · perf stat shows both
+Pipeline;Splitting execution into stages · Each stage works on a different instruction each cycle
+Superscalar;Several instructions per cycle · Multiple decoders and execution units
+OoO;Out-of-Order execution — Run instructions when inputs are ready, not in program order · Results committed in order later
+ROB;ReOrder Buffer — Tracks in-flight instructions · Retires them in program order
+Register renaming;Mapping architectural to physical registers · Removes false dependencies
+Dependency chain;Instructions that need each other's results · Limits parallelism
+IPC / CPI;Instructions Per Cycle / Cycles Per Instruction — Efficiency measure · perf stat reports it
+Branch predictor;Hardware that guesses branch direction and target · Learns from history
+Misprediction;Wrong guess · Pipeline flush, ~15–20 cycles lost
+Speculative execution;Running the predicted path before it's confirmed · Discarded if wrong
+Spectre / Meltdown;Side-channel attacks on speculation · Secrets leak through cache timing
+SMT / Hyper-Threading;"Simultaneous Multi-Threading — Two hardware threads share one core · Fills idle units; a vCPU is often one of these"
+Turbo / DVFS;Dynamic Voltage and Frequency Scaling — Clock speed changes with load and heat · Fewer active cores → higher boost
+Top-down analysis;Classify cycles: frontend, bad speculation, backend, retiring · perf stat --topdown
+CPU;Central Processing Unit — The processor running your code · Fetches, decodes and executes instructions
+Register;Tiny storage slots inside the core · The only place math happens directly
+RIP / RSP;Instruction Pointer / Stack Pointer — Next instruction address / top of stack · Updated by every instruction, call, ret and push/pop
+ALU;Arithmetic Logic Unit — The part that does math and logic · Adds, compares, shifts values from registers
+L1 / L2 / L3;Level 1/2/3 cache — On-chip memories, smaller = faster · Keep recently used data close to the core
+Branch prediction;Guessing which way an if goes · Wrong guess → pipeline flush, wasted cycles
+Stack frame;A function's area on the stack · Holds return address, saved registers, locals
+GHz;gigahertz — Clock frequency · 3 GHz = 3 billion cycles per second
+Process;A program in execution · Own address space, fds, credentials
+PID / PPID / TID;"Process ID / Parent PID / Thread ID — Numeric identities · Every thread has a TID; the main thread's TID = PID"
+Thread;Execution context inside a process · Shares memory, own stack + registers
+fork() / clone();Create a new process/thread · clone flags decide what is shared
+COW;Copy-On-Write — Lazy copying after fork · Pages are shared until one side writes
+execve();Replace the program in a process · Same PID, new code and memory
+wait() / waitpid();Parent collects a child's exit status · Removes the zombie
+Zombie;Exited process whose status isn't collected · Holds only a PID and exit code
+Orphan;Process whose parent died · Re-parented to PID 1 (or a subreaper)
+PID 1 / init;"First process in a PID namespace · Must reap orphans; default signal handling differs"
+Signal;Asynchronous notification · SIGTERM, SIGKILL, SIGINT, SIGCHLD, SIGHUP
+Exit code;"Number returned at exit · 0 = OK; 128+N = killed by signal N (137 = SIGKILL)"
+State codes;R, S, D, Z, T in ps · Running, Sleeping, Uninterruptible, Zombie, Stopped
+Scheduler;Kernel code choosing the next task · Runs on tick, wake-up, block, yield
+Run queue;Per-CPU list of runnable tasks · Tasks waiting for that CPU
+EEVDF;Earliest Eligible Virtual Deadline First — Linux's default fair scheduler since 6.6 · Picks the eligible task with the earliest virtual deadline
+CFS;Completely Fair Scheduler — The previous default (2007–2023) · Picked the task with the least virtual runtime
+Time slice;How long a task may run before re-evaluation · A few ms, depends on load
+Preemption;Taking the CPU away from a running task · On tick or when a more deserving task wakes
+Context switch;Switching the CPU from one task to another · Save/restore registers, maybe change page tables
+nice;User priority −20…19 · Changes the task's weight (~1.25× per step)
+RT policies;Real-Time (SCHED_FIFO, SCHED_RR, SCHED_DEADLINE) — Strict priority classes · Always run before normal tasks
+Load average;Average number of runnable + D-state tasks · 1, 5, 15-minute values
+Affinity;Which CPUs a task may run on · taskset, cpusets
+cpu.weight / cpu.max;cgroup v2 CPU share / hard quota · Weight under contention / quota per period
+Throttling;Pausing a cgroup that used its quota · Until the next period (default 100 ms)
+PSI;Pressure Stall Information — How long tasks waited for CPU/memory/IO · /proc/pressure/cpu
+Virtual address;Address a program uses · Translated by the MMU on every access
+Page / frame;4 KB unit of virtual / physical memory · Page tables map pages to frames
+Page table;Per-process mapping tree (4–5 levels) · Walked by the MMU on a TLB miss
+Page fault;Access to a page that isn't mapped (yet) · Kernel maps it (minor) or reads it from disk (major)
+Demand paging;RAM assigned on first touch · malloc(1 GB) uses ~0 RSS until written
+VSZ / RSS;Virtual Size / Resident Set Size — Reserved address space / pages in RAM · RSS is what costs memory
+PSS / USS;Proportional / Unique Set Size — RSS with shared pages divided / only private pages · Fairer per-process accounting
+Anonymous memory;Heap, stacks: not backed by a file · Can only go to swap
+Page cache;"File data cached in RAM · Reclaimable; ""buff/cache"" in free"
+mmap;memory map — Map a file or anonymous memory into the address space · Lazy loading, shared libraries, databases
+Swap / zswap;Disk (or compressed RAM) for anonymous pages · Slows things down but avoids OOM
+Reclaim;Freeing memory under pressure · Drop clean cache, write dirty pages, swap
+OOM killer;Out Of Memory — Kernel kills a process to free memory · Chooses highest oom_score
+memory.max / memory.high;cgroup v2 hard limit / throttle point · Kubernetes memory limit → memory.max
+Syscall;system call — Request from user space to the kernel · syscall instruction, number in RAX
+vDSO;virtual Dynamic Shared Object — Kernel code mapped into user space · gettimeofday without a real syscall
+fd;file descriptor — Small integer for an open file/socket/pipe · Index into the process's fd table
+VFS;Virtual File System — Common layer for all filesystems · Same API for ext4, xfs, NFS, procfs, sockets
+Inode;index node — A file's metadata (size, owner, blocks) · Names (dentries) point to inodes
+Dentry;directory entry — Name → inode link, cached · Path lookup cache
+fsync;"Force a file's data to stable storage · Durability; slow on purpose"
+Block layer (blk-mq);multi-queue block layer — Queues and merges I/O requests · One queue per CPU to the device
+Journal;Filesystem's write-ahead log · Consistency after a crash
+IOPS / throughput / latency;I/O operations per second — Storage performance numbers · Small random vs big sequential I/O
+epoll;Wait for many fds at once · Kernel tells you which are ready
+io_uring;Shared-ring async I/O interface · Submit and complete I/O with few syscalls
+OverlayFS;Union filesystem used by container images · Read-only layers + one writable layer
+Namespace;A private view of one kernel resource · Created with clone()/unshare() flags
+pid ns;Own PID numbering · Container's first process is PID 1
+net ns;Own interfaces, routes, iptables, ports · Connected via veth pairs / CNI
+mnt ns;Own mount table · pivot_root into the image filesystem
+uts / ipc ns;UNIX Time-Sharing / Inter-Process Communication — Own hostname / own SysV IPC & POSIX queues · hostname inside ≠ host
+user ns;Own UID/GID mapping · Root inside = unprivileged user outside
+cgroup;control group — Group of processes with resource limits · Files under /sys/fs/cgroup
+cgroup v2;Unified hierarchy (modern default) · cpu.max, memory.max, io.max, pids.max
+Capabilities;Root's powers split into ~40 pieces · CAP_NET_ADMIN, CAP_SYS_ADMIN… dropped by default
+seccomp;secure computing mode — Syscall filter (BPF) · Blocks dangerous syscalls (kexec_load, mount…)
+LSM;Linux Security Module — Mandatory access control · AppArmor profiles, SELinux labels
+OCI runtime;Open Container Initiative — Program that creates the container · runc, crun, gVisor (runsc), Kata
+Rootless;Containers run entirely as a normal user · User namespaces + slirp4netns/pasta
+Privileged;Container with nearly all protections off · Effectively root on the host
+OS / kernel;Operating System — The software that manages hardware and programs · Runs in ring 0, everything else asks it via syscalls
+Process / PID;Process ID — A running program with its own memory · Created by fork/clone + execve
+EEVDF / CFS;Earliest Eligible Virtual Deadline First / Completely Fair Scheduler — Linux's scheduler algorithms · Give each task a fair share, weighted by nice
+Virtual memory;Each process's private view of memory · Page tables map virtual pages to physical frames
+MMU / TLB;Memory Management Unit / Translation Lookaside Buffer — Hardware doing translation / its cache · Translates every address, caches recent ones
+cgroup / OOM;control group / Out Of Memory — Resource limits for groups of processes / memory exhaustion · Exceeding a memory cgroup limit triggers the OOM killer
+Compiler;Translates source to machine code · gcc, clang/LLVM, rustc, go build, javac (to bytecode)
+AST;Abstract Syntax Tree — Tree form of the parsed code · Built by the parser, type-checked
+IR;Intermediate Representation — Language- and CPU-neutral code · LLVM IR, GCC GIMPLE, Go SSA
+SSA;Static Single Assignment — IR form where each variable is assigned once · Makes optimizations simpler
+Optimization level;How hard the compiler optimizes · -O0 debug … -O2 default … -O3, -Os size
+Object file (.o);Machine code + symbols + relocations · One per source file
+Symbol;Named function or variable · Defined (T) or undefined (U)
+Relocation;"""Patch this address later"" note · Filled in by the linker or loader"
+Linker;Combines objects into an executable · ld (bfd), gold, lld, mold
+Static library (.a);archive — Bundle of .o files copied in at link time · Bigger binary, no runtime dependency
+Shared library (.so);shared object — Loaded at run time, shared in memory · Smaller binaries, update libs separately
+LTO / PGO;Link-Time Optimization / Profile-Guided Optimization — Whole-program / data-driven optimization · Faster binaries, slower builds
+Cross-compiling;Building for another OS/CPU · GOOS=linux GOARCH=arm64, --target
+Reproducible build;Same source → bit-identical output · Needed for verifying supply chains
+ELF;"Executable and Linkable Format — Linux/BSD format for executables, .o and .so · Magic bytes 7f 45 4c 46 (""\x7fELF"")"
+ELF header;First bytes: class, ISA, entry point, table offsets · readelf -h
+Segment (program header);What the loader maps (PT_LOAD, PT_INTERP, PT_DYNAMIC…) · readelf -l
+Section;What tools/linker use (.text, .data, .symtab, .debug_) · readelf -S
+Entry point;First instruction executed (_start) · Not main
+PT_INTERP;program interpreter — Path to the dynamic loader · /lib64/ld-linux-x86-64.so.2
+ld.so;dynamic linker/loader — Loads shared libraries at start · Configured by RPATH, LD_LIBRARY_PATH, ld.so.cache
+DT_NEEDED;List of required libraries · readelf -d
+GOT / PLT;Global Offset Table / Procedure Linkage Table — Indirection tables for library addresses · Filled lazily or at start
+ASLR;Address Space Layout Randomization — Random base addresses each run · Makes exploits harder
+PIE;Position-Independent Executable — Executable that can load anywhere · Needed for full ASLR
+RELRO / NX / stack canary;RELocation Read-Only / No-eXecute — Hardening features · Protect GOT, stack, data pages
+soname;shared object name — Library ABI identity (libssl.so.3) · Major version in the file name
+LD_PRELOAD;Force-load a library first · Override functions (tracing, mocks, also attacks)
+Runtime;Code that runs alongside your program · Memory, threads, compilation, standard library
+Bytecode;Portable instruction format for a VM · .class, .pyc, V8 Ignition bytecode
+Interpreter;Executes bytecode instruction by instruction · Simple, slower
+JIT;"Just-In-Time compiler — Compiles hot code to machine code at run time · Needs warm-up; uses profiling data"
+AOT;Ahead-Of-Time — Compile to native before running · Go, Rust, GraalVM native-image
+GC;Garbage Collector — Frees memory no longer reachable · Mark live objects from roots, reclaim the rest
+Stop-the-world pause;All app threads paused for GC · Shows up as latency spikes
+Generational GC;Separate young and old objects · Most objects die young
+GIL;Global Interpreter Lock — CPython lock: one thread runs Python at a time · Free-threaded builds since 3.13 remove it
+Event loop;One thread running callbacks · Node.js (libuv), Python asyncio
+Goroutine;Go's lightweight thread (~2 KB stack) · M:N scheduled on OS threads
+Virtual threads;JVM lightweight threads (Java 21+) · Blocking code without OS-thread cost
+Heap limit;Max managed memory · -Xmx, --max-old-space-size, GOMEMLIMIT
+Warm-up;Slow period before JIT optimizes · Affects autoscaling and cold starts
+Preprocessor;Text-level step before compiling (C/C++) · Expands #include and #define
+Assembler;Assembly → object file · Encodes instructions into bytes, records symbols
+Static / dynamic linking;Copy libraries in / load them at start · Dynamic: ld.so maps .so files and fixes addresses
+fork / execve;Copy the process / replace its program · Shell forks a child, child execs the new program
+libc;C standard library — Wrappers for syscalls + standard functions · printf, malloc, open → syscalls underneath
+JIT / AOT;"Just-In-Time / Ahead-Of-Time — Compile while running / before running · JIT compiles hot code at runtime; AOT produces native binaries"
+VM;Virtual Machine (language runtime) — Runtime executing bytecode · JVM, CPython VM, V8 engine
+C / C++ / Rust / Go;Native ELF binary — The CPU directly · Ahead-of-time (AOT) compilation
+Java / Kotlin;.class/.jar bytecode — The JVM (itself an ELF) interprets bytecode · JIT: hot methods are compiled to machine code at runtime (HotSpot)
+JavaScript (Node.js);.js source — V8 parses to bytecode (Ignition) · JIT: hot functions are optimized to machine code (TurboFan)
+Python;.py source — CPython compiles to bytecode (.pyc) and runs it in an interpreter loop · Mostly interpreted, so CPU-heavy work goes to C extensions (NumPy, PyTorch)
+L2;Layer 2 (data link) — Delivery within one local network · Frames addressed by MAC
+Frame;"L2 packet: dst MAC, src MAC, EtherType, payload, FCS · FCS = checksum; bad frames are dropped"
+MAC address;Media Access Control — 48-bit NIC address · aa:bb:cc:dd:ee:ff, first half = vendor (OUI)
+EtherType;Which protocol is inside · 0x0800 IPv4, 0x86DD IPv6, 0x0806 ARP
+Switch;Device that forwards frames by MAC · Learns source MACs into a MAC table
+Flooding;Sending a frame out all ports · For broadcast and unknown destinations
+Broadcast domain;Set of hosts that receive each other's broadcasts · One VLAN / one subnet
+ARP;Address Resolution Protocol — IPv4 → MAC lookup on the LAN · Broadcast question, unicast answer, cached
+NDP;Neighbor Discovery Protocol — IPv6's replacement for ARP · Uses ICMPv6 multicast
+GARP;"Gratuitous ARP — Unasked ARP announcing ""this IP is at my MAC"" · Used for failover (VIP moves)"
+VLAN / 802.1Q;Virtual LAN — Logical L2 network on shared hardware · 4-byte tag with a 12-bit VLAN ID
+Trunk / access port;Carries many tagged VLANs / one untagged VLAN · Switch-to-switch vs switch-to-host
+MTU;"Maximum Transmission Unit — Largest payload per frame · 1500 standard, 9000 ""jumbo"""
+STP;Spanning Tree Protocol — Blocks redundant links to prevent loops · Elects a root, disables loop ports
+IP;Internet Protocol — L3: addressing and forwarding between networks · Best-effort, no delivery guarantee
+IPv4 / IPv6;32-bit / 128-bit addresses · 10.0.1.5 / 2001:db8::5
+CIDR;Classless Inter-Domain Routing — address/prefix-length notation · /24 = first 24 bits are the network
+Subnet mask;Same as prefix, dotted · /24 = 255.255.255.0
+Network / broadcast address;First / last address of an IPv4 subnet · Not usable by hosts
+Private ranges;RFC 1918 — 10/8, 172.16/12, 192.168/16 · Not routed on the internet → need NAT
+CGNAT range;Carrier-Grade NAT — 100.64.0.0/10 · ISPs, also used for pod CIDRs
+Routing table;List of prefix → next hop / interface · ip route
+Longest-prefix match;Most specific route wins · /32 beats /24 beats /0
+Default route;"0.0.0.0/0 (::/0) · ""Everything else → gateway"""
+TTL / hop limit;"Time To Live — Counter decremented per router · 0 → drop + ICMP ""time exceeded"""
+ICMP;Internet Control Message Protocol — Errors and diagnostics · ping (echo), unreachable, time exceeded
+PMTUD;"Path MTU Discovery — Finding the smallest MTU on a path · Relies on ICMP ""fragmentation needed"""
+BGP;Border Gateway Protocol — Exchanges routes between networks · Internet, also Calico/MetalLB/cloud routers
+Firewall;Allows or blocks traffic by rules · Match on IP, port, protocol, state, interface
+Stateless / stateful;Judges each packet alone / knows connections · Stateful allows replies automatically
+netfilter;Kernel packet-processing framework · Hooks: PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING
+iptables / nftables;User tools for netfilter rules · nftables is the modern replacement
+conntrack;connection tracking — Table of active flows · States: NEW, ESTABLISHED, RELATED, INVALID
+NAT;Network Address Translation — Rewriting IPs/ports in packets · Reverse rewrite on replies via conntrack
+SNAT / MASQUERADE;Source NAT — Change the source address · Many private hosts behind one IP
+DNAT;Destination NAT — Change the destination address · Port forwarding, Service VIP → pod
+Port exhaustion;Running out of source ports for SNAT · ~64K per (src IP, dst IP, dst port)
+kube-proxy;Implements Services on each node · iptables / IPVS / nftables modes
+eBPF;extended Berkeley Packet Filter — Programs run safely in the kernel · Cilium replaces kube-proxy and iptables
+NetworkPolicy;Kubernetes pod-level firewall · Enforced by the CNI
+Security group / NACL;— / Network Access Control List — Cloud firewall per interface / per subnet · Stateful / stateless
+VPC / VNet;Virtual Private Cloud / Virtual Network — Isolated network in a region · AWS/GCP call it VPC, Azure VNet
+SDN;"Software-Defined Networking — Network implemented in hypervisors/NICs · No real L2; the cloud decides who reaches whom"
+Region / AZ;— / Availability Zone — Geographic area / isolated data centre(s) in it · Subnets live in one AZ (AWS)
+Subnet (public / private);"Slice of the VPC CIDR · ""Public"" = has a route to an internet gateway"
+Route table;Per-subnet routing rules · 0.0.0.0/0 → igw-… or → nat-…
+IGW;Internet Gateway — Connects the VPC to the internet · 1:1 NAT for public IPs
+NAT gateway;Outbound-only internet for private subnets · Managed SNAT, charged per GB
+ENI;Elastic Network Interface — Virtual NIC attached to an instance · Has IPs and security groups
+Security group (SG);"Stateful firewall on ENIs · Can allow traffic ""from SG X"""
+NACL;Network Access Control List — Stateless subnet firewall · Ordered allow/deny rules
+VPC endpoint / PrivateLink;Private access to cloud services · S3, ECR, APIs without NAT/internet
+Peering / TGW;— / Transit Gateway — Connect two VPCs / hub for many VPCs + on-prem · Peering is non-transitive
+VPN / Direct Connect;Encrypted tunnel / private fibre to the cloud · Hybrid connectivity
+Egress;Traffic leaving a region/cloud · Usually the expensive direction
+OSI / TCP/IP model;Open Systems Interconnection — Layered models of networking · Each layer solves one problem and adds one header
+IP address;Internet Protocol — Address of a host on the internet (IPv4 32-bit, IPv6 128-bit) · Routers forward packets by destination IP
+Port;16-bit number selecting a program on a host · TCP/UDP header carries source and destination ports
+Subnet / CIDR;Classless Inter-Domain Routing — A block of IPs like 192.168.1.0/24 · /24 = first 24 bits are the network part
+Default gateway;The router for everything outside your subnet · Frames for remote IPs go to its MAC
+Router;L3 device forwarding packets between networks · Longest-prefix match in the routing table, TTL−1
+TTL;"Time To Live — Hop counter in the IP header · Each router decrements it; 0 = drop (prevents loops)"
+BGP / AS;Border Gateway Protocol / Autonomous System — How networks on the internet share routes · Each AS announces the IP ranges it can reach
+VPC;Virtual Private Cloud — A private network in a cloud · Subnets, route tables, gateways, security groups in software
+Header (field);"A Name: value line of metadata · Names are case-insensitive; sent before the body"
+Request / response header;Metadata sent by the client / by the server · Accept, Authorization vs Content-Type, Set-Cookie
+Start line / status line;First line of a request / response · GET /path HTTP/1.1 / HTTP/1.1 200 OK
+MIME type;Multipurpose Internet Mail Extensions — Format label like application/json · Put in Content-Type and Accept
+Content negotiation;Client says what it can take, server picks · Accept- in, Content- + Vary out
+Hop-by-hop / end-to-end;Headers for one connection / for the final recipient · Proxies strip hop-by-hop ones (Connection, Keep-Alive)
+Cache-Control;Caching rules for browsers and CDNs · max-age, no-store, private, s-maxage …
+ETag;"Entity Tag — Version id of a response · Client sends it back in If-None-Match; unchanged → 304"
+Cookie / Set-Cookie;"Small state the browser stores and sends back · Server sets it; browser adds Cookie to matching requests"
+Authorization / Bearer;"Credentials for a request · Authorization: Bearer <token>; missing/invalid → 401"
+CORS;Cross-Origin Resource Sharing — Browser rule for cross-origin reads · API answers with Access-Control-Allow- headers
+Origin;scheme + host + port of a page · https://app.example.com ≠ https://api.example.com
+HSTS;"HTTP Strict Transport Security — ""Always use HTTPS for this site"" · Strict-Transport-Security: max-age=…"
+CSP;Content Security Policy — Allow-list of where scripts/styles may load from · Browser blocks everything else (stops most XSS)
+XSS;Cross-Site Scripting — Attacker's script running in your page · Prevented by escaping output + CSP
+X-Forwarded-For (XFF);Original client IP behind proxies · Each proxy appends the address it received from
+traceparent;W3C Trace Context — Distributed-trace id passed between services · 00-<trace-id>-<span-id>-<flags>
+HPACK / QPACK;Header compression in HTTP/2 / HTTP/3 · Static + dynamic tables replace repeated headers with indexes
+Pseudo-header;HTTP/2+ fields that replace the start line · :method, :path, :authority, :scheme, :status
+Routing;Host (:authority in h2/h3) — Location (with 3xx / 201) · Virtual hosting, ingress rules, redirects
+Body framing;Content-Length, Transfer-Encoding — same · Where the body ends
+Connection;Connection, Upgrade — Connection, Keep-Alive · Keep-alive, WebSocket upgrade (hop-by-hop)
+Caching;Cache-Control, If-None-Match, If-Modified-Since — Cache-Control, ETag, Last-Modified, Age, Expires · Browser and CDN caching
+Auth;Authorization, Cookie — WWW-Authenticate, Set-Cookie · Logins, API tokens, sessions
+Security;Origin, Sec-Fetch- — Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, Referrer-Policy · Telling the browser how to protect the user
+Proxies;X-Forwarded-For, X-Forwarded-Proto, Forwarded, Via — Via · Real client IP and scheme behind LBs
+Observability;X-Request-ID, traceparent, tracestate — X-Request-ID, Server-Timing · Correlating logs and traces
+Rate limiting;Retry-After (+ RateLimit- drafts) · Telling clients when to retry after 429 / 503
+DNS;Domain Name System — Distributed database of names · Hierarchy of zones, each served by its own name servers
+Zone;The part of the tree one operator controls · example.com zone holds its records and delegations
+Stub resolver;The small resolver in your OS · Asks one recursive resolver, caches answers
+Recursive resolver;Server that does the lookup for you · Walks root → TLD → authoritative, caches everything
+Authoritative server;Server that holds the zone's real answers · Answers with the AA (authoritative answer) flag
+Root / TLD;"Top-Level Domain — Top of the tree / .com, .org, .tr · Root points to TLD servers; TLD points to domain NS"
+Record (RR);Resource Record — One entry: name, type, TTL, value · shop.example.com. 300 IN A 93.184.215.14
+Negative caching;"Caching ""this name doesn't exist"" (NXDOMAIN) · Lasts the zone's SOA minimum TTL"
+Glue record;IP of a name server, stored in the parent · Breaks the loop when NS is inside its own zone
+DNSSEC;DNS Security Extensions — Signatures on DNS records · Resolver validates a chain of keys from the root
+DoH / DoT;DNS over HTTPS / DNS over TLS — Encrypted DNS · Hides queries from the network path
+CoreDNS;Kubernetes' cluster DNS server · Answers .svc.cluster.local, forwards the rest
+ndots;resolv.conf option · Names with fewer dots than this try search domains first
+TCP;Transmission Control Protocol — Reliable byte stream over IP · Handshake, sequence numbers, ACKs, retransmits
+Socket;An endpoint: IP + port (+ protocol) · A connection = 4-tuple (src IP, src port, dst IP, dst port)
+Segment;One TCP packet · Header (20+ bytes) + payload
+SYN / ACK / FIN / RST;synchronize / acknowledge / finish / reset — Header flags · Open / confirm / close politely / abort
+Sequence number;Byte offset of the segment's data · Lets the receiver reorder and detect gaps
+MSS;Maximum Segment Size — Largest payload per segment · Usually 1460 bytes (1500 MTU − 40 bytes of headers)
+rwnd;receive window — Free buffer space at the receiver · Flow control: sender may not exceed it
+cwnd;congestion window — Sender's estimate of what the network can take · Grows on ACKs, shrinks on loss
+RTT / RTO;Round-Trip Time / Retransmission TimeOut — Measured delay / timer for resends · RTO adapts to the measured RTT
+CUBIC / BBR;— / Bottleneck Bandwidth and RTT — Congestion control algorithms · Loss-based (Linux default) / model-based
+TIME_WAIT;State after an active close · Keeps the 4-tuple reserved ~60 s on Linux
+Keep-alive;Reusing a connection for many requests (HTTP) or probing idle ones (TCP) · Saves handshakes / detects dead peers
+Backlog;Queue of connections waiting for accept() · Full queue → dropped SYNs, slow connects
+Ephemeral port;Random client-side port · Range 32768–60999 on Linux
+TLS;Transport Layer Security — Encryption + authentication for a connection · Handshake agrees keys, then records are encrypted
+SSL;"Secure Sockets Layer — TLS's obsolete predecessor · Name survives in ""SSL certificate""; protocol is dead"
+Symmetric cipher;Same key encrypts and decrypts · AES-GCM, ChaCha20-Poly1305: fast, used for data
+Asymmetric crypto;Public/private key pair · Used only to agree keys and sign
+ECDHE;Elliptic Curve Diffie-Hellman Ephemeral — Key exchange · Both sides combine key shares into the same secret
+Forward secrecy;Old traffic stays safe if the server key leaks later · Fresh (ephemeral) keys per connection
+Certificate (X.509);"Signed statement ""this public key belongs to these names"" · Contains SAN, issuer, validity, public key"
+SAN;Subject Alternative Name — List of hostnames in a certificate · Browser checks the hostname is in it
+CA;Certificate Authority — Organisation that signs certificates · Must verify you control the domain first
+Chain / intermediate;Leaf ← intermediate ← root · Server sends leaf + intermediates
+Trust store;Root CAs your OS/browser trusts · /etc/ssl/certs, Java cacerts, browser stores
+ACME;Automatic Certificate Management Environment — Protocol to get certificates automatically · Prove control (HTTP-01/DNS-01), receive cert
+OCSP / CRL;"Online Certificate Status Protocol / Certificate Revocation List — Ways to say ""this cert is revoked"" · Being replaced by short-lived certificates"
+mTLS;mutual TLS — Both sides present certificates · Service identity in meshes and zero-trust
+SNI / ECH;Server Name Indication / Encrypted Client Hello — Hostname in the handshake / encrypted version of it · Lets one IP host many sites / hides which one
+HOL blocking;Head-Of-Line blocking — One slow/lost item delays everything behind it · At HTTP level in 1.1, at TCP level in h2
+Stream;One request/response pair inside a connection · Many streams interleave on one connection
+Multiplexing;Many streams over one connection · Frames from different streams mixed on the wire
+ALPN;Application-Layer Protocol Negotiation — Picks h2 or http/1.1 during TLS · Listed in ClientHello
+h2c;HTTP/2 cleartext — HTTP/2 without TLS · Used inside clusters (gRPC)
+QUIC;"— (originally ""Quick UDP Internet Connections"") — Transport over UDP with TLS 1.3 built in · Streams, loss recovery, congestion control in user space"
+Connection ID;QUIC's connection identifier · Survives IP/port changes (connection migration)
+0-RTT;zero round-trip time — Sending data in the first flight on resumption · Faster, but replayable → only for safe requests
+Alt-Svc;"Alternative Service — Header advertising another protocol/endpoint · Alt-Svc: h3="":443""; ma=86400"
+Server push;"h2 feature to send unrequested resources · Removed from browsers; use 103 Early Hints"
+Method (verb);The action of a request · GET, POST, PUT, PATCH, DELETE, …
+Safe;Doesn't change server state · GET, HEAD, OPTIONS
+Idempotent;Doing it twice = doing it once · GET, PUT, DELETE (not POST, PATCH)
+Status code;3-digit result of a request · 1xx info · 2xx ok · 3xx redirect · 4xx client · 5xx server
+REST;REpresentational State Transfer — Resource-oriented API style · URLs are nouns, methods are verbs, JSON bodies
+OpenAPI;Machine-readable REST contract · Generates docs, clients, validation
+gRPC;gRPC Remote Procedure Calls — RPC framework over HTTP/2 · Protobuf contract, generated stubs, streaming
+Protobuf;Protocol Buffers — Compact binary serialization · Schema with numbered fields
+GraphQL;Query language over one endpoint · Client asks for exactly the fields it needs
+WebSocket;Full-duplex connection upgraded from HTTP · Upgrade: websocket, then frames both ways
+SSE;"Server-Sent Events — One-way stream from server over HTTP · text/event-stream; used for LLM token streaming"
+Idempotency key;"Client-chosen id for a non-idempotent request · Server stores the result; a retry returns the same result"
+URL;Uniform Resource Locator — Address of a resource · scheme://host:port/path?query
+TLD;Top-Level Domain — The last label of a name (.com, .org, .tr) · TLD servers point to each domain's authoritative servers
+TTL (DNS);Time To Live — How long a DNS answer may be cached · Lower it before migrations
+UDP;"User Datagram Protocol — Fire-and-forget datagrams · No handshake, no retransmits; base of DNS and QUIC"
+RTT;Round-Trip Time — Time for a message to go and come back · Every handshake step costs about one RTT
+CA / certificate;Certificate Authority — Trusted issuer / signed proof of a domain's key · Browser checks the chain up to a trusted root CA
+SNI / ALPN;Server Name Indication / Application-Layer Protocol Negotiation — TLS extensions · Which hostname / which protocol (h2, h3) inside ClientHello
+HTTP;HyperText Transfer Protocol — Request/response protocol of the web · Method + path + headers → status + headers + body
+HTTP/2 / HTTP/3 / QUIC;"— / — / Quick UDP Internet Connections — Multiplexed HTTP over TCP / over QUIC (UDP) · Many streams on one connection; QUIC removes TCP head-of-line blocking"
+TTFB;Time To First Byte — Time until the first response byte arrives · DNS + TCP + TLS + server processing
+LB;Load Balancer — Spreads traffic over backends · Hardware, software (nginx, HAProxy, Envoy) or cloud
+L4 LB;Layer 4 — Balances TCP/UDP connections · Sees IP:port only, very fast
+L7 LB;Layer 7 — Balances HTTP requests · Routes by host/path/header, TLS, retries
+Round robin;Next backend in turn · Simple, ignores load
+Least connections / least request;Backend with fewest active · Better for uneven request costs
+Consistent hashing;"Same key → same backend · Cache affinity; few keys move when pool changes"
+EWMA / P2C;Exponentially Weighted Moving Average / Power of Two Choices — Latency-aware picking · Pick 2 random, choose the faster
+Health check;Probe deciding if a backend gets traffic · Active (LB probes) or passive (watch errors)
+Readiness / liveness;K8s: may get traffic / should be restarted · Different questions, different probes
+Draining;Stop new traffic, let existing finish · During deploys and scale-in
+Sticky sessions;Pin a client to one backend · Cookie or source-IP affinity
+Anycast / GSLB;— / Global Server Load Balancing — Route users to the nearest region · Same IP from many places / DNS-based
+Gateway API;Kubernetes' successor to Ingress · Gateway + HTTPRoute/GRPCRoute, role-oriented
+Hit / miss / hit ratio;Found / not found / % of hits · 95% vs 99% hit ratio = 5× fewer DB calls
+Cache-aside;lazy loading — App reads cache, fills on miss · Most common pattern
+Read-through;Cache library loads from DB itself · App only talks to the cache
+Write-through;Write to cache and DB together · Cache always fresh, slower writes
+Write-behind;write-back — Write to cache, DB later · Fast, risk of loss
+Invalidation;Removing/updating stale entries · Delete on write, events, versioned keys
+Eviction (LRU/LFU);Least Recently / Frequently Used — What to drop when full · Redis maxmemory-policy
+Stampede / thundering herd;Many misses for one key at once · All hit the DB simultaneously
+Hot key;One key with huge traffic · Overloads one cache shard
+Redis;REmote DIctionary Server — In-memory data store · Strings, hashes, sets, sorted sets, streams
+Memcached;Simple distributed memory cache · Multi-threaded, key/value only
+CDN;Content Delivery Network — Edge caches near users · Cache-Control from your origin
+RDBMS / SQL;Relational DB Management System / Structured Query Language — Tables + relations + queries · PostgreSQL, MySQL, SQL Server, Oracle
+Page;Unit of storage (8 KB Postgres, 16 KB InnoDB) · Cached in the buffer pool
+Index (B-tree);Sorted tree for fast lookups · O(log n) page reads instead of a full scan
+WAL / redo log / binlog;Write-Ahead Log — Append-only log of changes · Written + fsynced before data pages
+Transaction;Group of changes that succeed or fail together · BEGIN … COMMIT / ROLLBACK
+ACID;Atomicity, Consistency, Isolation, Durability — Transaction guarantees · All-or-nothing, rules hold, no interference, survives crash
+Isolation level;How much concurrent transactions see each other · Read committed, repeatable read, serializable
+MVCC;Multi-Version Concurrency Control — Readers see a snapshot, writers create new versions · Readers don't block writers
+Deadlock;Two transactions wait for each other · DB kills one
+Query plan / EXPLAIN;How the DB will execute a query · Index scan vs seq scan, joins
+Connection pool;Reusing DB connections · PgBouncer, HikariCP, RDS Proxy
+Replication (sync / async);Copying the WAL to replicas · Durability vs latency trade-off
+PITR;Point-In-Time Recovery — Restore to any second · Base backup + archived WAL
+Sharding;Splitting data across databases by key · Horizontal write scaling
+RPO / RTO;Recovery Point / Time Objective — Max data loss / max downtime · Drives backup and HA design
+Broker;Server storing and delivering messages · Kafka, RabbitMQ, SQS, Pub/Sub, NATS
+Producer / consumer;Writes / reads messages · Decoupled in time and scale
+Queue;Each message handled by one consumer, then removed · Work distribution
+Log / stream;Append-only, retained, replayable · Many consumer groups read independently
+Topic / partition;Named stream / ordered shard of it · Order is guaranteed only within a partition
+Consumer group;Consumers sharing a topic's partitions · Max parallelism = number of partitions
+Offset / ack;"acknowledgement — Position read / ""done with this message"" · Commit after processing"
+At-most / at-least / exactly-once;Delivery guarantees · At-least-once + idempotency is the practical default
+Idempotency;Processing twice has the same effect as once · Dedupe by message id, upserts
+DLQ;Dead-Letter Queue — Where poison messages go · Inspect and replay later
+Backpressure;Slowing producers when consumers can't keep up · Bounded queues, rate limits
+Outbox / CDC;"— / Change Data Capture — Reliable ""DB write + event"" · Event row in same transaction, relayed later"
+Saga;Multi-step business process across services · Each step has a compensating action
+Consumer lag;"Messages waiting to be processed · Key metric; drives autoscaling (KEDA)"
+L4 / L7;Layer 4 / Layer 7 — Transport-level vs application-level · L4 sees IP:port, L7 sees host, path, headers
+Reverse proxy / ingress;Front server routing requests to services · Routes by host/path, terminates TLS, adds headers
+Horizontal / vertical scaling;More machines / bigger machine · Horizontal needs stateless apps and a load balancer
+Primary / replica;Write node / read copies of a database · Replication copies changes, usually asynchronously
+Replication lag;Delay before replicas see a write · Read-after-write may return old data
+Queue / worker;Buffer of jobs / process consuming them · At-least-once delivery → idempotent jobs, DLQ for failures
+Object storage;Store for files/blobs (S3, GCS) · Flat namespace, HTTP API, presigned URLs
+Circuit breaker;Stops calling a failing dependency for a while · Fail fast instead of piling up timeouts
+CRP;Critical Rendering Path — Steps from bytes to first pixels · HTML → DOM, CSS → CSSOM, layout, paint
+DOM / CSSOM;Document / CSS Object Model — Trees for content / styles · Built incrementally while downloading
+Render-blocking;Resource the browser waits for before painting · <link rel=stylesheet> in <head>
+Parser-blocking;Script that stops HTML parsing · <script src> without defer/async
+Preload scanner;Secondary parser that finds resources early · Starts downloads while the main parser is blocked
+Resource hints;preload, preconnect, dns-prefetch, fetchpriority · Tell the browser what matters early
+Style recalc;Computing final styles for elements · Selector matching, cascade, inheritance
+Layout (reflow);Computing geometry of every box · Expensive on big DOMs
+Paint;Recording draw operations into layers · Text, colours, borders, images
+Compositing;Combining layers on the GPU · transform/opacity changes only need this
+Layout thrashing;Alternating DOM writes and layout reads · Forces many synchronous layouts
+FOIT / FOUT;Flash Of Invisible / Unstyled Text — Font-loading behaviours · Controlled by font-display
+Lazy loading;"Load offscreen images/iframes later · loading=""lazy"""
+Call stack;"Frames of currently running functions · One at a time; must empty before the next task"
+Heap;Where objects live · Garbage collected by V8
+Web APIs;Browser features outside JS · fetch, timers, DOM events, IndexedDB
+Task (macrotask);Unit of work from the task queue · Event handler, timer callback, message
+Microtask;High-priority follow-up work · Promise reactions, queueMicrotask, MutationObserver
+Promise;Object for a future value · .then callbacks run as microtasks
+async / await;Syntax over promises · await pauses the function, not the thread
+Long task;Task > 50 ms · Delays input → bad INP
+rAF;requestAnimationFrame — Callback before the next paint · For animations and DOM writes
+Web Worker;Background thread without DOM · Heavy compute off the main thread
+Memory leak;Objects kept reachable by mistake · Detached DOM nodes, listeners, growing caches
+libuv;Node.js' event loop + thread pool · Same model on the server
+Core Web Vitals;Google's three key UX metrics · LCP, INP, CLS
+LCP;Largest Contentful Paint — Time until the largest content element renders · Good ≤ 2.5 s
+INP;Interaction to Next Paint — Slowest typical delay from input to next frame · Good ≤ 200 ms (replaced FID in 2024)
+CLS;Cumulative Layout Shift — Unexpected movement of visible content · Good ≤ 0.1
+FCP;First Contentful Paint — First text/image painted · Good ≤ 1.8 s
+TBT;Total Blocking Time — Lab proxy for responsiveness · Sum of long-task time over 50 ms
+p75;75th percentile — The value 75% of visits beat · Used to pass/fail each metric
+Lab data;Synthetic test in a controlled setup · Lighthouse, WebPageTest
+Field data / RUM;Real User Monitoring — Measurements from real visitors · CrUX, web-vitals.js, vendor RUM
+CrUX;Chrome UX Report — Google's public field dataset · Origin/URL level, 28-day window
+Performance budget;Limits on bytes/metrics · Enforced in CI
+Site;"Registrable domain (eTLD+1) + scheme · https://example.com; used by SameSite"
+SOP;Same-Origin Policy — Pages can't read other origins' responses/DOM · The browser's core security boundary
+Site isolation;Each site in its own renderer process · Limits Spectre-style leaks between sites
+CSRF;Cross-Site Request Forgery — Another site triggers a state-changing request with your cookies · Prevented by SameSite, tokens, Origin checks
+SameSite;Cookie attribute: Strict / Lax / None · Controls sending cookies on cross-site requests
+Clickjacking;Your page invisibly framed under a decoy · frame-ancestors / X-Frame-Options
+SRI;"Subresource Integrity — Hash pinning for external scripts · integrity=""sha384-…"""
+Trusted Types;CSP feature restricting DOM XSS sinks · innerHTML only accepts vetted values
+COOP / COEP;Cross-Origin Opener / Embedder Policy — Isolation headers · Needed for SharedArrayBuffer, stronger isolation
+DOM;Document Object Model — Tree of HTML elements in memory · Built by the HTML parser, changed by JS
+CSSOM;"CSS Object Model — Tree of style rules · Built from stylesheets; render-blocking"
+Render tree;Visible nodes with computed styles · DOM + CSSOM, minus display:none
+Paint / composite;Recording draw commands / stacking layers on the GPU · Composite-only changes (transform/opacity) are cheap
+Main thread;The renderer's single thread for JS + rendering · Long tasks block input and frames
+V8;Chrome's JavaScript engine · Bytecode interpreter + optimizing JIT
+defer / async;"Script loading attributes · Download in parallel; run after parse / when ready"
+LCP / INP / CLS;Largest Contentful Paint / Interaction to Next Paint / Cumulative Layout Shift — Core Web Vitals · Load speed / responsiveness / visual stability
+SPA / SSR;Single-Page Application / Server-Side Rendering — Client builds the page / server sends full HTML · SSR then hydrates with JS
+OCI;Open Container Initiative — Standards for images, runtimes, distribution · Docker, Podman, containerd all follow them
+Image;"Filesystem layers + config (entrypoint, env, user) · Immutable; identified by digest"
+Layer;Tarball of filesystem changes · Shared and cached between images
+Manifest / index;List of layers + config / list of per-platform manifests · Multi-arch images use an index
+Digest;sha256: hash of content · Same digest = byte-identical image
+Tag;Human name pointing at a digest · Mutable (:latest, :1.4)
+Registry;Server storing images · Docker Hub, GHCR, ECR, GAR, Harbor
+BuildKit / buildx;Modern Docker build engine · Parallel stages, cache mounts, multi-platform
+Multi-stage build;Build in one stage, copy artifacts to a small final stage · Smaller, safer images
+Distroless / scratch;Minimal base images · No shell or package manager
+SBOM;Software Bill of Materials — List of packages in an image · Syft, docker buildx --sbom
+cosign / Sigstore;Image signing and verification · Admission policies verify signatures
+CRI / containerd / runc;Container Runtime Interface — kubelet's runtime API / runtime / low-level OCI runtime · kubelet → containerd → shim → runc
+Control plane;Components that manage the cluster · API server, etcd, scheduler, controller-manager
+kube-apiserver;"The only entry point; REST API · Authn → authz (RBAC) → admission → etcd"
+etcd;"Consistent key-value store (Raft) · Holds all cluster state; back it up"
+kube-scheduler;Picks a node for each pending pod · Filter (fits?) then score (best?)
+Controller;Reconcile loop for a resource type · Watch → diff → act (9a)
+kubelet;Node agent · Runs pods via CRI, probes, reports status
+Pod;Smallest unit: one or more containers sharing net/IPC · Has its own IP
+Deployment / ReplicaSet;Stateless replicas with rolling updates · ReplicaSet per version
+StatefulSet;Stable names + storage per replica · Databases, Kafka
+DaemonSet / Job / CronJob;One pod per node / run to completion / scheduled · Agents, batch, periodic tasks
+Requests / limits;Scheduling reservation / hard cap · CPU throttles, memory OOMs (3.2, 3.3)
+QoS class;Quality of Service — Guaranteed, Burstable, BestEffort · Eviction order under node pressure
+Taints / tolerations, affinity;Keep pods off / attract pods to nodes · Dedicated nodes, spreading
+CRD / operator;Custom Resource Definition — Extend the API / controller for an app · kind: PostgresCluster managed automatically
+Admission webhook;Validate or mutate objects on create/update · Policies (Kyverno), sidecar injection
+CNI;Container Network Interface — Plugin API for pod networking · Called by the runtime when a pod starts
+Pod CIDR;IP range for pods (per node) · e.g. 10.244.3.0/24 on node 3
+Overlay;Pod traffic wrapped in node-to-node tunnels · VXLAN / Geneve / IPIP
+Native routing;Pod IPs routed directly (no tunnel) · BGP (Calico), cloud routes, VPC CNI
+eBPF dataplane;"Kernel programs for forwarding and policy · Cilium; can replace kube-proxy"
+Service (ClusterIP);Stable virtual IP + port for pods · DNAT to an endpoint (5.3)
+EndpointSlice;List of ready pod IPs behind a Service · Updated by readiness
+NodePort / LoadBalancer;Expose a Service on node ports / via a cloud LB · For external access
+Headless Service;clusterIP: None · DNS returns pod IPs directly
+Ingress / Gateway API;L7 entry into the cluster · Gateway + HTTPRoute is the modern API
+Service mesh;Proxies (sidecar or node/ambient) for service-to-service traffic · mTLS, retries, traffic splitting, metrics
+CI;Continuous Integration — Build + test every change · Pipeline on each push/PR
+CD;Continuous Delivery / Deployment — Always releasable / automatically released · Promotion through environments
+Artifact;The thing you deploy · Image digest, Helm chart, binary
+IaC;Infrastructure as Code — Infra defined in code · Terraform/OpenTofu, Pulumi, Crossplane
+GitOps;Git = source of truth, pulled by an agent · Argo CD, Flux reconcile cluster to git
+Drift;Live state ≠ git · Detected and (optionally) auto-corrected
+Helm / Kustomize;Templating / overlay tools for manifests · Per-environment configuration
+Rolling / blue-green / canary;Deployment strategies · Gradual replace / switch / small % first
+Progressive delivery;Automated canary with metric analysis · Argo Rollouts, Flagger
+Feature flag;Turn code paths on/off at runtime · Decouple deploy from release
+SLSA;Supply-chain Levels for Software Artifacts — Framework for build integrity · Provenance, hermetic builds
+DORA metrics;DevOps Research and Assessment — Delivery performance · Deploy frequency, lead time, change failure rate, recovery time
+Recreate;Stop all old, start new — Simple · Downtime
+Blue-green;Run new version fully, switch traffic at once — Instant switch and rollback · Double capacity during switch
+Canary;1% → 10% → 50% → 100% with checks — Limits blast radius · Needs traffic splitting + metrics
+Feature flags;Deploy dark, enable per user/percentage — Release without deploy · Flag debt, complexity
+Metric;"Numeric time series with labels · http_requests_total{route=""/cart"",code=""500""}"
+Counter / gauge / histogram;Metric types · Only goes up / goes up and down / distribution in buckets
+Cardinality;Number of distinct label combinations · High cardinality (user_id) explodes cost
+Log;Timestamped event record · Structured (JSON) beats free text
+Trace / span;A request's path / one operation in it · Spans share a trace id (traceparent, 6.1)
+Sampling;Keeping only some traces · Head-based or tail-based (keep errors/slow)
+Profile;Where CPU/memory is spent in code · Continuous profiling (Pyroscope, Parca)
+OTel;OpenTelemetry — Vendor-neutral APIs, SDKs, protocol (OTLP), collector · Instrument once, send anywhere
+Exemplar;A trace id attached to a metric sample · Jump from a latency spike to an example trace
+RED / USE;Rate, Errors, Duration / Utilization, Saturation, Errors — Checklists for services / resources · What to put on dashboards
+SLI;Service Level Indicator — Measured good events / total events · e.g. % requests < 300 ms and not 5xx
+SLO;Service Level Objective — Target for an SLI over a window · 99.9% over 30 days
+Error budget;Allowed unreliability = 1 − SLO · 0.1% of 30 days ≈ 43 minutes
+Burn rate;How fast the budget is being consumed · Alert when burning 14× faster than allowed
+Metrics;Is something wrong? Trends, alerts — Low (aggregated) · p99 latency of /checkout jumped
+Traces;Where in the call chain? — Medium (sampled) · 900 ms of 1 s spent in inventory → postgres
+Logs;What exactly happened? — High (volume) · deadlock detected on table orders
+Profiles;Which code uses the CPU/memory? — Low–medium · 40% CPU in JSON serialization
+Container;A process isolated with namespaces and limited with cgroups · Started from an image by a runtime (containerd/runc)
+OCI image;Open Container Initiative — Standard container image format · Manifest + layers + config, addressed by digest
+CRI / CNI;Container Runtime Interface / Container Network Interface — Plugin APIs of Kubernetes · kubelet ↔ runtime / pod networking plugins
+API server / etcd;Kubernetes front door / its database · Everything reads/writes cluster state through the API
+Scheduler / kubelet;Picks a node / runs pods on a node · Filter + score nodes / talk to the runtime
+Controller / reconcile;Loop making actual state match desired state · Watch → compare → act → repeat
+Service / Ingress;"Stable virtual IP for pods / HTTP routing into the cluster · kube-proxy/eBPF load-balances; ingress routes by host/path"
+CI / CD;"Continuous Integration / Continuous Delivery — Automated build-test / automated release · Pipelines on every push; rollouts to environments"
+AI;Artificial Intelligence — Software that performs tasks that normally need human intelligence · Today mostly means machine-learned models
+ML;Machine Learning — Programs that learn behaviour from data instead of hand-written rules · Adjust numbers (parameters) until outputs match examples
+NN;Neural Network — A model made of layers of simple math units · Each layer multiplies inputs by weights and applies a non-linearity
+LLM;Large Language Model — A huge neural network trained on text to continue text · Predicts the next token, appends it, repeats
+GPT;Generative Pre-trained Transformer — The family name of decoder-only transformer LLMs · Pre-trained on text, then generates token by token
+Token;A piece of text (word, part of word, symbol) · The unit the model reads and writes
+BPE;Byte-Pair Encoding — The usual tokenizer algorithm · Repeatedly merges the most frequent character pairs into tokens
+Embedding;A vector of numbers that represents a token or text · Similar meanings → nearby vectors
+Parameter / weight;"One learned number inside the model · Billions of them = the model's ""knowledge"""
+Transformer;The neural-network architecture behind modern LLMs · Stacks of attention + MLP layers
+Attention;The mechanism that lets a token look at other tokens · Query·Key scores decide how much of each Value to mix in
+Q / K / V;Query / Key / Value — Three vectors computed for every token · Q asks, K is matched against Q, V is the content passed along
+RoPE;Rotary Position Embedding — How position (word order) is encoded · Rotates Q and K by an angle that depends on the position
+MLP / FFN;Multi-Layer Perceptron / Feed-Forward Network — The per-token neural network inside each layer · Expands, applies a non-linearity, projects back
+MoE;Mixture of Experts — An MLP split into many experts plus a router · Only the top-k experts run for each token
+Logits;Raw scores for every possible next token · Softmax turns them into probabilities
+Context window;Max tokens the model can handle at once · Prompt + output must fit
+SFT;Supervised Fine-Tuning — Training on example prompt → answer pairs · Teaches the model to follow instructions
+RLHF;Reinforcement Learning from Human Feedback — Training on human preferences · A reward model scores answers, the LLM is tuned to maximize it
+DPO;"Direct Preference Optimization — Simpler preference training · Learns directly from ""A is better than B"" pairs"
+LoRA / QLoRA;Low-Rank Adaptation / Quantized LoRA — Cheap fine-tuning · Trains small adapter matrices next to frozen weights (QLoRA: base in 4-bit)
+VLM;Vision-Language Model — A model that reads images and text · Image encoder output is fed in as extra tokens
+ASR / TTS;Automatic Speech Recognition / Text-to-Speech — Speech → text / text → speech · Audio models, usually streaming
+KV cache;Key-Value cache — Stored K and V of past tokens · Avoids recomputing them at every step (10.5)
+GPU;Graphics Processing Unit — A massively parallel processor · Runs the same instruction on thousands of data items at once
+SM;Streaming Multiprocessor — One of the GPU's 100+ processing blocks · Holds CUDA cores, Tensor Cores, registers and shared memory
+CUDA core;— (CUDA = Compute Unified Device Architecture) — A simple scalar math lane · FP32/INT operations, one per clock
+Tensor Core;A matrix-multiply unit inside each SM · Multiplies small matrix tiles per clock in FP16/BF16/FP8/FP4
+Warp;A group of 32 GPU threads · All 32 execute the same instruction together
+SIMT;Single Instruction, Multiple Threads — NVIDIA's execution model · One instruction drives many threads on different data
+HBM;High Bandwidth Memory — Stacked DRAM next to the GPU die · Very wide bus → TB/s of bandwidth
+SRAM / L2;Static RAM / Level-2 cache — On-chip memory · Tiny but much faster than HBM
+FLOP / FLOPS;Floating-Point Operation (per Second) — Unit of math work / speed · TFLOPS = 10¹², PFLOPS = 10¹⁵ per second
+PCIe;Peripheral Component Interconnect Express — The standard bus between CPU and devices · Lanes of serial links, ~64 GB/s per direction for Gen5 x16
+NVLink;NVIDIA's GPU-to-GPU link · Much faster than PCIe, direct GPU memory access
+NVSwitch;A switch chip for NVLink · Connects every GPU to every other GPU at full speed
+NVL72;NVLink 72 — A rack where 72 GPUs share one NVLink domain · Behaves like one giant GPU for communication
+HGX / DGX;NVIDIA's 8-GPU baseboard / complete server · Reference design most AI servers are built on
+NIC;Network Interface Card — Network adapter · Typically one 400–800 Gb/s NIC per GPU in AI servers
+RDMA;Remote Direct Memory Access — Reading/writing another machine's memory without its CPU · NIC moves data directly between memories
+GPUDirect RDMA;RDMA straight into GPU memory · NIC ↔ GPU HBM, skipping CPU and system RAM
+GPUDirect Storage;Storage → GPU memory directly · NVMe / network storage DMA into HBM
+IB;InfiniBand — A low-latency HPC network · Lossless, RDMA-native, credit-based flow control
+RoCE;RDMA over Converged Ethernet — RDMA on Ethernet · Needs lossless tuning (PFC, ECN)
+DPU;Data Processing Unit — A smart NIC with its own cores (e.g. BlueField) · Offloads networking, storage, security from the host
+TDP;Thermal Design Power — How much power/heat a chip is designed for · 700 W–1.4 kW+ per modern GPU
+TPU / ASIC;Tensor Processing Unit / Application-Specific IC — Google's (and others') custom AI chips · Fixed-function hardware for matrix math
+ROCm;Radeon Open Compute — AMD's equivalent of CUDA · Software stack for AMD Instinct GPUs
+CUDA;Compute Unified Device Architecture — NVIDIA's GPU programming platform · Language extensions + runtime + driver to run code on the GPU
+PTX;"Parallel Thread Execution — A portable GPU ""assembly"" · JIT-compiled by the driver to the exact GPU"
+SASS;— (Streaming ASSembler) — The real machine code of a specific GPU generation · What the SMs actually execute
+Compute capability;GPU generation number (e.g. 8.0, 9.0, 10.0) · Decides which features and binaries a GPU supports
+cuBLAS;CUDA Basic Linear Algebra Subprograms — Matrix-math library · Highly tuned GEMM (matmul) kernels
+GEMM;General Matrix Multiply — C = A × B (+ C) · The core operation of neural networks
+cuDNN;CUDA Deep Neural Network library — Kernels for convolution, attention, normalization · Called by frameworks automatically
+CUTLASS;CUDA Templates for Linear Algebra Subroutines — C++ templates to build custom GEMM kernels · Used by libraries and engines for fused kernels
+FlashAttention;A fast, memory-efficient attention kernel · Tiles the computation so it stays in on-chip SRAM
+NCCL;NVIDIA Collective Communications Library — Multi-GPU / multi-node communication · All-reduce, all-gather over NVLink / InfiniBand
+TensorRT;NVIDIA's inference optimizer/compiler · Fuses layers and picks the fastest kernels for a model
+torch.compile;PyTorch's compiler · Captures the model graph and generates optimized kernels
+CUDA Graphs;Record a sequence of kernel launches once, replay it · Removes CPU launch overhead per step
+UMD / KMD;User-Mode Driver / Kernel-Mode Driver — libcuda.so / nvidia.ko · User-space half and kernel half of the driver
+NVML;NVIDIA Management Library — API for GPU status and control · What nvidia-smi uses
+DCGM;Data Center GPU Manager — Fleet-level GPU monitoring and diagnostics · Exports health/metrics (DCGM exporter → Prometheus)
+XID;"GPU error codes logged by the driver · dmesg shows ""NVRM: Xid …"" on faults"
+NVIDIA Container Toolkit;Makes GPUs usable inside containers · Injects device files and host driver libraries
+CDI;Container Device Interface — A standard spec to describe devices for containers · Runtime reads a JSON/YAML spec and mounts the devices
+MIG;Multi-Instance GPU — Hardware partitioning of one GPU · Up to 7 isolated instances with their own SMs and memory
+MPS;Multi-Process Service — Lets processes share one GPU context · Kernels from several processes run concurrently
+Time-slicing;"Oversubscribing a GPU · Processes take turns; no memory isolation"
+vGPU;virtual GPU — GPU sharing for VMs · Hypervisor-level slicing (licensed)
+ROCm / HIP;Radeon Open Compute / Heterogeneous-compute Interface for Portability — AMD's stack / CUDA-like API · Same layering as CUDA, for AMD GPUs
+Whole GPU;One workload gets the full device — Full · Large models, training
+Forward / backward pass;Compute predictions / compute gradients · Backward walks the layers in reverse (backpropagation)
+Loss;One number measuring how wrong the predictions are · For LLMs: cross-entropy of the real next token
+Gradient;Direction and size to change each parameter · Computed by backpropagation for every parameter
+Batch / global batch;Examples processed per step / across all GPUs · Bigger batch = fewer, larger steps
+Mixed precision;Compute in BF16/FP8, keep master weights in FP32 · Speed of low precision, stability of high precision
+Activation checkpointing;"Don't store all activations; recompute in backward · Trades ~30% more compute for much less memory"
+DP;Data Parallel — Every GPU has a full model copy, different data · Gradients averaged with all-reduce each step
+FSDP / ZeRO;Fully Sharded Data Parallel / Zero Redundancy Optimizer — DP where weights, grads and optimizer states are sharded · Gather a layer's weights just in time, then free them
+TP;Tensor Parallel — Each layer's matrices split across GPUs · Partial results exchanged every layer → needs NVLink
+PP;Pipeline Parallel — Layers split into stages on different GPUs · Micro-batches flow through stages like an assembly line
+EP;Expert Parallel — MoE experts placed on different GPUs · Tokens sent to their experts with all-to-all
+CP / SP;Context / Sequence Parallel — Long sequences split across GPUs · Each GPU handles part of the tokens, attention exchanges K/V
+Collective;A communication pattern among many GPUs · All-reduce, all-gather, reduce-scatter, broadcast, all-to-all
+All-reduce;Everyone contributes a tensor, everyone gets the sum · Ring/tree algorithms in NCCL
+Gang scheduling;Start all pods/processes of a job together or none · Prevents half-started jobs holding GPUs forever
+Slurm;Simple Linux Utility for Resource Management — Classic HPC batch scheduler · sbatch / srun jobs on node allocations
+Kueue / JobSet / KAI;Kubernetes queueing, multi-pod jobs, AI scheduler · Quotas, gang admission, topology-aware placement
+torchrun;PyTorch's distributed launcher · Starts one process per GPU and wires up ranks
+Rank / world size;A process's ID / total number of processes · Rank 0 often logs and saves checkpoints
+Checkpoint;A saved snapshot of weights + optimizer + data position · Resume after failures
+MFU;Model FLOPs Utilization — Useful FLOPs achieved ÷ peak FLOPS · 35–55% is typical for large well-tuned runs
+Parallel FS;Parallel File System (Lustre, GPFS…) — Storage striped across many servers · Thousands of clients read/write at high aggregate speed
+Inference / serving;Running a trained model for users · An engine loads weights, accepts requests, streams tokens
+Prefill;Processing the whole prompt · All prompt tokens in parallel, builds the KV cache
+Decode;Generating output tokens · One token per request per step
+TTFT;Time To First Token — Latency until the first output token · Queueing + prefill
+TPOT / ITL;Time Per Output Token / Inter-Token Latency — Time between output tokens · One decode step for this request
+E2E latency;End-to-End — Total request time · TTFT + TPOT × (output tokens − 1)
+Throughput;Total tokens/s (or requests/s) of a deployment · Grows with batch size, until latency SLOs break
+Goodput;Throughput that meets the latency SLO · What actually counts for users
+GQA / MQA;Grouped-Query / Multi-Query Attention — Fewer K/V heads than Q heads · Shrinks the KV cache several times
+PagedAttention;KV cache stored in fixed-size blocks · A block table maps logical to physical blocks (like page tables)
+Continuous batching;Rebuild the batch at every decode step · New requests join, finished ones leave immediately
+Chunked prefill;Split long prompts into chunks · Mixes prefill chunks with decode steps so decodes don't stall
+Prefix caching;Reuse KV of a shared prompt prefix · System prompt / chat history computed once
+Quantization;Store weights (and maybe KV/activations) in fewer bits · FP8, INT8, INT4 (AWQ, GPTQ), FP4
+Speculative decoding;Draft several tokens cheaply, verify in one big pass · Output identical to normal decoding, fewer slow steps
+MTP;Multi-Token Prediction — Extra heads that predict several next tokens · Built-in draft for speculative decoding
+P/D disaggregation;Prefill/Decode disaggregation — Prefill and decode on different workers · KV cache transferred between them over RDMA
+KV-aware routing;Send a request where its prefix KV already is · Router tracks which pod holds which prefixes
+EPP;Endpoint Picker — The routing brain in the Gateway API Inference Extension · Scores pods by KV cache hit, queue, load
+NIXL;NVIDIA Inference Xfer Library — Fast KV-cache transfer library · Moves KV between GPUs/nodes/storage tiers
+Multi-LoRA;Many fine-tuned adapters on one base model · Adapter chosen per request, base weights shared
+OpenAI-compatible API;/v1/chat/completions, /v1/completions, /v1/embeddings · De-facto standard request/response format
+GPU Operator;Operator that manages the whole GPU node stack · Installs driver, container toolkit, device plugin / DRA driver, DCGM exporter, MIG manager
+NFD / GFD;Node Feature Discovery / GPU Feature Discovery — Labels nodes with their hardware · e.g. nvidia.com/gpu.product=H100-SXM
+Device plugin;The classic way to expose devices · Advertises a count (nvidia.com/gpu: 8) as an extended resource
+DRA;"Dynamic Resource Allocation — The new device API (GA since v1.34, resource.k8s.io/v1) · Pods claim devices by attributes; the scheduler matches and allocates"
+ResourceSlice;DRA object published by a driver · Lists the devices on a node with their attributes
+DeviceClass;DRA object defined by admins · Names a kind of device and its selection rules
+ResourceClaim / Template;"What a pod asks for · ""1 GPU with ≥80 GB"" or ""2 GPUs on the same NVLink"""
+Taints / tolerations;"Keep normal pods off GPU nodes · GPU nodes are tainted; only GPU workloads tolerate it"
+Kueue;Kubernetes-native job queueing · LocalQueue → ClusterQueue with quotas, borrowing, preemption
+KAI Scheduler;NVIDIA's open-source AI-aware scheduler · Hierarchical queues, gang scheduling, GPU sharing
+JobSet;A group of Jobs managed as one unit · Multi-pod distributed training with shared lifecycle
+LWS;LeaderWorkerSet — Groups of pods (leader + workers) as one replica · Multi-node inference of models too big for one node
+KubeRay;Operator for Ray clusters · Ray Train / Ray Serve on Kubernetes
+KServe;Model serving platform on Kubernetes · InferenceService CRDs, autoscaling, canaries
+Gateway API Inference Extension;Kubernetes SIG project for LLM routing · InferencePool + an endpoint picker (EPP) scoring pods by KV cache and load
+llm-d;CNCF project for distributed LLM inference · vLLM/SGLang + inference gateway + P/D disaggregation + KV-aware routing
+KEDA;Kubernetes Event-Driven Autoscaling — Autoscaler driven by external metrics · Scales on queue length, KV usage, Prometheus queries
+HPA;Horizontal Pod Autoscaler — Built-in autoscaler · Scales replicas on CPU/memory or custom metrics
+Model cache;Keep model weights close to GPUs · Node-local NVMe, shared PVC, or OCI image volumes
+DCGM exporter;Data Center GPU Manager exporter — GPU metrics for Prometheus · Utilization, memory, power, XID errors per GPU/pod
+OpenCost;Kubernetes cost allocation · Cost per namespace/team, including GPUs
+RAG;Retrieval-Augmented Generation — Answering with retrieved documents in the prompt · Search your data, paste the best chunks into the context, then generate
+Embedding model;Turns text into a vector capturing meaning · Similar texts → nearby vectors (cosine similarity)
+Vector DB;Database for storing and searching vectors · pgvector, Qdrant, Milvus, Weaviate, OpenSearch
+ANN;"Approximate Nearest Neighbour — Fast ""closest vectors"" search · Trades a bit of accuracy for huge speed"
+HNSW;Hierarchical Navigable Small World — The most common ANN index · A layered graph you walk greedily toward the query
+IVF / PQ;Inverted File / Product Quantization — Other ANN index/compression methods · Cluster vectors / compress them to save memory
+BM25;Best Matching 25 — Classic keyword search ranking · Scores term frequency vs. document frequency
+Hybrid search;Vector + keyword search combined · Catches both meaning and exact terms (IDs, error codes)
+Chunking;Splitting documents into pieces · Size, overlap and boundaries decide retrieval quality
+Reranker;A model that re-scores retrieved chunks · Reads (query, chunk) pairs together, more precise than vectors
+Grounding / citations;Tying answers to sources · Model must cite the chunks it used
+Hallucination;Confident but wrong output · Mitigated by grounding, evals, guardrails
+Tool / function calling;"The model outputs a structured call instead of text · {""name"":""get_weather"",""arguments"":{...}}, the app executes it"
+Structured outputs;Output constrained to a JSON schema · Decoding is restricted so the JSON is always valid
+Agent;An LLM in a loop with tools and a goal · Think → call tool → observe result → repeat until done
+MCP;Model Context Protocol — Open standard connecting AI apps to tools and data · Host app's MCP client talks JSON-RPC to MCP servers exposing tools/resources/prompts
+A2A;Agent2Agent protocol — Open protocol for agents talking to other agents · Agents describe capabilities and exchange tasks
+AI gateway;A proxy in front of all model providers · Auth, quotas, routing, fallback, caching, logging
+Guardrails;Input/output safety checks · PII redaction, prompt-injection detection, topic and policy filters
+Prompt injection;"Malicious instructions hidden in input or retrieved content · ""Ignore previous instructions…"" inside a web page or document"
+PII;Personally Identifiable Information — Names, emails, IDs… · Must be detected, masked or blocked by policy
+Semantic cache;Cache keyed by meaning, not exact text · Similar questions reuse a previous answer
+Evals;Evaluations — Systematic tests for LLM behaviour · Test sets + metrics + graders (rules or LLM-as-judge)
+LLM-as-judge;Using a model to grade outputs · Rubric-based scoring, checked against human labels
+OTel GenAI;OpenTelemetry Generative AI semantic conventions — Standard attributes for tracing LLM calls · Model, tokens, latency, tool calls as spans
+Prefill / decode;The two phases of generation · Whole prompt at once / one token per step
+TTFT / TPOT;Time To First Token / Time Per Output Token — Latency metrics · Queue + prefill / one decode step
+CUDA / NCCL;Compute Unified Device Architecture / NVIDIA Collective Communications Library — GPU programming platform / multi-GPU communication · Kernels on the GPU / all-reduce over NVLink & IB
+AuthN / AuthZ;Authentication / Authorization — Who are you? / What may you do? · Login, tokens / roles, policies
+IAM;Identity and Access Management — Cloud system of identities and permissions · Policies attached to users, roles, service accounts
+SSO / MFA;Single Sign-On / Multi-Factor Authentication — One login for many apps / more than a password · IdP + second factor (passkey, TOTP)
+IdP;Identity Provider — Service that authenticates users · Entra ID, Okta, Google, Keycloak
+OIDC;OpenID Connect — Identity layer on OAuth 2.0 · Signed ID tokens (JWTs)
+JWT;JSON Web Token — Signed claims (sub, aud, exp) · Verified with the issuer's public key
+RBAC;Role-Based Access Control — Permissions grouped into roles · Kubernetes Role/RoleBinding, cloud roles
+Least privilege;Only the permissions actually needed · Limits blast radius
+Workload identity;Identity for software, not humans · Federated tokens instead of static keys
+KMS / HSM;Key Management Service / Hardware Security Module — Managed encryption keys · Envelope encryption, keys never leave
+Zero trust;Never trust the network location · Authenticate and authorize every request
+SPIFFE;Secure Production Identity Framework For Everyone — Standard workload identity (spiffe://…) · SPIRE issues short-lived SVIDs
+SBOM / SLSA;Software Bill of Materials / Supply-chain Levels for Software Artifacts — Ingredient list / build-integrity framework · Generated and attested in CI
+CVE / CVSS;Common Vulnerabilities and Exposures / Common Vulnerability Scoring System — Vulnerability IDs / severity scores · Scanners match packages against CVEs
+SIEM;Security Information and Event Management — Central security log analysis · Correlates audit logs, alerts
+Node / replica;One machine / one copy of the data · Many replicas = availability + read scaling
+Partial failure;Some parts fail while others work · You can't tell slow from dead
+Network partition;Nodes alive but unable to talk · Split brain if both sides keep writing
+CAP;Consistency, Availability, Partition tolerance — During a partition, choose C or A · Partitions happen, so the choice is real
+PACELC;Partition → A/C, Else → Latency/Consistency — CAP + the normal-case trade-off · Even without failures, consistency costs latency
+Linearizability;Strongest consistency: looks like one copy · Every read sees the latest committed write
+Eventual consistency;"Replicas converge ""eventually"" · Stale reads possible, high availability"
+Consensus;Nodes agreeing on a value/order despite failures · Raft, Paxos, Zab
+Quorum / majority;More than half of the voters · 2 of 3, 3 of 5
+Leader / term;Node ordering writes / election epoch · Higher term wins
+Split brain;Two nodes both acting as leader · Prevented by quorums and fencing
+Backpressure / load shedding;Slow producers / reject excess work early · Protects the system under overload
+FinOps;Financial Operations — Practice of managing cloud cost together · Inform → Optimize → Operate
+On-demand;Pay per second/hour, no commitment · Most flexible, most expensive
+RI / Savings Plan / CUD;Reserved Instance / — / Committed Use Discount — Commit 1–3 years for ~30–70% off · Pay for commitment even if unused
+Spot / preemptible;Spare capacity at ~60–90% off · Can be reclaimed with ~2 min notice
+Cross-AZ traffic;Availability Zone — Data between zones in a region · Charged both directions (~$0.01/GB each way)
+Right-sizing;Matching resources to real usage · Based on p95 usage + headroom
+Bin packing;Fitting pods tightly onto nodes · Fewer, fuller nodes
+Showback / chargeback;Showing / billing cost per team · Needs tags and allocation
+Unit economics;Cost per business unit · €/1000 requests, €/customer, €/training run
+FOCUS;FinOps Open Cost and Usage Specification — Standard billing data format · Same columns across clouds
+Instance type;VM size and shape · m7i.large = family m (general), gen 7, Intel, size large
+vCPU;virtual CPU — One hardware thread on the host · 2 vCPU ≈ 1 physical core with SMT
+Instance family;CPU:RAM ratio and specialty · General (m), compute (c), memory (r), GPU (p/g), burstable (t)
+AMI / image;Amazon Machine Image — Disk template a VM boots from · Built by Packer/image pipelines
+user-data / cloud-init;Script run at first boot · Bootstraps config, joins a cluster
+ASG / MIG / VMSS;Auto Scaling Group / Managed Instance Group / VM Scale Set — Self-healing fleet of identical VMs · min/desired/max + health checks
+Immutable infrastructure;Never change running servers · New image → rolling replace
+Spot;Spare capacity at a discount · ~2 min interruption notice (13)
+Graviton / Axion / Cobalt;Cloud providers' ARM CPUs · Often better price-performance (4.x multi-arch)
+FaaS;Function as a Service — Code run per event · Lambda, Cloud Run functions, Azure Functions
+Cold start;"Delay when a new instance starts · Runtime boot + code init; ms to seconds"
+Nitro / hypervisor;Virtualization layer · Offloads network/storage to cards (3.x, 2.x)
+Block storage;"Network-attached virtual disk · EBS, Persistent Disk; one VM (mostly)"
+IOPS;I/O Operations Per Second — Small random I/O capacity · gp3: baseline 3,000, provisioned up to 16,000
+File storage;Shared filesystem over NFS/SMB · EFS, Filestore, Azure Files
+Durability / availability;Chance data survives / is reachable · S3 Standard: 11 nines / 99.99%
+Storage class;Price/latency tier for objects · Standard → Infrequent Access → Glacier/Archive
+Lifecycle rule;"Automatic transition or deletion by age · ""Move to IA after 30 days, delete after 365"""
+Multi-AZ (DB);Synchronous standby in another zone · Automatic failover, ~1–2 min
+Read replica;Asynchronous copy for reads · Scales reads, may lag (12)
+Snapshot;Incremental copy of a volume/DB · Stored in object storage
+Valkey;Open-source Redis fork · Default engine in several managed caches
+HCL;HashiCorp Configuration Language — Terraform's declarative language · Blocks: resource, variable, output, module
+Provider;Plugin that talks to an API · aws, google, azurerm, kubernetes, github
+Resource;One managed object · aws_s3_bucket.logs
+Data source;Read-only lookup · Find an AMI, an existing VPC
+State;Map from code to real resource IDs + attributes · terraform.tfstate, JSON
+Backend;Where state is stored · S3 (+ lock), GCS, Azure Blob, HCP Terraform
+Lock;Prevents two applies at once · S3 lockfile / DynamoDB, GCS native
+Plan / apply;Preview diff / execute it · + create, ~ update, -/+ replace, - destroy
+Module;Reusable group of resources · Inputs (variables) → outputs
+Import;Adopt an existing resource into state · import block, then plan shows no changes
+OpenTofu;Linux Foundation fork of Terraform (MPL) · Same language, drop-in for most uses
+Policy as code;Rules checked on plans · OPA/Conftest, Checkov, Sentinel
+Organization;Top container for all accounts · AWS Organizations, GCP Organization, Azure Management Groups
+OU;Organizational Unit — Folder of accounts sharing policies · Prod, NonProd, Security, Sandbox
+Account / project / subscription;Isolation and billing boundary · Separate IAM, quotas, resources
+SCP / Org Policy;"Service Control Policy — Guardrail on everything in an OU · ""Deny leaving eu- regions"", even for admins"
+IAM Identity Center;SSO into many accounts · Permission sets → short-lived roles
+Account vending;Automated creation of new accounts · Control Tower AFT, Terraform
+Hub-and-spoke;Central network hub, workload VPCs as spokes · Transit Gateway, Shared VPC, Virtual WAN
+Log archive;Central, immutable audit logs · Org-wide CloudTrail, write-once bucket
+RPO;"Recovery Point Objective — Max acceptable data loss · ""≤ 5 minutes of transactions"""
+RTO;"Recovery Time Objective — Max acceptable downtime · ""Back within 1 hour"""
+Pilot light / warm standby;DR with minimal / scaled-down copy · Cheaper than active-active, slower
+Active-active;Two+ regions serving traffic · Lowest RTO/RPO, hardest data story
+Game day;Planned failure exercise · Practise failover, measure real RTO
+Backup & restore;"Nothing; backups copied there — Hours (last backup) · Hours–days | $"
+Pilot light;"Data replicated; core infra defined in IaC, scaled to zero — Minutes · Tens of minutes–hours | $$"
+Warm standby;Small but working copy of the whole stack — Seconds–minutes · Minutes | $$$
+Region;A geographic area with several data centers · eu-central-1 (Frankfurt), europe-west4 (Netherlands)
+AZ;Availability Zone — One or more isolated data centers in a region · Own power/cooling/network, low-latency links between AZs
+Edge / PoP;Point of Presence — Small sites close to users · CDN, DNS, WAF, DDoS protection
+IaaS / PaaS / SaaS;Infrastructure / Platform / Software as a Service — How much of the stack the provider runs · VM → managed runtime → finished app
+Serverless;You don't manage servers or capacity · Pay per request/duration, scales to zero
+Shared responsibility;"Split of security duties · Provider: ""of"" the cloud; you: ""in"" the cloud"
+Control plane / data plane;APIs that manage resources / the traffic itself · Control plane outages block changes, not always traffic
+Managed service;Provider runs the software for you · RDS, EKS, Pub/Sub: patching, backups, HA included
+Landing zone;Pre-built multi-account foundation · Accounts, SSO, networking, logging, guardrails
+Quota / limit;"Max resources per account/region · vCPUs, IPs, API rate limits; raise before launch"
+SLA;"Service Level Agreement — Provider's uptime promise · e.g. 99.99% for multi-AZ; credits, not compensation"
+ReplicaSet;Keeps N identical pods · Created and managed by a Deployment
+maxSurge / maxUnavailable;Rolling update speed · Extra pods allowed / pods allowed down
+Startup probe;"""Has it finished booting?"" · Other probes wait until it succeeds"
+Readiness probe;"""Can it take traffic now?"" · Fail → removed from Service endpoints"
+Liveness probe;"""Is it stuck?"" · Fail → container restarted"
+Node affinity;Prefer/require nodes by labels · zone, instance-type, gpu=true
+Pod (anti-)affinity;Place near / away from other pods · Co-locate cache, separate replicas
+Taint / toleration;Node repels pods / pod accepts the taint · Dedicated GPU or system nodes
+Topology spread;Even distribution over a topology key · maxSkew: 1 across zones
+PriorityClass;Importance of pods · Higher priority can preempt lower
+Grace period;Time between SIGTERM and SIGKILL · terminationGracePeriodSeconds, default 30
+ConfigMap;Key-value config object · Mounted as files or env vars
+Secret;"Config for sensitive values · base64 in the API; encrypt etcd at rest"
+External Secrets Operator;ESO — Syncs secrets from Vault/cloud managers · ExternalSecret → Kubernetes Secret
+Secrets Store CSI;Mounts secrets directly from a manager · No Kubernetes Secret object needed
+PV;PersistentVolume — A piece of storage in the cluster · Backed by a cloud disk, NFS, local disk
+PVC;PersistentVolumeClaim — A request for storage · Size + access mode + class
+StorageClass;How to provision volumes · Provisioner, parameters, reclaim policy
+Access modes;RWO / ROX / RWX / RWOP — Who can mount it · Block disks are RWO (one node)
+CSI;Container Storage Interface — Standard storage driver API · Controller (create/attach) + node (mount) plugins
+WaitForFirstConsumer;Delay provisioning until a pod is scheduled · Disk created in the pod's zone
+Reclaim policy;What happens to a PV when the PVC is deleted · Delete or Retain
+VolumeSnapshot;Point-in-time copy of a volume · Via CSI snapshot support
+Chart;Helm package · Chart.yaml, values.yaml, templates/
+Values;Inputs to a chart · Defaults overridden by -f prod.yaml / --set
+Release;One installation of a chart · Name + namespace + revision history
+Hook;Job run at install/upgrade phases · pre-upgrade DB migration
+OCI registry;Open Container Initiative — Store charts like images · helm push chart.tgz oci://…
+Base / overlay;Kustomize shared config / per-env patches · overlays/prod patches base
+Generator;Creates ConfigMaps/Secrets with hash suffix · Triggers rollouts on change
+CRD;CustomResourceDefinition — Adds a new resource type to the API · Schema, versions, validation
+CR;Custom Resource — An instance of a CRD · kind: Certificate
+Operator;Controller for a CRD with domain knowledge · Reconcile loop: observe → diff → act
+Finalizer;Blocks deletion until cleanup is done · Operator removes it when finished
+Crossplane;Operators for cloud resources · Kubernetes API for databases, buckets
+metrics-server;Cluster-wide CPU/memory usage · Source for kubectl top and resource HPA
+Utilization target;% of the request to aim for · averageUtilization: 70
+Custom / external metrics;Non-CPU signals · RPS, latency, queue depth via adapters
+Stabilization window;Wait before scaling down/up · Avoids flapping (behavior)
+VPA;Vertical Pod Autoscaler — Recommends/sets requests · Off / Initial / Recreate / InPlaceOrRecreate
+Cluster Autoscaler;CA — Scales node groups · Reacts to pending pods
+Karpenter;Provisions nodes directly · Picks instance type per pending pods
+Consolidation;Removing/replacing underused nodes · Evicts pods respecting PDBs
+Overprovisioning;Low-priority placeholder pods · Reserve headroom for fast scale-up
+Cooldown;Delay between scaling actions · Prevents oscillation
+Events;Short-lived records of what controllers did · kubectl events, kept ~1 h by default
+OOMKilled;Out Of Memory — Kernel killed the container for exceeding its memory limit · cgroup memory.max (3.3)
+CrashLoopBackOff;"Container keeps exiting; restarts are delayed exponentially · 10 s → 5 min"
+ImagePullBackOff;"Image can't be pulled; retries with backoff · Name/tag, auth, registry limits"
+Ephemeral container;Debug container added to a running pod · kubectl debug -it pod --image=…
+Node conditions;Ready, MemoryPressure, DiskPressure, PIDPressure · Pressure → evictions
+Version skew;Allowed version gaps between components · kubelet up to 3 minors older than API server
+Deprecated API;API version scheduled for removal · Must migrate manifests before upgrading
+etcd snapshot;"Backup of the cluster's state store · Self-managed clusters; managed ones do it for you"
+Velero;Backs up Kubernetes objects + volumes · To object storage, restore to any cluster
+Day 2;Operating after the initial install · Upgrades, scaling, backups, incidents
+Workload controller;Object that manages pods for you · Deployment, StatefulSet, DaemonSet, Job, CronJob
+Probe;Kubelet health check · startup, readiness, liveness
+PDB;PodDisruptionBudget — Min available pods during voluntary disruptions · Protects against drains taking too many
+PV / PVC;PersistentVolume / Claim — Storage object / a pod's request for it · Bound 1:1, provisioned by CSI
+Helm;Package manager for Kubernetes · Charts = templates + values, releases
+Kustomize;Template-free overlays · base + patches per environment
+HPA / VPA;Horizontal / Vertical Pod Autoscaler — Replica count / resource size automation · Based on metrics
+Trunk / main;The single integration branch · Always green, always deployable
+Trunk-based development;TBD — Integrate into main at least daily · Short branches or direct commits + flags
+GitFlow;"develop/release/hotfix branches · Suits versioned, shipped software; slows SaaS"
+PR / MR;Pull / Merge Request — Proposed change + review + checks · GitHub / GitLab
+Branch protection;Rules on main · Required reviews, checks, no force-push
+Merge queue;Tests PRs in merge order before landing · Keeps main green at high volume
+CODEOWNERS;Files → required reviewers · Auto-requests the right team
+Squash merge;One commit per PR on main · Clean, revertible history
+Conventional Commits;type(scope): summary · feat, fix, chore, BREAKING CHANGE
+SemVer;Semantic Versioning — MAJOR.MINOR.PATCH · Breaking / feature / fix
+Monorepo / polyrepo;One repo for many projects / one per project · Trade-offs in tooling and coupling
+Signed commits;Cryptographically verified authorship · SSH/GPG/Sigstore gitsign (11)
+Deploy;Putting new code on servers · Technical event, frequent
+Feature flag / toggle;Runtime condition around code · Evaluated per request/user
+Release flag;Hides unfinished work · Short-lived, removed after launch
+Ops flag / kill switch;Turns off expensive or risky paths · Long-lived, for incidents
+Experiment flag;A/B tests · Splits users, measures outcomes
+Permission flag;Entitlements, plans, beta access · Long-lived, product logic
+OpenFeature;CNCF vendor-neutral flag API · SDK + providers (LaunchDarkly, Flagd, Unleash…)
+Expand / contract;Parallel change for schemas and APIs · Add new → migrate → remove old
+Backward compatible;Old clients/versions still work · Additive changes only
+Preview environment;Short-lived env per PR · Review the change running
+Incident;Unplanned degradation of a service · Declared, managed, closed
+On-call;Person responsible for responding · Rotations, primary + secondary
+SEV / severity;Impact level · SEV1 major outage … SEV3 minor
+IC;Incident Commander — Coordinates the response · Delegates, decides, doesn't debug
+Comms lead;Internal and external updates · Status page, stakeholders
+Ops / subject matter lead;Hands-on investigation and changes · One person changes prod at a time
+MTTA / MTTR;Mean Time To Acknowledge / Restore — Response speed metrics · Trend, not target
+Mitigation;Stop user impact · Rollback, flag off, failover, shed load
+Runbook / playbook;Step-by-step response guide · Linked from alerts
+Postmortem / incident review;Written analysis after resolution · Timeline, contributing factors, actions
+Blameless;Focus on systems, not individuals · Psychological safety → honest data
+Platform engineering;Building self-service internal platforms · Product mindset for infrastructure
+IDP;Internal Developer Platform — The sum of tools/APIs teams self-serve from · CI/CD, runtime, infra, observability
+Developer portal;UI front door to the platform · Catalog, docs, templates, scorecards
+Backstage;CNCF open-source developer portal framework · Plugins, software catalog, scaffolder
+Golden path / paved road;"Opinionated, supported way to do a task · ""New Go service"" template with everything wired"
+Cognitive load;Mental effort a team must spend · Platform removes extraneous load
+Team Topologies;Four team types, three interaction modes · Stream-aligned, platform, enabling, complicated-subsystem
+Stream-aligned team;Owns a flow of business value · The platform's main customer
+X-as-a-Service;Interaction mode with low coordination · Use the platform without meetings
+Scorecard;Checks services against standards · Owner set, SLOs defined, on supported runtime
+DevEx / DX;Developer Experience — How easy and pleasant it is to deliver · Surveys + flow metrics
+Ticket-ops;Anti-pattern: platform via tickets · Waiting days for a database
+DevOps;Development + Operations — Shared ownership of building and running software · Culture + automation + feedback
+CALMS;Culture, Automation, Lean, Measurement, Sharing — A lens to assess DevOps adoption · Tools alone ≠ DevOps
+SRE;Site Reliability Engineering — Operations as a software problem · SLOs, error budgets, toil reduction (9.5)
+Lead time for changes;Commit → running in production · Hours for top performers
+Change failure rate;% of deploys causing a failure · Needs rollback/hotfix/incident
+Toil;Manual, repetitive, automatable work · SRE goal: < 50% of time
+Postmortem;Written analysis after an incident · Blameless, action items (16.3)
+Why can't an interrupt handler sleep or do heavy work?;"It runs with interrupts (at least on that line/core) blocked and outside any process context; sleeping would freeze that core's interrupt handling. Heavy work goes to a bottom half."
+What does NAPI do and why?;After the first interrupt it disables the NIC's interrupt and polls batches of packets until the queue is empty, avoiding an interrupt storm at high packet rates.
+How does Linux know which driver to load for a newly plugged device?;"The bus reads the device IDs, the kernel emits a uevent with a modalias, udev matches it to a module and runs modprobe; the driver's probe() then claims the device."
+A node shows one core at 100% in si while others are idle. What do you check?;/proc/interrupts: NIC queue IRQs probably land on one core. Add queues / RSS, fix IRQ affinity or enable irqbalance, consider RPS.
+Why must GPU drivers be installed on the node and not just in the container?;"Drivers are kernel code. Containers share the host kernel; they only carry user-space libraries that talk to the host's driver."
+If USB devices can't speak first, how does a key press reach the computer?;"The host polls the keyboard's interrupt endpoint every 1–8 ms; the next poll after the press returns a report instead of NAK."
+Why does one generic driver work for almost every keyboard and mouse?;HID devices describe their report layout in a report descriptor, so the HID core can parse any of them.
+Does the keyboard send the letter 'a'?;"No. It sends usage 0x04, a key position. The layout (xkb in user space) decides it means ""a"", ""q"" or something else."
+How much latency can a 125 Hz polling rate add?;Up to 8 ms (average ~4 ms) before the host even sees the report.
+Why do some hardened servers block unknown USB devices?;A device can claim to be a keyboard and type commands (BadUSB). Allow-listing with USBGuard prevents that.
+Where does the letter (as opposed to the key position) get decided on a Wayland desktop?;In the application, by xkbcommon applying the keymap the compositor sent, using the current modifier state.
+Why are /dev/input/event files not readable by normal users?;Reading them would let any program capture every keystroke system-wide (a keylogger).
+Why could any X11 app capture your passwords, but not on Wayland?;"X11 let any client listen to all input; on Wayland the compositor only sends input to the focused surface."
+A game should use WASD on every layout. Which KeyboardEvent field should it read?;event.code, the physical key position, not event.key.
+Who generates key repeat when you hold a key down?;"The client/toolkit, using the rate and delay advertised by the compositor; the keyboard only reports that the key is still down."
+If you switch from QWERTY to AZERTY, does the code sent over USB change for the same physical key?;No. The code (0x04) describes the key's position. Translating it to a character is done by the OS or the app, using the layout.
+With 8 ms polling, how long can a keypress wait in the worst case?;About 8 ms. If you press right after a poll, the report waits until the next one.
+What happens to the program the CPU was running when the interrupt arrived?;The CPU finishes the current instruction, saves the program's state (RIP, RFLAGS, …) on the stack, runs the handler, and resumes the program exactly where it was with iretq. The program never notices.
+Why don't applications read the keyboard directly from /dev/input?;Security and focus. If every app could read every key, every app would be a keylogger. The compositor only delivers events to the focused window.
+Why is the 'A' keycode 38 on X11 but 30 on Wayland?;For historical reasons X11 adds 8 to the evdev code (30 + 8 = 38). Wayland sends the evdev code as is.
+Why does an amd64 image fail on a Graviton node?;"Graviton is ARM64; the binary's instructions belong to a different ISA. The kernel refuses to execute it (exec format error)."
+Why is decoding x86 harder than ARM64?;"x86 instructions are 1–15 bytes long, so the CPU must find instruction boundaries first; ARM64 instructions are always 4 bytes."
+In a gdb session a function crashed. Where do you find its first two arguments?;In RDI and RSI (System V calling convention), if they haven't been overwritten yet.
+A program dies with SIGILL after migrating to another VM type. What's a likely cause?;It was compiled for CPU extensions (AVX-512, AVX2) the new CPU doesn't support.
+What does xor eax, eax do and why do compilers prefer it?;"Sets EAX to zero; it's shorter than mov eax, 0 and recognized by the CPU as a dependency-breaking zero idiom."
+Why does reading one byte from RAM cost as much as reading 64?;"Memory moves in 64-byte cache lines; the whole line is fetched either way."
+Why is iterating a linked list much slower than an array of the same length?;Each node can be anywhere in memory, so each step can be a cache miss and the prefetcher can't predict the next address.
+Two threads increment two different counters and get slower than one thread. Why?;"The counters share a cache line (false sharing); each write invalidates the other core's copy."
+What does NUMA mean for a database on a 2-socket server?;"Memory attached to the other socket is slower; threads and their data should stay on the same node (or memory interleaved)."
+Why do huge pages help large heaps?;One TLB entry covers 2 MB (or 1 GB) instead of 4 KB, so far fewer TLB misses and page-table walks.
+How can a CPU finish one instruction per cycle if each takes 15+ cycles?;Pipelining: many instructions are in different stages at the same time.
+Why does sorting an array make a branchy loop over it faster?;The if becomes predictable (all false, then all true), so mispredictions and pipeline flushes nearly disappear.
+What does Spectre exploit?;"Speculative execution leaves traces in the cache that aren't rolled back; timing cache accesses reveals data read speculatively."
+Your cloud VM has 8 vCPUs. How many physical cores is that likely to be?;Usually 4 physical cores with SMT (2 hardware threads each), depending on the provider and instance type.
+A pod with low average CPU shows latency spikes and rising cfs_throttled_periods. What's happening?;Its threads use up the CPU limit's quota early in each 100 ms period and are throttled until the next one. Raise or remove the limit, or reduce thread bursts.
+Why is iterating over an array faster than over a linked list with the same number of elements?;The array's elements sit next to each other, so one 64-byte cache line brings several of them at once and the prefetcher can guess what comes next. Linked-list nodes are scattered, so each one may need a ~100 ns trip to RAM.
+What does the RIP register hold, and who changes it?;The address of the next instruction. It normally advances by the instruction's length. Jumps, call, ret and interrupts change it directly.
+What does ret actually do?;It pops the return address that call pushed onto the stack and puts it into RIP, so execution continues right after the call.
+Why can a program compiled with GCC call a library compiled with Clang?;Both follow the same calling convention (System V ABI): which registers carry arguments and return values, and which registers each side must preserve.
+Roughly how many CPU cycles does one RAM access cost at 3 GHz?;About 300 cycles (~100 ns × 3 cycles/ns). During that time the core could have executed hundreds of instructions.
+Why is fork() fast even for a process with gigabytes of memory?;"Copy-on-write: parent and child share pages until one of them writes; only page tables are copied up front."
+What's the difference between a zombie and an orphan?;"A zombie has exited but hasn't been reaped by its parent. An orphan is still running but its parent died; it gets adopted by PID 1."
+Your pod always takes 30 s to stop. Why?;The app (PID 1) doesn't handle SIGTERM, so nothing happens until the kubelet sends SIGKILL after the grace period.
+What does exit code 137 mean?;128 + 9: the process was killed by SIGKILL, commonly by the OOM killer or after the termination grace period.
+When would you use processes instead of threads?;When you need isolation (a crash or memory leak shouldn't take everything down) or to avoid a lock like Python's GIL.
+What happens to a task that calls read() on a socket with no data?;"It blocks: leaves the run queue and sleeps until data arrives; the scheduler runs something else."
+Load average is 16 on a 16-core server but CPU is 20%. What's going on?;"Load includes D-state tasks; many tasks are probably stuck in uninterruptible I/O (disk, NFS)."
+What's the difference between a CPU request and a CPU limit in Kubernetes?;"Request sets cpu.weight (share under contention, used for scheduling); limit sets cpu.max (hard quota, causes throttling)."
+Why can a CPU limit hurt latency even when average CPU usage is well below it?;Multiple threads can burn the whole period's quota early, then the container is throttled for the rest of the period.
+Why should runtimes like the JVM or Go know the container's CPU limit?;"They size thread pools and GC workers from the number of CPUs; seeing 64 host cores with a 2-CPU limit causes heavy throttling."
+A process allocates 4 GB but RSS is only 50 MB. Is something wrong?;"No. Pages are only backed by RAM when touched (demand paging); untouched allocations cost nothing."
+free shows 1 GB free on a 64 GB server. Should you worry?;Look at available. Most RAM is probably page cache, which the kernel drops when applications need memory.
+What's the difference between a minor and a major page fault?;Minor: the data is already in RAM, only a mapping is added. Major: the data must be read from disk.
+Why did my JVM pod get OOMKilled even though -Xmx is below the limit?;"The JVM uses memory outside the heap (metaspace, thread stacks, direct buffers, JIT code, native libs); heap + all that exceeded memory.max."
+Why can't Kubernetes throttle memory the way it throttles CPU?;"CPU time can be delayed; memory already in use can't be taken back without reclaiming (cache/swap) or killing the process."
+What happens between calling read() and the kernel running its code?;"libc sets the syscall number and args in registers and executes syscall; the CPU switches to ring 0 and jumps to the kernel entry, which dispatches to the read handler."
+write() returned success. Is the data on disk?;Not necessarily: it's in the page cache as a dirty page. Only after fsync() (or writeback) is it on stable storage.
+How does nginx handle 50,000 connections with a few worker processes?;Non-blocking sockets + epoll: each worker waits for readiness on all its sockets and only handles the ready ones.
+You deleted a 20 GB log but the disk is still full. Why?;"A process still has the file open; the inode isn't freed until the last fd is closed. Restart/reload the process or truncate via /proc/PID/fd."
+Why can /dev/shm usage cause an OOMKill in a pod?;It's tmpfs, i.e. RAM, and counts against the container's memory cgroup.
+Is a container a lightweight VM?;No. It's a regular process on the host kernel, isolated with namespaces and limited with cgroups. A VM runs its own kernel.
+Why can two containers in the same pod reach each other on localhost?;They share one network namespace (held by the pause container).
+Which kernel feature enforces a memory limit, and what happens when it's exceeded?;"The memory cgroup (memory.max); the OOM killer kills a process inside that cgroup."
+Why is privileged: true dangerous?;"It gives all capabilities, disables seccomp/AppArmor confinement and exposes host devices; the container can usually control the host."
+An app inside a container reads /proc/meminfo and sees 256 GB on a 2 GB limit. Why?;"/proc/meminfo isn't namespaced; the app must read the cgroup files (memory.max) to learn its real limit."
+Two threads of the same process and two separate processes both run in parallel. What is the key difference?;Threads share one address space (memory, open files) and can read each other's data directly. Separate processes have separate page tables and cannot see each other's memory without explicit sharing (pipes, sockets, shared memory).
+Why can't a buggy process overwrite another process's memory?;Each process has its own page table. Its virtual addresses can only map to the physical frames the kernel gave it, and the MMU enforces this on every access.
+What happens, step by step, when your program calls write()?;libc puts the syscall number in RAX and arguments in RDI/RSI/RDX, executes syscall, the CPU switches to ring 0, the kernel's VFS finds what fd refers to and calls the right driver, the result comes back in RAX, and the CPU returns to ring 3.
+A container keeps getting killed with OOMKilled. Which kernel mechanism is doing it?;The memory cgroup limit plus the kernel's OOM killer. The container used more memory than its limit, so the kernel killed a process inside it.
+Why should your container's PID 1 handle SIGTERM?;Kubernetes sends SIGTERM first to allow a graceful shutdown (finish requests, close connections). If PID 1 ignores it, the pod waits out the grace period and is then killed with SIGKILL, dropping in-flight work.
+What does the compiler's IR make possible?;"One optimizer for many languages and many targets; front ends and back ends can be mixed (LLVM)."
+What does U puts in nm output mean?;"The object file uses puts but doesn't define it; the linker (or loader) must find it, here in libc."
+Why are Go binaries popular for FROM scratch images?;With CGO_ENABLED=0 they're statically linked: no libc or loader needed, only the kernel.
+A security fix lands in OpenSSL. What's the difference for statically vs dynamically linked apps?;Dynamic: update the shared library (base image) once. Static: every binary must be rebuilt and redeployed.
+Why do reproducible builds matter for supply-chain security?;Anyone can rebuild from source and check the binary is bit-identical, proving nothing was injected during the build.
+What's the difference between ELF segments and sections?;"Segments describe what the loader maps into memory and with which permissions; sections are for the linker, debuggers and tools and can be stripped."
+Is main the first code that runs in a C program?;No. ld.so runs first (for dynamic binaries), then _start → __libc_start_main and constructors, then main.
+A container fails with exec /app: no such file or directory but /app exists. Why?;Its interpreter (PT_INTERP, e.g. glibc's ld-linux) isn't in the image, or it's built for another architecture.
+What is ASLR and why does it need PIE?;"Randomizing where code, heap, stack and libraries load each run; the executable itself can only move if it's position-independent."
+What does full RELRO protect?;It resolves all symbols at start and makes the GOT read-only, so an attacker can't overwrite function pointers in it.
+Why are JVM services slow for the first minute after a deploy?;"Code starts interpreted; the JIT compiles hot methods only after profiling them (warm-up)."
+Why doesn't adding threads speed up CPU-bound pure-Python code?;The GIL lets only one thread execute Python bytecode at a time (except in the free-threaded build).
+A Node.js pod has a 4-CPU limit but never goes above 1 CPU. Why?;"JavaScript runs on one thread; use worker threads or more, smaller replicas."
+What should GOMEMLIMIT be set to in a container with a 1 GiB limit, and why?;Around 900 MiB: the GC then works harder before reaching the limit, avoiding OOMKills, while leaving headroom for non-heap memory.
+The JVM's default max heap is 25% of the container memory. What do you change?;Set -XX:MaxRAMPercentage (e.g. 70–75%), leaving room for off-heap memory.
+At which stage does printf get its real address?;"Not in the compiler or assembler. Those leave an undefined symbol. With static linking the linker fills it in; with dynamic linking the dynamic linker resolves it at start-up (or lazily on first call)."
+What's the difference between fork() and execve()?;fork() creates a new process that is a copy of the current one. execve() replaces the current process's program with a new one (same PID, new memory). Starting a program = fork + execve.
+Your image runs fine on your laptop but fails on the cluster with exec format error. Why?;The binary was built for a different CPU architecture, e.g. arm64 (Apple Silicon) vs amd64 nodes. Build multi-arch images (docker buildx --platform linux/amd64,linux/arm64).
+Why can a Go binary run in a FROM scratch image but a typical C program can't?;A static Go binary contains everything it needs and has no PT_INTERP. A dynamically linked C program needs ld-linux.so and libc.so.6, which a scratch image doesn't have.
+What does a JIT compiler do?;"It watches which code runs often (""hot"") and compiles that bytecode into native machine code while the program is running, so those parts run at near-native speed."
+What does a switch do with a frame whose destination MAC it hasn't learned?;It floods it to all ports in that VLAN except the one it came in on.
+You ping 8.8.8.8. Whose MAC address does your laptop ARP for?;"The default gateway's; MACs only matter on the local link."
+Why do VXLAN overlays usually need a smaller MTU?;"VXLAN encapsulation adds ~50 bytes of headers; inner packets must shrink so the outer packet still fits in 1500."
+Why doesn't gratuitous-ARP failover usually work in AWS/GCP VPCs?;"The cloud network isn't a real L2 segment; the SDN controls which IP belongs to which interface and ignores GARP."
+What problem does STP solve?;It blocks redundant links so broadcasts can't loop forever and cause a broadcast storm.
+How many addresses are in a /22, and what range does 10.1.4.0/22 cover?;1024 addresses: 10.1.4.0 – 10.1.7.255.
+A host has routes for 10.0.0.0/8 via A and 10.0.5.0/24 via B. Where does 10.0.5.20 go?;Via B: the /24 is the longest matching prefix.
+Do the source and destination IPs change as a packet crosses routers?;No (without NAT). Only TTL/checksum and the L2 (MAC) header change at each hop.
+Why can blocking all ICMP break HTTPS for some users?;"PMTU discovery depends on ICMP ""fragmentation needed""; without it, big packets are dropped silently and connections hang."
+Why must pod CIDRs not overlap with your corporate network?;Routes would be ambiguous: traffic to corporate IPs would be sent into the cluster (or vice versa) and peering/VPN can't be set up.
+Why does a stateful firewall need only one rule for HTTPS while a NACL needs two?;"conntrack lets replies of an allowed flow through automatically; a stateless NACL must explicitly allow the return traffic to ephemeral ports."
+How does a packet to a ClusterIP reach a pod when no interface has that IP?;"kube-proxy rules DNAT the destination to a chosen pod IP in PREROUTING/OUTPUT; conntrack keeps the mapping for the connection."
+Many pods call one external API through a NAT gateway and get random connection timeouts. Likely cause?;SNAT source-port exhaustion to that single destination IP:port. Add NAT IPs, reuse connections, or spread destinations.
+What happens to other traffic once a NetworkPolicy selects a pod for ingress?;All ingress not explicitly allowed by some policy is denied for that pod.
+Why does externalTrafficPolicy: Local preserve the client IP?;Traffic only goes to pods on the node that received it, so no SNAT to another node is needed.
+What makes a subnet 'public'?;Its route table has a default route to an internet gateway (and instances have public IPs).
+Instances in a private subnet can't download packages. What do you check?;The subnet's route table has 0.0.0.0/0 → a NAT gateway in a public subnet, the NAT gateway is healthy, and SG/NACL allow outbound + return traffic.
+VPC A is peered with B, and B with C. Can A reach C?;"No. Peering isn't transitive; use a transit gateway or peer A and C directly."
+Why is it better to reference security groups than CIDRs in rules?;Rules follow roles, not IPs: any instance (or pod with SG-for-pods) in the app SG is allowed, even as IPs change with autoscaling.
+Your NAT gateway bill is huge. What's a common fix?;Add VPC endpoints for S3/ECR/other AWS services so that traffic bypasses the NAT gateway.
+A packet goes through 12 routers. How many times does the destination IP change? And the destination MAC?;The destination IP stays the same the whole way (ignoring NAT on the server side). The destination MAC changes at every hop, because each L2 frame only goes to the next device.
+Your laptop wants to reach 192.168.1.50 and 8.8.8.8. Which MAC address does it put on each frame?;For 192.168.1.50 (same /24): that machine's own MAC, found via ARP. For 8.8.8.8 (outside the subnet): the gateway's MAC.
+What does a switch look at, and what does a router look at?;A switch looks at MAC addresses (L2). A router looks at IP addresses (L3) and its routing table.
+Why can't a server on the internet open a connection to your laptop at home?;Your laptop only has a private IP behind NAT. The router only knows where to send incoming packets for conversations your side started (conntrack entries). Unsolicited inbound traffic has no mapping, unless you configure port forwarding.
+What is the AWS equivalent of your home router's NAT?;A NAT gateway: instances in a private subnet send outbound traffic through it, and it rewrites their private IPs to a public one.
+What does Cache-Control: no-cache actually mean?;The response may be stored, but it must be revalidated with the server (e.g. If-None-Match) before each use. To forbid storing, use no-store.
+Your API works with curl but the browser shows a CORS error. Why, and where is the fix?;CORS is enforced only by browsers. The API (or the ingress in front of it) must return Access-Control-Allow-Origin for that origin, and answer the OPTIONS preflight with the allowed methods and headers.
+Behind your load balancer every log line shows the same client IP. What's wrong?;The app logs the TCP peer (the LB). Read the client IP from X-Forwarded-For / Forwarded, and trust only entries added by your own proxies.
+Why must a CDN see Vary: Accept-Encoding?;The same URL exists in several encodings (br, gzip, none). Without Vary the CDN may serve a brotli body to a client that can't decode it.
+Which cookie attributes stop JavaScript from reading a session cookie and stop it being sent over HTTP?;HttpOnly (no JS access) and Secure (HTTPS only). Add SameSite=Lax or Strict against CSRF.
+Who actually walks the root → TLD → authoritative chain: your laptop or the resolver?;The recursive resolver. Your laptop's stub resolver sends one query and gets the final answer.
+You changed an A record with TTL 3600 ten minutes ago. Why do some users still see the old IP?;Resolvers that cached it before the change keep it until their copy's TTL expires (up to an hour), and some apps cache even longer.
+Why can a pod's lookup of api.stripe.com be slow, and what are two fixes?;ndots:5 makes it try every search suffix first, each for A and AAAA. Use the FQDN with a trailing dot, lower ndots, and/or run NodeLocal DNSCache.
+What does DNSSEC protect against, and what doesn't it protect?;"Forged or modified answers (authenticity and integrity). It doesn't hide which names you look up; that's DoH/DoT."
+What is a subdomain takeover?;A CNAME still points at a cloud resource (bucket, app, CDN) that was deleted. An attacker claims that resource name and now serves content on your subdomain.
+Why does TCP need a handshake before sending data?;Both sides must agree on starting sequence numbers and confirm the other side is reachable and willing.
+What's the difference between flow control and congestion control?;Flow control protects the receiver (rwnd, its buffer). Congestion control protects the network (cwnd, estimated from loss or bandwidth/RTT).
+Your service has 20,000 sockets in CLOSE_WAIT. What do you fix?;The application: it receives the peer's FIN but never closes its socket (leaked connections, missing close() / response body not closed).
+Why do you get intermittent 502s when the LB idle timeout is 60 s and the backend's keep-alive timeout is 30 s?;"The backend closes idle connections first; the LB may send a new request on a connection the backend just closed. Make the backend's timeout longer than the LB's."
+Why can one gRPC client overload a single pod behind a Kubernetes Service?;kube-proxy balances per TCP connection, and gRPC sends all requests over one long-lived HTTP/2 connection. Use L7 load balancing (mesh, gateway) or client-side balancing.
+Why doesn't TLS just use RSA/ECDSA to encrypt all the data?;"Asymmetric crypto is slow. It's used once to agree keys and prove identity; the data uses fast symmetric ciphers."
+What does the CertificateVerify signature prove that the certificate alone doesn't?;"That the server has the private key. Anyone can copy a public certificate; only the owner can sign with its key."
+Your site works in Chrome but curl says 'unable to get local issuer certificate'. Why?;"The server isn't sending the intermediate certificate. Chrome had it cached; curl didn't. Serve the full chain."
+Why is the industry moving to 47-day certificates?;Revocation doesn't work reliably, so short lifetimes limit how long a stolen or mis-issued certificate is useful, and force automation.
+Which ACME challenge do you need for .example.com?;DNS-01: wildcard certificates require a TXT record under _acme-challenge.example.com.
+HTTP/2 multiplexes streams. Why can it still suffer from head-of-line blocking?;"Streams share one TCP connection; a lost TCP segment blocks delivery of all later bytes, so every stream waits."
+How does a browser find out a site supports HTTP/3?;"Alt-Svc: h3="":443"" on an earlier response, or an HTTPS DNS record. Then it tries QUIC and falls back to TCP if UDP is blocked."
+Why is 0-RTT data restricted to safe requests?;"An attacker can replay the first flight. Replaying a GET is harmless; replaying a payment POST is not."
+Your gRPC service behind a Kubernetes Service has one hot pod. Why?;"gRPC keeps one long-lived HTTP/2 connection; kube-proxy balances connections, not requests."
+What happens to a QUIC connection when the phone switches from Wi-Fi to 5G?;The IP changes but the Connection ID doesn't, so the connection migrates instead of reconnecting.
+Which methods can a proxy safely retry automatically, and why?;Idempotent ones (GET, HEAD, PUT, DELETE, OPTIONS): repeating them doesn't change the result. POST may create a duplicate.
+What's the difference between 401 and 403?;401: we don't know who you are (missing/invalid credentials). 403: we know who you are and you're not allowed.
+Users get 504 on a report endpoint that takes 90 s. Where do you look first?;The proxy/ingress/LB read timeout (often 60 s). Raise it for that route, or make the endpoint asynchronous (202 + polling).
+Why do LLM chat UIs often use SSE rather than WebSockets?;The stream is one-directional (server → client), SSE is plain HTTP, works through proxies and CDNs, and reconnects automatically.
+Why does gRPC return HTTP 200 even when the call failed?;"gRPC reports its own status in the grpc-status trailer at the end of the stream; HTTP status only says the transport worked."
+Your recursive resolver already knows .com's servers. Does it still ask the root for example.com?;No. It caches the root's referral (the .com NS records) for their TTL and goes straight to the .com servers. The root is only asked when that cache has expired.
+Why does a new HTTPS request cost at least 2 RTTs before any HTTP data flows (TLS 1.3 over TCP)?;1 RTT for the TCP handshake, then 1 RTT for the TLS 1.3 handshake. Only then can the HTTP request be sent. HTTP/3 merges the transport and TLS handshakes to save one of them.
+How does the browser know the server really is example.com and not an attacker?;The server sends a certificate for example.com signed by a CA the browser trusts, and proves it holds the matching private key (CertificateVerify). The browser checks the chain, the hostname and the validity dates.
+What is SNI and why is it needed?;Server Name Indication: the hostname sent in ClientHello. One IP (a load balancer, a CDN) can serve thousands of sites, so it needs to know which certificate to present before encryption starts.
+502 vs 504 from your load balancer: what's the difference?;502 Bad Gateway: the LB got an invalid or no response from the backend (crashed, connection refused). 504 Gateway Timeout: the backend didn't answer in time.
+Why can an L4 load balancer leave gRPC traffic unbalanced?;"It balances connections; gRPC multiplexes all requests over one long-lived HTTP/2 connection, so one backend gets everything from that client."
+What's the difference between readiness and liveness probes?;Readiness: should this pod receive traffic now? Liveness: is it stuck and should be restarted?
+Why is a deep liveness check (that queries the DB) dangerous?;A DB hiccup fails every pod's liveness and Kubernetes restarts them all at once, turning a blip into an outage.
+When is consistent hashing useful?;When the same key should hit the same backend (cache locality, shards) and you want few keys to move when backends change.
+Users see 502s for a few seconds during every rollout. What do you check?;Graceful shutdown: readiness turning false before exit, a preStop sleep so endpoints update, SIGTERM handling, and LB deregistration delay.
+Why delete the key on write instead of updating it in cache-aside?;"Concurrent writers can update the cache in the wrong order, leaving an old value; deleting makes the next read fetch the current one."
+What is a cache stampede and how do you prevent it?;Many requests miss the same expired hot key at once and all hit the DB. Use request coalescing/locks, stale-while-revalidate or early refresh with jittered TTLs.
+Your Redis is at 100% CPU on one core while others are idle. Possible causes?;"A slow command (KEYS, huge sets, Lua) or a hot key; Redis executes commands on one thread."
+When is write-behind acceptable?;When losing the last few writes is tolerable (counters, metrics) and write speed matters more than durability.
+What happens to the database when the cache cluster restarts empty, and how do you prepare?;It gets the full read load (cold cache). Warm critical keys, ramp traffic, and protect the DB with rate limits/circuit breakers.
+Why is the WAL written before the data pages?;So a committed transaction can always be recovered by replaying the log after a crash, while data pages can be flushed lazily.
+Why doesn't replication replace backups?;"It copies every change, including mistakes and malicious deletes, to replicas within seconds; you need point-in-time backups to go back."
+A query filters on created_at but the only index is on (tenant_id, created_at). Will it be used efficiently?;"Generally no: B-tree composite indexes are used left-to-right; without tenant_id in the filter it can't seek efficiently."
+What's the trade-off between sync and async replication?;Sync: no data loss on failover but higher commit latency and availability coupling. Async: fast commits but possible loss of recent transactions and stale replica reads.
+You scale your app from 10 to 100 pods and Postgres starts refusing connections. Why and what's the fix?;"Each pod's pool opens N connections; total exceeds max_connections. Use a connection pooler (PgBouncer/RDS Proxy) and smaller per-pod pools."
+Why must consumers be idempotent?;"With at-least-once delivery, a crash between processing and ack causes redelivery; the handler must produce the same result twice."
+You have a topic with 6 partitions and scale consumers to 10. What happens?;"Only 6 consumers get partitions; 4 sit idle. Parallelism is capped by the partition count."
+What's the problem with 'write to DB, then publish to Kafka' in application code?;The two aren't atomic: a crash or publish failure after the commit loses the event (or the reverse order publishes events for data that was rolled back). Use an outbox/CDC.
+What does a growing consumer lag tell you, and what do you do?;Consumers process slower than producers write. Scale consumers (up to partitions), fix slow handlers, or add partitions.
+Queue or log for 'replay the last 7 days of events into a new analytics service'?;"A log (Kafka) with ≥ 7 days retention; a queue deletes messages once consumed."
+Why should app servers be stateless?;So any instance can serve any request and any instance can be added or killed at any time. That enables horizontal scaling, rolling deploys and self-healing.
+What's the difference between an L4 and an L7 load balancer?;L4 forwards TCP/UDP connections by IP and port without reading the content. L7 understands HTTP, so it can route by host, path or header, terminate TLS and retry individual requests.
+A user updates their profile and then immediately sees the old version. What could cause this?;Replication lag (the read went to a replica that hasn't caught up yet) or a stale cache entry that wasn't invalidated on write.
+Why should queue workers be idempotent?;"Most queues deliver ""at least once"", so a job can run twice (e.g. a worker crashes after doing the work but before acknowledging it). Running it twice must not charge a card twice."
+Your API calls a payment provider that sometimes takes 30 s. What do you add?;A timeout on the call, retries with backoff (only if the call is idempotent), a circuit breaker, and ideally moving it to an async job so the user's request doesn't wait.
+Why is CSS render-blocking but images aren't?;"Without the CSSOM the browser can't know how anything looks or where it goes; painting without it would flash unstyled content. Images can fill in later."
+What's the difference between defer and async?;"Both download in parallel. defer runs after HTML parsing, in document order; async runs as soon as it's downloaded, in any order."
+Why animate transform instead of left?;"left triggers layout and paint every frame; transform can be handled by the compositor on the GPU without layout."
+What is layout thrashing?;Interleaving DOM writes and layout reads so the browser must recompute layout synchronously many times per frame.
+What can the infrastructure team do for rendering speed?;Lower TTFB (CDN, caching, streaming), compression, HTTP/2-3, early hints, correct cache headers and image optimization at the edge.
+In what order do setTimeout(f,0), Promise.resolve().then(g) and a sync console.log run?;Sync log first, then g (microtask), then f (task).
+Why does a 500 ms loop make clicks feel ignored?;"The click handler is a task that can only run after the current task finishes; rendering also waits."
+Does await block the main thread?;"No. It pauses that async function and returns control to the event loop; CPU-bound code still blocks."
+When should you use a Web Worker?;For CPU-heavy work (parsing, image/crypto processing, search) that would otherwise create long tasks on the main thread.
+What's the server-side equivalent of a long task, and how do you detect it?;"A blocking operation on the Node.js event loop; detect with event loop delay/utilization metrics."
+Why can't Lighthouse report INP, and what does it show instead?;"INP needs real user interactions over the page's life; Lighthouse shows Total Blocking Time as a lab proxy."
+LCP is 4 s but TTFB is 3 s. Where do you start?;Server side: caching HTML at the CDN, backend/database latency, redirects, origin distance. The frontend can't fix a 3 s TTFB.
+What does 'p75 LCP = 2.3 s' mean?;"75% of real page loads had LCP at or below 2.3 s; the slowest 25% were worse."
+A cookie banner pushes the page down after load. Which metric suffers and how do you fix it?;CLS. Reserve its space from the start, overlay it, or show it without moving existing content.
+Name three infrastructure changes that improve Core Web Vitals.;CDN caching of HTML/assets, HTTP/3 + Brotli compression, image optimization at the edge (also: Early Hints, removing redirect chains).
+What exactly does the same-origin policy prevent?;"Reading responses, DOM, cookies and storage of another origin; it doesn't prevent sending requests to it."
+Why is XSS so dangerous even with the SOP in place?;The attacker's script runs on your origin, so the SOP treats it as your code: it can read pages and call APIs as the user.
+How does SameSite=Lax stop most CSRF?;Cookies aren't attached to cross-site POSTs or subrequests, so a forged form submission from another site arrives without the session.
+Is CORS a security feature that protects your API?;"No. It's a controlled relaxation of the SOP for browser reads; it doesn't stop non-browser clients and isn't authentication."
+Why roll out CSP in Report-Only mode first?;To see what legitimate scripts/styles would be blocked before enforcing, avoiding breaking the site.
+Why can a plain <script src> in the <head> delay the whole page?;It's parser-blocking: the HTML parser stops, waits for the script to download and execute, and only then continues building the DOM. defer or async avoids this.
+Which is cheaper to animate, left or transform: translateX()? Why?;transform. Changing left triggers layout and paint on the main thread every frame. transform can be handled by the compositor on the GPU without layout or paint.
+A button click takes 400 ms to show any effect. Which metric gets worse, and what's the usual cause?;INP (Interaction to Next Paint). Usually a long JavaScript task on the main thread that blocks the event handler or the next rendering step.
+What's the difference between View Source and the Elements panel?;View Source shows the original HTML bytes the server sent. Elements shows the current DOM, after the parser fixed things up and JavaScript changed it.
+Why does each site get its own renderer process?;Security and stability. A compromised or crashing page is isolated in its own sandboxed process (Site Isolation) and can't read other sites' memory or bring them down.
+Why does changing one line of source code rebuild npm install in a badly ordered Dockerfile?;"The COPY . . comes before the install step; any source change invalidates that layer and every layer after it."
+You RUN rm secret.key in a later step. Is the secret gone from the image?;"No. It's still in the earlier layer; anyone with the image can extract it. Use build secrets."
+What's the difference between a tag and a digest?;"A tag is a movable name; a digest is a content hash that always identifies the same image bytes."
+Which component actually calls clone() to create the container's namespaces?;runc (or another OCI runtime), started by containerd's shim on behalf of the kubelet.
+Pods take 2 minutes to start on new nodes. Where do you look?;"Image pull time: image size, registry throttling/latency, no cache on fresh nodes; use smaller images, mirrors, pre-pulling or lazy pulling."
+Which component writes to etcd?;"Only the API server; everything else reads and writes through it."
+A pod stays Pending forever. What do you check?;kubectl describe pod events: insufficient CPU/memory requests, untolerated taints, unsatisfiable affinity, unbound PVC or zone mismatch.
+Why did a pod you deleted come back?;Its ReplicaSet controller saw fewer pods than desired and created a replacement.
+What does the scheduler use to decide if a pod fits: requests or actual usage?;Requests.
+What's an operator?;A controller plus CRDs that automate running a specific application (create, scale, backup, upgrade, failover) the way a human operator would.
+What are the three rules of the Kubernetes network model?;"Every pod gets its own IP; pods can reach all other pods without NAT; agents on a node can reach all pods on that node."
+What does the CNI plugin do when a pod starts?;Creates the pod's interface (veth), assigns an IP, sets routes, and makes the IP reachable from other nodes.
+A Service exists but curl to it times out. First thing to check?;Its EndpointSlice: if empty, the selector doesn't match or no pods are Ready.
+Why prefer Gateway API over Ingress for new setups?;It's the maintained standard with richer, portable features (traffic splitting, header matching, role separation), and the community ingress-nginx controller has been retired.
+After applying a default-deny NetworkPolicy, nothing can resolve DNS. Why?;"Egress to kube-dns (port 53) is now denied too; add an explicit allow rule for DNS."
+Why 'build once, promote everywhere' instead of rebuilding per environment?;"So production runs exactly the bytes that were tested; rebuilding can pull different dependencies or base images."
+What's the main security advantage of pull-based GitOps?;"CI doesn't need cluster credentials; the cluster pulls from git and only needs read access."
+Someone runs kubectl edit in production. What does Argo CD with selfHeal do?;It detects drift from git and reverts the live object to the git state.
+When is blue-green better than canary?;When you need an instant, all-at-once switch and instant rollback, and can afford double capacity briefly (or can't split traffic finely).
+Why must DB migrations be backward compatible during rolling or canary deploys?;Old and new app versions run simultaneously against the same database.
+Why shouldn't you use user_id as a Prometheus label?;"Each distinct value creates a new time series; millions of users = millions of series, exploding memory, storage and query cost."
+What's the difference between an SLI and an SLO?;"The SLI is the measurement (ratio of good events); the SLO is the target for it over a time window."
+Your SLO is 99.9% over 30 days. How much full downtime does the error budget allow?;0.1% of 30 days ≈ 43.2 minutes.
+Why alert on burn rate instead of 'error rate > 1% for 5 minutes'?;Burn rate ties alerts to the budget and user impact: fast burns page quickly, slow burns open tickets, and brief harmless blips don't wake anyone.
+What does tail-based sampling give you that head-based sampling doesn't?;The decision is made after the trace completes, so you can keep all errors and slow traces while dropping most normal ones.
+Is a container a small virtual machine?;No. It's a normal Linux process sharing the host kernel, isolated with namespaces and limited with cgroups. A VM runs its own kernel on a hypervisor.
+A pod is stuck in Pending. Which component hasn't done its job yet, and why might that be?;The scheduler hasn't bound it to a node, usually because no node has enough free CPU/memory for its requests, or because of taints, affinity rules or an unbound PersistentVolumeClaim. kubectl describe pod shows the reason in the events.
+You delete a pod that belongs to a Deployment and a new one appears. Who created it?;The ReplicaSet controller (in kube-controller-manager). It saw actual replicas < desired replicas and created a new Pod object, which the scheduler and kubelet then made real.
+What's the difference between push-based CD and GitOps?;In push-based CD the pipeline runs kubectl apply/helm upgrade against the cluster with cluster credentials. In GitOps an agent inside the cluster (Argo CD, Flux) pulls the desired state from git and reconciles continuously, so git is the source of truth and drift is corrected.
+Your service is slow but CPU and memory look fine. Which signal do you reach for?;Traces, to see which downstream call or span is taking the time across services. Then logs for that specific request.
+Why is everything in LLM infrastructure measured in tokens?;The model processes tokens, not characters or words. Compute per request, latency per step, KV cache memory and API cost all scale with the number of input and output tokens.
+A MoE model has 120B total parameters but only 5B active per token. What do you size memory and compute for?;Memory for all 120B (every expert must be loaded), compute for roughly 5B per token. That's why MoE models are cheap to run per token but still need lots of GPU memory.
+Why can past keys and values be cached in a decoder-only model?;Each token only attends to earlier tokens, and earlier tokens never change once generated. So their K and V vectors stay valid and can be reused for every following step.
+What does temperature 0 mean?;Greedy decoding: always pick the most likely next token. Output becomes deterministic (given the same inputs and setup).
+What's the difference between fine-tuning with LoRA and full fine-tuning, from an infra point of view?;LoRA trains small adapter matrices while the base weights stay frozen, so it needs far less GPU memory and produces small files. Many LoRA adapters can even be served on top of one shared base model.
+Why are LLMs usually limited by memory bandwidth rather than FLOPS during decode?;Each decode step reads every weight once but only does ~2 FLOPs per weight per sequence. That's far below the ~300 FLOPs/byte the GPU needs to be compute-bound, so it waits on HBM.
+What's the theoretical max decode speed of a 70B FP8 model on one GPU with 4.8 TB/s?;70 GB of weights ÷ 4.8 TB/s ≈ 15 ms per token → ~70 tokens/s for a single stream (ignoring KV cache reads). Batching raises total throughput, not single-stream speed.
+What's the difference between NVLink and InfiniBand?;NVLink is the scale-up link between GPUs inside a server or rack (TB/s, memory-like). InfiniBand (or RoCE) is the scale-out network between servers (hundreds of Gb/s per NIC).
+What does GPUDirect RDMA save?;Copies through the CPU and system RAM. The NIC reads from and writes to GPU memory directly, which lowers latency and frees the CPU.
+Why does every GPU get its own NIC in an AI server?;"Collective operations (like all-reduce) make all GPUs send data at the same time. One NIC per GPU, each on its own ""rail"", gives every GPU full network bandwidth without sharing."
+"Your pod fails with \""CUDA driver version is insufficient for CUDA runtime version\"". Where is the problem?";The host's driver is older than the CUDA runtime inside the image needs. Either upgrade the node driver (GPU Operator / node image) or use an image built for an older CUDA version.
+Why doesn't a CUDA container image contain the GPU driver?;The driver includes a kernel module (nvidia.ko) that must match the host kernel and is loaded on the host. The toolkit mounts the matching user-space part (libcuda.so) from the host into the container at start-up.
+When would you choose MIG over time-slicing?;When workloads from different teams or tenants share a GPU and need guaranteed memory and fault isolation with predictable performance. Time-slicing gives no isolation and no memory limits.
+nvidia-smi shows 100% utilization but throughput is low. What do you check?;"DCGM metrics like SM activity, tensor pipe activity and memory bandwidth. 100% ""utilization"" only means some kernel was running in the sample period; it may be tiny, memory-bound or waiting."
+What does NCCL do, and on which hardware paths?;It implements collective communication (all-reduce, all-gather, reduce-scatter…) between GPUs, choosing NVLink/NVSwitch inside a node and InfiniBand/RoCE with GPUDirect RDMA between nodes.
+Why is tensor parallelism usually kept inside one server (or NVLink domain)?;"TP exchanges partial results in every layer, forward and backward. That needs the TB/s bandwidth and low latency of NVLink; over the network it would make every step wait."
+Roughly how much memory does full training state need for a 13B model with AdamW and mixed precision?;About 16 bytes per parameter → ~208 GB, before activations. That's more than one GPU, so you'd use FSDP/ZeRO across several GPUs.
+What is gang scheduling and why does distributed training need it?;Starting all processes of a job together or not at all. If only some ranks start, they block waiting for the others while holding expensive GPUs, and two such jobs can deadlock the cluster.
+One node in a 512-GPU job has a slow NIC. What happens to the whole job?;Every collective waits for the slowest participant, so every step slows down to that node's speed. Straggler detection and replacing the node matter.
+Your 1,000-GPU run checkpoints every 3 hours and a node fails every 4 hours on average. Why is that bad?;Each failure loses up to 3 hours × 1,000 GPUs of work plus restart time, and failures happen almost as often as checkpoints. Checkpoint more often (asynchronously) to raise goodput.
+Users complain the first word takes 4 seconds to appear but then text flows fast. Which metric and which phase?;High TTFT: either queueing (not enough capacity, or bad routing) or slow prefill (very long prompts). Prefix caching, chunked prefill, more replicas or P/D disaggregation help.
+Why does round-robin load balancing hurt LLM serving?;It ignores where each conversation's KV cache (prefix) lives, so requests keep landing on pods that must recompute the prefill. KV-aware routing sends them to the pod that already has the prefix.
+How much KV cache does a 32-layer model with 8 KV heads of dimension 128 need for 100 concurrent 4k-token requests in BF16?;2 × 32 × 8 × 128 × 2 bytes = 128 KB/token → × 4,096 tokens × 100 requests ≈ 54 GB.
+Does speculative decoding change the model's answers?;"No. Accepted tokens are exactly those the target model would have produced; the draft only lets several of them be confirmed in one forward pass."
+Why split prefill and decode onto different GPUs?;They stress different resources (compute vs memory bandwidth). Mixed together, long prefills stall everyone's decode steps. Separate pools can be sized and scaled independently and tuned for their bottleneck.
+What can DRA express that nvidia.com/gpu: 1 can't?;Attributes and relationships: a specific model or memory size, a MIG profile, several GPUs on the same NVLink domain, shared claims between pods. The device plugin only exposes a count.
+A 64-GPU training job gets 40 pods scheduled and the rest stay Pending. What's wrong, and what fixes it?;No gang scheduling: the default scheduler placed pods one by one. The 40 running pods hold GPUs while waiting for the others. Kueue (or KAI/Volcano) admits the job only when all 64 GPUs are available.
+Why should GPU nodes be tainted?;So that ordinary pods (web apps, sidecars, system jobs) don't land on very expensive GPU nodes and take CPU/memory that GPU workloads need. Only pods that tolerate the taint and request GPUs go there.
+Your LLM Deployment scales up but new pods take 8 minutes to become Ready. What do you change?;Cache model weights close to the node (local NVMe pre-pull, shared PVC, OCI artifacts), use a streaming loader, keep a minimum number of warm replicas and scale earlier (on queue length rather than on SLO violations).
+What does the endpoint picker in the Gateway API Inference Extension do that a normal Service doesn't?;It chooses a model server pod per request based on LLM-specific signals: prefix/KV cache locality, queue length, KV cache usage, LoRA adapters loaded. A Service just load-balances connections.
+Why use hybrid search instead of vector search only?;Vectors capture meaning but are weak on exact tokens such as error codes, ticket IDs or product names. BM25 keyword search catches those. Combining both improves recall.
+Where should permissions be enforced in a RAG system?;At retrieval time: store ACL metadata with each chunk and filter the search by the user's identity, so the model never sees documents the user isn't allowed to read.
+What exactly does the model produce in tool calling, and who runs the tool?;The model produces a structured message naming the tool and its JSON arguments. The application (or its MCP client) validates and executes the call, then sends the result back to the model.
+What is prompt injection, and why is it a bigger risk for agents?;Instructions hidden in user input, documents or tool results that try to override the system's instructions. Agents act on systems with credentials, so a successful injection can cause real side effects, not just a bad answer.
+You change the system prompt to fix one complaint. How do you know you didn't break something else?;Run the eval suite (a versioned test set with graders) before and after the change, compare scores per category, and roll out gradually while sampling and grading live traffic.
+Why is decoding usually limited by memory bandwidth rather than compute?;Each decode step produces one token per request, but it still has to read all model weights (and the KV cache) from HBM. There's little math per byte read, so the GPU waits for memory. Batching many requests together reuses each weight read for more tokens.
+Can a 70B model in FP16 run on a single 80 GB GPU?;"No. The weights alone are ~140 GB. Options: quantize (FP8 ≈ 70 GB, still tight with KV cache; INT4 ≈ 35 GB) or split the model across several GPUs with tensor parallelism."
+What is the KV cache, and why does it limit concurrency?;It stores the attention keys and values of all previous tokens of each active request so they aren't recomputed every step. It grows with context length and the number of concurrent requests, and it has to fit in GPU memory next to the weights.
+Why scale an LLM service on queue length or KV cache usage instead of CPU?;The work happens on the GPU. CPU usage stays low even when the GPU is saturated and requests are queuing, so CPU-based autoscaling would never react.
+In RAG, what does the embedding model do, and what does the vector DB do?;The embedding model turns text (chunks and questions) into vectors that capture meaning. The vector DB stores the chunk vectors and quickly finds the ones closest to the question's vector, which are then added to the prompt.
+What's the difference between authentication and authorization?;"Authentication proves who you are (login, token, certificate); authorization decides what that identity may do (roles, policies)."
+Why is OIDC federation from CI to the cloud safer than storing an access key as a CI secret?;There's no long-lived secret to leak: each job gets a signed token describing exactly which repo/branch it is, exchanged for credentials that expire in about an hour and only for a scoped role.
+Are Kubernetes Secrets encrypted?;"Only base64-encoded by default; anyone with RBAC get secrets can read them, and etcd stores them in plain text unless encryption at rest is configured."
+What does 'zero trust' change compared to a classic perimeter network?;Being inside the network grants nothing: every request is authenticated and authorized by identity, typically with mTLS and policies, so one compromised host can't reach everything.
+What does an SBOM help you answer during a new critical CVE?;Which of your images and services contain the affected package and version, so you know what to patch within minutes instead of days.
+Why can't you reliably tell a crashed node from a slow one?;"Both look like ""no answer yet"". The only tool is a timeout, which is a guess; that's why systems must handle false failure detection."
+What does CAP force you to choose, and when?;During a network partition, either stay consistent (refuse some requests) or stay available (accept requests that may conflict). Without a partition, both are possible (but PACELC says consistency still costs latency).
+Why does etcd need a majority to commit a write?;Any two majorities overlap, so a committed entry is always known to at least one member of any future majority, which prevents two leaders committing conflicting histories.
+Why is a 4-member etcd cluster no better than 3 for failures?;Quorum of 4 is 3, so it still tolerates only 1 failure, while costing more and adding latency.
+How does a retry storm happen, and how do you prevent it?;Multiple layers retry without backoff, multiplying load on a struggling dependency. Retry at one layer with exponential backoff, jitter and a retry budget, plus circuit breakers and load shedding.
+Why can a Kubernetes cluster be 'full' while CPU usage is 15%?;The scheduler packs by requests, not usage. If pods request far more than they use, nodes fill up on paper and the autoscaler adds nodes that stay mostly idle.
+When should you buy Savings Plans or committed use discounts?;"For the steady baseline you are confident you'll run for 1–3 years, and only after right-sizing; otherwise you commit to paying for waste."
+Which workloads are good candidates for spot instances?;Stateless, fault-tolerant or retryable ones: web replicas behind a load balancer, batch jobs, CI runners, checkpointed training. Not single-instance databases.
+Why can traffic to S3 from private subnets be expensive, and how do you fix it?;Without a VPC endpoint it goes through the NAT gateway, which charges per GB processed. A gateway endpoint for S3 is free and keeps traffic private.
+What is unit economics and why does it matter more than the total bill?;"Cost per business unit (per 1,000 requests, per customer). A growing bill can be healthy if unit cost falls; a flat bill can hide falling efficiency."
+What does each part of m7g.xlarge mean?;m = general purpose family, 7 = generation, g = Graviton (ARM) processor, xlarge = size (4 vCPUs, 16 GiB for this family).
+Why bake images instead of configuring servers after boot with SSH scripts?;"Baked images are identical, tested and fast to boot; servers configured by hand drift into unique snowflakes that can't be reproduced or safely replaced."
+How does an Auto Scaling group heal a broken instance?;"Health checks (instance status and load balancer checks) mark it unhealthy; the group terminates it and launches a replacement from the launch template to keep the desired count."
+What is a cold start and how can you reduce it?;The delay when a new execution environment starts (runtime boot + initialization). Reduce it with small packages and fast runtimes, lazy initialization, provisioned/minimum instances or snapshot-based start.
+When are functions more expensive than containers?;For steady, high-traffic workloads: per-request and per-ms pricing adds up beyond the cost of always-on containers or VMs that serve many requests concurrently.
+Why can't an EBS volume attach to an instance in another availability zone?;"Block volumes are replicated within a single AZ's storage network; to move data across zones you use snapshots (stored regionally) or application-level replication."
+What's the difference between durability and availability for S3?;"Durability is the probability your data isn't lost (11 nines); availability is the probability you can access it at a given moment (99.99% for Standard)."
+What does a Multi-AZ database give you that a read replica doesn't?;"A synchronous standby with automatic failover and no data loss; a read replica is asynchronous, used for read scaling, and may lag behind."
+Why do you need a connection pooler in front of PostgreSQL in Kubernetes?;"Each connection is a backend process with memory cost; many pods with many connections can exhaust the database. A pooler multiplexes them onto fewer connections."
+Why must backups be copied to another account?;"If attackers or a bad script get admin access to the production account, they can delete backups stored there; a separate, locked account preserves them."
+Why does Terraform need a state file?;"To map each resource in code to the real object it created (IDs and attributes), so it can compute diffs, update and destroy the right things; the cloud API alone doesn't know which resources belong to your configuration."
+What does -/+ in a plan mean and why is it dangerous?;Replacement: the resource will be destroyed and recreated because an immutable attribute changed. On stateful resources like databases or disks it means data loss or downtime.
+Why use remote state with locking?;So the whole team and CI share one source of truth, and two applies can't run at the same time and corrupt state.
+How do you bring a manually created bucket under Terraform management without recreating it?;Write the matching resource block and an import block (or terraform import), then run plan until it shows no changes.
+What should a CI pipeline do on a Terraform pull request?;"Format and validate, lint and policy/security scan, run plan and post it (plus cost diff) on the PR for review; apply only the reviewed plan after merge, using short-lived OIDC credentials."
+Why use separate accounts for prod and dev instead of one account with tags?;"Accounts are hard isolation boundaries for IAM, quotas and blast radius; tags and naming conventions don't stop a dev-side mistake or compromised key from touching prod."
+What can an SCP do that IAM policies in the account can't?;"It sets a ceiling for everyone in the account, including its administrators, so rules like ""never disable CloudTrail"" or ""only EU regions"" can't be bypassed locally."
+What's the difference between pilot light and warm standby?;"Pilot light keeps data replicated and infrastructure ready but compute mostly off; warm standby runs a small working copy of the whole stack, so it recovers faster but costs more."
+Which disasters are more common than a full region outage, and what protects against them?;Bad deployments, accidental deletes, data corruption and ransomware. Point-in-time recovery, versioning, and immutable backups in a separate account protect against them.
+Why run game days?;"Untested DR plans fail on details (expired credentials, missing quotas, hard-coded endpoints); exercises reveal them and measure the real RTO and RPO."
+What's the difference between a region and an availability zone?;"A region is a geographic area with independent APIs and data; an availability zone is an isolated data center (or group) inside a region with its own power and network, close enough to the others for synchronous replication."
+Under the shared responsibility model, who is responsible for a public S3 bucket leaking data?;"The customer. The provider secures the infrastructure; configuration, access control and data are always the customer's responsibility."
+Why is 'multi-AZ' usually enough for high availability, and when do you need multi-region?;AZs have independent failure domains, so spreading across them survives data-center failures at low latency and cost. Multi-region is needed for regional outages, strict RTO/RPO, data residency or global latency, at much higher complexity.
+Why should production changes go through Infrastructure as Code instead of the console?;"Code is reviewed, versioned, repeatable and can rebuild the environment after a disaster; console changes are invisible, unreproducible and drift from what everyone thinks exists."
+What do RPO and RTO mean?;"RPO is how much data (time) you can afford to lose; RTO is how long the service can be unavailable. Together they decide the backup and DR strategy and its cost."
+What do maxSurge: 25% and maxUnavailable: 0 mean for a 4-replica Deployment?;During the rollout up to 1 extra pod may exist (5 total), and the number of available pods never drops below 4: a new pod must be ready before an old one is removed.
+Why can a liveness probe that checks the database make an outage worse?;If the database slows down, every pod fails liveness and is restarted at the same time, losing caches and connections and adding load exactly when the system is struggling.
+Why is a startup probe useful?;"It gives slow-starting apps time to boot without loosening liveness and readiness probes; those only start once the startup probe succeeds."
+What happens between kubectl delete pod and the container stopping?;"The pod is marked terminating; in parallel the endpoint is removed from Services and the kubelet runs preStop then sends SIGTERM; after the grace period any remaining process gets SIGKILL."
+What's the difference between a taint and node affinity?;"A taint on a node repels pods that don't tolerate it (node chooses); node affinity on a pod attracts it to nodes with certain labels (pod chooses). Dedicated nodes usually use both."
+You change a ConfigMap used via envFrom. Why doesn't the app see the new value?;"Environment variables are set when the container starts; they aren't updated in a running process. Restart the pods (e.g. via a config checksum annotation) or mount the ConfigMap as files."
+Why are Kubernetes Secrets not enough on their own?;They're only base64-encoded, readable by anyone with get secrets, and stored in etcd unencrypted unless configured. Use encryption at rest, tight RBAC and ideally an external secret manager.
+What does WaitForFirstConsumer solve?;"It delays creating the disk until the pod is scheduled, so the volume is created in the same zone as the node; otherwise the disk could land in a zone where the pod can't run."
+Why can a pod with an RWO PVC get stuck in Pending after a zone failure?;"The disk lives in the failed zone and can only attach to nodes there; the scheduler can't place the pod anywhere else."
+Why use Retain as the reclaim policy for important volumes?;"With Delete, deleting the PVC (or its namespace) also deletes the underlying disk; Retain keeps the disk so the data can be recovered."
+Where does Helm store information about a release?;"In the release's namespace, as a Secret per revision containing the rendered manifest, values and metadata; that's what helm history and rollback use."
+What's the main difference between Helm and Kustomize?;"Helm renders templates with values (and manages releases); Kustomize patches plain YAML bases with overlays, without templates or release tracking."
+Why add a checksum of the ConfigMap to the pod template annotations?;"So a config change changes the pod template, triggering a rolling update; otherwise pods keep running with old config."
+What is the operator pattern?;A CRD defines a new resource type and a controller continuously reconciles those resources to the desired state, automating operational tasks like provisioning, failover, backups and upgrades.
+What should you check before running an operator in production?;Maturity and maintenance, how the operator and its CRDs are upgraded, the RBAC it needs, behaviour when the operator is down, and its backup/restore and failure handling.
+"5 pods run at 90% of their CPU request; the target is 60%. How many replicas will the HPA want?";ceil(5 × 90 / 60) = ceil(7.5) = 8 replicas (within min/max).
+Why does CPU-based HPA depend on correct requests?;Utilization is measured as a percentage of the request. If requests are much higher than real usage, utilization never reaches the target and the HPA doesn't scale (and nodes are wasted).
+What can KEDA do that the HPA alone can't?;Scale on many external event sources out of the box and scale workloads to zero and back up when events arrive.
+How does Karpenter differ from Cluster Autoscaler?;Instead of growing predefined node groups, it looks at pending pods and launches the best-fitting instance types directly, and actively consolidates by removing or replacing nodes with cheaper ones.
+Why keep headroom even with fast autoscalers?;"New nodes take minutes to boot, join and pull images; without spare capacity, sudden spikes hit before new capacity is ready."
+A pod is Pending. Where do you look first and what are common causes?;The events in kubectl describe pod: insufficient CPU/memory for its requests, taints without tolerations, unsatisfiable affinity/spread, an unbound PVC or one in another zone, or a namespace quota.
+A container shows exit code 137. What happened?;It was killed with SIGKILL, most often by the OOM killer for exceeding its memory limit (Reason: OOMKilled), or because it didn't stop within the termination grace period.
+Why use kubectl logs --previous for a CrashLoopBackOff?;"The current container may have just restarted and logged nothing useful; --previous shows the output of the instance that crashed."
+A Service returns connection errors but the pods are Running. What do you check?;Whether the pods are Ready and appear in the Service's EndpointSlices, whether the selector and target port match, NetworkPolicies, and DNS resolution from a debug pod.
+Why can't you jump from Kubernetes 1.31 directly to 1.34?;"The control plane must be upgraded one minor version at a time to keep components within the supported skew and allow storage/API migrations; removed APIs must also be migrated at each step."
+When do you use a StatefulSet instead of a Deployment?;When pods need stable identity and their own storage: stable names, ordered start/stop and one PVC per replica (databases, brokers, clustered apps).
+What's the difference between a readiness and a liveness probe?;"Readiness decides whether a pod receives traffic (removed from Service endpoints when failing); liveness decides whether the container is restarted."
+Why can pods drop requests during a rolling update even though Kubernetes waits for readiness?;"Endpoint removal propagates asynchronously after SIGTERM; if the app exits immediately, load balancers still route a few requests to it. A preStop delay and graceful draining fix it."
+What does a PodDisruptionBudget protect against?;"Voluntary disruptions (node drains, upgrades, autoscaler consolidation) evicting too many pods at once; it doesn't protect against crashes or node failures."
+Why must Kubernetes clusters be upgraded regularly?;"Minor versions are supported for only about 14 months; managed services force upgrades, APIs get removed, and security fixes only come for supported versions."
+Why do long-lived feature branches hurt delivery?;"They delay integration, so conflicts and interactions appear late and all at once; reviews get huge, and releases become big, risky batches."
+How do you merge unfinished work daily without exposing it to users?;Put it behind a feature flag (or keep it unreachable) so the code is integrated and deployed but not released (16.2).
+What problem does a merge queue solve?;"Two PRs that pass CI separately can break main when combined; the queue tests each PR against main plus the PRs ahead of it before merging."
+Under SemVer, what does a change from 2.4.1 to 3.0.0 signal?;A breaking change: consumers may need to change their code or configuration to upgrade.
+When does GitFlow still make sense?;For software where several versions are maintained and shipped in discrete releases (mobile apps, libraries, on-prem products) rather than deployed continuously.
+What's the difference between deploying and releasing?;"Deploying puts new code into production; releasing exposes the new behaviour to users. Feature flags let you deploy continuously and release gradually and independently."
+Why must feature flags be removed after launch?;"Each flag adds code paths, testing combinations and confusion; stale flags become technical debt and a source of incidents when someone flips them unexpectedly."
+Why can't you rename a database column in a single release?;"During a rolling deploy (and after a rollback) the old version still runs and reads the old column; a one-step rename breaks it. Expand/contract keeps both versions working."
+What should decide whether a canary is promoted?;Predefined metrics compared against the stable version (error rate, latency, SLO burn, key business metrics), ideally evaluated automatically with rollback on failure.
+Why are change freezes often counterproductive?;Changes keep being written, so they accumulate into a large, risky batch released all at once after the freeze, the opposite of small safe changes.
+What should page a human at night, and what shouldn't?;"Urgent, actionable, user-visible symptoms (SLO burn, high error rate, service down) should page; causes and non-urgent signals (high CPU, a single pod restart, disk at 70%) go to dashboards or tickets."
+Why should the incident commander usually not debug?;Their job is coordination: keeping the big picture, assigning work, making decisions and ensuring communication. Debugging pulls them into details and leaves nobody steering.
+Why mitigate before finding the root cause?;"Users are affected right now; rolling back, disabling a flag or failing over usually restores service in minutes, while root cause analysis can take hours and is safer afterwards."
+What makes a postmortem blameless, and why does it matter?;"It focuses on how the system and process allowed the failure rather than who made a mistake; without fear of blame people share what really happened, so the right fixes are found."
+What makes a good postmortem action item?;"Specific, with an owner, a due date and a ticket, addressing a contributing factor (not ""be more careful""), and actually prioritised and tracked to completion."
+What problem does platform engineering solve?;"The growing cognitive load on product teams who must master many infrastructure tools; a platform provides self-service, opinionated paths so they can focus on business value."
+What is a golden path?;"A supported, end-to-end, opinionated way to accomplish a common task (e.g. creating a service) with best practices built in; teams can deviate but then own the extra complexity."
+What is the software catalog for?;A single place listing services, APIs and resources with owners, docs, dependencies and health, used for discovery, standards and incident response.
+Why is 'ticket-ops' an anti-pattern?;"Requests wait in queues for humans, creating delays and bottlenecks; self-service APIs with guardrails give the same control without the wait."
+How do you know an internal platform is successful?;Teams adopt it voluntarily, delivery metrics (lead time, deploy frequency, change failure rate) and time-to-first-deploy improve, and developer satisfaction rises.
+Is DevOps a role, a tool or something else?;Primarily a culture and set of practices: shared ownership of building and running software, small automated changes and fast feedback. Tools and roles support it but don't create it.
+What are the four DORA metrics?;Deployment frequency, lead time for changes, change failure rate and failed deployment recovery time.
+Why do small, frequent deployments improve stability?;Each change is easier to review and test, failures are rarer and smaller, it's obvious which change caused a problem, and rolling back affects little.
+How do DevOps, SRE and platform engineering relate?;"DevOps is the philosophy of shared ownership and flow; SRE implements reliability with SLOs, error budgets and toil limits; platform engineering scales both by giving teams self-service golden paths."
+Why should DORA metrics not be used to rank individuals?;"They describe a team's system of work; using them as personal targets invites gaming (e.g. tiny meaningless deploys) and destroys their value as honest feedback."

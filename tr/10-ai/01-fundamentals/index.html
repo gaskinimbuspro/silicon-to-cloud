@@ -1,0 +1,2698 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Modeller, parametreler, token'lar, embedding'ler, transformer, attention, MoE, örnekleme ve model yaşam döngüsü. Bir altyapı mühendisinin bilmesi gereken minimum.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/01-fundamentals/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-gpu/">
+      
+      
+        
+          <link rel="alternate" href="../../../10-ai/01-fundamentals/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>10.1 — Altyapıcılar için AI temelleri - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="10.1 — Altyapıcılar için AI temelleri - Silicon to Cloud">
+<meta property="og:description" content="Modeller, parametreler, token'lar, embedding'ler, transformer, attention, MoE, örnekleme ve model yaşam döngüsü. Bir altyapı mühendisinin bilmesi gereken minimum.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/10-ai/01-fundamentals.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/01-fundamentals/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="10.1 — Altyapıcılar için AI temelleri - Silicon to Cloud">
+<meta property="twitter:description" content="Modeller, parametreler, token'lar, embedding'ler, transformer, attention, MoE, örnekleme ve model yaşam döngüsü. Bir altyapı mühendisinin bilmesi gereken minimum.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/10-ai/01-fundamentals.png">
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#101-altyapclar-icin-ai-temelleri" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10.1 — Altyapıcılar için AI temelleri
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../10-ai/01-fundamentals/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14" id="__nav_14_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 · AI infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.1 · AI fundamentals
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.1 · AI fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0-llm-nedir-ve-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0 · LLM nedir ve nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="0 · LLM nedir ve nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-fiziksel-olarak-model-nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Fiziksel olarak "model" nedir?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-token-her-seyin-birimi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Token: her şeyin birimi
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-embedding-koordinat-olarak-anlam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Embedding: koordinat olarak anlam
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-katman-katman-transformer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Katman katman transformer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Katman katman transformer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attention-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attention nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-skordan-metne-ornekleme-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Skordan metne: örnekleme (sampling)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-model-yasam-dongusu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Model yaşam döngüsü
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-karslasacagn-model-tipleri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Karşılaşacağın model tipleri
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.2 · GPU hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.3 · Software stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.4 · Distributed training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.5 · Inference &amp; serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.6 · AI platform on Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.7 · Applications: RAG &amp; agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📖 AI glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0-llm-nedir-ve-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0 · LLM nedir ve nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="0 · LLM nedir ve nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-fiziksel-olarak-model-nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Fiziksel olarak "model" nedir?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-token-her-seyin-birimi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Token: her şeyin birimi
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-embedding-koordinat-olarak-anlam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Embedding: koordinat olarak anlam
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-katman-katman-transformer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Katman katman transformer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Katman katman transformer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attention-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attention nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-skordan-metne-ornekleme-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Skordan metne: örnekleme (sampling)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-model-yasam-dongusu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Model yaşam döngüsü
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-karslasacagn-model-tipleri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Karşılaşacağın model tipleri
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    10 · AI infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="101-altyapclar-icin-ai-temelleri">10.1 — Altyapıcılar için <abbr title="Artificial Intelligence">AI</abbr> temelleri<a class="headerlink" href="#101-altyapclar-icin-ai-temelleri" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p>Bir model, <strong>milyarlarca sayıdan oluşan bir fonksiyondur</strong> (parametreler). Bir <abbr title="Large Language Model">LLM</abbr> metni <strong>token</strong>'lara, token'ları
+<strong>vektörlere</strong> çevirir. Bunları bir <strong>transformer katmanları</strong> yığınından (attention + <abbr title="Multi-Layer Perceptron">MLP</abbr>) geçirir, <strong>olası her
+sıradaki token için bir skor</strong> üretir, birini seçer, sona ekler ve tekrar çalışır. <abbr title="Artificial Intelligence">AI</abbr> altyapısındaki her şey bu
+sayıları saklamak, onları hızlı taşımak ve bu hesabı ucuza yapmak için vardır.</p>
+</div>
+<h2 id="terimler-ve-ksaltmalar">📖 Terimler ve kısaltmalar<a class="headerlink" href="#terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Artificial Intelligence">AI</abbr></strong></td>
+<td>Artificial Intelligence (Yapay Zekâ)</td>
+<td>Normalde insan zekâsı gerektiren işleri yapan yazılım</td>
+<td>Bugün çoğunlukla makine öğrenmesiyle eğitilmiş modeller demek</td>
+</tr>
+<tr>
+<td><strong><abbr title="Machine Learning">ML</abbr></strong></td>
+<td>Machine Learning (Makine Öğrenmesi)</td>
+<td>Davranışı elle yazılmış kurallar yerine veriden öğrenen programlar</td>
+<td>Çıktılar örneklerle eşleşene kadar sayıları (parametreleri) ayarlar</td>
+</tr>
+<tr>
+<td><strong><abbr title="Neural Network">NN</abbr></strong></td>
+<td>Neural Network (Sinir Ağı)</td>
+<td>Basit matematik birimlerinden oluşan katmanlı bir model</td>
+<td>Her katman girdiyi ağırlıklarla çarpar ve doğrusal olmayan bir fonksiyon uygular</td>
+</tr>
+<tr>
+<td><strong><abbr title="Large Language Model">LLM</abbr></strong></td>
+<td>Large Language Model (Büyük Dil Modeli)</td>
+<td>Metni sürdürmek için metin üzerinde eğitilmiş devasa bir sinir ağı</td>
+<td>Sıradaki token'ı tahmin eder, sona ekler, tekrarlar</td>
+</tr>
+<tr>
+<td><strong><abbr title="Generative Pre-trained Transformer">GPT</abbr></strong></td>
+<td>Generative Pre-trained Transformer</td>
+<td>Decoder-only transformer <abbr title="Large Language Model">LLM</abbr>'lerin aile adı</td>
+<td>Metin üzerinde ön eğitilir, sonra token token üretir</td>
+</tr>
+<tr>
+<td><strong>Token</strong></td>
+<td>—</td>
+<td>Bir metin parçası (kelime, kelime parçası, sembol)</td>
+<td>Modelin okuduğu ve yazdığı birim</td>
+</tr>
+<tr>
+<td><strong><abbr title="Byte-Pair Encoding">BPE</abbr></strong></td>
+<td>Byte-Pair Encoding</td>
+<td>Yaygın tokenizer algoritması</td>
+<td>En sık görülen karakter çiftlerini tekrar tekrar birleştirip token yapar</td>
+</tr>
+<tr>
+<td><strong>Embedding</strong></td>
+<td>—</td>
+<td>Bir token'ı ya da metni temsil eden sayı vektörü</td>
+<td>Benzer anlam → yakın vektörler</td>
+</tr>
+<tr>
+<td><strong>Parametre / ağırlık</strong></td>
+<td>—</td>
+<td>Modelin içinde öğrenilmiş tek bir sayı</td>
+<td>Milyarlarcası = modelin "bilgisi"</td>
+</tr>
+<tr>
+<td><strong>Transformer</strong></td>
+<td>—</td>
+<td>Modern <abbr title="Large Language Model">LLM</abbr>'lerin arkasındaki sinir ağı mimarisi</td>
+<td>Attention + <abbr title="Multi-Layer Perceptron">MLP</abbr> katmanları yığını</td>
+</tr>
+<tr>
+<td><strong>Attention</strong></td>
+<td>—</td>
+<td>Bir token'ın diğer token'lara bakmasını sağlayan mekanizma</td>
+<td>Query·Key skorları, her Value'dan ne kadar karıştırılacağına karar verir</td>
+</tr>
+<tr>
+<td><strong>Q / K / V</strong></td>
+<td>Query / Key / Value</td>
+<td>Her token için hesaplanan üç vektör</td>
+<td>Q sorar, K, Q ile eşleştirilir, V aktarılan içeriktir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Rotary Position Embedding">RoPE</abbr></strong></td>
+<td>Rotary Position Embedding</td>
+<td>Konumun (kelime sırasının) kodlanma şekli</td>
+<td>Q ve K'yi konuma bağlı bir açıyla döndürür</td>
+</tr>
+<tr>
+<td><strong><abbr title="Multi-Layer Perceptron">MLP</abbr> / <abbr title="Feed-Forward Network">FFN</abbr></strong></td>
+<td>Multi-Layer Perceptron / Feed-Forward Network</td>
+<td>Her katmandaki token başına sinir ağı</td>
+<td>Genişletir, doğrusal olmayan fonksiyon uygular, geri daraltır</td>
+</tr>
+<tr>
+<td><strong><abbr title="Mixture of Experts">MoE</abbr></strong></td>
+<td>Mixture of Experts (Uzmanlar Karışımı)</td>
+<td>Birçok uzmana bölünmüş bir <abbr title="Multi-Layer Perceptron">MLP</abbr> ve bir router</td>
+<td>Her token için sadece en iyi k uzman çalışır</td>
+</tr>
+<tr>
+<td><strong>Logit</strong></td>
+<td>—</td>
+<td>Olası her sıradaki token için ham skor</td>
+<td>Softmax bunları olasılığa çevirir</td>
+</tr>
+<tr>
+<td><strong>Bağlam penceresi</strong></td>
+<td>Context window</td>
+<td>Modelin aynı anda işleyebildiği azami token</td>
+<td>Prompt + çıktı sığmalı</td>
+</tr>
+<tr>
+<td><strong><abbr title="Supervised Fine-Tuning">SFT</abbr></strong></td>
+<td>Supervised Fine-Tuning (Gözetimli İnce Ayar)</td>
+<td>Örnek prompt → cevap çiftleri üzerinde eğitim</td>
+<td>Modele talimat takip etmeyi öğretir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Reinforcement Learning from Human Feedback">RLHF</abbr></strong></td>
+<td>Reinforcement Learning from Human Feedback</td>
+<td>İnsan tercihleriyle eğitim</td>
+<td>Bir ödül modeli cevapları puanlar, <abbr title="Large Language Model">LLM</abbr> bunu en üst düzeye çıkaracak şekilde ayarlanır</td>
+</tr>
+<tr>
+<td><strong><abbr title="Direct Preference Optimization">DPO</abbr></strong></td>
+<td>Direct Preference Optimization</td>
+<td>Daha basit tercih eğitimi</td>
+<td>Doğrudan "A, B'den iyi" çiftlerinden öğrenir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Low-Rank Adaptation">LoRA</abbr> / <abbr title="Quantized LoRA">QLoRA</abbr></strong></td>
+<td>Low-Rank Adaptation / Quantized <abbr title="Low-Rank Adaptation">LoRA</abbr></td>
+<td>Ucuz fine-tuning</td>
+<td>Dondurulmuş ağırlıkların yanında küçük adaptör matrisleri eğitir (<abbr title="Quantized LoRA">QLoRA</abbr>: temel model 4-bit)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Vision-Language Model">VLM</abbr></strong></td>
+<td>Vision-Language Model</td>
+<td>Görüntü ve metin okuyan model</td>
+<td>Görüntü encoder'ının çıktısı ek token'lar olarak verilir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Automatic Speech Recognition">ASR</abbr> / <abbr title="Text-to-Speech">TTS</abbr></strong></td>
+<td>Automatic Speech Recognition / Text-to-Speech</td>
+<td>Ses → metin / metin → ses</td>
+<td>Ses modelleri, genelde akış halinde</td>
+</tr>
+<tr>
+<td><strong>KV cache</strong></td>
+<td>Key-Value cache</td>
+<td>Geçmiş token'ların saklanan K ve V'leri</td>
+<td>Her adımda yeniden hesaplanmalarını önler (<a href="../05-inference/">10.5</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-1-fundamentals.png" data-desc-position="bottom"><img alt="Bir LLM'in içi" src="../../assets/diagrams/10-1-fundamentals.png"></a></p>
+<hr>
+<h2 id="0-llm-nedir-ve-nasl-calsr">0 · <abbr title="Large Language Model">LLM</abbr> nedir ve nasıl çalışır?<a class="headerlink" href="#0-llm-nedir-ve-nasl-calsr" title="Permanent link">¶</a></h2>
+<h3 id="nedir">Nedir?<a class="headerlink" href="#nedir" title="Permanent link">¶</a></h3>
+<p>Bir <strong><abbr title="Large Language Model">LLM</abbr> (Large Language Model, Büyük Dil Modeli)</strong>, devasa miktarda metinden <strong>metnin genelde nasıl devam ettiğini</strong> öğrenmiş, milyarlarca parametreli bir sinir ağıdır. Bir veritabanında arama yapmaz, tahmin eder.</p>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Eğitim (bir kez):</strong> modele trilyonlarca token gösterilir. Her konumda sıradaki token'ı tahmin eder, tahminini gerçeğiyle karşılaştırır ve parametrelerini çok az düzeltir. Bu milyarlarca kez tekrarlanır. Sonuç bir <strong>ağırlık dosyasıdır</strong>.</li>
+<li><strong>Inference (her istekte):</strong> ağırlıklar <abbr title="Graphics Processing Unit">GPU</abbr> belleğine yüklenir. Prompt'un token'lara çevrilir, ağdan geçirilir ve en olası sıradaki token elde edilir.</li>
+<li><strong>Döngü:</strong> o token girdinin sonuna eklenir ve tekrar çalıştırılır. Durdurma token'ına ya da uzunluk sınırına kadar her seferinde bir token üretilir.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-1a-llm.png" data-desc-position="bottom"><img alt="LLM nedir" src="../../assets/diagrams/10-1a-llm.png"></a></p>
+<h2 id="1-fiziksel-olarak-model-nedir">1 · Fiziksel olarak "model" nedir?<a class="headerlink" href="#1-fiziksel-olarak-model-nedir" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Şey</th>
+<th>Ne</th>
+<th>Altyapı açısından anlamı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Parametreler / ağırlıklar</strong></td>
+<td>Eğitim sırasında öğrenilen milyarlarca sayı</td>
+<td>Diskteki ve <abbr title="Graphics Processing Unit">GPU</abbr> belleğindeki boyut. 8B parametre × 2 byte = ~16 GB</td>
+</tr>
+<tr>
+<td><strong>Mimari</strong></td>
+<td>Sayıların nasıl kullanılacağını söyleyen kod (katmanlar, boyutlar)</td>
+<td><code>config.json</code>: katman sayısı, gizli boyut, head sayısı, sözlük boyutu, bağlam uzunluğu</td>
+</tr>
+<tr>
+<td><strong>Ağırlık dosyası</strong></td>
+<td><code>*.safetensors</code> (Hugging Face), <code>*.gguf</code> (llama.cpp/Ollama)</td>
+<td>Bir model hub'ından ya da nesne depolamadan indirilir, çoğu zaman onlarca ile yüzlerce GB</td>
+</tr>
+<tr>
+<td><strong>Tokenizer</strong></td>
+<td>Metni token'lara bölme kuralları</td>
+<td><code>tokenizer.json</code>, modelle birlikte gelir</td>
+</tr>
+<tr>
+<td><strong>Model kartı / lisans</strong></td>
+<td>Amaçlanan kullanım, sınırlar, lisans</td>
+<td>Ticari olarak çalıştırmaya yasal olarak iznin var mı?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-token-her-seyin-birimi">2 · Token: her şeyin birimi<a class="headerlink" href="#2-token-her-seyin-birimi" title="Permanent link">¶</a></h2>
+<ul>
+<li>Tokenizer (genelde <strong><abbr title="Byte-Pair Encoding">BPE</abbr></strong>: byte-pair encoding) metni sık görülen parçalara böler: <code>"unbelievable"</code> → <code>["un", "believ", "able"]</code>.</li>
+<li>Her parça sabit bir <strong>sözlükte (vocabulary)</strong> bir <strong>tam sayı ID</strong>'ye karşılık gelir (onbinlerce ile ~200 bin girdi).</li>
+<li>İngilizce için pratik kural: <strong>1 token ≈ 4 karakter ≈ ¾ kelime</strong>. Türkçe eklemeli bir dil olduğu için genelde <strong>kelime başına daha fazla token</strong> gerektirir.</li>
+<li><strong>Bağlam penceresi (context window)</strong> = modelin aynı anda işleyebildiği token sayısı (prompt + cevap): 8k'dan 1M+ token'a kadar.</li>
+<li><strong>Her şey token cinsinden fiyatlanır ve ölçülür</strong>: API fiyatları, verim (token/sn), token başına gecikme, KV cache boyutu.</li>
+</ul>
+<h2 id="3-embedding-koordinat-olarak-anlam">3 · Embedding: koordinat olarak anlam<a class="headerlink" href="#3-embedding-koordinat-olarak-anlam" title="Permanent link">¶</a></h2>
+<p>Her token ID'si bir <strong>embedding tablosunda</strong> aranır ve bir vektöre dönüşür (ör. 4.096 sayı). Eğitim, bu vektörleri benzer anlamdaki şeyler <strong>birbirine yakın</strong> olacak şekilde yerleştirir. Aynı fikir, ayrı bir <strong>embedding modeli</strong> ile cümlelerin tamamına uygulandığında anlamsal arama ve <abbr title="Retrieval-Augmented Generation">RAG</abbr>'ı mümkün kılar (<a href="../07-applications/">10.7</a>).</p>
+<h2 id="4-katman-katman-transformer">4 · Katman katman transformer<a class="headerlink" href="#4-katman-katman-transformer" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parça</th>
+<th>Ne yapar</th>
+<th>Sade anlatım</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Konum kodlaması</strong> (ör. <abbr title="Rotary Position Embedding">RoPE</abbr>)</td>
+<td>Kelime sırası bilgisini ekler</td>
+<td>"Bu token 5. sırada"</td>
+</tr>
+<tr>
+<td><strong>Self-attention</strong></td>
+<td>Her token bir <strong>query (Q)</strong>, bir <strong>key (K)</strong> ve bir <strong>value (V)</strong> hesaplar. Q·K skorları, diğer her token'ın V'sinden ne kadar karıştırılacağına karar verir</td>
+<td>"Bunu anlamak için önceki hangi kelimeler önemli?"</td>
+</tr>
+<tr>
+<td><strong>Multi-head attention</strong></td>
+<td>Paralel çalışan birkaç attention "head"i, her biri farklı ilişkiler öğrenir</td>
+<td>Dilbilgisi, referanslar, konu…</td>
+</tr>
+<tr>
+<td><strong><abbr title="Multi-Layer Perceptron">MLP</abbr> / feed-forward</strong></td>
+<td>Token başına büyük bir sinir ağı, <strong>tüm parametrelerin yaklaşık ⅔'ü</strong></td>
+<td>"Bilginin" çoğunun saklandığı yer</td>
+</tr>
+<tr>
+<td><strong>Residual + normalizasyon</strong></td>
+<td>Sinyallerin çok sayıda katmanda kararlı kalmasını sağlar</td>
+<td>Tesisat</td>
+</tr>
+<tr>
+<td><strong>× N katman</strong></td>
+<td>Blok 30–100+ kez tekrarlanır</td>
+<td>Daha derin = daha yetenekli, daha çok hesaplama</td>
+</tr>
+</tbody>
+</table>
+<h3 id="attention-nasl-calsr">Attention nasıl çalışır?<a class="headerlink" href="#attention-nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li>Her token üç vektör hesaplar: bir <strong>Query</strong> ("ne arıyorum?"), bir <strong>Key</strong> ("bende ne var?") ve bir <strong>Value</strong> ("ne aktarıyorum?").</li>
+<li>Şu anki token'ın Query'si, önceki her token'ın Key'iyle karşılaştırılır (iç çarpım) → token başına bir <strong>skor</strong>.</li>
+<li><strong>Softmax</strong> skorları toplamı 1 olan ağırlıklara çevirir.</li>
+<li>Token'ın yeni temsili, <strong>Value'ların ağırlıklı toplamıdır</strong>. Aşağıdaki örnekte "o", çoğunlukla "kedi"nin anlamını taşır hale gelir.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-1b-attention.png" data-desc-position="bottom"><img alt="Self-attention nasıl çalışır" src="../../assets/diagrams/10-1b-attention.png"></a></p>
+<p>Modern <abbr title="Large Language Model">LLM</abbr>'ler <strong>decoder-only</strong>'dir: her token sadece kendinden <strong>önceki</strong> token'lara bakabilir. Tek tek token üretmeyi mümkün kılan da, geçmiş token'ların key ve value'larının <strong>önbelleğe alınabilmesinin</strong> sebebi de budur (<strong>KV cache</strong>, <a href="../05-inference/">10.5</a>).</p>
+<p><strong>Mixture of Experts (<abbr title="Mixture of Experts">MoE</abbr>):</strong> <abbr title="Multi-Layer Perceptron">MLP</abbr> birçok "uzmana" bölünür ve küçük bir <strong>router</strong> her token'ı sadece birkaçına gönderir. Modelin <strong>toplam</strong> parametresi çoktur (hepsi bellekte durmalı) ama token başına sadece bir kısmı <strong>aktiftir</strong> (daha az hesaplama). Altyapı sonucu: <strong>bellek toplama göre, hesaplama aktife göre boyutlanır</strong>.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-1c-moe.png" data-desc-position="bottom"><img alt="MoE nasıl çalışır" src="../../assets/diagrams/10-1c-moe.png"></a></p>
+<h2 id="5-skordan-metne-ornekleme-sampling">5 · Skordan metne: örnekleme (sampling)<a class="headerlink" href="#5-skordan-metne-ornekleme-sampling" title="Permanent link">¶</a></h2>
+<p>Son katman sözlükteki her token için bir <strong>logit</strong> (skor) üretir. <strong>Softmax</strong> bunları olasılıklara çevirir, sonra:</p>
+<table>
+<thead>
+<tr>
+<th>Ayar</th>
+<th>Etkisi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Greedy</strong> (temperature 0)</td>
+<td>Her zaman en olası token'ı al: deterministik, tekrara düşebilir</td>
+</tr>
+<tr>
+<td><strong>Temperature</strong></td>
+<td>&lt; 1 daha keskin ve güvenli, &gt; 1 daha rastgele ve yaratıcı</td>
+</tr>
+<tr>
+<td><strong>Top-p / top-k</strong></td>
+<td>Sadece en olası birkaç token arasından örnekle</td>
+</tr>
+<tr>
+<td><strong>Max tokens / stop dizileri</strong></td>
+<td>Üretimin ne zaman duracağı</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-model-yasam-dongusu">6 · Model yaşam döngüsü<a class="headerlink" href="#6-model-yasam-dongusu" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aşama</th>
+<th>Ne olur</th>
+<th>Hesaplama profili</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ön eğitim (pre-training)</strong></td>
+<td>Trilyonlarca token metin üzerinde sıradaki token'ı tahmin etmeyi öğren</td>
+<td>Haftalar ile aylar boyunca binlerce <abbr title="Graphics Processing Unit">GPU</abbr> (<a href="../04-training/">10.4</a>)</td>
+</tr>
+<tr>
+<td><strong>Son eğitim (post-training)</strong></td>
+<td>Talimat ayarı (<strong><abbr title="Supervised Fine-Tuning">SFT</abbr></strong>), tercih ayarı (<strong><abbr title="Reinforcement Learning from Human Feedback">RLHF</abbr></strong>, <strong><abbr title="Direct Preference Optimization">DPO</abbr></strong>), akıl yürütme için pekiştirmeli öğrenme</td>
+<td>Büyük, ama ön eğitimden çok daha küçük</td>
+</tr>
+<tr>
+<td><strong>Fine-tuning</strong></td>
+<td>Kendi alanına uyarla. <strong><abbr title="Low-Rank Adaptation">LoRA</abbr> / <abbr title="Quantized LoRA">QLoRA</abbr></strong> tüm ağırlıklar yerine küçük adaptör matrislerini eğitir</td>
+<td>Bir ile birkaç <abbr title="Graphics Processing Unit">GPU</abbr></td>
+</tr>
+<tr>
+<td><strong>Distillation / quantization</strong></td>
+<td>Çalıştırması daha ucuz, daha küçük ya da daha düşük hassasiyetli bir versiyon üret</td>
+<td>Offline işler</td>
+</tr>
+<tr>
+<td><strong>Inference</strong></td>
+<td>Modeli kullanıcılara servis et</td>
+<td>7/24, gecikmeye duyarlı, zamanla paranın çoğunun harcandığı yer (<a href="../05-inference/">10.5</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-karslasacagn-model-tipleri">7 · Karşılaşacağın model tipleri<a class="headerlink" href="#7-karslasacagn-model-tipleri" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tip</th>
+<th>Girdi → çıktı</th>
+<th>Tipik altyapı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Large Language Model">LLM</abbr></strong> (decoder)</td>
+<td>metin → metin</td>
+<td>Büyük <abbr title="Graphics Processing Unit">GPU</abbr>'lar, KV cache, akış (streaming)</td>
+</tr>
+<tr>
+<td><strong>Embedding modeli</strong> (encoder)</td>
+<td>metin → vektör</td>
+<td>Küçük, yüksek verimli, batch'lenebilir</td>
+</tr>
+<tr>
+<td><strong>Reranker</strong></td>
+<td>(sorgu, doküman) → alaka skoru</td>
+<td>Küçük, <abbr title="Retrieval-Augmented Generation">RAG</abbr>'da kullanılır</td>
+</tr>
+<tr>
+<td><strong>Multimodal / <abbr title="Vision-Language Model">VLM</abbr></strong></td>
+<td>görüntü + metin → metin</td>
+<td><abbr title="Large Language Model">LLM</abbr> + görüntü encoder'ı</td>
+</tr>
+<tr>
+<td><strong>Diffusion</strong></td>
+<td>metin → görüntü/video</td>
+<td>İstek başına <abbr title="Graphics Processing Unit">GPU</abbr>'yu yoğun kullanır, KV cache yok</td>
+</tr>
+<tr>
+<td><strong>Konuşma</strong></td>
+<td>ses ↔ metin (<abbr title="Automatic Speech Recognition">ASR</abbr> / <abbr title="Text-to-Speech">TTS</abbr>)</td>
+<td>Akış halinde, gerçek zamanlı</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>tiktoken<span class="w"> </span>transformers
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># 1) Token'ları gör, İngilizce ile Türkçe'yi karşılaştır</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="s">import tiktoken</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s">enc = tiktoken.get_encoding("o200k_base")</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="s">for s in ["The weather is very nice today.", "Bugün hava çok güzel."]:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s">    ids = enc.encode(s)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s">    print(len(ids), "token:", [enc.decode([i]) for i in ids])</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s">EOF</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># 2) Ağırlıkları indirmeden bir modelin mimarisini oku</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>curl<span class="w"> </span>-sL<span class="w"> </span>https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/resolve/main/config.json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import json,sys; c=json.load(sys.stdin); print({k:c[k] for k in ['num_hidden_layers','hidden_size','num_attention_heads','num_key_value_heads','vocab_size','max_position_embeddings']})"</span>
+</code></pre></div>
+<p><strong>Görev:</strong> <code>config.json</code>'dan parametre sayısını kabaca tahmin et (embedding'ler ≈ sözlük × gizli boyut; her katman ≈ 12 × gizli²) ve model adıyla karşılaştır.</p>
+<hr>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Model = mimari (config.json) + ağırlıklar (safetensors/gguf) + tokenizer
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Metin → token'lar (BPE, İngilizce'de her biri ~4 karakter) → ID'ler → embedding'ler (vektörler)
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>→ N × [ self-attention (Q,K,V: ne önemli?) + MLP (bilgi, parametrelerin ~2/3'ü) ]
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>→ logit'ler → softmax → örnekle (temperature, top-p) → sona ekle → tekrar
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Decoder-only → geçmiş K/V önbelleğe alınabilir (KV cache)
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>MoE: toplam parametre bellekte, token başına sadece aktif parametreler hesaplanır
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Yaşam döngüsü: ön eğitim → son eğitim (SFT, RLHF/DPO) → fine-tune (LoRA) → quantize → servis et
+</code></pre></div>
+<hr>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. <abbr title="Large Language Model">LLM</abbr> altyapısında neden her şey token cinsinden ölçülür?</summary>
+<p>Model karakterleri ya da kelimeleri değil, token'ları işler. İstek başına hesaplama, adım başına gecikme, KV cache belleği ve API maliyeti, girdi ve çıktı token sayısıyla ölçeklenir.</p>
+</details>
+<details class="question">
+<summary>2. Bir <abbr title="Mixture of Experts">MoE</abbr> modelin toplam 120B parametresi var ama token başına sadece 5B'si aktif. Belleği ve hesaplamayı neye göre boyutlandırırsın?</summary>
+<p>Belleği 120B'nin tamamına göre (her uzman yüklenmeli), hesaplamayı token başına kabaca 5B'ye göre. <abbr title="Mixture of Experts">MoE</abbr> modellerinin token başına ucuz çalışmasına rağmen hâlâ çok <abbr title="Graphics Processing Unit">GPU</abbr> belleği istemesinin sebebi budur.</p>
+</details>
+<details class="question">
+<summary>3. Decoder-only bir modelde geçmiş key ve value'lar neden önbelleğe alınabilir?</summary>
+<p>Her token sadece önceki token'lara bakar ve önceki token'lar üretildikten sonra asla değişmez. Bu yüzden K ve V vektörleri geçerli kalır ve sonraki her adımda yeniden kullanılabilir.</p>
+</details>
+<details class="question">
+<summary>4. Temperature 0 ne demek?</summary>
+<p>Greedy decoding: her zaman en olası sıradaki token'ı seç. Çıktı deterministik olur (aynı girdi ve kurulum verildiğinde).</p>
+</details>
+<details class="question">
+<summary>5. Altyapı açısından <abbr title="Low-Rank Adaptation">LoRA</abbr> ile fine-tuning ve tam fine-tuning arasındaki fark ne?</summary>
+<p><abbr title="Low-Rank Adaptation">LoRA</abbr>, temel ağırlıklar dondurulmuşken küçük adaptör matrislerini eğitir. Bu yüzden çok daha az <abbr title="Graphics Processing Unit">GPU</abbr> belleği gerektirir ve küçük dosyalar üretir. Hatta birçok <abbr title="Low-Rank Adaptation">LoRA</abbr> adaptörü, ortak tek bir temel modelin üstünde servis edilebilir.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need (Vaswani vd., 2017)</a></li>
+<li><a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer (Jay Alammar)</a></li>
+<li><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Andrej Karpathy: Let's build <abbr title="Generative Pre-trained Transformer">GPT</abbr> from scratch (video)</a></li>
+<li><a href="https://huggingface.co/learn/llm-course">Hugging Face <abbr title="Large Language Model">LLM</abbr> kursu</a></li>
+<li><a href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">OpenAI: token nedir ve nasıl sayılır</a></li>
+</ul>
+<h2 id="kendi-notlarm">✍️ Kendi notlarım<a class="headerlink" href="#kendi-notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Prompt'un ile ilk çıktı token'ı arasında bir <abbr title="Large Language Model">LLM</abbr>'in içinde ne olduğunu kendi cümlelerinle 5 satırda anlat.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Önceki: Bölüm 10 — AI altyapısı">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                Bölüm 10 — AI altyapısı
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-gpu/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 10.2 · GPU hardware">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                10.2 · GPU hardware
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

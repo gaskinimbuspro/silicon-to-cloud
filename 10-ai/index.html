@@ -1,0 +1,2354 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="How an LLM is served — GPUs, HBM and tensor cores, prefill and decode, the KV cache, batching, the CUDA stack, RAG, and running it all on Kubernetes.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/">
+      
+      
+        <link rel="prev" href="../09-infra/05-observability/">
+      
+      
+        <link rel="next" href="01-fundamentals/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../tr/10-ai/" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Chapter 10 — AI infrastructure - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/site.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chapter 10 — AI infrastructure - Silicon to Cloud">
+<meta property="og:description" content="How an LLM is served — GPUs, HBM and tensor cores, prefill and decode, the KV cache, batching, the CUDA stack, RAG, and running it all on Kubernetes.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/10-ai/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Chapter 10 — AI infrastructure - Silicon to Cloud">
+<meta property="twitter:description" content="How an LLM is served — GPUs, HBM and tensor cores, prefill and decode, the KV cache, batching, the CUDA stack, RAG, and running it all on Kubernetes.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/10-ai/index.png">
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-10-ai-infrastructure" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 10 — AI infrastructure
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../tr/10-ai/" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_14" id="__nav_14_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 · AI infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-fundamentals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.1 · AI fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.2 · GPU hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.3 · Software stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.4 · Distributed training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.5 · Inference &amp; serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="06-kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.6 · AI platform on Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="07-applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.7 · Applications: RAG &amp; agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📖 AI glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incident-story-longer-context-collapsing-throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Incident story: longer context, collapsing throughput
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-deeper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧭 Go deeper
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-gpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Why GPUs?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-what-happens-to-one-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · What happens to one prompt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-memory-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · The memory math
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-inference-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · The inference server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-software-stack-chapters-34-again" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · The software stack: Chapters 3–4 again
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-rag-giving-the-model-your-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · RAG: giving the model your documents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-on-kubernetes-chapter-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · On Kubernetes (Chapter 9)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-training-vs-inference-briefly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · Training vs inference (briefly)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href=".." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    10 · AI infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-10-ai-infrastructure">Chapter 10 — <abbr title="Artificial Intelligence">AI</abbr> infrastructure<a class="headerlink" href="#chapter-10-ai-infrastructure" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">In short</p>
+<p>An <abbr title="Large Language Model">LLM</abbr> is a huge file of <strong>weights</strong> plus code that does <strong>matrix multiplications</strong>. To answer a prompt, you may add
+relevant documents (<strong><abbr title="Retrieval-Augmented Generation">RAG</abbr></strong>) and process the prompt in one parallel step (<strong>prefill</strong>). Then the answer is generated
+<strong>one token at a time</strong> (<strong>decode</strong>). Each step reads all the weights and a growing <strong>KV cache</strong> from the <abbr title="Graphics Processing Unit">GPU</abbr>'s
+<strong><abbr title="High Bandwidth Memory">HBM</abbr></strong> memory. An <strong>inference server</strong> batches many users together to keep the very expensive <abbr title="Graphics Processing Unit">GPU</abbr> busy. Everything
+from Chapters 1–9 is still underneath.</p>
+</div>
+<h2 id="key-terms-abbreviations">📖 Key terms &amp; abbreviations<a class="headerlink" href="#key-terms-abbreviations" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Stands for</th>
+<th>What it is</th>
+<th>How it works (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Large Language Model">LLM</abbr></strong></td>
+<td>Large Language Model</td>
+<td>Neural network that generates text</td>
+<td>Predicts the next token, appends it, repeats</td>
+</tr>
+<tr>
+<td><strong><abbr title="Graphics Processing Unit">GPU</abbr></strong></td>
+<td>Graphics Processing Unit</td>
+<td>Massively parallel processor</td>
+<td>Thousands of lanes + Tensor Cores doing matrix math</td>
+</tr>
+<tr>
+<td><strong><abbr title="High Bandwidth Memory">HBM</abbr></strong></td>
+<td>High Bandwidth Memory</td>
+<td>The <abbr title="Graphics Processing Unit">GPU</abbr>'s own memory</td>
+<td>Holds weights and KV cache, read at TB/s</td>
+</tr>
+<tr>
+<td><strong>Prefill / decode</strong></td>
+<td>—</td>
+<td>The two phases of generation</td>
+<td>Whole prompt at once / one token per step</td>
+</tr>
+<tr>
+<td><strong>KV cache</strong></td>
+<td>Key-Value cache</td>
+<td>Saved attention state of past tokens</td>
+<td>Avoids recomputation, grows with context × users</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time To First Token">TTFT</abbr> / <abbr title="Time Per Output Token">TPOT</abbr></strong></td>
+<td>Time To First Token / Time Per Output Token</td>
+<td>Latency metrics</td>
+<td>Queue + prefill / one decode step</td>
+</tr>
+<tr>
+<td><strong><abbr title="Retrieval-Augmented Generation">RAG</abbr></strong></td>
+<td>Retrieval-Augmented Generation</td>
+<td>Answering with your documents</td>
+<td>Embed → vector search → put chunks in the prompt</td>
+</tr>
+<tr>
+<td><strong><abbr title="Compute Unified Device Architecture">CUDA</abbr> / <abbr title="NVIDIA Collective Communications Library">NCCL</abbr></strong></td>
+<td>Compute Unified Device Architecture / NVIDIA Collective Communications Library</td>
+<td><abbr title="Graphics Processing Unit">GPU</abbr> programming platform / multi-<abbr title="Graphics Processing Unit">GPU</abbr> communication</td>
+<td>Kernels on the <abbr title="Graphics Processing Unit">GPU</abbr> / all-reduce over NVLink &amp; <abbr title="InfiniBand">IB</abbr></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The full A–Z list is in the <a href="glossary/">📖 <abbr title="Artificial Intelligence">AI</abbr> glossary</a>.</p>
+</blockquote>
+<h2 id="incident-story-longer-context-collapsing-throughput">🚨 Incident story: longer context, collapsing throughput<a class="headerlink" href="#incident-story-longer-context-collapsing-throughput" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">The alarm</p>
+<p>To support long documents, the team raises <code>--max-model-len</code> of a vLLM deployment from 8k to 128k tokens. Throughput drops by 70%, latency explodes and logs fill with <em>preempted</em> sequences, although <abbr title="Graphics Processing Unit">GPU</abbr> memory isn't fuller than before.</p>
+</div>
+<p>Try to diagnose it yourself first, then open the clues one by one.</p>
+<details class="info">
+<summary>🔍 Clue 1</summary>
+<p>vLLM's startup log: the number of KV-cache blocks is unchanged, but <em>maximum concurrency for 131072 tokens per request</em> dropped to ~1.5×.</p>
+</details>
+<details class="info">
+<summary>🔍 Clue 2</summary>
+<p>Most requests are still short, but a few long ones grab huge parts of the KV cache, and the scheduler preempts and recomputes others to make room.</p>
+</details>
+<details class="success">
+<summary>🎯 Root cause</summary>
+<p><abbr title="Graphics Processing Unit">GPU</abbr> memory after the weights is the KV cache. It's per token (~128 KB/token for an 8B model in FP16), so a few very long sequences consume what dozens of normal ones would use, and batching collapses.</p>
+</details>
+<details class="tip">
+<summary>🛠️ Fix and lesson</summary>
+<p>Route long-context requests to a separate pool, set <code>--max-num-seqs</code>/<code>--max-num-batched-tokens</code> deliberately, use FP8 KV cache and prefix caching, or use a larger/more GPUs (tensor parallel). <strong>Lesson:</strong> in <abbr title="Large Language Model">LLM</abbr> serving, capacity planning means KV-cache planning.</p>
+</details>
+<h2 id="go-deeper">🧭 Go deeper<a class="headerlink" href="#go-deeper" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>What you'll learn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="01-fundamentals/">10.1 <abbr title="Artificial Intelligence">AI</abbr> fundamentals</a></td>
+<td>What an <abbr title="Large Language Model">LLM</abbr> is, tokens, embeddings, attention, <abbr title="Mixture of Experts">MoE</abbr>, the model lifecycle</td>
+</tr>
+<tr>
+<td><a href="02-gpu/">10.2 <abbr title="Graphics Processing Unit">GPU</abbr> hardware</a></td>
+<td>Inside a <abbr title="Graphics Processing Unit">GPU</abbr>, <abbr title="High Bandwidth Memory">HBM</abbr> and the roofline, number formats, NVLink, scale-up vs scale-out</td>
+</tr>
+<tr>
+<td><a href="03-software/">10.3 Software stack</a></td>
+<td><abbr title="Compute Unified Device Architecture">CUDA</abbr>, cuBLAS/cuDNN/<abbr title="NVIDIA Collective Communications Library">NCCL</abbr>, drivers, containers, <abbr title="Multi-Instance GPU">MIG</abbr>/<abbr title="Multi-Process Service">MPS</abbr>, <abbr title="Data Center GPU Manager">DCGM</abbr></td>
+</tr>
+<tr>
+<td><a href="04-training/">10.4 Distributed training</a></td>
+<td>Parallelism, all-reduce, clusters, checkpoints, gang scheduling</td>
+</tr>
+<tr>
+<td><a href="05-inference/">10.5 Inference &amp; serving</a></td>
+<td>KV cache paging, continuous batching, quantization, speculative decoding, P/D disaggregation</td>
+</tr>
+<tr>
+<td><a href="06-kubernetes/">10.6 <abbr title="Artificial Intelligence">AI</abbr> platform on Kubernetes</a></td>
+<td><abbr title="Graphics Processing Unit">GPU</abbr> Operator, <abbr title="Dynamic Resource Allocation">DRA</abbr>, Kueue, JobSet/<abbr title="LeaderWorkerSet">LWS</abbr>, inference gateway, autoscaling, cost</td>
+</tr>
+<tr>
+<td><a href="07-applications/">10.7 Applications</a></td>
+<td><abbr title="Retrieval-Augmented Generation">RAG</abbr>, vector DBs, agents, <abbr title="Model Context Protocol">MCP</abbr>, <abbr title="Artificial Intelligence">AI</abbr> gateways, guardrails, evals</td>
+</tr>
+</tbody>
+</table>
+<h2 id="big-picture">🗺️ Big picture<a class="headerlink" href="#big-picture" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/10-ai.png" data-desc-position="bottom"><img alt="Serving an LLM" src="../assets/diagrams/10-ai.png"></a></p>
+<hr>
+<h2 id="1-why-gpus">1 · Why GPUs?<a class="headerlink" href="#1-why-gpus" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><abbr title="Central Processing Unit">CPU</abbr> (Chapter 2)</th>
+<th><abbr title="Graphics Processing Unit">GPU</abbr></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cores</td>
+<td>Tens of big, smart cores (branch prediction, out-of-order)</td>
+<td>Thousands of small, simple lanes grouped in <strong>SMs</strong> (streaming multiprocessors)</td>
+</tr>
+<tr>
+<td>Good at</td>
+<td>Complex, branchy, sequential logic</td>
+<td>The <strong>same math on huge arrays</strong> in parallel</td>
+</tr>
+<tr>
+<td>Special units</td>
+<td>Vector instructions (AVX)</td>
+<td><strong>Tensor Cores</strong>: dedicated matrix-multiply units for FP16/BF16/FP8</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>DDR RAM, ~100 GB/s range</td>
+<td><strong><abbr title="High Bandwidth Memory">HBM</abbr></strong> stacked on the package, several TB/s</td>
+</tr>
+</tbody>
+</table>
+<p>A transformer layer is mostly big matrix multiplications, which is exactly what a <abbr title="Graphics Processing Unit">GPU</abbr> is built for.</p>
+<h2 id="2-what-happens-to-one-prompt">2 · What happens to one prompt<a class="headerlink" href="#2-what-happens-to-one-prompt" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>"Why is the sky blue?" → tokenizer → [10445, 374, 279, 13180, 6437, 30] → embeddings
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ N transformer layers (attention + MLP) → probabilities for the next token → sample "The"
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>→ append, run again → "sky" → … until &lt;end&gt; or max tokens
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>What it does</th>
+<th>Bottleneck</th>
+<th>User-visible metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prefill</strong></td>
+<td>Processes <strong>all prompt tokens at once</strong>, in parallel</td>
+<td><strong>Compute</strong> (tensor cores)</td>
+<td><strong><abbr title="Time To First Token">TTFT</abbr></strong>: time to first token</td>
+</tr>
+<tr>
+<td><strong>Decode</strong></td>
+<td>Generates <strong>one token per step</strong>, each step depending on the previous one</td>
+<td><strong>Memory bandwidth</strong>: all weights are read for every step</td>
+<td><strong><abbr title="Time Per Output Token">TPOT</abbr> / <abbr title="Inter-Token Latency">ITL</abbr></strong>: time per output token</td>
+</tr>
+</tbody>
+</table>
+<p>Tokens are <strong>streamed</strong> back to the client as they're generated (Server-Sent Events over <abbr title="HyperText Transfer Protocol">HTTP</abbr>, Chapter 6).</p>
+<h2 id="3-the-memory-math">3 · The memory math<a class="headerlink" href="#3-the-memory-math" title="Permanent link">¶</a></h2>
+<p>The first question for any model: <strong>does it fit?</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>weights ≈ parameters × bytes per parameter
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  FP16/BF16 = 2 bytes · FP8/INT8 = 1 byte · INT4 = 0.5 bytes
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  7B  × 2 B =  ~14 GB   → fits one 24 GB GPU
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  70B × 2 B = ~140 GB   → does NOT fit one 80 GB GPU → quantize (FP8 ≈ 70 GB, INT4 ≈ 35 GB) or split across GPUs
+</code></pre></div>
+<p>On top of the weights comes the <strong>KV cache</strong>: for every token in every active request, each layer stores its attention <strong>keys and values</strong> so they don't have to be recomputed. It grows with <strong>context length × number of concurrent requests</strong> and is usually what limits how many users one <abbr title="Graphics Processing Unit">GPU</abbr> can serve.</p>
+<blockquote>
+<p>Chapter 3 connection: <strong>vLLM's PagedAttention</strong> manages the KV cache in fixed-size <strong>blocks</strong>, like the OS manages memory in pages. That avoids fragmentation and lets many more requests share the <abbr title="Graphics Processing Unit">GPU</abbr>.</p>
+</blockquote>
+<h2 id="4-the-inference-server">4 · The inference server<a class="headerlink" href="#4-the-inference-server" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Continuous batching</strong></td>
+<td>Instead of waiting for a whole batch to finish, new requests join and finished ones leave at every decode step. <abbr title="Graphics Processing Unit">GPU</abbr> utilization goes way up.</td>
+</tr>
+<tr>
+<td><strong>KV cache management</strong></td>
+<td>Paging, prefix caching (reuse the cache for a shared system prompt), eviction.</td>
+</tr>
+<tr>
+<td><strong>Quantization</strong></td>
+<td>FP8/INT4 weights: less memory, more bandwidth per token, small quality cost.</td>
+</tr>
+<tr>
+<td><strong>Parallelism</strong></td>
+<td><strong>Tensor parallel</strong>: split each layer across GPUs in one node (needs fast <strong>NVLink</strong>). <strong>Pipeline parallel</strong>: different layers on different GPUs/nodes. Across nodes you need <strong>InfiniBand/<abbr title="RDMA over Converged Ethernet">RoCE</abbr></strong>.</td>
+</tr>
+<tr>
+<td><strong>OpenAI-compatible API</strong></td>
+<td><code>/v1/chat/completions</code>, so clients and gateways work unchanged.</td>
+</tr>
+</tbody>
+</table>
+<p>Common engines: <strong>vLLM</strong>, <strong>SGLang</strong>, <strong>TensorRT-<abbr title="Large Language Model">LLM</abbr></strong>, plus <strong>Triton Inference Server</strong> for general models. <strong>Ollama / llama.cpp</strong> for laptops and CPUs.</p>
+<h2 id="5-the-software-stack-chapters-34-again">5 · The software stack: Chapters 3–4 again<a class="headerlink" href="#5-the-software-stack-chapters-34-again" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Your app → inference engine (Python) → PyTorch → CUDA libraries (cuBLAS, cuDNN, NCCL)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>        → CUDA runtime (user space .so) → ioctl() syscalls → nvidia.ko kernel driver (ring 0) → GPU
+</code></pre></div>
+<ul>
+<li><strong><abbr title="Compute Unified Device Architecture">CUDA</abbr> kernels</strong> are small programs that run on thousands of <abbr title="Graphics Processing Unit">GPU</abbr> lanes at once. Libraries ship heavily optimized ones (matrix multiply, attention).</li>
+<li><strong><abbr title="NVIDIA Collective Communications Library">NCCL</abbr></strong> handles <abbr title="Graphics Processing Unit">GPU</abbr>-to-<abbr title="Graphics Processing Unit">GPU</abbr> communication (all-reduce, all-gather) over NVLink or the network.</li>
+<li>The user-space <abbr title="Compute Unified Device Architecture">CUDA</abbr> libraries and the kernel driver must be <strong>version-compatible</strong>. That's a classic source of "works on one node, not the other".</li>
+</ul>
+<h2 id="6-rag-giving-the-model-your-documents">6 · <abbr title="Retrieval-Augmented Generation">RAG</abbr>: giving the model your documents<a class="headerlink" href="#6-rag-giving-the-model-your-documents" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>When</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Index</strong></td>
+<td>Offline</td>
+<td>Split documents into chunks → an <strong>embedding model</strong> turns each chunk into a vector → store in a <strong>vector DB</strong> (pgvector, Qdrant, Milvus…) with an <abbr title="Approximate Nearest Neighbour">ANN</abbr> index (e.g. <abbr title="Hierarchical Navigable Small World">HNSW</abbr>).</td>
+</tr>
+<tr>
+<td><strong>Retrieve</strong></td>
+<td>Per request</td>
+<td>Embed the question → find the <strong>top-k most similar chunks</strong> (cosine similarity).</td>
+</tr>
+<tr>
+<td><strong>Generate</strong></td>
+<td>Per request</td>
+<td>Put those chunks into the prompt as context → the <abbr title="Large Language Model">LLM</abbr> answers using them.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-on-kubernetes-chapter-9">7 · On Kubernetes (Chapter 9)<a class="headerlink" href="#7-on-kubernetes-chapter-9" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NVIDIA <abbr title="Graphics Processing Unit">GPU</abbr> Operator</strong></td>
+<td>Installs and manages the driver, container toolkit, <strong>device plugin</strong> and <strong><abbr title="Data Center GPU Manager">DCGM</abbr> exporter</strong> on <abbr title="Graphics Processing Unit">GPU</abbr> nodes.</td>
+</tr>
+<tr>
+<td><strong>Device plugin</strong></td>
+<td>Advertises <code>nvidia.com/gpu</code> as a schedulable resource. Pods request it: <code>resources.limits: nvidia.com/gpu: 1</code>.</td>
+</tr>
+<tr>
+<td><strong><abbr title="Graphics Processing Unit">GPU</abbr> node pools</strong></td>
+<td>Separate, <strong>tainted</strong> nodes so only <abbr title="Graphics Processing Unit">GPU</abbr> workloads land there.</td>
+</tr>
+<tr>
+<td><strong>Sharing</strong></td>
+<td><strong><abbr title="Multi-Instance GPU">MIG</abbr></strong> (hardware partitions on supported GPUs) or time-slicing for small models.</td>
+</tr>
+<tr>
+<td><strong>Autoscaling</strong></td>
+<td>Scale on <strong>queue length, KV cache usage or tokens/s</strong>, not <abbr title="Central Processing Unit">CPU</abbr>. Model loading (tens of GB) makes cold starts slow, so cache weights on the node.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Metrics that matter:</strong> <abbr title="Time To First Token">TTFT</abbr>, <abbr title="Time Per Output Token">TPOT</abbr>, tokens/s, request queue length, KV cache utilization, <abbr title="Graphics Processing Unit">GPU</abbr> utilization and memory (<abbr title="Data Center GPU Manager">DCGM</abbr>), and <strong>cost per million tokens</strong>.</p>
+<h2 id="8-training-vs-inference-briefly">8 · Training vs inference (briefly)<a class="headerlink" href="#8-training-vs-inference-briefly" title="Permanent link">¶</a></h2>
+<p>Training also stores <strong>gradients and optimizer states</strong> (several times the weight memory), runs on many GPUs at once (data/tensor/pipeline parallel), synchronizes with <strong><abbr title="NVIDIA Collective Communications Library">NCCL</abbr> all-reduce</strong> over very fast networks, and writes large <strong>checkpoints</strong> to storage. Inference is the part most platform teams operate day to day.</p>
+<hr>
+<h2 id="try-it-yourself">🧪 Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">¶</a></h2>
+<div class="admonition example">
+<p class="admonition-title">🧪 Ready-made lab</p>
+<p>Run this chapter's experiments with one command: <code>./labs/run.sh 10-ai</code> (<a href="https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/10-ai/">scripts</a>). No setup? <a href="https://codespaces.new/gaskinimbuspro/silicon-to-cloud">Open in Codespaces</a>. <!-- s2c-lab --></p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1) No GPU needed: run a small model locally (Ollama)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ollama<span class="w"> </span>run<span class="w"> </span>llama3.2:1b<span class="w"> </span><span class="s2">"Explain the KV cache in one sentence"</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:11434/v1/chat/completions<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Content-Type: application/json'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"model":"llama3.2:1b","messages":[{"role":"user","content":"Hello"}],"stream":false}'</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># 2) With an NVIDIA GPU: look at it, then serve a model with vLLM</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>nvidia-smi<span class="w">                                   </span><span class="c1"># GPUs, memory, utilization, driver/CUDA version</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>pip<span class="w"> </span>install<span class="w"> </span>vllm
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>vllm<span class="w"> </span>serve<span class="w"> </span>Qwen/Qwen2.5-0.5B-Instruct<span class="w">        </span><span class="c1"># OpenAI-compatible server on :8000</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>curl<span class="w"> </span>-s<span class="w"> </span>localhost:8000/v1/chat/completions<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Content-Type: application/json'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"model":"Qwen/Qwen2.5-0.5B-Instruct","messages":[{"role":"user","content":"Hi"}]}'</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># 3) The memory math in Python</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="s2">for p in (7, 13, 70):</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="s2">    print(f'{p}B: FP16 {p*2} GB · FP8 {p} GB · INT4 {p/2:.0f} GB')"</span>
+</code></pre></div>
+<p><strong>Exercise:</strong> in the vLLM logs, find how much <abbr title="Graphics Processing Unit">GPU</abbr> memory went to the <strong>weights</strong> and how many <strong>KV cache blocks</strong> it could allocate with the rest. Send 20 requests in parallel and watch throughput (tokens/s) vs. latency per request.</p>
+<hr>
+<h2 id="cheat-sheet">🃏 Cheat sheet<a class="headerlink" href="#cheat-sheet" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Prompt → tokens → PREFILL (all at once, compute-bound → TTFT)
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>       → DECODE (1 token/step, reads all weights, bandwidth-bound → TPOT) → stream tokens (SSE)
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Memory: weights (params × bytes) + KV cache (context × concurrency) must fit in HBM
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Too big? quantize (FP8/INT4) or shard (tensor parallel over NVLink, nodes over InfiniBand)
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Server: continuous batching · PagedAttention (KV in pages) · prefix caching · OpenAI API
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Stack: app → engine → PyTorch → cuBLAS/cuDNN/NCCL → CUDA runtime → nvidia.ko → GPU
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>RAG: chunk → embed → vector DB → top-k → into the prompt
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>K8s: GPU Operator · nvidia.com/gpu · tainted GPU pools · scale on queue/KV, not CPU
+</code></pre></div>
+<hr>
+<h2 id="test-yourself">❓ Test yourself<a class="headerlink" href="#test-yourself" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Why is decoding usually limited by memory bandwidth rather than compute?</summary>
+<p>Each decode step produces one token per request, but it still has to read all model weights (and the KV cache) from <abbr title="High Bandwidth Memory">HBM</abbr>. There's little math per byte read, so the <abbr title="Graphics Processing Unit">GPU</abbr> waits for memory. Batching many requests together reuses each weight read for more tokens.</p>
+</details>
+<details class="question">
+<summary>2. Can a 70B model in FP16 run on a single 80 GB <abbr title="Graphics Processing Unit">GPU</abbr>?</summary>
+<p>No. The weights alone are ~140 GB. Options: quantize (FP8 ≈ 70 GB, still tight with KV cache; INT4 ≈ 35 GB) or split the model across several GPUs with tensor parallelism.</p>
+</details>
+<details class="question">
+<summary>3. What is the KV cache, and why does it limit concurrency?</summary>
+<p>It stores the attention keys and values of all previous tokens of each active request so they aren't recomputed every step. It grows with context length and the number of concurrent requests, and it has to fit in <abbr title="Graphics Processing Unit">GPU</abbr> memory next to the weights.</p>
+</details>
+<details class="question">
+<summary>4. Why scale an <abbr title="Large Language Model">LLM</abbr> service on queue length or KV cache usage instead of <abbr title="Central Processing Unit">CPU</abbr>?</summary>
+<p>The work happens on the <abbr title="Graphics Processing Unit">GPU</abbr>. <abbr title="Central Processing Unit">CPU</abbr> usage stays low even when the <abbr title="Graphics Processing Unit">GPU</abbr> is saturated and requests are queuing, so <abbr title="Central Processing Unit">CPU</abbr>-based autoscaling would never react.</p>
+</details>
+<details class="question">
+<summary>5. In <abbr title="Retrieval-Augmented Generation">RAG</abbr>, what does the embedding model do, and what does the vector DB do?</summary>
+<p>The embedding model turns text (chunks and questions) into vectors that capture meaning. The vector DB stores the chunk vectors and quickly finds the ones closest to the question's vector, which are then added to the prompt.</p>
+</details>
+<hr>
+<h2 id="sources">📚 Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://docs.vllm.ai/">vLLM docs</a> · <a href="https://arxiv.org/abs/2309.06180">PagedAttention paper (Kwon et al., 2023)</a></li>
+<li><a href="https://docs.nvidia.com/cuda/cuda-programming-guide/">NVIDIA <abbr title="Compute Unified Device Architecture">CUDA</abbr> C++ Programming Guide</a></li>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html">NVIDIA <abbr title="Graphics Processing Unit">GPU</abbr> Operator docs</a></li>
+<li><a href="https://huggingface.co/docs/transformers/main/en/llm_optims">Hugging Face: <abbr title="Large Language Model">LLM</abbr> inference optimization</a></li>
+<li><a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer (Jay Alammar)</a></li>
+</ul>
+<h2 id="my-notes">✍️ My notes<a class="headerlink" href="#my-notes" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Explain prefill vs decode, and why the KV cache matters, in your own words in 5 lines.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../09-infra/05-observability/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 9.5 · Observability &amp; SLOs">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                9.5 · Observability &amp; SLOs
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-fundamentals/" class="md-footer__link md-footer__link--next" aria-label="Next: 10.1 · AI fundamentals">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                10.1 · AI fundamentals
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

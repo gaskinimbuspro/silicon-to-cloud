@@ -1,0 +1,2391 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="What happens after you press Enter on a URL — DNS resolution, the TCP handshake, the TLS 1.3 handshake and HTTP/1.1, HTTP/2 and HTTP/3.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/">
+      
+      
+        <link rel="prev" href="../05-network/04-cloud-networking/">
+      
+      
+        <link rel="next" href="01-headers/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../tr/06-internet/" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/site.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP - Silicon to Cloud">
+<meta property="og:description" content="What happens after you press Enter on a URL — DNS resolution, the TCP handshake, the TLS 1.3 handshake and HTTP/1.1, HTTP/2 and HTTP/3.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/06-internet/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP - Silicon to Cloud">
+<meta property="twitter:description" content="What happens after you press Enter on a URL — DNS resolution, the TCP handshake, the TLS 1.3 handshake and HTTP/1.1, HTTP/2 and HTTP/3.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/06-internet/index.png">
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-6-reaching-the-internet-dns-tcp-tls-http" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../tr/06-internet/" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-headers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.1 · HTTP headers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-dns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.2 · DNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-tcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.3 · TCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.4 · TLS &amp; certificates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-http2-http3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.5 · HTTP/2 &amp; HTTP/3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="06-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.6 · Methods, status codes &amp; APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0-before-anything-parse-the-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0 · Before anything: parse the URL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-dns-from-name-to-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · DNS: from name to IP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tcp-a-reliable-pipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · TCP: a reliable pipe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tls-13-make-the-pipe-private-and-authentic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · TLS 1.3: make the pipe private and authentic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-http-the-conversation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · HTTP: the conversation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-the-time-goes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where the time goes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Where the time goes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-the-handshakes-add-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do the handshakes add up?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incident-story-the-mysterious-5-seconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Incident story: the mysterious +5 seconds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-deeper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧭 Go deeper
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href=".." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    6 · DNS, TCP, TLS, HTTP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-6-reaching-the-internet-dns-tcp-tls-http">Chapter 6 — Reaching the internet: <abbr title="Domain Name System">DNS</abbr>, <abbr title="Transmission Control Protocol">TCP</abbr>, <abbr title="Transport Layer Security">TLS</abbr>, <abbr title="HyperText Transfer Protocol">HTTP</abbr><a class="headerlink" href="#chapter-6-reaching-the-internet-dns-tcp-tls-http" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">In short</p>
+<p>The browser turns a <strong>name</strong> into an <strong><abbr title="Internet Protocol">IP</abbr></strong> with <abbr title="Domain Name System">DNS</abbr> and opens a reliable <strong><abbr title="Transmission Control Protocol">TCP</abbr></strong> connection to it. It wraps the
+connection in <strong><abbr title="Transport Layer Security">TLS</abbr></strong> so nobody can read or change it. Then it speaks <strong><abbr title="HyperText Transfer Protocol">HTTP</abbr></strong> over it: "GET / please" → "200 OK,
+here's the HTML". Each step costs round trips, and round trips are what you feel as latency.</p>
+</div>
+<h2 id="key-terms-abbreviations">📖 Key terms &amp; abbreviations<a class="headerlink" href="#key-terms-abbreviations" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Stands for</th>
+<th>What it is</th>
+<th>How it works (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Uniform Resource Locator">URL</abbr></strong></td>
+<td>Uniform Resource Locator</td>
+<td>Address of a resource</td>
+<td><code>scheme://host:port/path?query</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="Domain Name System">DNS</abbr></strong></td>
+<td>Domain Name System</td>
+<td>Turns names into <abbr title="Internet Protocol">IP</abbr> addresses</td>
+<td>Recursive resolver walks root → <abbr title="Top-Level Domain">TLD</abbr> → authoritative</td>
+</tr>
+<tr>
+<td><strong><abbr title="Top-Level Domain">TLD</abbr></strong></td>
+<td>Top-Level Domain</td>
+<td>The last label of a name (.com, .org, .tr)</td>
+<td><abbr title="Top-Level Domain">TLD</abbr> servers point to each domain's authoritative servers</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time To Live">TTL</abbr> (<abbr title="Domain Name System">DNS</abbr>)</strong></td>
+<td>Time To Live</td>
+<td>How long a <abbr title="Domain Name System">DNS</abbr> answer may be cached</td>
+<td>Lower it before migrations</td>
+</tr>
+<tr>
+<td><strong><abbr title="Transmission Control Protocol">TCP</abbr></strong></td>
+<td>Transmission Control Protocol</td>
+<td>Reliable, ordered byte stream</td>
+<td>3-way handshake, ACKs, retransmits, flow + congestion control</td>
+</tr>
+<tr>
+<td><strong><abbr title="User Datagram Protocol">UDP</abbr></strong></td>
+<td>User Datagram Protocol</td>
+<td>Fire-and-forget datagrams</td>
+<td>No handshake, no retransmits; base of <abbr title="Domain Name System">DNS</abbr> and <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="Round-Trip Time">RTT</abbr></strong></td>
+<td>Round-Trip Time</td>
+<td>Time for a message to go and come back</td>
+<td>Every handshake step costs about one <abbr title="Round-Trip Time">RTT</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="Transport Layer Security">TLS</abbr></strong></td>
+<td>Transport Layer Security</td>
+<td>Encryption + server authentication</td>
+<td>Key exchange (<abbr title="Elliptic Curve Diffie-Hellman Ephemeral">ECDHE</abbr>) + certificate check, then symmetric encryption</td>
+</tr>
+<tr>
+<td><strong><abbr title="Certificate Authority">CA</abbr> / certificate</strong></td>
+<td>Certificate Authority</td>
+<td>Trusted issuer / signed proof of a domain's key</td>
+<td>Browser checks the chain up to a trusted root <abbr title="Certificate Authority">CA</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="Server Name Indication">SNI</abbr> / <abbr title="Application-Layer Protocol Negotiation">ALPN</abbr></strong></td>
+<td>Server Name Indication / Application-Layer Protocol Negotiation</td>
+<td><abbr title="Transport Layer Security">TLS</abbr> extensions</td>
+<td>Which hostname / which protocol (h2, h3) inside ClientHello</td>
+</tr>
+<tr>
+<td><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr></strong></td>
+<td>HyperText Transfer Protocol</td>
+<td>Request/response protocol of the web</td>
+<td>Method + path + headers → status + headers + body</td>
+</tr>
+<tr>
+<td><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 / <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3 / <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr></strong></td>
+<td>— / — / Quick <abbr title="User Datagram Protocol">UDP</abbr> Internet Connections</td>
+<td>Multiplexed <abbr title="HyperText Transfer Protocol">HTTP</abbr> over <abbr title="Transmission Control Protocol">TCP</abbr> / over <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr> (<abbr title="User Datagram Protocol">UDP</abbr>)</td>
+<td>Many streams on one connection; <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr> removes <abbr title="Transmission Control Protocol">TCP</abbr> head-of-line blocking</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time To First Byte">TTFB</abbr></strong></td>
+<td>Time To First Byte</td>
+<td>Time until the first response byte arrives</td>
+<td><abbr title="Domain Name System">DNS</abbr> + <abbr title="Transmission Control Protocol">TCP</abbr> + <abbr title="Transport Layer Security">TLS</abbr> + server processing</td>
+</tr>
+</tbody>
+</table>
+<h2 id="big-picture">🗺️ Big picture<a class="headerlink" href="#big-picture" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/06-internet.png" data-desc-position="bottom"><img alt="DNS → TCP → TLS → HTTP" src="../assets/diagrams/06-internet.png"></a></p>
+<hr>
+<h2 id="0-before-anything-parse-the-url">0 · Before anything: parse the <abbr title="Uniform Resource Locator">URL</abbr><a class="headerlink" href="#0-before-anything-parse-the-url" title="Permanent link">¶</a></h2>
+<p><code>https://example.com/</code> → <strong>scheme</strong> <code>https</code> (so port <strong>443</strong> and <abbr title="Transport Layer Security">TLS</abbr>), <strong>host</strong> <code>example.com</code>, <strong>path</strong> <code>/</code>.
+The browser first checks its own caches: a cached <abbr title="Domain Name System">DNS</abbr> answer, an open connection it can reuse, or an <abbr title="HTTP Strict Transport Security">HSTS</abbr> rule that forces HTTPS.</p>
+<h2 id="1-dns-from-name-to-ip">1 · <abbr title="Domain Name System">DNS</abbr>: from name to <abbr title="Internet Protocol">IP</abbr><a class="headerlink" href="#1-dns-from-name-to-ip" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Who</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Browser → OS</td>
+<td>"What's the <abbr title="Internet Protocol">IP</abbr> of <code>example.com</code>?" The OS checks <code>/etc/hosts</code> and its own cache.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OS → <strong>recursive resolver</strong></td>
+<td>Asks your configured resolver (your ISP's, or <code>1.1.1.1</code> / <code>8.8.8.8</code>) over <strong><abbr title="User Datagram Protocol">UDP</abbr> port 53</strong>.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Resolver → <strong>root servers</strong></td>
+<td>"Who handles <code>.com</code>?" The root replies with a <strong>referral</strong> to the <code>.com</code> servers.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Resolver → <strong><abbr title="Top-Level Domain">TLD</abbr></strong> (<code>.com</code>)</td>
+<td>"Who handles <code>example.com</code>?" Another referral: <code>ns1.example.com</code>.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Resolver → <strong>authoritative</strong> server</td>
+<td>"What is <code>example.com</code>?" Final answer: <code>A 93.184.215.14</code>, valid for its <strong><abbr title="Time To Live">TTL</abbr></strong> (e.g. 300 s).</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Back down the chain</td>
+<td>Every layer <strong>caches</strong> the answer for the <abbr title="Time To Live">TTL</abbr>, so the next lookup is usually instant.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Record</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A</code> / <code>AAAA</code></td>
+<td>Name → IPv4 / IPv6 address</td>
+</tr>
+<tr>
+<td><code>CNAME</code></td>
+<td>Name → another name (an alias)</td>
+</tr>
+<tr>
+<td><code>NS</code></td>
+<td>Which servers are authoritative for this zone</td>
+</tr>
+<tr>
+<td><code>MX</code></td>
+<td>Mail servers for the domain</td>
+</tr>
+<tr>
+<td><code>TXT</code></td>
+<td>Free text: domain verification, SPF, DKIM</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> connection: lower the <abbr title="Time To Live">TTL</abbr> <strong>before</strong> a migration, so clients pick up the new <abbr title="Internet Protocol">IP</abbr> quickly. "It's always <abbr title="Domain Name System">DNS</abbr>" is a joke because it's so often true.</p>
+</blockquote>
+<h2 id="2-tcp-a-reliable-pipe">2 · <abbr title="Transmission Control Protocol">TCP</abbr>: a reliable pipe<a class="headerlink" href="#2-tcp-a-reliable-pipe" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Packet</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Client → <code>SYN</code></td>
+<td>"I want to talk. My sequence numbers start at <em>x</em>."</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Server → <code>SYN-ACK</code></td>
+<td>"OK. Mine start at <em>y</em>, and I got your <em>x</em>."</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Client → <code>ACK</code></td>
+<td>"Got your <em>y</em>." The connection is open.</td>
+</tr>
+</tbody>
+</table>
+<p>That costs <strong>1 round trip (<abbr title="Round-Trip Time">RTT</abbr>)</strong> before any data is sent. After that, <abbr title="Transmission Control Protocol">TCP</abbr> gives you:</p>
+<ul>
+<li><strong>Reliability:</strong> every byte is acknowledged. Lost packets are retransmitted.</li>
+<li><strong>Ordering:</strong> sequence numbers put bytes back in the right order.</li>
+<li><strong>Flow control:</strong> the receiver advertises how much it can accept (the <em>window</em>).</li>
+<li><strong>Congestion control:</strong> the sender speeds up slowly and backs off when packets are lost, so the network isn't flooded.</li>
+</ul>
+<p>A connection is identified by its <strong>4-tuple</strong>: <code>client IP : client port ↔ server IP : server port</code>. The client port is a random <strong>ephemeral</strong> port.</p>
+<p><strong><abbr title="User Datagram Protocol">UDP</abbr></strong> has none of this: no handshake, no retransmission, no ordering. It's just "send this datagram". That makes it good for <abbr title="Domain Name System">DNS</abbr>, video and games, and it's the base for <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr>.</p>
+<h2 id="3-tls-13-make-the-pipe-private-and-authentic">3 · <abbr title="Transport Layer Security">TLS</abbr> 1.3: make the pipe private and authentic<a class="headerlink" href="#3-tls-13-make-the-pipe-private-and-authentic" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ClientHello</strong></td>
+<td>Supported cipher suites, a <strong>key share</strong> (an ephemeral public key, <abbr title="Elliptic Curve Diffie-Hellman Ephemeral">ECDHE</abbr>), and <strong><abbr title="Server Name Indication">SNI</abbr></strong> (which hostname you want, so one <abbr title="Internet Protocol">IP</abbr> can host many sites).</td>
+</tr>
+<tr>
+<td><strong>ServerHello</strong></td>
+<td>The server picks a cipher, sends its key share. Both sides can now compute the same <strong>session key</strong>. Everything after this is encrypted.</td>
+</tr>
+<tr>
+<td><strong>Certificate + CertificateVerify</strong></td>
+<td>The server proves it is <code>example.com</code>: a certificate signed by a <abbr title="Certificate Authority">CA</abbr>, and a signature made with the matching private key.</td>
+</tr>
+<tr>
+<td><strong>Client verifies</strong></td>
+<td>Is the chain signed by a <strong>trusted root <abbr title="Certificate Authority">CA</abbr></strong> in my trust store? Is the hostname in the certificate? Is it still valid?</td>
+</tr>
+<tr>
+<td><strong>Finished</strong></td>
+<td>Both sides confirm the handshake wasn't tampered with.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Asymmetric</strong> crypto (<abbr title="Elliptic Curve Diffie-Hellman Ephemeral">ECDHE</abbr>, RSA/ECDSA signatures) is used only to <strong>agree on keys</strong> and <strong>prove identity</strong>. It's slow, so it's used once.</li>
+<li><strong>Symmetric</strong> crypto (AES-GCM or ChaCha20-Poly1305) encrypts the actual data. It's fast.</li>
+<li><abbr title="Transport Layer Security">TLS</abbr> 1.3 needs <strong>1 <abbr title="Round-Trip Time">RTT</abbr></strong> (<abbr title="Transport Layer Security">TLS</abbr> 1.2 needed 2). Resumed connections can even send data in 0-<abbr title="Round-Trip Time">RTT</abbr>.</li>
+</ul>
+<h2 id="4-http-the-conversation">4 · <abbr title="HyperText Transfer Protocol">HTTP</abbr>: the conversation<a class="headerlink" href="#4-http-the-conversation" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">GET</span> <span class="nn">/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">User-Agent</span><span class="o">:</span> <span class="l">curl/8.5.0</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">Accept</span><span class="o">:</span> <span class="l">*/*</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/html; charset=UTF-8</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="na">Cache-Control</span><span class="o">:</span> <span class="l">max-age=604800</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="na">Content-Length</span><span class="o">:</span> <span class="l">1256</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="cp">&lt;!doctype html&gt;</span> …
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2xx</td>
+<td>Success</td>
+<td><code>200 OK</code>, <code>201 Created</code>, <code>204 No Content</code></td>
+</tr>
+<tr>
+<td>3xx</td>
+<td>Go elsewhere</td>
+<td><code>301</code> permanent redirect, <code>304 Not Modified</code> (use your cache)</td>
+</tr>
+<tr>
+<td>4xx</td>
+<td><strong>You</strong> made a mistake</td>
+<td><code>400</code>, <code>401</code> unauthenticated, <code>403</code> forbidden, <code>404</code>, <code>429</code> rate-limited</td>
+</tr>
+<tr>
+<td>5xx</td>
+<td><strong>The server</strong> failed</td>
+<td><code>500</code>, <code>502</code> bad gateway, <code>503</code> unavailable, <code>504</code> gateway timeout</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Transport</th>
+<th>Key idea</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/1.1</strong></td>
+<td><abbr title="Transmission Control Protocol">TCP</abbr></td>
+<td>Text. One request at a time per connection, so browsers open ~6 connections per site.</td>
+</tr>
+<tr>
+<td><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2</strong></td>
+<td><abbr title="Transmission Control Protocol">TCP</abbr></td>
+<td>Binary, <strong>many parallel streams on one connection</strong>, header compression. Negotiated during <abbr title="Transport Layer Security">TLS</abbr> via <strong><abbr title="Application-Layer Protocol Negotiation">ALPN</abbr></strong> (<code>h2</code>). One lost <abbr title="Transmission Control Protocol">TCP</abbr> packet still stalls <em>all</em> streams (<abbr title="Transmission Control Protocol">TCP</abbr> head-of-line blocking).</td>
+</tr>
+<tr>
+<td><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/3</strong></td>
+<td><strong><abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr> over <abbr title="User Datagram Protocol">UDP</abbr></strong></td>
+<td><abbr title="Transport Layer Security">TLS</abbr> 1.3 built into the transport, streams are independent (no head-of-line blocking), faster set-up, connections survive network changes (Wi-Fi → 4G).</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="where-the-time-goes">Where the time goes<a class="headerlink" href="#where-the-time-goes" title="Permanent link">¶</a></h2>
+<p>With a 50 ms round trip to the server and nothing cached:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><abbr title="Domain Name System">DNS</abbr> (resolver walks root → <abbr title="Top-Level Domain">TLD</abbr> → authoritative)</td>
+<td>0 to several RTTs, cached afterwards</td>
+</tr>
+<tr>
+<td><abbr title="Transmission Control Protocol">TCP</abbr> handshake</td>
+<td>1 <abbr title="Round-Trip Time">RTT</abbr> = 50 ms</td>
+</tr>
+<tr>
+<td><abbr title="Transport Layer Security">TLS</abbr> 1.3 handshake</td>
+<td>1 <abbr title="Round-Trip Time">RTT</abbr> = 50 ms</td>
+</tr>
+<tr>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr> request → first byte</td>
+<td>1 <abbr title="Round-Trip Time">RTT</abbr> + server time = 50 ms +</td>
+</tr>
+</tbody>
+</table>
+<p>That's ~150–200 ms <strong>before the first byte of HTML</strong>, which is why <strong>connection reuse</strong>, <strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 / <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3</strong> and <strong>CDNs</strong> (putting servers close to users, Chapter 7) matter so much.</p>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> connection: <abbr title="Transport Layer Security">TLS</abbr> is often <strong>terminated</strong> at the load balancer or ingress, using certificates from <strong>Let's Encrypt</strong> via <strong>cert-manager</strong>. Behind it, traffic may be plain <abbr title="HyperText Transfer Protocol">HTTP</abbr> or re-encrypted (mTLS in a service mesh).</p>
+</blockquote>
+<h3 id="how-do-the-handshakes-add-up">How do the handshakes add up?<a class="headerlink" href="#how-do-the-handshakes-add-up" title="Permanent link">¶</a></h3>
+<p>Before the first byte of HTML: one <abbr title="Round-Trip Time">RTT</abbr> for the <strong><abbr title="Transmission Control Protocol">TCP</abbr></strong> handshake, one for the <strong><abbr title="Transport Layer Security">TLS</abbr> 1.3</strong> handshake, one for the <strong><abbr title="HyperText Transfer Protocol">HTTP</abbr></strong> request/response (plus <abbr title="Domain Name System">DNS</abbr> if not cached). On a 50 ms <abbr title="Round-Trip Time">RTT</abbr> link that is already ~150 ms. <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3 over <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr> merges the transport and <abbr title="Transport Layer Security">TLS</abbr> handshakes.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/06a-handshakes.png" data-desc-position="bottom"><img alt="How do the handshakes add up?" src="../assets/diagrams/06a-handshakes.png"></a></p>
+<hr>
+<h2 id="incident-story-the-mysterious-5-seconds">🚨 Incident story: the mysterious +5 seconds<a class="headerlink" href="#incident-story-the-mysterious-5-seconds" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">The alarm</p>
+<p>Calls from pods to an external payment API sometimes take <strong>exactly 5 seconds longer</strong> than usual. It's random, about 1 in 50 requests, and never happens from developers' laptops.</p>
+</div>
+<p>Try to diagnose it yourself first, then open the clues one by one.</p>
+<details class="info">
+<summary>🔍 Clue 1</summary>
+<p>The extra time is spent before the <abbr title="Transmission Control Protocol">TCP</abbr> connect: it's <abbr title="Domain Name System">DNS</abbr>. <code>/etc/resolv.conf</code> in the pod: <code>options ndots:5</code>, <code>timeout:5</code> is the resolver default.</p>
+</details>
+<details class="info">
+<summary>🔍 Clue 2</summary>
+<p><code>conntrack -S</code> on the nodes shows <code>insert_failed</code> increasing. The resolver sends the A and AAAA queries in parallel over the same <abbr title="User Datagram Protocol">UDP</abbr> socket.</p>
+</details>
+<details class="success">
+<summary>🎯 Root cause</summary>
+<p>Two parallel <abbr title="User Datagram Protocol">UDP</abbr> <abbr title="Domain Name System">DNS</abbr> packets with the same 5-tuple race in conntrack; one gets dropped, and the client waits the full 5 s timeout before retrying. <code>ndots:5</code> multiplies the number of lookups, so the race happens often.</p>
+</details>
+<details class="tip">
+<summary>🛠️ Fix and lesson</summary>
+<p>Run <strong>NodeLocal DNSCache</strong>, use FQDNs with a trailing dot or lower <code>ndots</code>, and/or <code>single-request-reopen</code>. <strong>Lesson:</strong> exact multiples of a timeout (5 s, 1 s, 3 s) are a fingerprint: find the timeout, then find what's being dropped.</p>
+</details>
+<h2 id="go-deeper">🧭 Go deeper<a class="headerlink" href="#go-deeper" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>What's inside</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="01-headers/">6.1 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> headers deep dive</a></strong></td>
+<td>What an <abbr title="HyperText Transfer Protocol">HTTP</abbr> header is, how a message is built, and what headers do for routing, content negotiation, caching, authentication, cookies, security, <abbr title="Cross-Origin Resource Sharing">CORS</abbr>, proxies and tracing.</td>
+</tr>
+<tr>
+<td><strong><a href="02-dns/">6.2 — <abbr title="Domain Name System">DNS</abbr> deep dive</a></strong></td>
+<td>How <abbr title="Domain Name System">DNS</abbr> resolution works, record types, <abbr title="Time To Live">TTL</abbr> and caching, <abbr title="Domain Name System">DNS</abbr> in Kubernetes, <abbr title="DNS Security Extensions">DNSSEC</abbr>, encrypted <abbr title="Domain Name System">DNS</abbr> and the <abbr title="Domain Name System">DNS</abbr> problems <abbr title="Development + Operations">DevOps</abbr> engineers meet most.</td>
+</tr>
+<tr>
+<td><strong><a href="03-tcp/">6.3 — <abbr title="Transmission Control Protocol">TCP</abbr> deep dive</a></strong></td>
+<td><abbr title="Transmission Control Protocol">TCP</abbr> connection lifecycle and states, sequence numbers and ACKs, flow control and congestion control (<abbr title="—">CUBIC</abbr>, <abbr title="Bottleneck Bandwidth and RTT">BBR</abbr>), keep-alive and connection reuse, and the <abbr title="Transmission Control Protocol">TCP</abbr> problems seen in production.</td>
+</tr>
+<tr>
+<td><strong><a href="04-tls/">6.4 — <abbr title="Transport Layer Security">TLS</abbr> &amp; certificates deep dive</a></strong></td>
+<td>What <abbr title="Transport Layer Security">TLS</abbr> protects, how the <abbr title="Transport Layer Security">TLS</abbr> 1.3 handshake and key exchange work, certificates and chains of trust, revocation, short-lived certificates and automation with <abbr title="Automatic Certificate Management Environment">ACME</abbr> and cert-manager, mTLS, and post-quantum <abbr title="Transport Layer Security">TLS</abbr>.</td>
+</tr>
+<tr>
+<td><strong><a href="05-http2-http3/">6.5 — <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 &amp; <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3 deep dive</a></strong></td>
+<td>Why <abbr title="HyperText Transfer Protocol">HTTP</abbr>/1.1 needed replacing, how <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 multiplexes streams over one <abbr title="Transmission Control Protocol">TCP</abbr> connection, how <abbr title="— (originally &quot;Quick UDP Internet Connections&quot;)">QUIC</abbr> and <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3 remove <abbr title="Transmission Control Protocol">TCP</abbr> head-of-line blocking, and what this means for load balancers, gRPC and Kubernetes.</td>
+</tr>
+<tr>
+<td><strong><a href="06-apis/">6.6 — Methods, status codes &amp; API styles</a></strong></td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr> methods and their safety and idempotency, every status code family that matters in operations, and how <abbr title="REpresentational State Transfer">REST</abbr>, gRPC, GraphQL, WebSockets and <abbr title="Server-Sent Events">SSE</abbr> use <abbr title="HyperText Transfer Protocol">HTTP</abbr>, plus versioning, pagination, retries and rate limits.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="try-it-yourself">🧪 Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">¶</a></h2>
+<div class="admonition example">
+<p class="admonition-title">🧪 Ready-made lab</p>
+<p>Run this chapter's experiments with one command: <code>./labs/run.sh 06-internet</code> (<a href="https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/06-internet/">scripts</a>). No setup? <a href="https://codespaces.new/gaskinimbuspro/silicon-to-cloud">Open in Codespaces</a>. <!-- s2c-lab --></p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1) DNS</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dig<span class="w"> </span>example.com<span class="w">                 </span><span class="c1"># answer + TTL</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>dig<span class="w"> </span>+short<span class="w"> </span>AAAA<span class="w"> </span>example.com<span class="w">     </span><span class="c1"># IPv6</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>dig<span class="w"> </span>+trace<span class="w"> </span>example.com<span class="w">          </span><span class="c1"># walk root → .com → authoritative yourself</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>resolvectl<span class="w"> </span>status<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w">   </span><span class="c1"># which resolver your Linux uses</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 2) The whole conversation, verbose</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>curl<span class="w"> </span>-v<span class="w"> </span>https://example.com<span class="w"> </span>-o<span class="w"> </span>/dev/null
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># 3) Timing of each phase</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>curl<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-s<span class="w"> </span>-w<span class="w"> </span><span class="s1">'dns:%{time_namelookup} tcp:%{time_connect} tls:%{time_appconnect} ttfb:%{time_starttransfer} total:%{time_total}\n'</span><span class="w"> </span>https://example.com
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># 4) TLS details: certificate chain, protocol, cipher</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>example.com:443<span class="w"> </span>-servername<span class="w"> </span>example.com<span class="w"> </span>&lt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-25
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># 5) Watch the TCP handshake on the wire</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-n<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span><span class="s1">'tcp port 443 and (tcp[tcpflags] &amp; (tcp-syn) != 0)'</span><span class="w">   </span><span class="c1"># then run curl in another terminal</span>
+</code></pre></div>
+<p><strong>Exercise:</strong> run the timing command twice in a row against the same site. Which phases get faster the second time, and why?</p>
+<hr>
+<h2 id="cheat-sheet">🃏 Cheat sheet<a class="headerlink" href="#cheat-sheet" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>URL → scheme/host/port/path
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>DNS: browser → OS (/etc/hosts, cache) → recursive resolver → root → TLD → authoritative → A record (TTL cached)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>TCP: SYN → SYN-ACK → ACK (1 RTT) · reliable, ordered, flow + congestion control · 4-tuple
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>TLS 1.3: ClientHello (key share, SNI) → ServerHello + cert + Finished (1 RTT) → symmetric keys
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>HTTP: request line + headers → status + headers + body · 2xx/3xx/4xx/5xx
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>HTTP/1.1 (text, 1 req/conn) → HTTP/2 (streams on 1 TCP) → HTTP/3 (QUIC on UDP)
+</code></pre></div>
+<hr>
+<h2 id="test-yourself">❓ Test yourself<a class="headerlink" href="#test-yourself" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Your recursive resolver already knows <code>.com</code>'s servers. Does it still ask the root for <code>example.com</code>?</summary>
+<p>No. It caches the root's referral (the <code>.com</code> NS records) for their <abbr title="Time To Live">TTL</abbr> and goes straight to the <code>.com</code> servers. The root is only asked when that cache has expired.</p>
+</details>
+<details class="question">
+<summary>2. Why does a new HTTPS request cost at least 2 RTTs before any <abbr title="HyperText Transfer Protocol">HTTP</abbr> data flows (<abbr title="Transport Layer Security">TLS</abbr> 1.3 over <abbr title="Transmission Control Protocol">TCP</abbr>)?</summary>
+<p>1 <abbr title="Round-Trip Time">RTT</abbr> for the <abbr title="Transmission Control Protocol">TCP</abbr> handshake, then 1 <abbr title="Round-Trip Time">RTT</abbr> for the <abbr title="Transport Layer Security">TLS</abbr> 1.3 handshake. Only then can the <abbr title="HyperText Transfer Protocol">HTTP</abbr> request be sent. <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3 merges the transport and <abbr title="Transport Layer Security">TLS</abbr> handshakes to save one of them.</p>
+</details>
+<details class="question">
+<summary>3. How does the browser know the server really is <code>example.com</code> and not an attacker?</summary>
+<p>The server sends a certificate for <code>example.com</code> signed by a <abbr title="Certificate Authority">CA</abbr> the browser trusts, and proves it holds the matching private key (CertificateVerify). The browser checks the chain, the hostname and the validity dates.</p>
+</details>
+<details class="question">
+<summary>4. What is <abbr title="Server Name Indication">SNI</abbr> and why is it needed?</summary>
+<p>Server Name Indication: the hostname sent in ClientHello. One <abbr title="Internet Protocol">IP</abbr> (a load balancer, a <abbr title="Content Delivery Network">CDN</abbr>) can serve thousands of sites, so it needs to know which certificate to present before encryption starts.</p>
+</details>
+<details class="question">
+<summary>5. <code>502</code> vs <code>504</code> from your load balancer: what's the difference?</summary>
+<p><code>502 Bad Gateway</code>: the <abbr title="Load Balancer">LB</abbr> got an invalid or no response from the backend (crashed, connection refused). <code>504 Gateway Timeout</code>: the backend didn't answer in time.</p>
+</details>
+<hr>
+<h2 id="sources">📚 Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.cloudflare.com/learning/dns/what-is-dns/">How <abbr title="Domain Name System">DNS</abbr> works (Cloudflare Learning)</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9293">RFC 9293: <abbr title="Transmission Control Protocol">TCP</abbr></a> · <a href="https://www.rfc-editor.org/rfc/rfc8446">RFC 8446: <abbr title="Transport Layer Security">TLS</abbr> 1.3</a> · <a href="https://www.rfc-editor.org/rfc/rfc9110">RFC 9110: <abbr title="HyperText Transfer Protocol">HTTP</abbr> semantics</a> · <a href="https://www.rfc-editor.org/rfc/rfc9114">RFC 9114: <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3</a></li>
+<li><a href="https://tls13.xargs.org/">The Illustrated <abbr title="Transport Layer Security">TLS</abbr> 1.3 Connection</a></li>
+<li><a href="https://hpbn.co/">High Performance Browser Networking (free book)</a></li>
+</ul>
+<h2 id="my-notes">✍️ My notes<a class="headerlink" href="#my-notes" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Explain what happens between pressing Enter and receiving the first byte of HTML, in your own words in 5 lines.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../05-network/04-cloud-networking/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 5.4 · Cloud networking (VPC)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                5.4 · Cloud networking (VPC)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-headers/" class="md-footer__link md-footer__link--next" aria-label="Next: 6.1 · HTTP headers">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                6.1 · HTTP headers
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

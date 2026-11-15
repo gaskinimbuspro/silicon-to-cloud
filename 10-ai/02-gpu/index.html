@@ -1,0 +1,2664 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="What's inside a GPU, why memory bandwidth rules LLMs, number formats, NVLink and NVSwitch, the 8-GPU server, rack-scale systems, the cluster network, and non-NVIDIA accelerators.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/02-gpu/">
+      
+      
+        <link rel="prev" href="../01-fundamentals/">
+      
+      
+        <link rel="next" href="../03-software/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../tr/10-ai/02-gpu/" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>10.2 — GPU &amp; accelerator hardware - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="10.2 — GPU &amp; accelerator hardware - Silicon to Cloud">
+<meta property="og:description" content="What's inside a GPU, why memory bandwidth rules LLMs, number formats, NVLink and NVSwitch, the 8-GPU server, rack-scale systems, the cluster network, and non-NVIDIA accelerators.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/10-ai/02-gpu.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/02-gpu/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="10.2 — GPU &amp; accelerator hardware - Silicon to Cloud">
+<meta property="twitter:description" content="What's inside a GPU, why memory bandwidth rules LLMs, number formats, NVLink and NVSwitch, the 8-GPU server, rack-scale systems, the cluster network, and non-NVIDIA accelerators.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/10-ai/02-gpu.png">
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#102-gpu-accelerator-hardware" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10.2 — GPU &amp; accelerator hardware
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../tr/10-ai/02-gpu/" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14" id="__nav_14_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 · AI infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-fundamentals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.1 · AI fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.2 · GPU hardware
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.2 · GPU hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-is-a-gpu-and-how-does-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · What is a GPU, and how does it work?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · What is a GPU, and how does it work?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-number-formats-precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Number formats (precision)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-compute-bound-or-memory-bound-the-roofline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Compute-bound or memory-bound? The roofline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-generations-at-a-glance-approximate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Generations at a glance (approximate)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-scale-up-vs-scale-out-whats-the-difference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Scale-up vs scale-out: what's the difference?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Scale-up vs scale-out: what's the difference?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-power-cooling-and-the-rest-of-the-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Power, cooling, and the rest of the server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-not-only-nvidia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Not only NVIDIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself-on-a-machine-with-an-nvidia-gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself (on a machine with an NVIDIA GPU)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.3 · Software stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.4 · Distributed training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.5 · Inference &amp; serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.6 · AI platform on Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.7 · Applications: RAG &amp; agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📖 AI glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-is-a-gpu-and-how-does-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · What is a GPU, and how does it work?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · What is a GPU, and how does it work?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-number-formats-precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Number formats (precision)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-compute-bound-or-memory-bound-the-roofline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Compute-bound or memory-bound? The roofline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-generations-at-a-glance-approximate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Generations at a glance (approximate)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-scale-up-vs-scale-out-whats-the-difference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Scale-up vs scale-out: what's the difference?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Scale-up vs scale-out: what's the difference?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-power-cooling-and-the-rest-of-the-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Power, cooling, and the rest of the server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-not-only-nvidia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Not only NVIDIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself-on-a-machine-with-an-nvidia-gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself (on a machine with an NVIDIA GPU)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    10 · AI infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="102-gpu-accelerator-hardware">10.2 — <abbr title="Graphics Processing Unit">GPU</abbr> &amp; accelerator hardware<a class="headerlink" href="#102-gpu-accelerator-hardware" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">In short</p>
+<p>A data-center <abbr title="Graphics Processing Unit">GPU</abbr> is <strong>thousands of small math lanes</strong> (with special <strong>Tensor Cores</strong> for matrix math) fed by a few
+hundred GB of very fast <strong><abbr title="High Bandwidth Memory">HBM</abbr></strong> memory. Eight of them sit in one server, connected all-to-all with <strong>NVLink</strong>
+through <strong>NVSwitch</strong> (scale-up). Servers talk to each other with <strong>one <abbr title="Network Interface Card">NIC</abbr> per <abbr title="Graphics Processing Unit">GPU</abbr></strong> over InfiniBand or <abbr title="RDMA over Converged Ethernet">RoCE</abbr>
+Ethernet (scale-out). For LLMs the limit is usually <strong>how fast bytes move</strong>, not how fast math happens.</p>
+</div>
+<h2 id="key-terms-abbreviations">📖 Key terms &amp; abbreviations<a class="headerlink" href="#key-terms-abbreviations" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Stands for</th>
+<th>What it is</th>
+<th>How it works (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Graphics Processing Unit">GPU</abbr></strong></td>
+<td>Graphics Processing Unit</td>
+<td>A massively parallel processor</td>
+<td>Runs the same instruction on thousands of data items at once</td>
+</tr>
+<tr>
+<td><strong><abbr title="Central Processing Unit">CPU</abbr></strong></td>
+<td>Central Processing Unit</td>
+<td>The general-purpose processor (Chapter 2)</td>
+<td>Few complex cores, great at branchy sequential code</td>
+</tr>
+<tr>
+<td><strong><abbr title="Streaming Multiprocessor">SM</abbr></strong></td>
+<td>Streaming Multiprocessor</td>
+<td>One of the <abbr title="Graphics Processing Unit">GPU</abbr>'s 100+ processing blocks</td>
+<td>Holds <abbr title="Compute Unified Device Architecture">CUDA</abbr> cores, Tensor Cores, registers and shared memory</td>
+</tr>
+<tr>
+<td><strong><abbr title="Compute Unified Device Architecture">CUDA</abbr> core</strong></td>
+<td>— (<abbr title="Compute Unified Device Architecture">CUDA</abbr> = Compute Unified Device Architecture)</td>
+<td>A simple scalar math lane</td>
+<td>FP32/INT operations, one per clock</td>
+</tr>
+<tr>
+<td><strong>Tensor Core</strong></td>
+<td>—</td>
+<td>A matrix-multiply unit inside each <abbr title="Streaming Multiprocessor">SM</abbr></td>
+<td>Multiplies small matrix tiles per clock in FP16/BF16/FP8/FP4</td>
+</tr>
+<tr>
+<td><strong>Warp</strong></td>
+<td>—</td>
+<td>A group of 32 <abbr title="Graphics Processing Unit">GPU</abbr> threads</td>
+<td>All 32 execute the same instruction together</td>
+</tr>
+<tr>
+<td><strong><abbr title="Single Instruction, Multiple Threads">SIMT</abbr></strong></td>
+<td>Single Instruction, Multiple Threads</td>
+<td>NVIDIA's execution model</td>
+<td>One instruction drives many threads on different data</td>
+</tr>
+<tr>
+<td><strong><abbr title="High Bandwidth Memory">HBM</abbr></strong></td>
+<td>High Bandwidth Memory</td>
+<td>Stacked DRAM next to the <abbr title="Graphics Processing Unit">GPU</abbr> die</td>
+<td>Very wide bus → TB/s of bandwidth</td>
+</tr>
+<tr>
+<td><strong><abbr title="Static RAM">SRAM</abbr> / L2</strong></td>
+<td>Static RAM / Level-2 cache</td>
+<td>On-chip memory</td>
+<td>Tiny but much faster than <abbr title="High Bandwidth Memory">HBM</abbr></td>
+</tr>
+<tr>
+<td><strong>FLOP / FLOPS</strong></td>
+<td>Floating-Point Operation (per Second)</td>
+<td>Unit of math work / speed</td>
+<td>TFLOPS = 10¹², PFLOPS = 10¹⁵ per second</td>
+</tr>
+<tr>
+<td><strong><abbr title="Peripheral Component Interconnect Express">PCIe</abbr></strong></td>
+<td>Peripheral Component Interconnect Express</td>
+<td>The standard bus between <abbr title="Central Processing Unit">CPU</abbr> and devices</td>
+<td>Lanes of serial links, ~64 GB/s per direction for Gen5 x16</td>
+</tr>
+<tr>
+<td><strong>NVLink</strong></td>
+<td>—</td>
+<td>NVIDIA's <abbr title="Graphics Processing Unit">GPU</abbr>-to-<abbr title="Graphics Processing Unit">GPU</abbr> link</td>
+<td>Much faster than <abbr title="Peripheral Component Interconnect Express">PCIe</abbr>, direct <abbr title="Graphics Processing Unit">GPU</abbr> memory access</td>
+</tr>
+<tr>
+<td><strong>NVSwitch</strong></td>
+<td>—</td>
+<td>A switch chip for NVLink</td>
+<td>Connects every <abbr title="Graphics Processing Unit">GPU</abbr> to every other <abbr title="Graphics Processing Unit">GPU</abbr> at full speed</td>
+</tr>
+<tr>
+<td><strong><abbr title="NVLink 72">NVL72</abbr></strong></td>
+<td>NVLink 72</td>
+<td>A rack where 72 GPUs share one NVLink domain</td>
+<td>Behaves like one giant <abbr title="Graphics Processing Unit">GPU</abbr> for communication</td>
+</tr>
+<tr>
+<td><strong>HGX / DGX</strong></td>
+<td>—</td>
+<td>NVIDIA's 8-<abbr title="Graphics Processing Unit">GPU</abbr> baseboard / complete server</td>
+<td>Reference design most <abbr title="Artificial Intelligence">AI</abbr> servers are built on</td>
+</tr>
+<tr>
+<td><strong><abbr title="Network Interface Card">NIC</abbr></strong></td>
+<td>Network Interface Card</td>
+<td>Network adapter</td>
+<td>Typically one 400–800 Gb/s <abbr title="Network Interface Card">NIC</abbr> per <abbr title="Graphics Processing Unit">GPU</abbr> in <abbr title="Artificial Intelligence">AI</abbr> servers</td>
+</tr>
+<tr>
+<td><strong><abbr title="Remote Direct Memory Access">RDMA</abbr></strong></td>
+<td>Remote Direct Memory Access</td>
+<td>Reading/writing another machine's memory without its <abbr title="Central Processing Unit">CPU</abbr></td>
+<td><abbr title="Network Interface Card">NIC</abbr> moves data directly between memories</td>
+</tr>
+<tr>
+<td><strong>GPUDirect <abbr title="Remote Direct Memory Access">RDMA</abbr></strong></td>
+<td>—</td>
+<td><abbr title="Remote Direct Memory Access">RDMA</abbr> straight into <abbr title="Graphics Processing Unit">GPU</abbr> memory</td>
+<td><abbr title="Network Interface Card">NIC</abbr> ↔ <abbr title="Graphics Processing Unit">GPU</abbr> <abbr title="High Bandwidth Memory">HBM</abbr>, skipping <abbr title="Central Processing Unit">CPU</abbr> and system RAM</td>
+</tr>
+<tr>
+<td><strong>GPUDirect Storage</strong></td>
+<td>—</td>
+<td>Storage → <abbr title="Graphics Processing Unit">GPU</abbr> memory directly</td>
+<td>NVMe / network storage <abbr title="Direct Memory Access">DMA</abbr> into <abbr title="High Bandwidth Memory">HBM</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="InfiniBand">IB</abbr></strong></td>
+<td>InfiniBand</td>
+<td>A low-latency HPC network</td>
+<td>Lossless, <abbr title="Remote Direct Memory Access">RDMA</abbr>-native, credit-based flow control</td>
+</tr>
+<tr>
+<td><strong><abbr title="RDMA over Converged Ethernet">RoCE</abbr></strong></td>
+<td><abbr title="Remote Direct Memory Access">RDMA</abbr> over Converged Ethernet</td>
+<td><abbr title="Remote Direct Memory Access">RDMA</abbr> on Ethernet</td>
+<td>Needs lossless tuning (PFC, ECN)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Data Processing Unit">DPU</abbr></strong></td>
+<td>Data Processing Unit</td>
+<td>A smart <abbr title="Network Interface Card">NIC</abbr> with its own cores (e.g. BlueField)</td>
+<td>Offloads networking, storage, security from the host</td>
+</tr>
+<tr>
+<td><strong><abbr title="Thermal Design Power">TDP</abbr></strong></td>
+<td>Thermal Design Power</td>
+<td>How much power/heat a chip is designed for</td>
+<td>700 W–1.4 kW+ per modern <abbr title="Graphics Processing Unit">GPU</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="Tensor Processing Unit">TPU</abbr> / <abbr title="Application-Specific IC">ASIC</abbr></strong></td>
+<td>Tensor Processing Unit / Application-Specific <abbr title="Incident Commander">IC</abbr></td>
+<td>Google's (and others') custom <abbr title="Artificial Intelligence">AI</abbr> chips</td>
+<td>Fixed-function hardware for matrix math</td>
+</tr>
+<tr>
+<td><strong><abbr title="Radeon Open Compute">ROCm</abbr></strong></td>
+<td>Radeon Open Compute</td>
+<td>AMD's equivalent of <abbr title="Compute Unified Device Architecture">CUDA</abbr></td>
+<td>Software stack for AMD Instinct GPUs</td>
+</tr>
+</tbody>
+</table>
+<h2 id="big-picture">🗺️ Big picture<a class="headerlink" href="#big-picture" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-2-gpu.png" data-desc-position="bottom"><img alt="Anatomy of an AI server" src="../../assets/diagrams/10-2-gpu.png"></a></p>
+<hr>
+<h2 id="1-what-is-a-gpu-and-how-does-it-work">1 · What is a <abbr title="Graphics Processing Unit">GPU</abbr>, and how does it work?<a class="headerlink" href="#1-what-is-a-gpu-and-how-does-it-work" title="Permanent link">¶</a></h2>
+<h3 id="what-is-it">What is it?<a class="headerlink" href="#what-is-it" title="Permanent link">¶</a></h3>
+<p>A <abbr title="Central Processing Unit">CPU</abbr> has a few dozen powerful cores built for <strong>complicated, sequential</strong> work. A <abbr title="Graphics Processing Unit">GPU</abbr> has <strong>100+ SMs</strong>, each with many simple lanes and a few <strong>Tensor Cores</strong>, built to do <strong>the same simple math on huge arrays</strong> at the same time. Neural networks are mostly matrix multiplications, which is exactly that.</p>
+<h3 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">¶</a></h3>
+<ol>
+<li>The <abbr title="Central Processing Unit">CPU</abbr> launches a <strong>kernel</strong> (a <abbr title="Graphics Processing Unit">GPU</abbr> function) with thousands of <strong>thread blocks</strong>.</li>
+<li>The blocks are spread across the SMs. Inside an <abbr title="Streaming Multiprocessor">SM</abbr>, threads run in <strong>warps of 32</strong> that execute the same instruction together (<abbr title="Single Instruction, Multiple Threads">SIMT</abbr>).</li>
+<li>Data flows <strong><abbr title="High Bandwidth Memory">HBM</abbr> → L2 → shared memory/registers → Tensor Cores</strong>. Fast kernels reuse each byte as many times as possible once it's on-chip.</li>
+<li>Results are written back to <abbr title="High Bandwidth Memory">HBM</abbr>. The next kernel (next layer) starts.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-2a-inside-gpu.png" data-desc-position="bottom"><img alt="Inside one GPU" src="../../assets/diagrams/10-2a-inside-gpu.png"></a></p>
+<h2 id="2-number-formats-precision">2 · Number formats (precision)<a class="headerlink" href="#2-number-formats-precision" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Bytes</th>
+<th>Where it's used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>FP32</strong></td>
+<td>4</td>
+<td>Classic training, optimizer states</td>
+</tr>
+<tr>
+<td><strong>TF32</strong></td>
+<td>4 (stored), 19-bit math</td>
+<td>Tensor Core mode for "FP32" matmuls</td>
+</tr>
+<tr>
+<td><strong>BF16</strong></td>
+<td>2</td>
+<td>Default for training and serving: FP32's range, less precision</td>
+</tr>
+<tr>
+<td><strong>FP16</strong></td>
+<td>2</td>
+<td>Inference, older training</td>
+</tr>
+<tr>
+<td><strong>FP8</strong> (E4M3 / E5M2)</td>
+<td>1</td>
+<td>Training and inference on Hopper and newer</td>
+</tr>
+<tr>
+<td><strong>FP4</strong> (NVFP4 / MXFP4)</td>
+<td>0.5</td>
+<td>Inference on Blackwell and newer</td>
+</tr>
+<tr>
+<td><strong>INT8 / INT4</strong></td>
+<td>1 / 0.5</td>
+<td>Quantized weights for inference</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fewer bytes per number = more numbers per second through the same memory bus</strong>, and each step down roughly doubles Tensor Core throughput.</p>
+<h2 id="3-compute-bound-or-memory-bound-the-roofline">3 · Compute-bound or memory-bound? The roofline<a class="headerlink" href="#3-compute-bound-or-memory-bound-the-roofline" title="Permanent link">¶</a></h2>
+<p><strong>Arithmetic intensity</strong> = FLOPs done per byte read from memory.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>GPU "ridge point" ≈ peak FLOPS / memory bandwidth
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  e.g. ~1,000 TFLOPS BF16 / ~3.35 TB/s ≈ 300 FLOPs per byte
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>LLM decode, batch 1: each 2-byte weight is used for ~2 FLOPs → ~1 FLOP/byte → hugely memory-bound
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>LLM decode, batch 64: each weight is reused 64× → ~64 FLOPs/byte → still memory-bound, much better
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>LLM prefill (long prompt): each weight reused for every prompt token → compute-bound
+</code></pre></div>
+<p>That gives a useful upper bound: <strong>max tokens/s for one stream ≈ memory bandwidth ÷ bytes of weights</strong>. An 8B model in BF16 (16 GB) on a 3.35 TB/s <abbr title="Graphics Processing Unit">GPU</abbr> can't decode faster than ~200 tokens/s per stream, no matter how many FLOPS it has. <strong>Batching</strong> is how you get more total tokens/s out of the same bandwidth (<a href="../05-inference/">10.5</a>).</p>
+<h2 id="4-generations-at-a-glance-approximate">4 · Generations at a glance (approximate)<a class="headerlink" href="#4-generations-at-a-glance-approximate" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Generation</th>
+<th>Example</th>
+<th><abbr title="High Bandwidth Memory">HBM</abbr> per <abbr title="Graphics Processing Unit">GPU</abbr></th>
+<th>NVLink per <abbr title="Graphics Processing Unit">GPU</abbr></th>
+<th>New formats</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ampere</td>
+<td>A100</td>
+<td>40/80 GB</td>
+<td>600 GB/s</td>
+<td>TF32, BF16</td>
+</tr>
+<tr>
+<td>Hopper</td>
+<td>H100 / H200</td>
+<td>80 / 141 GB</td>
+<td>900 GB/s</td>
+<td>FP8, Transformer Engine</td>
+</tr>
+<tr>
+<td>Blackwell</td>
+<td>B200 / B300, GB200/GB300 <abbr title="NVLink 72">NVL72</abbr></td>
+<td>~180–288 GB</td>
+<td>1.8 TB/s</td>
+<td>FP4</td>
+</tr>
+<tr>
+<td>Rubin (2H 2026)</td>
+<td>Vera Rubin <abbr title="NVLink 72">NVL72</abbr></td>
+<td>288 GB HBM4</td>
+<td>3.6 TB/s</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Numbers move fast. Always check the vendor datasheet for the exact SKU (SXM vs <abbr title="Peripheral Component Interconnect Express">PCIe</abbr> versions differ a lot).</p>
+</blockquote>
+<h2 id="5-scale-up-vs-scale-out-whats-the-difference">5 · Scale-up vs scale-out: what's the difference?<a class="headerlink" href="#5-scale-up-vs-scale-out-whats-the-difference" title="Permanent link">¶</a></h2>
+<h3 id="what-is-it_1">What is it?<a class="headerlink" href="#what-is-it_1" title="Permanent link">¶</a></h3>
+<p>Every <abbr title="Artificial Intelligence">AI</abbr> cluster has <strong>two networks</strong>:</p>
+<ul>
+<li><strong>Scale-up</strong>: GPUs inside one NVLink domain (8 GPUs in a server, or 72 in an <abbr title="NVLink 72">NVL72</abbr> rack) talk over <strong>NVLink + NVSwitch</strong> at TB/s. They can read each other's memory almost like local memory.</li>
+<li><strong>Scale-out</strong>: everything beyond that domain goes over the <strong>network</strong>: one 400–800 Gb/s <abbr title="Network Interface Card">NIC</abbr> per <abbr title="Graphics Processing Unit">GPU</abbr>, <strong>InfiniBand</strong> or <strong><abbr title="RDMA over Converged Ethernet">RoCE</abbr> Ethernet</strong>, arranged as a <strong>rail-optimized fat-tree</strong> (<abbr title="Graphics Processing Unit">GPU</abbr> #3 of every server is on "rail 3", and so on).</li>
+</ul>
+<h3 id="how-does-it-work_1">How does it work?<a class="headerlink" href="#how-does-it-work_1" title="Permanent link">¶</a></h3>
+<ol>
+<li>A <abbr title="Graphics Processing Unit">GPU</abbr> writes data for a <abbr title="Graphics Processing Unit">GPU</abbr> in another server.</li>
+<li>With <strong>GPUDirect <abbr title="Remote Direct Memory Access">RDMA</abbr></strong>, its <abbr title="Network Interface Card">NIC</abbr> reads it <strong>straight from <abbr title="High Bandwidth Memory">HBM</abbr></strong>, no <abbr title="Central Processing Unit">CPU</abbr> copy.</li>
+<li>Leaf and spine switches forward it. The fabric is designed to be <strong>lossless</strong> and <strong>non-blocking</strong>.</li>
+<li>The remote <abbr title="Network Interface Card">NIC</abbr> writes it <strong>straight into the remote <abbr title="Graphics Processing Unit">GPU</abbr>'s <abbr title="High Bandwidth Memory">HBM</abbr></strong>.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-2b-scale.png" data-desc-position="bottom"><img alt="Scale-up vs scale-out" src="../../assets/diagrams/10-2b-scale.png"></a></p>
+<p><strong>Rule of thumb:</strong> keep the most communication-heavy parallelism (tensor parallel) <strong>inside</strong> the scale-up domain. Use the scale-out network for less chatty parallelism (data parallel, pipeline parallel) (<a href="../04-training/">10.4</a>).</p>
+<h2 id="6-power-cooling-and-the-rest-of-the-server">6 · Power, cooling, and the rest of the server<a class="headerlink" href="#6-power-cooling-and-the-rest-of-the-server" title="Permanent link">¶</a></h2>
+<ul>
+<li>A modern 8-<abbr title="Graphics Processing Unit">GPU</abbr> server draws <strong>10 kW or more</strong>. A rack-scale <abbr title="NVLink 72">NVL72</abbr> system draws over 100 kW and is <strong>liquid-cooled</strong>. Power and cooling, not GPUs, are often the real data-center bottleneck.</li>
+<li>The server also has <strong>2 CPUs</strong> (to feed data, run the driver and the framework), <strong><abbr title="Peripheral Component Interconnect Express">PCIe</abbr> switches</strong> linking GPUs, NICs and NVMe drives, and often a <strong><abbr title="Data Processing Unit">DPU</abbr></strong> for storage and north-south traffic.</li>
+</ul>
+<h2 id="7-not-only-nvidia">7 · Not only NVIDIA<a class="headerlink" href="#7-not-only-nvidia" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Vendor</th>
+<th>Chips</th>
+<th>Software</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AMD</strong></td>
+<td>Instinct MI300 series and newer (large <abbr title="High Bandwidth Memory">HBM</abbr>)</td>
+<td><strong><abbr title="Radeon Open Compute">ROCm</abbr></strong>, <abbr title="Heterogeneous-compute Interface for Portability">HIP</abbr> (<abbr title="Compute Unified Device Architecture">CUDA</abbr>-like), PyTorch support</td>
+</tr>
+<tr>
+<td><strong>Google</strong></td>
+<td><strong><abbr title="Tensor Processing Unit">TPU</abbr></strong> generations (pods with their own interconnect)</td>
+<td>JAX, PyTorch/XLA, available on Google Cloud</td>
+</tr>
+<tr>
+<td><strong>AWS</strong></td>
+<td><strong>Trainium</strong> (training) / <strong>Inferentia</strong> (inference)</td>
+<td>Neuron SDK</td>
+</tr>
+<tr>
+<td><strong>Intel</strong></td>
+<td>Gaudi</td>
+<td>SynapseAI / PyTorch</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> connection: hardware choice decides your <strong>software stack</strong> (<abbr title="Compute Unified Device Architecture">CUDA</abbr> vs <abbr title="Radeon Open Compute">ROCm</abbr> vs XLA vs Neuron), your <strong>Kubernetes device plugins/<abbr title="Dynamic Resource Allocation">DRA</abbr> drivers</strong>, and your <strong>capacity planning</strong> (power, cooling, network) — not just your benchmark numbers.</p>
+</blockquote>
+<hr>
+<h2 id="try-it-yourself-on-a-machine-with-an-nvidia-gpu">🧪 Try it yourself (on a machine with an NVIDIA <abbr title="Graphics Processing Unit">GPU</abbr>)<a class="headerlink" href="#try-it-yourself-on-a-machine-with-an-nvidia-gpu" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nvidia-smi<span class="w">                                  </span><span class="c1"># GPUs, memory used, utilization, power, driver/CUDA version</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>nvidia-smi<span class="w"> </span>topo<span class="w"> </span>-m<span class="w">                          </span><span class="c1"># how GPUs, NICs and CPUs are connected (NV#, PIX, SYS…)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>nvidia-smi<span class="w"> </span>nvlink<span class="w"> </span>--status<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w">      </span><span class="c1"># NVLink links and speeds</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>nvidia-smi<span class="w"> </span>-q<span class="w"> </span>-d<span class="w"> </span>MEMORY,CLOCK,POWER<span class="w"> </span><span class="p">|</span><span class="w"> </span>less
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>lspci<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"nvidia|mellanox"</span><span class="w">          </span><span class="c1"># GPUs and NICs on the PCIe bus</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>ibv_devinfo<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w">              </span><span class="c1"># RDMA-capable NICs (InfiniBand / RoCE)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Measure matmul TFLOPS and memory bandwidth with PyTorch</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="s">import torch, time</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="s">x = torch.randn(8192, 8192, device="cuda", dtype=torch.bfloat16)</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="s">torch.cuda.synchronize(); t = time.time()</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="s">for _ in range(50): y = x @ x</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="s">torch.cuda.synchronize(); dt = time.time() - t</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="s">print(f"matmul: {50 * 2 * 8192**3 / dt / 1e12:.0f} TFLOPS")</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="s">a = torch.empty(2 * 1024**3, dtype=torch.uint8, device="cuda")</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="s">torch.cuda.synchronize(); t = time.time()</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="s">for _ in range(20): b = a.clone()</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="s">torch.cuda.synchronize(); dt = time.time() - t</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="s">print(f"copy bandwidth: {20 * 2 * a.numel() / dt / 1e12:.2f} TB/s")</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="s">EOF</span>
+</code></pre></div>
+<p><strong>Exercise:</strong> divide the measured bandwidth by the size of an 8B BF16 model (16 GB). That's the theoretical max tokens/s for a single stream on this <abbr title="Graphics Processing Unit">GPU</abbr>.</p>
+<hr>
+<h2 id="cheat-sheet">🃏 Cheat sheet<a class="headerlink" href="#cheat-sheet" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>GPU = 100+ SMs × (CUDA cores + Tensor Cores) + HBM (80–288 GB, TB/s)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Work: kernel → thread blocks → warps of 32 (SIMT) · data: HBM → L2 → shared mem → Tensor Cores
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Formats: FP32 4B · BF16/FP16 2B · FP8 1B · FP4/INT4 0.5B → fewer bytes = faster
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Roofline: ridge ≈ FLOPS / bandwidth (~300 FLOP/B) · decode ≈ 1 FLOP/B × batch → memory-bound
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Max tokens/s per stream ≈ bandwidth ÷ weight bytes
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Server: 2 CPU + PCIe switches + 8 GPU + NVSwitch (scale-up) + 8 NIC (scale-out) · ~10 kW
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Scale-up: NVLink/NVSwitch, NVL72 · Scale-out: IB/RoCE, rail-optimized, GPUDirect RDMA
+</code></pre></div>
+<hr>
+<h2 id="test-yourself">❓ Test yourself<a class="headerlink" href="#test-yourself" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Why are LLMs usually limited by memory bandwidth rather than FLOPS during decode?</summary>
+<p>Each decode step reads every weight once but only does ~2 FLOPs per weight per sequence. That's far below the ~300 FLOPs/byte the <abbr title="Graphics Processing Unit">GPU</abbr> needs to be compute-bound, so it waits on <abbr title="High Bandwidth Memory">HBM</abbr>.</p>
+</details>
+<details class="question">
+<summary>2. What's the theoretical max decode speed of a 70B FP8 model on one <abbr title="Graphics Processing Unit">GPU</abbr> with 4.8 TB/s?</summary>
+<p>70 GB of weights ÷ 4.8 TB/s ≈ 15 ms per token → ~70 tokens/s for a single stream (ignoring KV cache reads). Batching raises total throughput, not single-stream speed.</p>
+</details>
+<details class="question">
+<summary>3. What's the difference between NVLink and InfiniBand?</summary>
+<p>NVLink is the scale-up link between GPUs inside a server or rack (TB/s, memory-like). InfiniBand (or <abbr title="RDMA over Converged Ethernet">RoCE</abbr>) is the scale-out network between servers (hundreds of Gb/s per <abbr title="Network Interface Card">NIC</abbr>).</p>
+</details>
+<details class="question">
+<summary>4. What does GPUDirect <abbr title="Remote Direct Memory Access">RDMA</abbr> save?</summary>
+<p>Copies through the <abbr title="Central Processing Unit">CPU</abbr> and system RAM. The <abbr title="Network Interface Card">NIC</abbr> reads from and writes to <abbr title="Graphics Processing Unit">GPU</abbr> memory directly, which lowers latency and frees the <abbr title="Central Processing Unit">CPU</abbr>.</p>
+</details>
+<details class="question">
+<summary>5. Why does every <abbr title="Graphics Processing Unit">GPU</abbr> get its own <abbr title="Network Interface Card">NIC</abbr> in an <abbr title="Artificial Intelligence">AI</abbr> server?</summary>
+<p>Collective operations (like all-reduce) make all GPUs send data at the same time. One <abbr title="Network Interface Card">NIC</abbr> per <abbr title="Graphics Processing Unit">GPU</abbr>, each on its own "rail", gives every <abbr title="Graphics Processing Unit">GPU</abbr> full network bandwidth without sharing.</p>
+</details>
+<hr>
+<h2 id="sources">📚 Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://docs.nvidia.com/cuda/cuda-programming-guide/">NVIDIA <abbr title="Compute Unified Device Architecture">CUDA</abbr> C++ Programming Guide: hardware implementation</a></li>
+<li><a href="https://www.nvidia.com/en-us/data-center/">NVIDIA data center <abbr title="Graphics Processing Unit">GPU</abbr> datasheets</a></li>
+<li><a href="https://horace.io/brrr_intro.html">Making Deep Learning Go Brrrr From First Principles (Horace He)</a></li>
+<li><a href="https://doi.org/10.1145/1498765.1498785">Roofline model (Williams et al.)</a></li>
+<li><a href="https://developer.nvidia.com/gpudirect">NVIDIA GPUDirect</a></li>
+</ul>
+<h2 id="my-notes">✍️ My notes<a class="headerlink" href="#my-notes" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Explain why "bandwidth ÷ model size" limits decode speed, and what scale-up vs scale-out means, in your own words in 5 lines.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../01-fundamentals/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 10.1 · AI fundamentals">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                10.1 · AI fundamentals
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../03-software/" class="md-footer__link md-footer__link--next" aria-label="Next: 10.3 · Software stack">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                10.3 · Software stack
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

@@ -1,0 +1,3287 @@
+[
+{
+"id": "e27cd924cc",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.1 — Kesmeler ve cihaz sürücüleri",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "Bir kesme handler'ı neden uyuyamaz ya da ağır iş yapamaz?",
+"a": "Kesmeler (en azından o hatta/çekirdekte) bloklu ve herhangi bir process bağlamı dışında çalışır; uyumak o çekirdeğin kesme işlemesini dondurur. Ağır iş alt yarıya gider."
+},
+{
+"id": "c2ea1f2d24",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.1 — Kesmeler ve cihaz sürücüleri",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "NAPI ne yapar ve neden?",
+"a": "İlk kesmeden sonra NIC'in kesmesini kapatır ve kuyruk boşalana kadar paket gruplarını yoklar; yüksek paket hızlarında kesme fırtınasını önler."
+},
+{
+"id": "74cd50c55d",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.1 — Kesmeler ve cihaz sürücüleri",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "Linux yeni takılan bir cihaz için hangi sürücüyü yükleyeceğini nasıl bilir?",
+"a": "Bus cihaz kimliklerini okur, kernel modalias içeren bir uevent yayar, udev bunu bir modülle eşler ve modprobe çalıştırır; sonra sürücünün probe()'u cihazı sahiplenir."
+},
+{
+"id": "020590d741",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.1 — Kesmeler ve cihaz sürücüleri",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "Bir node'da bir çekirdek si'de %100, diğerleri boş. Neye bakarsın?",
+"a": "/proc/interrupts: NIC kuyruk IRQ'ları muhtemelen tek çekirdeğe düşüyor. Kuyruk / RSS ekle, IRQ affinity'yi düzelt ya da irqbalance'ı aç, RPS'i düşün."
+},
+{
+"id": "8c36f219b1",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.1 — Kesmeler ve cihaz sürücüleri",
+"url": "01-keypress/01-interrupts-drivers/",
+"q": "GPU sürücüleri neden sadece container'a değil node'a kurulmalı?",
+"a": "Sürücüler kernel kodudur. Container'lar host kernel'ini paylaşır; sadece host'un sürücüsüyle konuşan user-space kütüphanelerini taşırlar."
+},
+{
+"id": "cd125b3e99",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.2 — USB ve HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "USB cihazları önce konuşamıyorsa bir tuşa basış bilgisayara nasıl ulaşır?",
+"a": "Host klavyenin interrupt endpoint'ini her 1–8 ms'de yoklar; basıştan sonraki ilk yoklama NAK yerine bir rapor döner."
+},
+{
+"id": "afdea57f1c",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.2 — USB ve HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "Neden tek bir genel sürücü neredeyse her klavye ve fare için çalışır?",
+"a": "HID cihazları rapor düzenlerini bir rapor tanımlayıcısında tarif eder; HID çekirdeği hepsini ayrıştırabilir."
+},
+{
+"id": "4c6a2aa21d",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.2 — USB ve HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "Klavye 'a' harfini mi gönderir?",
+"a": "Hayır. Bir tuş konumu olan 0x04 usage'ını gönderir. Bunun \"a\" mı, \"q\" mu ya da başka bir şey mi olduğuna düzen (user space'teki xkb) karar verir."
+},
+{
+"id": "a274e49a03",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.2 — USB ve HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "125 Hz yoklama hızı ne kadar gecikme ekleyebilir?",
+"a": "Host raporu görmeden önce 8 ms'ye kadar (ortalama ~4 ms)."
+},
+{
+"id": "8ff538b634",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.2 — USB ve HID",
+"url": "01-keypress/02-usb-hid/",
+"q": "Bazı sıkılaştırılmış sunucular neden bilinmeyen USB cihazlarını engeller?",
+"a": "Bir cihaz kendini klavye olarak tanıtıp komut yazabilir (BadUSB). USBGuard ile izin listesi bunu önler."
+},
+{
+"id": "1bb6f89a98",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.3 — Linux girdi yığını",
+"url": "01-keypress/03-input-stack/",
+"q": "Wayland masaüstünde harfe (tuş konumunun aksine) nerede karar verilir?",
+"a": "Uygulamada; xkbcommon compositor'ın gönderdiği keymap'i mevcut değiştirici durumuyla uygular."
+},
+{
+"id": "cf0d9bc3b8",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.3 — Linux girdi yığını",
+"url": "01-keypress/03-input-stack/",
+"q": "/dev/input/event dosyaları neden normal kullanıcılar tarafından okunamaz?",
+"a": "Onları okumak herhangi bir programın sistem genelinde her tuş vuruşunu yakalamasına izin verirdi (keylogger)."
+},
+{
+"id": "adaf79f247",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.3 — Linux girdi yığını",
+"url": "01-keypress/03-input-stack/",
+"q": "Neden her X11 uygulaması şifrelerini yakalayabiliyordu ama Wayland'da yakalayamaz?",
+"a": "X11 her istemcinin tüm girdiyi dinlemesine izin veriyordu; Wayland'da compositor girdiyi sadece odaktaki yüzeye gönderir."
+},
+{
+"id": "e85caa165b",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.3 — Linux girdi yığını",
+"url": "01-keypress/03-input-stack/",
+"q": "Bir oyun her düzende WASD kullanmalı. Hangi KeyboardEvent alanını okumalı?",
+"a": "event.key değil, fiziksel tuş konumu olan event.code."
+},
+{
+"id": "414f8896e3",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "1.3 — Linux girdi yığını",
+"url": "01-keypress/03-input-stack/",
+"q": "Bir tuşu basılı tuttuğunda tuş tekrarını kim üretir?",
+"a": "Compositor'ın duyurduğu hız ve gecikmeyle istemci/toolkit; klavye sadece tuşun hâlâ basılı olduğunu bildirir."
+},
+{
+"id": "3096254db1",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"url": "01-keypress/",
+"q": "Türkçe-F klavyede aynı fiziksel tuşa basınca USB'den giden kod değişir mi?",
+"a": "Hayır. Kod (0x04) tuşun konumunu gösterir. Çeviriyi işletim sistemi ya da uygulama klavye düzenine göre yapar."
+},
+{
+"id": "e9edee052f",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"url": "01-keypress/",
+"q": "Polling 8 ms ise bir tuş basışı en kötü ihtimalle ne kadar bekler?",
+"a": "Yaklaşık 8 ms. Basış, bir yoklamanın hemen ardından gelirse bir sonraki yoklamaya kadar bekler."
+},
+{
+"id": "97a492a140",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"url": "01-keypress/",
+"q": "CPU başka bir programı çalıştırırken kesme gelirse o programa ne olur?",
+"a": "CPU elindeki komutu bitirir. Program durumunu (RIP, RFLAGS, …) stack'e kaydeder, handler'ı çalıştırır ve iretq ile programı kaldığı yerden devam ettirir. Program bunu fark etmez."
+},
+{
+"id": "9c01da24e2",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"url": "01-keypress/",
+"q": "Uygulama klavyeyi neden doğrudan /dev/input'tan okumuyor?",
+"a": "Güvenlik ve odak yüzünden. Her uygulama tüm tuşları okuyabilseydi her uygulama bir keylogger olurdu. Compositor olayı sadece odaktaki pencereye verir."
+},
+{
+"id": "22fb8a12db",
+"ch": "01-keypress",
+"chTitle": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"page": "Bölüm 1 — “A” tuşuna bastığımızda ne olur?",
+"url": "01-keypress/",
+"q": "X11'de 'A' tuşunun keycode'u neden 38, Wayland'de neden 30?",
+"a": "X11 tarihsel nedenlerle evdev koduna 8 ekler (30 + 8 = 38). Wayland evdev kodunu olduğu gibi gönderir."
+},
+{
+"id": "d26d011e2d",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.1 — Komut setleri ve assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "Bir amd64 imajı neden Graviton node'unda başarısız olur?",
+"a": "Graviton ARM64'tür; binary'nin komutları farklı bir ISA'ya aittir. Kernel onu çalıştırmayı reddeder (exec format error)."
+},
+{
+"id": "7ee7cce446",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.1 — Komut setleri ve assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "x86'yı çözmek neden ARM64'ten zordur?",
+"a": "x86 komutları 1–15 byte uzunluğundadır, CPU önce komut sınırlarını bulmalıdır; ARM64 komutları her zaman 4 byte'tır."
+},
+{
+"id": "2d8e295358",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.1 — Komut setleri ve assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "Bir gdb oturumunda bir fonksiyon çöktü. İlk iki argümanını nerede bulursun?",
+"a": "RDI ve RSI'da (System V çağrı kuralı), henüz üzerine yazılmadıysa."
+},
+{
+"id": "35d913911d",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.1 — Komut setleri ve assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "Bir program başka bir VM tipine taşındıktan sonra SIGILL ile ölüyor. Muhtemel sebep?",
+"a": "Yeni CPU'nun desteklemediği eklentiler (AVX-512, AVX2) için derlenmiş."
+},
+{
+"id": "bcd1756291",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.1 — Komut setleri ve assembly",
+"url": "02-cpu/01-isa-assembly/",
+"q": "xor eax, eax ne yapar, derleyiciler neden tercih eder?",
+"a": "EAX'i sıfırlar; mov eax, 0'dan kısadır ve CPU tarafından bağımlılığı kıran bir sıfırlama deyimi olarak tanınır."
+},
+{
+"id": "3308dff4b4",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.2 — Önbellekler ve bellek hiyerarşisi",
+"url": "02-cpu/02-caches-memory/",
+"q": "RAM'den bir byte okumak neden 64 byte okumak kadar tutar?",
+"a": "Bellek 64 byte'lık cache line'larla taşınır; her durumda tüm satır getirilir."
+},
+{
+"id": "b750a5d2b1",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.2 — Önbellekler ve bellek hiyerarşisi",
+"url": "02-cpu/02-caches-memory/",
+"q": "Bağlı bir listeyi gezmek neden aynı uzunluktaki bir diziden çok daha yavaştır?",
+"a": "Her düğüm bellekte herhangi bir yerde olabilir; her adım bir önbellek ıskası olabilir ve prefetcher sıradaki adresi tahmin edemez."
+},
+{
+"id": "7c2abf9450",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.2 — Önbellekler ve bellek hiyerarşisi",
+"url": "02-cpu/02-caches-memory/",
+"q": "İki thread iki farklı sayacı artırıyor ve tek thread'den yavaş. Neden?",
+"a": "Sayaçlar aynı cache line'ı paylaşıyor (false sharing); her yazma diğer çekirdeğin kopyasını geçersiz kılıyor."
+},
+{
+"id": "489e11822c",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.2 — Önbellekler ve bellek hiyerarşisi",
+"url": "02-cpu/02-caches-memory/",
+"q": "2 soketli bir sunucudaki bir veritabanı için NUMA ne demek?",
+"a": "Diğer sokete bağlı bellek daha yavaş; thread'ler ve verileri aynı node'da kalmalı (ya da bellek dağıtılmalı)."
+},
+{
+"id": "f57be4451e",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.2 — Önbellekler ve bellek hiyerarşisi",
+"url": "02-cpu/02-caches-memory/",
+"q": "Huge page'ler büyük heap'lere neden yardımcı olur?",
+"a": "Bir TLB girdisi 4 KB yerine 2 MB'ı (ya da 1 GB'ı) kapsar; çok daha az TLB ıskası ve page table yürüyüşü olur."
+},
+{
+"id": "8cd6dd1229",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.3 — Boru hatları, dal tahmini ve spekülasyon",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Her komut 15+ döngü sürüyorsa CPU döngü başına bir komutu nasıl bitirebilir?",
+"a": "Boru hattı: çok sayıda komut aynı anda farklı aşamalardadır."
+},
+{
+"id": "75e7ee714f",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.3 — Boru hatları, dal tahmini ve spekülasyon",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Bir diziyi sıralamak, üzerinde dallı bir döngüyü neden hızlandırır?",
+"a": "if tahmin edilebilir hale gelir (önce hep yanlış, sonra hep doğru); yanlış tahminler ve boru hattı boşaltmaları neredeyse kaybolur."
+},
+{
+"id": "4c4759cdd5",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.3 — Boru hatları, dal tahmini ve spekülasyon",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Spectre neyi istismar eder?",
+"a": "Spekülatif çalıştırma önbellekte geri alınmayan izler bırakır; önbellek erişimlerini zamanlamak spekülatif olarak okunan veriyi açığa çıkarır."
+},
+{
+"id": "728e78cdc9",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.3 — Boru hatları, dal tahmini ve spekülasyon",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Bulut VM'inde 8 vCPU var. Bu muhtemelen kaç fiziksel çekirdek?",
+"a": "Sağlayıcıya ve instance tipine göre değişir ama genelde SMT ile 4 fiziksel çekirdek (her biri 2 donanım thread'i)."
+},
+{
+"id": "343e709070",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "2.3 — Boru hatları, dal tahmini ve spekülasyon",
+"url": "02-cpu/03-pipeline-speculation/",
+"q": "Ortalama CPU'su düşük bir pod gecikme sıçramaları ve artan cfs_throttled_periods gösteriyor. Ne oluyor?",
+"a": "Thread'leri her 100 ms'lik periyodun başında CPU limitinin kotasını tüketiyor ve bir sonrakine kadar throttle ediliyor. Limiti artır ya da kaldır, veya thread patlamalarını azalt."
+},
+{
+"id": "4f396eeab0",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "Bölüm 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "Aynı sayıda elemanı olan bir diziyi gezmek neden bağlı listeyi gezmekten hızlıdır?",
+"a": "Dizinin elemanları yan yana durur. Tek bir 64 byte'lık cache line birkaçını birden getirir ve önceden getirici (prefetcher) sıradakini tahmin edebilir. Bağlı listenin düğümleri dağınıktır, her biri ~100 ns'lik bir RAM yolculuğu gerektirebilir."
+},
+{
+"id": "8541045891",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "Bölüm 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "RIP register'ı ne tutar ve onu kim değiştirir?",
+"a": "Sıradaki komutun adresini tutar. Normalde komutun uzunluğu kadar ilerler. Atlama (jump), call, ret ve kesmeler onu doğrudan değiştirir."
+},
+{
+"id": "58c83319e2",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "Bölüm 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "ret aslında ne yapar?",
+"a": "call'un stack'e koyduğu dönüş adresini alır ve RIP'e yazar. Böylece çalışma çağrının hemen sonrasından devam eder."
+},
+{
+"id": "c7f6e6c38c",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "Bölüm 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "GCC ile derlenmiş bir program, Clang ile derlenmiş bir kütüphaneyi neden çağırabilir?",
+"a": "İkisi de aynı çağırma kuralına (System V ABI) uyar: argümanlar ve dönüş değeri hangi register'larda taşınır, hangi register'ları hangi taraf korumak zorundadır."
+},
+{
+"id": "db4b27fbc2",
+"ch": "02-cpu",
+"chTitle": "Bölüm 2 — CPU & Assembly",
+"page": "Bölüm 2 — CPU & Assembly",
+"url": "02-cpu/",
+"q": "3 GHz'de bir RAM erişimi kabaca kaç CPU döngüsüne mal olur?",
+"a": "Yaklaşık 300 döngü (~100 ns × 3 döngü/ns). Bu sürede çekirdek yüzlerce komut çalıştırabilirdi."
+},
+{
+"id": "4551b04d56",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.1 — Process'ler ve thread'ler",
+"url": "03-os/01-processes-threads/",
+"q": "fork() gigabaytlarca belleği olan bir process için bile neden hızlıdır?",
+"a": "Copy-on-write: ebeveyn ve çocuk biri yazana kadar sayfaları paylaşır; başta sadece page table'lar kopyalanır."
+},
+{
+"id": "5f2b342676",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.1 — Process'ler ve thread'ler",
+"url": "03-os/01-processes-threads/",
+"q": "Zombi ile yetim arasındaki fark ne?",
+"a": "Zombi bitmiştir ama ebeveyni tarafından toplanmamıştır. Yetim hâlâ çalışıyordur ama ebeveyni ölmüştür; PID 1 onu sahiplenir."
+},
+{
+"id": "ca0d2fcffd",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.1 — Process'ler ve thread'ler",
+"url": "03-os/01-processes-threads/",
+"q": "Pod'un durması hep 30 sn sürüyor. Neden?",
+"a": "Uygulama (PID 1) SIGTERM'i işlemiyor; kubelet bekleme süresinden sonra SIGKILL gönderene kadar hiçbir şey olmuyor."
+},
+{
+"id": "c488af6dbd",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.1 — Process'ler ve thread'ler",
+"url": "03-os/01-processes-threads/",
+"q": "Çıkış kodu 137 ne demek?",
+"a": "128 + 9: process SIGKILL ile öldürüldü; genelde OOM killer ya da sonlanma bekleme süresinden sonra."
+},
+{
+"id": "2ec65fd1ba",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.1 — Process'ler ve thread'ler",
+"url": "03-os/01-processes-threads/",
+"q": "Thread yerine ne zaman process kullanırsın?",
+"a": "İzolasyon gerektiğinde (bir çökme ya da bellek sızıntısı her şeyi düşürmesin) ya da Python'un GIL'i gibi bir kilitten kaçınmak için."
+},
+{
+"id": "1147b42a3c",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.2 — Zamanlayıcı ve CPU zamanı",
+"url": "03-os/02-scheduler/",
+"q": "Verisi olmayan bir sokette read() çağıran task'a ne olur?",
+"a": "Bloklanır: çalışma kuyruğundan çıkar ve veri gelene kadar uyur; zamanlayıcı başka bir şey çalıştırır."
+},
+{
+"id": "dcc53f6cf1",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.2 — Zamanlayıcı ve CPU zamanı",
+"url": "03-os/02-scheduler/",
+"q": "16 çekirdekli bir sunucuda load average 16 ama CPU %20. Ne oluyor?",
+"a": "Yük D durumundaki task'ları da sayar; muhtemelen çok sayıda task kesilemez I/O'da (disk, NFS) takılı."
+},
+{
+"id": "bd434c3802",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.2 — Zamanlayıcı ve CPU zamanı",
+"url": "03-os/02-scheduler/",
+"q": "Kubernetes'te CPU request ile CPU limit arasındaki fark ne?",
+"a": "Request cpu.weight'i ayarlar (çekişmede pay, zamanlamada kullanılır); limit cpu.max'i ayarlar (sert kota, throttling'e yol açar)."
+},
+{
+"id": "0c8eec1823",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.2 — Zamanlayıcı ve CPU zamanı",
+"url": "03-os/02-scheduler/",
+"q": "Ortalama CPU kullanımı limitin çok altındayken bile CPU limiti gecikmeye neden zarar verebilir?",
+"a": "Birden fazla thread periyodun tüm kotasını erken yakabilir, sonra container periyodun geri kalanında throttle edilir."
+},
+{
+"id": "c5eadb76b1",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.2 — Zamanlayıcı ve CPU zamanı",
+"url": "03-os/02-scheduler/",
+"q": "JVM ya da Go gibi runtime'lar container'ın CPU limitini neden bilmeli?",
+"a": "Thread havuzlarını ve GC worker'larını CPU sayısına göre boyutlarlar; 2 CPU limitiyle 64 host çekirdeği görmek ağır throttling'e yol açar."
+},
+{
+"id": "e3397fcd27",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.3 — Sanal bellek ve bellek yönetimi",
+"url": "03-os/03-virtual-memory/",
+"q": "Bir process 4 GB ayırıyor ama RSS sadece 50 MB. Bir sorun mu var?",
+"a": "Hayır. Sayfalar ancak dokunulunca RAM ile desteklenir (talep üzerine sayfalama); dokunulmamış ayırmalar bir şeye mal olmaz."
+},
+{
+"id": "408dd91217",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.3 — Sanal bellek ve bellek yönetimi",
+"url": "03-os/03-virtual-memory/",
+"q": "64 GB'lık bir sunucuda free 1 GB boş gösteriyor. Endişelenmeli misin?",
+"a": "available'a bak. RAM'in çoğu muhtemelen page cache; uygulamalar bellek isteyince kernel onu bırakır."
+},
+{
+"id": "208e8b71c4",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.3 — Sanal bellek ve bellek yönetimi",
+"url": "03-os/03-virtual-memory/",
+"q": "Minor ve major page fault arasındaki fark ne?",
+"a": "Minor: veri zaten RAM'de, sadece eşleme eklenir. Major: veri diskten okunmalı."
+},
+{
+"id": "5716be0ee6",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.3 — Sanal bellek ve bellek yönetimi",
+"url": "03-os/03-virtual-memory/",
+"q": "-Xmx limitin altında olduğu halde JVM pod'um neden OOMKilled oldu?",
+"a": "JVM heap dışında da bellek kullanır (metaspace, thread stack'leri, direct buffer'lar, JIT kodu, native kütüphaneler); heap + bunların hepsi memory.max'i aştı."
+},
+{
+"id": "4437580448",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.3 — Sanal bellek ve bellek yönetimi",
+"url": "03-os/03-virtual-memory/",
+"q": "Kubernetes belleği neden CPU gibi throttle edemez?",
+"a": "CPU zamanı geciktirilebilir; kullanımdaki bellek ise geri alma (cache/swap) ya da process'i öldürmeden geri alınamaz."
+},
+{
+"id": "9da3aef537",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.4 — Syscall'lar, I/O ve dosya sistemleri",
+"url": "03-os/04-io-filesystems/",
+"q": "read() çağırmak ile kernel'in kodunu çalıştırması arasında ne olur?",
+"a": "libc syscall numarasını ve argümanları register'lara koyup syscall çalıştırır; CPU ring 0'a geçer ve kernel girişine atlar, o da read handler'ına yönlendirir."
+},
+{
+"id": "ee7a704af0",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.4 — Syscall'lar, I/O ve dosya sistemleri",
+"url": "03-os/04-io-filesystems/",
+"q": "write() başarılı döndü. Veri diskte mi?",
+"a": "Şart değil: page cache'te kirli sayfa olarak duruyor. Ancak fsync()'ten (ya da writeback'ten) sonra kalıcı depolamada olur."
+},
+{
+"id": "d4e35e3c16",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.4 — Syscall'lar, I/O ve dosya sistemleri",
+"url": "03-os/04-io-filesystems/",
+"q": "nginx birkaç worker process'le 50.000 bağlantıyı nasıl yönetir?",
+"a": "Bloklamayan soketler + epoll: her worker tüm soketlerinde hazır olmayı bekler ve sadece hazır olanları işler."
+},
+{
+"id": "22a936b166",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.4 — Syscall'lar, I/O ve dosya sistemleri",
+"url": "03-os/04-io-filesystems/",
+"q": "20 GB'lık bir log'u sildin ama disk hâlâ dolu. Neden?",
+"a": "Bir process dosyayı hâlâ açık tutuyor; son fd kapanana kadar inode serbest kalmaz. Process'i yeniden başlat/reload et ya da /proc/PID/fd üzerinden truncate et."
+},
+{
+"id": "ca7dc80581",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.4 — Syscall'lar, I/O ve dosya sistemleri",
+"url": "03-os/04-io-filesystems/",
+"q": "/dev/shm kullanımı bir pod'da neden OOMKill'e yol açabilir?",
+"a": "tmpfs'tir, yani RAM'dir ve container'ın bellek cgroup'una sayılır."
+},
+{
+"id": "0df8e02fb5",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.5 — Namespace'ler, cgroup'lar ve container izolasyonu",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Container hafif bir VM mi?",
+"a": "Hayır. Host kernel'inde namespace'lerle izole edilmiş ve cgroup'larla sınırlandırılmış normal bir process'tir. VM kendi kernel'ini çalıştırır."
+},
+{
+"id": "e9fd108b54",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.5 — Namespace'ler, cgroup'lar ve container izolasyonu",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Aynı pod'daki iki container neden localhost üzerinden birbirine ulaşabilir?",
+"a": "Tek bir ağ namespace'ini (pause container'ının tuttuğu) paylaşırlar."
+},
+{
+"id": "515a65e9f9",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.5 — Namespace'ler, cgroup'lar ve container izolasyonu",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Bellek limitini hangi kernel özelliği uygular, aşılınca ne olur?",
+"a": "Bellek cgroup'u (memory.max); OOM killer o cgroup içindeki bir process'i öldürür."
+},
+{
+"id": "46084f770d",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.5 — Namespace'ler, cgroup'lar ve container izolasyonu",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "privileged: true neden tehlikeli?",
+"a": "Tüm capability'leri verir, seccomp/AppArmor kısıtlamasını kapatır ve host cihazlarını açar; container genelde host'u kontrol edebilir."
+},
+{
+"id": "76c9f8cb35",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "3.5 — Namespace'ler, cgroup'lar ve container izolasyonu",
+"url": "03-os/05-namespaces-cgroups/",
+"q": "Container içindeki bir uygulama /proc/meminfo'yu okuyup 2 GB limitle 256 GB görüyor. Neden?",
+"a": "/proc/meminfo namespace'lenmemiştir; uygulama gerçek limitini öğrenmek için cgroup dosyalarını (memory.max) okumalı."
+},
+{
+"id": "0691340787",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "Bölüm 3 — İşletim sistemi",
+"url": "03-os/",
+"q": "Aynı process'in iki thread'i de iki ayrı process de paralel çalışır. Temel fark ne?",
+"a": "Thread'ler tek bir adres alanını (bellek, açık dosyalar) paylaşır ve birbirinin verisini doğrudan okuyabilir. Ayrı process'lerin page table'ları ayrıdır, açık bir paylaşım (pipe, soket, shared memory) olmadan birbirlerinin belleğini göremezler."
+},
+{
+"id": "8996d207b1",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "Bölüm 3 — İşletim sistemi",
+"url": "03-os/",
+"q": "Hatalı bir process neden başka bir process'in belleğinin üstüne yazamaz?",
+"a": "Her process'in kendi page table'ı vardır. Sanal adresleri sadece kernel'in ona verdiği fiziksel çerçevelere eşlenebilir ve MMU bunu her erişimde denetler."
+},
+{
+"id": "55252863da",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "Bölüm 3 — İşletim sistemi",
+"url": "03-os/",
+"q": "Programın write() çağırdığında adım adım ne olur?",
+"a": "libc syscall numarasını RAX'e, argümanları RDI/RSI/RDX'e koyar ve syscall çalıştırır. CPU ring 0'a geçer, kernel'in VFS'i fd'nin neyi gösterdiğini bulup doğru sürücüyü çağırır. Sonuç RAX'te döner ve CPU ring 3'e geri geçer."
+},
+{
+"id": "fb91ce6a8f",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "Bölüm 3 — İşletim sistemi",
+"url": "03-os/",
+"q": "Bir container sürekli OOMKilled ile öldürülüyor. Bunu hangi kernel mekanizması yapıyor?",
+"a": "Bellek cgroup limiti ve kernel'in OOM killer'ı. Container limitinden fazla bellek kullandı, kernel de içindeki bir process'i öldürdü."
+},
+{
+"id": "55c6a9f619",
+"ch": "03-os",
+"chTitle": "Bölüm 3 — İşletim sistemi",
+"page": "Bölüm 3 — İşletim sistemi",
+"url": "03-os/",
+"q": "Container'ındaki PID 1 neden SIGTERM'i işlemeli?",
+"a": "Kubernetes düzgün kapanışa izin vermek için önce SIGTERM gönderir: istekleri bitir, bağlantıları kapat. PID 1 bunu yok sayarsa pod grace period sonuna kadar bekler, sonra SIGKILL ile öldürülür ve yarım kalan işler kaybolur."
+},
+{
+"id": "a95c24c5b1",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.1 — Derleme ve linkleme",
+"url": "04-program/01-compile-link/",
+"q": "Derleyicinin IR'ı neyi mümkün kılar?",
+"a": "Birçok dil ve birçok hedef için tek bir optimizer; ön ve arka uçlar karıştırılabilir (LLVM)."
+},
+{
+"id": "6bcd87cc4d",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.1 — Derleme ve linkleme",
+"url": "04-program/01-compile-link/",
+"q": "nm çıktısındaki U puts ne demek?",
+"a": "Object dosyası puts'u kullanıyor ama tanımlamıyor; linker (ya da yükleyici) onu bulmalı, burada libc'de."
+},
+{
+"id": "180daa5af3",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.1 — Derleme ve linkleme",
+"url": "04-program/01-compile-link/",
+"q": "Go binary'leri neden FROM scratch imajları için popüler?",
+"a": "CGO_ENABLED=0 ile statik linklenirler: libc ya da yükleyici gerekmez, sadece kernel."
+},
+{
+"id": "b5e1ebb8d6",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.1 — Derleme ve linkleme",
+"url": "04-program/01-compile-link/",
+"q": "OpenSSL'e bir güvenlik düzeltmesi geldi. Statik ve dinamik linklenmiş uygulamalar için fark ne?",
+"a": "Dinamik: paylaşımlı kütüphaneyi (taban imajı) bir kez güncelle. Statik: her binary yeniden derlenip deploy edilmeli."
+},
+{
+"id": "74f10450c9",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.1 — Derleme ve linkleme",
+"url": "04-program/01-compile-link/",
+"q": "Tekrarlanabilir build'ler tedarik zinciri güvenliği için neden önemli?",
+"a": "Herkes kaynaktan yeniden derleyip binary'nin bit bit aynı olduğunu kontrol edebilir; build sırasında hiçbir şeyin enjekte edilmediğini kanıtlar."
+},
+{
+"id": "ecdec30683",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.2 — ELF ve program yükleyici",
+"url": "04-program/02-elf-loader/",
+"q": "ELF segmentleri ile bölümleri arasındaki fark ne?",
+"a": "Segmentler yükleyicinin belleğe neyi hangi izinlerle eşleyeceğini tarif eder; bölümler linker, debugger ve araçlar içindir ve strip edilebilir."
+},
+{
+"id": "aae0aa2e41",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.2 — ELF ve program yükleyici",
+"url": "04-program/02-elf-loader/",
+"q": "Bir C programında ilk çalışan kod main mi?",
+"a": "Hayır. Önce ld.so çalışır (dinamik binary'lerde), sonra _start → __libc_start_main ve constructor'lar, sonra main."
+},
+{
+"id": "b8e893a1e9",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.2 — ELF ve program yükleyici",
+"url": "04-program/02-elf-loader/",
+"q": "Bir container exec /app: no such file or directory ile başarısız oluyor ama /app var. Neden?",
+"a": "Yorumlayıcısı (PT_INTERP, ör. glibc'nin ld-linux'u) imajda yok ya da başka bir mimari için derlenmiş."
+},
+{
+"id": "fefa0c11d3",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.2 — ELF ve program yükleyici",
+"url": "04-program/02-elf-loader/",
+"q": "ASLR nedir ve neden PIE gerektirir?",
+"a": "Kodun, heap'in, stack'in ve kütüphanelerin her çalışmada nereye yükleneceğini rastgele yapmak; çalıştırılabilirin kendisi ancak konumdan bağımsızsa taşınabilir."
+},
+{
+"id": "64b4a91f3a",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.2 — ELF ve program yükleyici",
+"url": "04-program/02-elf-loader/",
+"q": "Tam RELRO neyi korur?",
+"a": "Tüm sembolleri başlangıçta çözer ve GOT'u salt okunur yapar; saldırgan içindeki fonksiyon pointer'larının üzerine yazamaz."
+},
+{
+"id": "de5739346c",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.3 — Dil runtime'ları: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "JVM servisleri deploy'dan sonraki ilk dakika neden yavaştır?",
+"a": "Kod yorumlanarak başlar; JIT sıcak metotları ancak onları profilledikten sonra derler (ısınma)."
+},
+{
+"id": "1f910c9c2b",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.3 — Dil runtime'ları: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "Thread eklemek CPU yoğun saf Python kodunu neden hızlandırmaz?",
+"a": "GIL aynı anda sadece bir thread'in Python bytecode'u çalıştırmasına izin verir (free-threaded build hariç)."
+},
+{
+"id": "6300180017",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.3 — Dil runtime'ları: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "Bir Node.js pod'unun 4 CPU limiti var ama hiç 1 CPU'nun üstüne çıkmıyor. Neden?",
+"a": "JavaScript tek thread'de çalışır; worker thread'ler ya da daha çok, daha küçük replica kullan."
+},
+{
+"id": "74414b5a02",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.3 — Dil runtime'ları: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "1 GiB limitli bir container'da GOMEMLIMIT ne olmalı, neden?",
+"a": "900 MiB civarı: GC limite ulaşmadan önce daha çok çalışır, OOMKill'den kaçınır ve heap dışı bellek için pay bırakır."
+},
+{
+"id": "88dcd90d4a",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "4.3 — Dil runtime'ları: JVM, V8, Python, Go",
+"url": "04-program/03-runtimes/",
+"q": "JVM'in varsayılan azami heap'i container belleğinin %25'i. Neyi değiştirirsin?",
+"a": "-XX:MaxRAMPercentage'ı ayarla (ör. %70–75), heap dışı bellek için yer bırak."
+},
+{
+"id": "df6c0e1863",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "Bölüm 4 — Bir program nasıl çalışır",
+"url": "04-program/",
+"q": "printf gerçek adresini hangi aşamada alır?",
+"a": "Derleyicide ya da assembler'da değil. Onlar tanımsız bir sembol bırakır. Statik bağlamada linker doldurur. Dinamik bağlamada dinamik bağlayıcı başlangıçta (ya da ilk çağrıda, tembel olarak) çözer."
+},
+{
+"id": "853f70529e",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "Bölüm 4 — Bir program nasıl çalışır",
+"url": "04-program/",
+"q": "fork() ile execve() arasındaki fark ne?",
+"a": "fork(), mevcut process'in kopyası olan yeni bir process oluşturur. execve(), mevcut process'in programını yenisiyle değiştirir: PID aynı, bellek yeni. Bir program başlatmak = fork + execve."
+},
+{
+"id": "9401318c8d",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "Bölüm 4 — Bir program nasıl çalışır",
+"url": "04-program/",
+"q": "İmajın laptopunda çalışıyor ama cluster'da exec format error veriyor. Neden?",
+"a": "Binary başka bir CPU mimarisi için derlenmiş, örneğin arm64 (Apple Silicon) ile amd64 node'lar. Çözüm: çok mimarili imaj üret (docker buildx --platform linux/amd64,linux/arm64)."
+},
+{
+"id": "8d36429f4d",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "Bölüm 4 — Bir program nasıl çalışır",
+"url": "04-program/",
+"q": "Bir Go binary'si neden FROM scratch imajında çalışabiliyor da tipik bir C programı çalışamıyor?",
+"a": "Statik bir Go binary'si ihtiyacı olan her şeyi içerir ve PT_INTERP'i yoktur. Dinamik bağlanmış bir C programının ld-linux.so ve libc.so.6'ya ihtiyacı vardır, scratch imajında bunlar yoktur."
+},
+{
+"id": "c03620f1f1",
+"ch": "04-program",
+"chTitle": "Bölüm 4 — Bir program nasıl çalışır",
+"page": "Bölüm 4 — Bir program nasıl çalışır",
+"url": "04-program/",
+"q": "Bir JIT derleyicisi ne yapar?",
+"a": "Hangi kodun sık çalıştığını (\"sıcak\" kod) izler ve program çalışırken o bytecode'u native makine koduna derler. Böylece o kısımlar native'e yakın hızda çalışır."
+},
+{
+"id": "2ed182729f",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "Switch hedef MAC'ini öğrenmediği bir çerçeveyle ne yapar?",
+"a": "Geldiği port hariç o VLAN'daki tüm portlara taşır."
+},
+{
+"id": "66fbd86449",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "8.8.8.8'e ping atıyorsun. Laptopun kimin MAC adresi için ARP yapar?",
+"a": "Default gateway'in; MAC'ler sadece yerel bağlantıda önemlidir."
+},
+{
+"id": "82c20fe402",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "VXLAN overlay'leri neden genelde daha küçük bir MTU ister?",
+"a": "VXLAN kapsüllemesi ~50 byte başlık ekler; dış paket hâlâ 1500'e sığsın diye iç paketler küçülmeli."
+},
+{
+"id": "73d513ede7",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "Gratuitous ARP ile failover AWS/GCP VPC'lerinde neden genelde çalışmaz?",
+"a": "Bulut ağı gerçek bir L2 segmenti değildir; hangi IP'nin hangi arayüze ait olduğunu SDN kontrol eder ve GARP'ı yok sayar."
+},
+{
+"id": "fefd9f2439",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)",
+"url": "05-network/01-ethernet-arp-vlan/",
+"q": "STP hangi sorunu çözer?",
+"a": "Yedek bağlantıları kapatır; yayınlar sonsuza dek dönüp yayın fırtınasına yol açamaz."
+},
+{
+"id": "c1679532b1",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.2 — IP adresleme, subnet'ler ve routing",
+"url": "05-network/02-ip-routing/",
+"q": "Bir /22'de kaç adres var, 10.1.4.0/22 hangi aralığı kapsar?",
+"a": "1024 adres: 10.1.4.0 – 10.1.7.255."
+},
+{
+"id": "fb4200a000",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.2 — IP adresleme, subnet'ler ve routing",
+"url": "05-network/02-ip-routing/",
+"q": "Bir makinede A üzerinden 10.0.0.0/8 ve B üzerinden 10.0.5.0/24 rotası var. 10.0.5.20 nereye gider?",
+"a": "B üzerinden: /24 en uzun eşleşen önek."
+},
+{
+"id": "0ceab3e271",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.2 — IP adresleme, subnet'ler ve routing",
+"url": "05-network/02-ip-routing/",
+"q": "Paket router'ları geçerken kaynak ve hedef IP'ler değişir mi?",
+"a": "Hayır (NAT yoksa). Her durakta sadece TTL/sağlama toplamı ve L2 (MAC) başlığı değişir."
+},
+{
+"id": "6d1b39aa2d",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.2 — IP adresleme, subnet'ler ve routing",
+"url": "05-network/02-ip-routing/",
+"q": "Tüm ICMP'yi engellemek neden bazı kullanıcılar için HTTPS'i bozabilir?",
+"a": "PMTU keşfi ICMP \"fragmentation needed\"a dayanır; o olmadan büyük paketler sessizce atılır ve bağlantılar takılır."
+},
+{
+"id": "3f5491e57b",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.2 — IP adresleme, subnet'ler ve routing",
+"url": "05-network/02-ip-routing/",
+"q": "Pod CIDR'ları neden şirket ağınla çakışmamalı?",
+"a": "Rotalar belirsizleşir: şirket IP'lerine giden trafik cluster'a gönderilir (ya da tersi) ve peering/VPN kurulamaz."
+},
+{
+"id": "cd13569b6c",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.3 — NAT, firewall'lar ve conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Durumlu bir firewall HTTPS için neden tek kurala ihtiyaç duyarken bir NACL iki kural ister?",
+"a": "conntrack izin verilen bir akışın cevaplarını otomatik geçirir; durumsuz bir NACL ephemeral portlara dönen trafiğe açıkça izin vermelidir."
+},
+{
+"id": "e6484c44ee",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.3 — NAT, firewall'lar ve conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Hiçbir arayüzde o IP yokken ClusterIP'ye giden bir paket pod'a nasıl ulaşır?",
+"a": "kube-proxy kuralları PREROUTING/OUTPUT'ta hedefi seçilen bir pod IP'sine DNAT yapar; conntrack eşlemeyi bağlantı boyunca tutar."
+},
+{
+"id": "3fd6ca98a5",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.3 — NAT, firewall'lar ve conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Çok sayıda pod bir NAT gateway üzerinden tek bir dış API'yi çağırıyor ve rastgele zaman aşımları alıyor. Muhtemel sebep?",
+"a": "O tek hedef IP:port'a SNAT kaynak port tükenmesi. NAT IP'si ekle, bağlantıları yeniden kullan ya da hedefleri dağıt."
+},
+{
+"id": "7d61da3606",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.3 — NAT, firewall'lar ve conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "Bir NetworkPolicy bir pod'u ingress için seçince diğer trafiğe ne olur?",
+"a": "Hiçbir politikanın açıkça izin vermediği tüm gelen trafik o pod için reddedilir."
+},
+{
+"id": "bf33f0bc2b",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.3 — NAT, firewall'lar ve conntrack",
+"url": "05-network/03-nat-firewall/",
+"q": "externalTrafficPolicy: Local istemci IP'sini neden korur?",
+"a": "Trafik sadece onu alan node'daki pod'lara gider; başka bir node'a SNAT gerekmez."
+},
+{
+"id": "9af8ce1363",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.4 — Bulut ağları (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "Bir subnet'i 'public' yapan nedir?",
+"a": "Route table'ında bir internet gateway'e default rota olması (ve instance'ların genel IP'si olması)."
+},
+{
+"id": "9627aa8138",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.4 — Bulut ağları (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "Private subnet'teki instance'lar paket indiremiyor. Neyi kontrol edersin?",
+"a": "Subnet'in route table'ında 0.0.0.0/0 → public subnet'teki bir NAT gateway var mı, NAT gateway sağlıklı mı, SG/NACL dışa ve dönüş trafiğine izin veriyor mu."
+},
+{
+"id": "fca059c11a",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.4 — Bulut ağları (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "VPC A, B ile; B de C ile peer edilmiş. A, C'ye ulaşabilir mi?",
+"a": "Hayır. Peering geçişli değildir; transit gateway kullan ya da A ile C'yi doğrudan peer et."
+},
+{
+"id": "71b7bd3348",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.4 — Bulut ağları (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "Kurallarda CIDR yerine security group referans almak neden daha iyi?",
+"a": "Kurallar IP'leri değil rolleri takip eder: otomatik ölçeklemeyle IP'ler değişse de uygulama SG'sindeki her instance'a (ya da SG-for-pods ile pod'a) izin verilir."
+},
+{
+"id": "204a6d1afc",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "5.4 — Bulut ağları (VPC)",
+"url": "05-network/04-cloud-networking/",
+"q": "NAT gateway faturan çok büyük. Yaygın bir çözüm?",
+"a": "Trafiğin NAT gateway'i atlaması için S3/ECR/diğer AWS servislerine VPC endpoint'leri ekle."
+},
+{
+"id": "0b212422c0",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "Bölüm 5 — Ağın temelleri",
+"url": "05-network/",
+"q": "Bir paket 12 router'dan geçiyor. Hedef IP kaç kez değişir? Ya hedef MAC?",
+"a": "Hedef IP yol boyunca aynı kalır (sunucu tarafındaki NAT'ı saymazsak). Hedef MAC her hop'ta değişir, çünkü her L2 çerçevesi sadece sıradaki cihaza gider."
+},
+{
+"id": "834580d55d",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "Bölüm 5 — Ağın temelleri",
+"url": "05-network/",
+"q": "Laptopun 192.168.1.50'ye ve 8.8.8.8'e ulaşmak istiyor. Her çerçeveye hangi MAC adresini koyar?",
+"a": "192.168.1.50 için (aynı /24): o makinenin kendi MAC'ini, ARP ile bulur. 8.8.8.8 için (subnet dışında): ağ geçidinin MAC'ini."
+},
+{
+"id": "e6ad50f630",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "Bölüm 5 — Ağın temelleri",
+"url": "05-network/",
+"q": "Switch neye bakar, router neye bakar?",
+"a": "Switch MAC adreslerine bakar (L2). Router IP adreslerine (L3) ve yönlendirme tablosuna bakar."
+},
+{
+"id": "46bcad1c5d",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "Bölüm 5 — Ağın temelleri",
+"url": "05-network/",
+"q": "İnternetteki bir sunucu neden evdeki laptopuna bağlantı açamaz?",
+"a": "Laptopunun NAT arkasında sadece özel bir IP'si var. Router gelen paketleri sadece senin tarafının başlattığı konuşmalar (conntrack girdileri) için nereye göndereceğini bilir. İstenmeden gelen trafiğin bir eşleşmesi yoktur, port yönlendirme ayarlamadığın sürece."
+},
+{
+"id": "94f671fd81",
+"ch": "05-network",
+"chTitle": "Bölüm 5 — Ağın temelleri",
+"page": "Bölüm 5 — Ağın temelleri",
+"url": "05-network/",
+"q": "Evdeki router'ının NAT'ının AWS'deki karşılığı nedir?",
+"a": "NAT gateway: özel subnet'teki instance'lar dışarı giden trafiklerini onun üzerinden gönderir, o da özel IP'leri genel bir IP ile değiştirir."
+},
+{
+"id": "f88a32f426",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP header'larına derin dalış",
+"url": "06-internet/01-headers/",
+"q": "Cache-Control: no-cache aslında ne demek?",
+"a": "Cevap saklanabilir ama her kullanımdan önce sunucuyla yeniden doğrulanmalıdır (ör. If-None-Match). Saklamayı yasaklamak için no-store kullanılır."
+},
+{
+"id": "b9afb6e213",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP header'larına derin dalış",
+"url": "06-internet/01-headers/",
+"q": "API'n curl ile çalışıyor ama tarayıcı CORS hatası veriyor. Neden, düzeltme nerede?",
+"a": "CORS'u sadece tarayıcılar uygular. API'nin (ya da önündeki ingress'in) o origin için Access-Control-Allow-Origin döndürmesi ve OPTIONS preflight'ına izin verilen metot ve header'larla cevap vermesi gerekir."
+},
+{
+"id": "14aa7a61a7",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP header'larına derin dalış",
+"url": "06-internet/01-headers/",
+"q": "Load balancer arkasında her log satırı aynı istemci IP'sini gösteriyor. Sorun ne?",
+"a": "Uygulama TCP karşı tarafını (LB'yi) logluyor. İstemci IP'sini X-Forwarded-For / Forwarded'dan oku ve sadece kendi proxy'lerinin eklediği girdilere güven."
+},
+{
+"id": "dc5ba4f29a",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP header'larına derin dalış",
+"url": "06-internet/01-headers/",
+"q": "Bir CDN neden Vary: Accept-Encoding görmeli?",
+"a": "Aynı URL birden fazla kodlamada var (br, gzip, sıkıştırmasız). Vary olmadan CDN, brotli çözemeyen bir istemciye brotli gövde sunabilir."
+},
+{
+"id": "48e0b146d2",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.1 — HTTP header'larına derin dalış",
+"url": "06-internet/01-headers/",
+"q": "Hangi cookie öznitelikleri oturum cookie'sinin JavaScript ile okunmasını ve HTTP üzerinden gönderilmesini engeller?",
+"a": "HttpOnly (JS erişimi yok) ve Secure (sadece HTTPS). CSRF'e karşı SameSite=Lax ya da Strict ekle."
+},
+{
+"id": "2b872ddb3b",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS'e derin dalış",
+"url": "06-internet/02-dns/",
+"q": "Kök → TLD → yetkili zincirini aslında kim yürür: laptopun mu, çözücü mü?",
+"a": "Özyinelemeli çözücü. Laptopundaki stub çözücü tek bir sorgu gönderir ve son cevabı alır."
+},
+{
+"id": "bc81c3ddc6",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS'e derin dalış",
+"url": "06-internet/02-dns/",
+"q": "On dakika önce TTL'i 3600 olan bir A kaydını değiştirdin. Bazı kullanıcılar neden hâlâ eski IP'yi görüyor?",
+"a": "Değişiklikten önce önbelleğe alan çözücüler kopyalarının TTL'i dolana kadar (bir saate kadar) onu tutar; bazı uygulamalar daha da uzun tutar."
+},
+{
+"id": "caab39da70",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS'e derin dalış",
+"url": "06-internet/02-dns/",
+"q": "Bir pod'un api.stripe.com sorgusu neden yavaş olabilir, iki çözüm nedir?",
+"a": "ndots:5 önce her search ekini, A ve AAAA için ayrı ayrı denetir. Sonunda nokta olan tam ismi kullan, ndots'u düşür ve/veya NodeLocal DNSCache çalıştır."
+},
+{
+"id": "f690941d70",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS'e derin dalış",
+"url": "06-internet/02-dns/",
+"q": "DNSSEC neye karşı korur, neye karşı korumaz?",
+"a": "Sahte ya da değiştirilmiş cevaplara karşı (gerçeklik ve bütünlük). Hangi isimleri sorguladığını gizlemez; o iş DoH/DoT'nin."
+},
+{
+"id": "3da0cfa97b",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.2 — DNS'e derin dalış",
+"url": "06-internet/02-dns/",
+"q": "Subdomain takeover nedir?",
+"a": "Bir CNAME hâlâ silinmiş bir bulut kaynağını (bucket, uygulama, CDN) gösteriyordur. Saldırgan o kaynak adını alır ve artık senin subdomain'inde içerik sunar."
+},
+{
+"id": "559bdee194",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP'ye derin dalış",
+"url": "06-internet/03-tcp/",
+"q": "TCP neden veri göndermeden önce el sıkışmaya ihtiyaç duyar?",
+"a": "İki taraf başlangıç sıra numaralarında anlaşmalı ve karşı tarafın ulaşılabilir ve istekli olduğunu doğrulamalıdır."
+},
+{
+"id": "98f1c52f23",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP'ye derin dalış",
+"url": "06-internet/03-tcp/",
+"q": "Akış kontrolü ile tıkanıklık kontrolü arasındaki fark ne?",
+"a": "Akış kontrolü alıcıyı korur (rwnd, tamponu). Tıkanıklık kontrolü ağı korur (cwnd, kayıptan ya da bant genişliği/RTT'den tahmin edilir)."
+},
+{
+"id": "fe6368e81d",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP'ye derin dalış",
+"url": "06-internet/03-tcp/",
+"q": "Servisinde CLOSE_WAIT'te 20.000 soket var. Neyi düzeltirsin?",
+"a": "Uygulamayı: karşı tarafın FIN'ini alıyor ama soketini hiç kapatmıyor (sızan bağlantılar, eksik close() / kapatılmamış response body)."
+},
+{
+"id": "b146554ec7",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP'ye derin dalış",
+"url": "06-internet/03-tcp/",
+"q": "LB boşta süresi 60 sn, backend keep-alive süresi 30 sn iken neden ara sıra 502 alırsın?",
+"a": "Backend boştaki bağlantıları önce kapatır; LB az önce kapanan bir bağlantıya yeni istek yollayabilir. Backend'in süresini LB'ninkinden uzun yap."
+},
+{
+"id": "e8ed16a226",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.3 — TCP'ye derin dalış",
+"url": "06-internet/03-tcp/",
+"q": "Tek bir gRPC istemcisi neden bir Kubernetes Service arkasındaki tek pod'u boğabilir?",
+"a": "kube-proxy TCP bağlantısı başına dağıtır, gRPC ise tüm istekleri tek bir uzun ömürlü HTTP/2 bağlantısından yollar. L7 dağıtım (mesh, gateway) ya da istemci tarafı dağıtım kullan."
+},
+{
+"id": "7a3a90866a",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS ve sertifikalara derin dalış",
+"url": "06-internet/04-tls/",
+"q": "TLS neden tüm veriyi RSA/ECDSA ile şifrelemiyor?",
+"a": "Asimetrik kripto yavaştır. Bir kez anahtar anlaşması ve kimlik kanıtı için kullanılır; veri hızlı simetrik şifrelerle şifrelenir."
+},
+{
+"id": "51fca2daee",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS ve sertifikalara derin dalış",
+"url": "06-internet/04-tls/",
+"q": "CertificateVerify imzası, sertifikanın tek başına kanıtlamadığı neyi kanıtlar?",
+"a": "Sunucunun özel anahtara sahip olduğunu. Açık sertifikayı herkes kopyalayabilir; anahtarla sadece sahibi imza atabilir."
+},
+{
+"id": "0612e91c50",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS ve sertifikalara derin dalış",
+"url": "06-internet/04-tls/",
+"q": "Siten Chrome'da çalışıyor ama curl 'unable to get local issuer certificate' diyor. Neden?",
+"a": "Sunucu ara sertifikayı göndermiyor. Chrome onu önbellekte tutuyordu, curl tutmuyordu. Tam zinciri sun."
+},
+{
+"id": "81b71029a2",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS ve sertifikalara derin dalış",
+"url": "06-internet/04-tls/",
+"q": "Sektör neden 47 günlük sertifikalara geçiyor?",
+"a": "İptal mekanizmaları güvenilir çalışmıyor; kısa ömür, çalınmış ya da hatalı verilmiş bir sertifikanın ne kadar süre işe yarayacağını sınırlar ve otomasyonu zorunlu kılar."
+},
+{
+"id": "3e11f22c4e",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.4 — TLS ve sertifikalara derin dalış",
+"url": "06-internet/04-tls/",
+"q": ".example.com için hangi ACME challenge'ı gerekir?",
+"a": "DNS-01: wildcard sertifikalar _acme-challenge.example.com altında bir TXT kaydı ister."
+},
+{
+"id": "e82de8670c",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 ve HTTP/3'e derin dalış",
+"url": "06-internet/05-http2-http3/",
+"q": "HTTP/2 akışları çokluyor. Neden yine de head-of-line blocking yaşayabilir?",
+"a": "Akışlar tek bir TCP bağlantısını paylaşır; kayıp bir TCP segmenti sonraki tüm byte'ların teslimini bekletir, her akış bekler."
+},
+{
+"id": "ce14188d11",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 ve HTTP/3'e derin dalış",
+"url": "06-internet/05-http2-http3/",
+"q": "Tarayıcı bir sitenin HTTP/3 desteklediğini nasıl öğrenir?",
+"a": "Önceki bir cevaptaki Alt-Svc: h3=\":443\" ya da bir HTTPS DNS kaydıyla. Sonra QUIC'i dener, UDP kapalıysa TCP'ye döner."
+},
+{
+"id": "77f402e306",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 ve HTTP/3'e derin dalış",
+"url": "06-internet/05-http2-http3/",
+"q": "0-RTT verisi neden güvenli isteklerle sınırlı?",
+"a": "Saldırgan ilk uçuşu tekrar oynatabilir. Bir GET'i tekrarlamak zararsızdır; bir ödeme POST'unu tekrarlamak değildir."
+},
+{
+"id": "6438fde30a",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 ve HTTP/3'e derin dalış",
+"url": "06-internet/05-http2-http3/",
+"q": "Bir Kubernetes Service arkasındaki gRPC servisinde tek bir pod sıcak. Neden?",
+"a": "gRPC tek bir uzun ömürlü HTTP/2 bağlantısı tutar; kube-proxy istekleri değil bağlantıları dağıtır."
+},
+{
+"id": "283252de3b",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.5 — HTTP/2 ve HTTP/3'e derin dalış",
+"url": "06-internet/05-http2-http3/",
+"q": "Telefon Wi-Fi'dan 5G'ye geçince bir QUIC bağlantısına ne olur?",
+"a": "IP değişir ama Connection ID değişmez; bağlantı yeniden kurulmak yerine göç eder."
+},
+{
+"id": "11ec6c4310",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Metotlar, durum kodları ve API stilleri",
+"url": "06-internet/06-apis/",
+"q": "Bir proxy hangi metotları otomatik olarak güvenle yeniden deneyebilir, neden?",
+"a": "İdempotent olanları (GET, HEAD, PUT, DELETE, OPTIONS): tekrarlamak sonucu değiştirmez. POST bir kopya oluşturabilir."
+},
+{
+"id": "5d54895cd1",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Metotlar, durum kodları ve API stilleri",
+"url": "06-internet/06-apis/",
+"q": "401 ile 403 arasındaki fark ne?",
+"a": "401: kim olduğunu bilmiyoruz (eksik/geçersiz kimlik bilgisi). 403: kim olduğunu biliyoruz ve iznin yok."
+},
+{
+"id": "83714ac284",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Metotlar, durum kodları ve API stilleri",
+"url": "06-internet/06-apis/",
+"q": "90 sn süren bir rapor uç noktasında kullanıcılar 504 alıyor. Önce nereye bakarsın?",
+"a": "Proxy/ingress/LB okuma zaman aşımına (çoğu zaman 60 sn). O route için artır ya da uç noktayı asenkron yap (202 + yoklama)."
+},
+{
+"id": "97e248653b",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Metotlar, durum kodları ve API stilleri",
+"url": "06-internet/06-apis/",
+"q": "LLM sohbet arayüzleri neden çoğu zaman WebSocket yerine SSE kullanır?",
+"a": "Akış tek yönlü (sunucu → istemci); SSE düz HTTP'dir, proxy ve CDN'lerden geçer, otomatik yeniden bağlanır."
+},
+{
+"id": "715798be47",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "6.6 — Metotlar, durum kodları ve API stilleri",
+"url": "06-internet/06-apis/",
+"q": "gRPC çağrı başarısız olsa bile neden HTTP 200 döner?",
+"a": "gRPC kendi durumunu akışın sonundaki grpc-status trailer'ında bildirir; HTTP durumu sadece taşımanın çalıştığını söyler."
+},
+{
+"id": "13d083e5c2",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "Özyinelemeli çözücün .com sunucularını zaten biliyor. example.com için yine de köke sorar mı?",
+"a": "Hayır. Kökün yönlendirmesini (.com NS kayıtlarını) TTL'leri boyunca önbellekte tutar ve doğrudan .com sunucularına gider. Köke sadece o önbelleğin süresi dolduğunda sorulur."
+},
+{
+"id": "5d96444806",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "Yeni bir HTTPS isteği (TCP üzerinde TLS 1.3) neden HTTP verisi akmadan önce en az 2 RTT'ye mal olur?",
+"a": "TCP el sıkışması için 1 RTT, ardından TLS 1.3 el sıkışması için 1 RTT. HTTP isteği ancak bundan sonra gönderilebilir. HTTP/3, taşıma ve TLS el sıkışmalarını birleştirerek bunlardan birini kazandırır."
+},
+{
+"id": "05b1ba37fb",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "Tarayıcı, sunucunun gerçekten example.com olduğunu ve bir saldırgan olmadığını nereden bilir?",
+"a": "Sunucu, tarayıcının güvendiği bir CA tarafından imzalanmış example.com sertifikası gönderir ve eşleşen özel anahtara sahip olduğunu kanıtlar (CertificateVerify). Tarayıcı zinciri, hostname'i ve geçerlilik tarihlerini kontrol eder."
+},
+{
+"id": "e285690d99",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "SNI nedir ve neden gerekir?",
+"a": "Server Name Indication: ClientHello içinde gönderilen hostname. Tek bir IP (bir load balancer, bir CDN) binlerce siteye hizmet verebilir, şifreleme başlamadan hangi sertifikayı sunacağını bilmesi gerekir."
+},
+{
+"id": "490ede9e6c",
+"ch": "06-internet",
+"chTitle": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"page": "Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP",
+"url": "06-internet/",
+"q": "Load balancer'ından gelen 502 ile 504 arasındaki fark ne?",
+"a": "502 Bad Gateway: LB arka uçtan geçersiz bir cevap aldı ya da hiç cevap alamadı (çöktü, bağlantı reddedildi). 504 Gateway Timeout: arka uç zamanında cevap vermedi."
+},
+{
+"id": "9fb01f0114",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.1 — Yük dengeleme",
+"url": "07-server/01-load-balancing/",
+"q": "L4 bir load balancer gRPC trafiğini neden dengesiz bırakabilir?",
+"a": "Bağlantıları dengeler; gRPC tüm istekleri tek bir uzun ömürlü HTTP/2 bağlantısında çoklar, o istemciden gelen her şeyi tek backend alır."
+},
+{
+"id": "6663f7014f",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.1 — Yük dengeleme",
+"url": "07-server/01-load-balancing/",
+"q": "Readiness ve liveness probe'ları arasındaki fark ne?",
+"a": "Readiness: bu pod şu an trafik almalı mı? Liveness: takıldı mı, yeniden başlatılmalı mı?"
+},
+{
+"id": "b037c8f18a",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.1 — Yük dengeleme",
+"url": "07-server/01-load-balancing/",
+"q": "Derin bir liveness kontrolü (DB'yi sorgulayan) neden tehlikeli?",
+"a": "DB'deki bir aksaklık her pod'un liveness'ını düşürür ve Kubernetes hepsini aynı anda yeniden başlatır; küçük bir sorun kesintiye dönüşür."
+},
+{
+"id": "86866cde4d",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.1 — Yük dengeleme",
+"url": "07-server/01-load-balancing/",
+"q": "Consistent hashing ne zaman işe yarar?",
+"a": "Aynı anahtarın aynı backend'e gitmesi gerektiğinde (önbellek yakınlığı, shard'lar) ve backend'ler değişince az anahtarın taşınmasını istediğinde."
+},
+{
+"id": "3e716b79b4",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.1 — Yük dengeleme",
+"url": "07-server/01-load-balancing/",
+"q": "Kullanıcılar her rollout'ta birkaç saniye 502 görüyor. Neyi kontrol edersin?",
+"a": "Düzgün kapanışı: çıkıştan önce readiness'ın false olması, endpoint'ler güncellensin diye preStop sleep, SIGTERM işleme ve LB deregistration gecikmesi."
+},
+{
+"id": "2cbb48f9b0",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.2 — Önbellek desenleri",
+"url": "07-server/02-caching/",
+"q": "Cache-aside'da yazmada anahtarı güncellemek yerine neden silersin?",
+"a": "Eşzamanlı yazanlar önbelleği yanlış sırayla güncelleyip eski bir değer bırakabilir; silmek bir sonraki okumanın güncel değeri getirmesini sağlar."
+},
+{
+"id": "383a58f376",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.2 — Önbellek desenleri",
+"url": "07-server/02-caching/",
+"q": "Önbellek izdihamı nedir, nasıl önlenir?",
+"a": "Çok sayıda istek süresi dolmuş aynı sıcak anahtarı aynı anda ıskalayıp DB'ye gider. İstek birleştirme/kilitler, stale-while-revalidate ya da jitter'lı TTL'lerle erken yenileme kullan."
+},
+{
+"id": "47f7b46568",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.2 — Önbellek desenleri",
+"url": "07-server/02-caching/",
+"q": "Redis'in bir çekirdeği %100 CPU'da, diğerleri boş. Olası sebepler?",
+"a": "Yavaş bir komut (KEYS, dev set'ler, Lua) ya da sıcak bir anahtar; Redis komutları tek thread'de çalıştırır."
+},
+{
+"id": "ccc55d5425",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.2 — Önbellek desenleri",
+"url": "07-server/02-caching/",
+"q": "Write-behind ne zaman kabul edilebilir?",
+"a": "Son birkaç yazmayı kaybetmek tolere edilebiliyorsa (sayaçlar, metrikler) ve yazma hızı kalıcılıktan önemliyse."
+},
+{
+"id": "5b3b546f5a",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.2 — Önbellek desenleri",
+"url": "07-server/02-caching/",
+"q": "Önbellek cluster'ı boş olarak yeniden başlayınca veritabanına ne olur, nasıl hazırlanırsın?",
+"a": "Tüm okuma yükünü alır (soğuk önbellek). Kritik anahtarları ısıt, trafiği kademeli artır ve DB'yi hız sınırları/circuit breaker'larla koru."
+},
+{
+"id": "8cf0d657fd",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.3 — Veritabanları: depolama, transaction'lar ve replikasyon",
+"url": "07-server/03-databases/",
+"q": "WAL neden veri sayfalarından önce yazılır?",
+"a": "Commit edilmiş bir transaction çökme sonrası log yeniden oynatılarak her zaman kurtarılabilsin, veri sayfaları da tembelce flush edilebilsin diye."
+},
+{
+"id": "4dcbe039ed",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.3 — Veritabanları: depolama, transaction'lar ve replikasyon",
+"url": "07-server/03-databases/",
+"q": "Replikasyon neden yedeklerin yerini tutmaz?",
+"a": "Hatalar ve kötü niyetli silmeler dahil her değişikliği saniyeler içinde replikalara kopyalar; geri dönmek için zaman noktası yedeklerine ihtiyacın var."
+},
+{
+"id": "8c0c5832e6",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.3 — Veritabanları: depolama, transaction'lar ve replikasyon",
+"url": "07-server/03-databases/",
+"q": "Bir sorgu created_at'e göre filtreliyor ama tek indeks (tenant_id, created_at) üzerinde. Verimli kullanılır mı?",
+"a": "Genelde hayır: B-tree bileşik indeksleri soldan sağa kullanılır; filtrede tenant_id yoksa verimli arama yapamaz."
+},
+{
+"id": "1fb2367566",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.3 — Veritabanları: depolama, transaction'lar ve replikasyon",
+"url": "07-server/03-databases/",
+"q": "Senkron ve asenkron replikasyon arasındaki ödünleşim ne?",
+"a": "Senkron: failover'da veri kaybı yok ama daha yüksek commit gecikmesi ve erişilebilirlik bağımlılığı. Asenkron: hızlı commit'ler ama son transaction'ların olası kaybı ve eski replika okumaları."
+},
+{
+"id": "673317fe35",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.3 — Veritabanları: depolama, transaction'lar ve replikasyon",
+"url": "07-server/03-databases/",
+"q": "Uygulamanı 10'dan 100 pod'a çıkardın ve Postgres bağlantı reddetmeye başladı. Neden, çözüm ne?",
+"a": "Her pod'un havuzu N bağlantı açar; toplam max_connections'ı aşar. Bir bağlantı havuzlayıcı (PgBouncer/RDS Proxy) ve pod başına daha küçük havuzlar kullan."
+},
+{
+"id": "cc2ad202ee",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler",
+"url": "07-server/04-queues-events/",
+"q": "Tüketiciler neden idempotent olmalı?",
+"a": "En az bir kez teslimde işleme ile ack arasındaki bir çökme yeniden teslime yol açar; handler iki kez aynı sonucu üretmeli."
+},
+{
+"id": "d74bd9b24a",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler",
+"url": "07-server/04-queues-events/",
+"q": "6 partition'lı bir topic'in var ve tüketicileri 10'a çıkarıyorsun. Ne olur?",
+"a": "Sadece 6 tüketici partition alır; 4'ü boşta oturur. Paralelliği partition sayısı sınırlar."
+},
+{
+"id": "0e6f24b994",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler",
+"url": "07-server/04-queues-events/",
+"q": "Uygulama kodunda 'DB'ye yaz, sonra Kafka'ya yayınla' yapmanın sorunu ne?",
+"a": "İkisi atomik değil: commit'ten sonraki bir çökme ya da yayınlama hatası olayı kaybettirir (ya da ters sırada geri alınmış veri için olay yayınlanır). Outbox/CDC kullan."
+},
+{
+"id": "244c2cd072",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler",
+"url": "07-server/04-queues-events/",
+"q": "Büyüyen tüketici gecikmesi sana ne söyler, ne yaparsın?",
+"a": "Tüketiciler üreticilerin yazdığından yavaş işliyor. Tüketicileri ölçekle (partition sayısına kadar), yavaş handler'ları düzelt ya da partition ekle."
+},
+{
+"id": "fd0688c162",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler",
+"url": "07-server/04-queues-events/",
+"q": "'Son 7 günün olaylarını yeni bir analitik servisine yeniden oynat' için kuyruk mu log mu?",
+"a": "≥ 7 gün saklamalı bir log (Kafka); kuyruk tüketilince mesajları siler."
+},
+{
+"id": "e4ce4fa678",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "Bölüm 7 — Sunucu tarafı",
+"url": "07-server/",
+"q": "Uygulama sunucuları neden stateless olmalı?",
+"a": "Böylece her instance her isteğe hizmet verebilir ve herhangi bir instance istendiği an eklenip öldürülebilir. Yatay ölçekleme, kademeli deploy ve kendi kendini iyileştirme bu sayede mümkün olur."
+},
+{
+"id": "0cc126dcfd",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "Bölüm 7 — Sunucu tarafı",
+"url": "07-server/",
+"q": "L4 ile L7 load balancer arasındaki fark ne?",
+"a": "L4, TCP/UDP bağlantılarını içeriği okumadan IP ve porta göre iletir. L7 HTTP'yi anlar: host'a, yola ya da başlığa göre yönlendirebilir, TLS'i sonlandırabilir, tek tek istekleri tekrar deneyebilir."
+},
+{
+"id": "5766ad7d4b",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "Bölüm 7 — Sunucu tarafı",
+"url": "07-server/",
+"q": "Bir kullanıcı profilini güncelliyor ve hemen ardından eski halini görüyor. Sebebi ne olabilir?",
+"a": "Replikasyon gecikmesi (okuma henüz yetişmemiş bir replikaya gitti) ya da yazma sırasında geçersiz kılınmamış eski bir cache girdisi."
+},
+{
+"id": "666b8e65a7",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "Bölüm 7 — Sunucu tarafı",
+"url": "07-server/",
+"q": "Kuyruk worker'ları neden idempotent olmalı?",
+"a": "Çoğu kuyruk \"en az bir kez\" teslim eder. Bir iş iki kez çalışabilir; örneğin worker işi yaptıktan sonra ama onaylamadan önce çökerse. İki kez çalışınca kartı iki kez çekmemeli."
+},
+{
+"id": "c78ee10324",
+"ch": "07-server",
+"chTitle": "Bölüm 7 — Sunucu tarafı",
+"page": "Bölüm 7 — Sunucu tarafı",
+"url": "07-server/",
+"q": "API'n bazen 30 sn süren bir ödeme sağlayıcısını çağırıyor. Ne eklersin?",
+"a": "Çağrıya bir zaman aşımı, backoff ile tekrar deneme (sadece çağrı idempotent ise), bir circuit breaker. En iyisi de çağrıyı asenkron bir işe taşımak, kullanıcının isteği beklemesin."
+},
+{
+"id": "2822e5e9b9",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.1 — Render pipeline'ına derin dalış",
+"url": "08-browser/01-rendering/",
+"q": "CSS neden render engelleyici de görseller değil?",
+"a": "CSSOM olmadan tarayıcı hiçbir şeyin nasıl görüneceğini ya da nereye gideceğini bilemez; onsuz boyamak stilsiz içerik yanıp sönmesine yol açar. Görseller sonra yerine oturabilir."
+},
+{
+"id": "99136ff081",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.1 — Render pipeline'ına derin dalış",
+"url": "08-browser/01-rendering/",
+"q": "defer ile async arasındaki fark ne?",
+"a": "İkisi de paralel indirir. defer HTML ayrıştırmasından sonra, belge sırasıyla çalışır; async iner inmez, herhangi bir sırada çalışır."
+},
+{
+"id": "051c939016",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.1 — Render pipeline'ına derin dalış",
+"url": "08-browser/01-rendering/",
+"q": "Neden left yerine transform animasyonu yapılır?",
+"a": "left her karede layout ve paint tetikler; transform layout olmadan GPU'da compositor tarafından işlenebilir."
+},
+{
+"id": "8c7829dc15",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.1 — Render pipeline'ına derin dalış",
+"url": "08-browser/01-rendering/",
+"q": "Layout thrashing nedir?",
+"a": "DOM yazmaları ile layout okumalarını iç içe yapmak; tarayıcı kare başına birçok kez layout'u senkron yeniden hesaplamak zorunda kalır."
+},
+{
+"id": "9bcf0e6640",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.1 — Render pipeline'ına derin dalış",
+"url": "08-browser/01-rendering/",
+"q": "Altyapı ekibi render hızı için ne yapabilir?",
+"a": "TTFB'yi düşürmek (CDN, önbellek, akış), sıkıştırma, HTTP/2-3, early hints, doğru cache header'ları ve uçta görsel optimizasyonu."
+},
+{
+"id": "4fad539d84",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.2 — JavaScript, event loop ve asenkron",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "setTimeout(f,0), Promise.resolve().then(g) ve senkron bir console.log hangi sırayla çalışır?",
+"a": "Önce senkron log, sonra g (mikro görev), sonra f (görev)."
+},
+{
+"id": "2f3bbd69a9",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.2 — JavaScript, event loop ve asenkron",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "500 ms'lik bir döngü neden tıklamaların yok sayıldığı hissini verir?",
+"a": "Tıklama handler'ı ancak mevcut görev bitince çalışabilen bir görevdir; render da bekler."
+},
+{
+"id": "e1c8f6d039",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.2 — JavaScript, event loop ve asenkron",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "await ana thread'i bloklar mı?",
+"a": "Hayır. O async fonksiyonu duraklatır ve kontrolü event loop'a verir; CPU yoğun kod yine bloklar."
+},
+{
+"id": "de5ebc03da",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.2 — JavaScript, event loop ve asenkron",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "Web Worker ne zaman kullanılmalı?",
+"a": "Aksi halde ana thread'de uzun görevler oluşturacak CPU yoğun işler için (ayrıştırma, görsel/kripto işleme, arama)."
+},
+{
+"id": "81e577289d",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.2 — JavaScript, event loop ve asenkron",
+"url": "08-browser/02-javascript-event-loop/",
+"q": "Uzun görevin sunucu tarafındaki karşılığı ne, nasıl tespit edilir?",
+"a": "Node.js event loop'unda bloklayan bir işlem; event loop gecikme/kullanım metrikleriyle tespit edilir."
+},
+{
+"id": "825105d265",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.3 — Web performansı ve Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "Lighthouse neden INP bildiremez, onun yerine ne gösterir?",
+"a": "INP sayfanın ömrü boyunca gerçek kullanıcı etkileşimleri ister; Lighthouse laboratuvar vekili olarak Total Blocking Time gösterir."
+},
+{
+"id": "80ad9db9fb",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.3 — Web performansı ve Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "LCP 4 sn ama TTFB 3 sn. Nereden başlarsın?",
+"a": "Sunucu tarafından: HTML'i CDN'de önbelleğe almak, backend/veritabanı gecikmesi, yönlendirmeler, origin mesafesi. Ön uç 3 sn'lik bir TTFB'yi düzeltemez."
+},
+{
+"id": "d622a33458",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.3 — Web performansı ve Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "'p75 LCP = 2,3 sn' ne demek?",
+"a": "Gerçek sayfa yüklemelerinin %75'inde LCP 2,3 sn ya da altındaydı; en yavaş %25 daha kötüydü."
+},
+{
+"id": "5891b0f7fe",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.3 — Web performansı ve Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "Bir cookie banner'ı yüklemeden sonra sayfayı aşağı itiyor. Hangi metrik zarar görür, nasıl düzeltirsin?",
+"a": "CLS. Yerini baştan ayır, üstüne bindir ya da mevcut içeriği kaydırmadan göster."
+},
+{
+"id": "15002446d2",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.3 — Web performansı ve Core Web Vitals",
+"url": "08-browser/03-web-performance/",
+"q": "Core Web Vitals'ı iyileştiren üç altyapı değişikliği say.",
+"a": "HTML/dosyaların CDN'de önbelleğe alınması, HTTP/3 + Brotli sıkıştırma, uçta görsel optimizasyonu (ayrıca: Early Hints, yönlendirme zincirlerini kaldırmak)."
+},
+{
+"id": "cd51d7cb8b",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.4 — Tarayıcı güvenliği",
+"url": "08-browser/04-browser-security/",
+"q": "Same-origin policy tam olarak neyi engeller?",
+"a": "Başka bir origin'in cevaplarını, DOM'unu, cookie'lerini ve depolamasını okumayı; ona istek göndermeyi engellemez."
+},
+{
+"id": "8787ce7627",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.4 — Tarayıcı güvenliği",
+"url": "08-browser/04-browser-security/",
+"q": "SOP yerindeyken bile XSS neden bu kadar tehlikeli?",
+"a": "Saldırganın script'i senin origin'inde çalışır; SOP onu senin kodun sayar: sayfaları okuyabilir ve kullanıcı olarak API çağırabilir."
+},
+{
+"id": "8ba8e39f1b",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.4 — Tarayıcı güvenliği",
+"url": "08-browser/04-browser-security/",
+"q": "SameSite=Lax çoğu CSRF'i nasıl durdurur?",
+"a": "Cookie'ler siteler arası POST'lara ya da alt isteklere eklenmez; başka bir siteden gelen sahte form gönderimi oturumsuz ulaşır."
+},
+{
+"id": "db61aabda7",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.4 — Tarayıcı güvenliği",
+"url": "08-browser/04-browser-security/",
+"q": "CORS API'ni koruyan bir güvenlik özelliği mi?",
+"a": "Hayır. Tarayıcı okumaları için SOP'nin kontrollü bir gevşetilmesidir; tarayıcı olmayan istemcileri durdurmaz ve kimlik doğrulama değildir."
+},
+{
+"id": "1f6cd9f529",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "8.4 — Tarayıcı güvenliği",
+"url": "08-browser/04-browser-security/",
+"q": "CSP neden önce Report-Only modunda yayına alınır?",
+"a": "Uygulamaya koymadan önce hangi meşru script/stillerin engelleneceğini görmek ve siteyi bozmamak için."
+},
+{
+"id": "588762d0f7",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "Bölüm 8 — Tarayıcı",
+"url": "08-browser/",
+"q": "<head> içindeki düz bir <script src> neden tüm sayfayı geciktirebilir?",
+"a": "Ayrıştırıcıyı bloklar: HTML ayrıştırıcısı durur, script'in inmesini ve çalışmasını bekler, DOM'u kurmaya ancak ondan sonra devam eder. defer ya da async bunu önler."
+},
+{
+"id": "0863867f5c",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "Bölüm 8 — Tarayıcı",
+"url": "08-browser/",
+"q": "left ile transform: translateX() arasında animasyonu hangisi daha ucuz? Neden?",
+"a": "transform. left değişikliği her karede ana thread'de layout ve paint tetikler. transform, layout ya da paint olmadan GPU'daki compositor tarafından halledilebilir."
+},
+{
+"id": "9726c699ee",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "Bölüm 8 — Tarayıcı",
+"url": "08-browser/",
+"q": "Bir butona tıklamanın herhangi bir etkisi 400 ms sonra görünüyor. Hangi metrik kötüleşir ve olağan sebep nedir?",
+"a": "INP (Interaction to Next Paint). Olağan sebep, ana thread'de olay işleyicisini ya da sonraki render adımını bloklayan uzun bir JavaScript görevidir."
+},
+{
+"id": "d781571fe4",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "Bölüm 8 — Tarayıcı",
+"url": "08-browser/",
+"q": "View Source ile Elements paneli arasındaki fark ne?",
+"a": "View Source, sunucunun gönderdiği orijinal HTML byte'larını gösterir. Elements ise ayrıştırıcının düzelttiği ve JavaScript'in değiştirdiği mevcut DOM'u gösterir."
+},
+{
+"id": "e44abc3f8f",
+"ch": "08-browser",
+"chTitle": "Bölüm 8 — Tarayıcı",
+"page": "Bölüm 8 — Tarayıcı",
+"url": "08-browser/",
+"q": "Neden her site kendi renderer process'ini alır?",
+"a": "Güvenlik ve kararlılık. Ele geçirilmiş ya da çöken bir sayfa kendi sandbox'lı process'inde izole edilir (Site Isolation). Diğer sitelerin belleğini okuyamaz, onları da çökertemez."
+},
+{
+"id": "af0a0c8073",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.1 — Container'lar ve imajlar",
+"url": "09-infra/01-containers-images/",
+"q": "Kötü sıralanmış bir Dockerfile'da tek satır kaynak kodu değiştirmek neden npm install'ı yeniden çalıştırır?",
+"a": "COPY . . install adımından önce geliyor; herhangi bir kaynak değişikliği o katmanı ve sonraki her katmanı geçersiz kılar."
+},
+{
+"id": "b90b3af613",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.1 — Container'lar ve imajlar",
+"url": "09-infra/01-containers-images/",
+"q": "Sonraki bir adımda RUN rm secret.key yapıyorsun. Secret imajdan gitti mi?",
+"a": "Hayır. Hâlâ önceki katmanda; imaja sahip herkes onu çıkarabilir. Build secret'ları kullan."
+},
+{
+"id": "65f2bbcc22",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.1 — Container'lar ve imajlar",
+"url": "09-infra/01-containers-images/",
+"q": "Etiket ile digest arasındaki fark ne?",
+"a": "Etiket taşınabilir bir addır; digest her zaman aynı imaj byte'larını tanımlayan bir içerik hash'idir."
+},
+{
+"id": "44cf391d62",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.1 — Container'lar ve imajlar",
+"url": "09-infra/01-containers-images/",
+"q": "Container'ın namespace'lerini oluşturmak için clone()'u aslında hangi bileşen çağırır?",
+"a": "kubelet adına containerd'nin shim'inin başlattığı runc (ya da başka bir OCI runtime'ı)."
+},
+{
+"id": "9a9106b7e3",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.1 — Container'lar ve imajlar",
+"url": "09-infra/01-containers-images/",
+"q": "Yeni node'larda pod'ların başlaması 2 dakika sürüyor. Nereye bakarsın?",
+"a": "İmaj çekme süresine: imaj boyutu, registry kısıtlaması/gecikmesi, taze node'larda önbellek olmaması; daha küçük imajlar, aynalar, önceden çekme ya da tembel çekme kullan."
+},
+{
+"id": "22ae5ce84f",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.2 — Kubernetes mimarisi",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "etcd'ye hangi bileşen yazar?",
+"a": "Sadece API server; diğer her şey onun üzerinden okur ve yazar."
+},
+{
+"id": "fa097f5a9f",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.2 — Kubernetes mimarisi",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "Bir pod sonsuza dek Pending'de kalıyor. Neyi kontrol edersin?",
+"a": "kubectl describe pod olaylarını: yetersiz CPU/bellek request'leri, tolere edilmeyen taint'ler, karşılanamayan affinity, bağlanmamış PVC ya da zone uyumsuzluğu."
+},
+{
+"id": "157a856f84",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.2 — Kubernetes mimarisi",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "Sildiğin bir pod neden geri geldi?",
+"a": "ReplicaSet controller'ı istenenden az pod gördü ve bir yenisini oluşturdu."
+},
+{
+"id": "b0f64aa370",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.2 — Kubernetes mimarisi",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "Scheduler bir pod'un sığıp sığmadığına neyle karar verir: request'ler mi gerçek kullanım mı?",
+"a": "Request'lerle."
+},
+{
+"id": "5ed6db558c",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.2 — Kubernetes mimarisi",
+"url": "09-infra/02-kubernetes-architecture/",
+"q": "Operator nedir?",
+"a": "Belirli bir uygulamayı çalıştırmayı (oluştur, ölçekle, yedekle, yükselt, failover) bir insan operatörün yapacağı gibi otomatikleştiren bir controller artı CRD'ler."
+},
+{
+"id": "8ed8d61343",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.3 — Kubernetes ağı",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "Kubernetes ağ modelinin üç kuralı nedir?",
+"a": "Her pod kendi IP'sini alır; pod'lar diğer tüm pod'lara NAT'sız ulaşabilir; bir node'daki ajanlar o node'daki tüm pod'lara ulaşabilir."
+},
+{
+"id": "f4a5e25558",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.3 — Kubernetes ağı",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "Bir pod başlarken CNI eklentisi ne yapar?",
+"a": "Pod'un arayüzünü (veth) oluşturur, bir IP atar, rotaları ayarlar ve IP'yi diğer node'lardan erişilebilir yapar."
+},
+{
+"id": "133825a963",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.3 — Kubernetes ağı",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "Bir Service var ama ona curl zaman aşımına düşüyor. İlk kontrol?",
+"a": "EndpointSlice'ı: boşsa seçici eşleşmiyor ya da hiçbir pod Ready değil."
+},
+{
+"id": "2973239ca9",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.3 — Kubernetes ağı",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "Yeni kurulumlarda neden Ingress yerine Gateway API tercih edilir?",
+"a": "Daha zengin, taşınabilir özelliklere (trafik bölme, header eşleştirme, rol ayrımı) sahip bakımı süren standarttır ve topluluk ingress-nginx controller'ı emekliye ayrıldı."
+},
+{
+"id": "3186bdd57c",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.3 — Kubernetes ağı",
+"url": "09-infra/03-kubernetes-networking/",
+"q": "Default-deny bir NetworkPolicy uyguladıktan sonra hiçbir şey DNS çözemiyor. Neden?",
+"a": "kube-dns'e (53 portu) çıkış da artık reddediliyor; DNS için açık bir izin kuralı ekle."
+},
+{
+"id": "7ac95c099d",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.4 — CI/CD ve GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Neden ortam başına yeniden üretmek yerine 'bir kez üret, her yere terfi ettir'?",
+"a": "Production tam olarak test edilen byte'ları çalıştırsın diye; yeniden üretmek farklı bağımlılıklar ya da taban imajlar çekebilir."
+},
+{
+"id": "b190ecf461",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.4 — CI/CD ve GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Pull tabanlı GitOps'un temel güvenlik avantajı ne?",
+"a": "CI'ın cluster kimlik bilgisine ihtiyacı yok; cluster git'ten çeker ve sadece okuma erişimine ihtiyaç duyar."
+},
+{
+"id": "25d2b7a0ca",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.4 — CI/CD ve GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Biri production'da kubectl edit çalıştırıyor. selfHeal açık Argo CD ne yapar?",
+"a": "Git'ten sapmayı tespit eder ve canlı nesneyi git durumuna geri döndürür."
+},
+{
+"id": "7477b7286d",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.4 — CI/CD ve GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Blue-green ne zaman canary'den iyidir?",
+"a": "Anında, hepsi birden bir geçiş ve anında geri alma gerektiğinde, kısa süre çift kapasiteyi karşılayabildiğinde (ya da trafiği ince bölemediğinde)."
+},
+{
+"id": "74fec58f29",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.4 — CI/CD ve GitOps",
+"url": "09-infra/04-cicd-gitops/",
+"q": "Rolling ya da canary deploy'larda DB migration'ları neden geriye uyumlu olmalı?",
+"a": "Eski ve yeni uygulama sürümleri aynı veritabanına karşı aynı anda çalışır."
+},
+{
+"id": "2bc6b598b9",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar",
+"url": "09-infra/05-observability/",
+"q": "Neden user_id'yi bir Prometheus etiketi olarak kullanmamalısın?",
+"a": "Her farklı değer yeni bir zaman serisi oluşturur; milyonlarca kullanıcı = milyonlarca seri, bellek, depolama ve sorgu maliyetini patlatır."
+},
+{
+"id": "0f4b861cdf",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar",
+"url": "09-infra/05-observability/",
+"q": "SLI ile SLO arasındaki fark ne?",
+"a": "SLI ölçümdür (iyi olayların oranı); SLO bir zaman penceresi için onun hedefidir."
+},
+{
+"id": "981e3327e9",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar",
+"url": "09-infra/05-observability/",
+"q": "SLO'n 30 günde %99,9. Hata bütçesi ne kadar tam kesintiye izin verir?",
+"a": "30 günün %0,1'i ≈ 43,2 dakika."
+},
+{
+"id": "9ebb917261",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar",
+"url": "09-infra/05-observability/",
+"q": "'Hata oranı 5 dakika boyunca > %1' yerine neden burn rate'e alarm kurulur?",
+"a": "Burn rate alarmları bütçeye ve kullanıcı etkisine bağlar: hızlı yanmalar çabuk sayfalar, yavaş yanmalar bilet açar ve kısa zararsız sıçramalar kimseyi uyandırmaz."
+},
+{
+"id": "bc5e2d54f6",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar",
+"url": "09-infra/05-observability/",
+"q": "Kuyruk tabanlı örnekleme, baş tabanlının vermediği neyi verir?",
+"a": "Karar trace tamamlandıktan sonra verilir; tüm hataları ve yavaş trace'leri tutup normallerin çoğunu atabilirsin."
+},
+{
+"id": "a70975439a",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "Bölüm 9 — Modern altyapı",
+"url": "09-infra/",
+"q": "Container küçük bir sanal makine midir?",
+"a": "Hayır. Host kernel'ini paylaşan, namespace'lerle izole edilmiş ve cgroup'larla sınırlandırılmış normal bir Linux process'idir. VM ise bir hypervisor üzerinde kendi kernel'ini çalıştırır."
+},
+{
+"id": "91e8045fdc",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "Bölüm 9 — Modern altyapı",
+"url": "09-infra/",
+"q": "Bir pod Pending'de takılı kaldı. Hangi bileşen henüz işini yapmadı ve neden olabilir?",
+"a": "Scheduler onu bir node'a atamadı. Genelde sebebi, hiçbir node'da isteklerine (requests) yetecek boş CPU/bellek olmaması ya da taint'ler, affinity kuralları veya bağlanmamış bir PersistentVolumeClaim'dir. kubectl describe pod sebebi event'lerde gösterir."
+},
+{
+"id": "ad5f2975ab",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "Bölüm 9 — Modern altyapı",
+"url": "09-infra/",
+"q": "Bir Deployment'a ait pod'u siliyorsun ve yenisi beliriyor. Onu kim oluşturdu?",
+"a": "ReplicaSet controller (kube-controller-manager içinde). Gerçek replika sayısının istenenden az olduğunu gördü ve yeni bir Pod nesnesi oluşturdu. Scheduler ve kubelet de onu hayata geçirdi."
+},
+{
+"id": "59dfbf5cdb",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "Bölüm 9 — Modern altyapı",
+"url": "09-infra/",
+"q": "Push tabanlı CD ile GitOps arasındaki fark ne?",
+"a": "Push tabanlı CD'de pipeline, cluster kimlik bilgileriyle cluster'a karşı kubectl apply/helm upgrade çalıştırır. GitOps'ta cluster içindeki bir ajan (Argo CD, Flux) istenen durumu git'ten çeker ve sürekli uzlaştırır. Böylece git doğruluk kaynağı olur ve sapmalar düzeltilir."
+},
+{
+"id": "a8ced51233",
+"ch": "09-infra",
+"chTitle": "Bölüm 9 — Modern altyapı",
+"page": "Bölüm 9 — Modern altyapı",
+"url": "09-infra/",
+"q": "Servisin yavaş ama CPU ve bellek iyi görünüyor. Hangi sinyale başvurursun?",
+"a": "Trace'lere: servisler arasında hangi aşağı akış çağrısının ya da span'in zaman aldığını görmek için. Sonra o istek için loglara."
+},
+{
+"id": "53a361399f",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.1 — Altyapıcılar için AI temelleri",
+"url": "10-ai/01-fundamentals/",
+"q": "LLM altyapısında neden her şey token cinsinden ölçülür?",
+"a": "Model karakterleri ya da kelimeleri değil, token'ları işler. İstek başına hesaplama, adım başına gecikme, KV cache belleği ve API maliyeti, girdi ve çıktı token sayısıyla ölçeklenir."
+},
+{
+"id": "7d1b183b7b",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.1 — Altyapıcılar için AI temelleri",
+"url": "10-ai/01-fundamentals/",
+"q": "Bir MoE modelin toplam 120B parametresi var ama token başına sadece 5B'si aktif. Belleği ve hesaplamayı neye göre boyutlandırırsın?",
+"a": "Belleği 120B'nin tamamına göre (her uzman yüklenmeli), hesaplamayı token başına kabaca 5B'ye göre. MoE modellerinin token başına ucuz çalışmasına rağmen hâlâ çok GPU belleği istemesinin sebebi budur."
+},
+{
+"id": "dd409f9d2c",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.1 — Altyapıcılar için AI temelleri",
+"url": "10-ai/01-fundamentals/",
+"q": "Decoder-only bir modelde geçmiş key ve value'lar neden önbelleğe alınabilir?",
+"a": "Her token sadece önceki token'lara bakar ve önceki token'lar üretildikten sonra asla değişmez. Bu yüzden K ve V vektörleri geçerli kalır ve sonraki her adımda yeniden kullanılabilir."
+},
+{
+"id": "bf3fc33a8a",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.1 — Altyapıcılar için AI temelleri",
+"url": "10-ai/01-fundamentals/",
+"q": "Temperature 0 ne demek?",
+"a": "Greedy decoding: her zaman en olası sıradaki token'ı seç. Çıktı deterministik olur (aynı girdi ve kurulum verildiğinde)."
+},
+{
+"id": "133e9cd3e2",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.1 — Altyapıcılar için AI temelleri",
+"url": "10-ai/01-fundamentals/",
+"q": "Altyapı açısından LoRA ile fine-tuning ve tam fine-tuning arasındaki fark ne?",
+"a": "LoRA, temel ağırlıklar dondurulmuşken küçük adaptör matrislerini eğitir. Bu yüzden çok daha az GPU belleği gerektirir ve küçük dosyalar üretir. Hatta birçok LoRA adaptörü, ortak tek bir temel modelin üstünde servis edilebilir."
+},
+{
+"id": "17fb74d01e",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.2 — GPU ve hızlandırıcı donanımı",
+"url": "10-ai/02-gpu/",
+"q": "Decode sırasında LLM'ler neden genelde FLOPS ile değil de bellek bant genişliğiyle sınırlıdır?",
+"a": "Her decode adımı her ağırlığı bir kez okur ama dizi başına ağırlık başına sadece ~2 FLOP yapar. Bu, GPU'nun hesaplama sınırlı olması için gereken byte başına ~300 FLOP'un çok altında kalır. Bu yüzden GPU HBM'i bekler."
+},
+{
+"id": "0cd5cde260",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.2 — GPU ve hızlandırıcı donanımı",
+"url": "10-ai/02-gpu/",
+"q": "4,8 TB/sn'lik tek bir GPU'da FP8'deki 70B'lik bir modelin teorik azami decode hızı nedir?",
+"a": "70 GB ağırlık ÷ 4,8 TB/sn ≈ token başına 15 ms → tek akış için ~70 token/sn (KV cache okumalarını saymazsak). Batching tek akış hızını değil, toplam verimi artırır."
+},
+{
+"id": "39705f90ca",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.2 — GPU ve hızlandırıcı donanımı",
+"url": "10-ai/02-gpu/",
+"q": "NVLink ile InfiniBand arasındaki fark ne?",
+"a": "NVLink, bir sunucu ya da raf içindeki GPU'lar arasındaki scale-up bağlantısıdır (TB/sn, bellek benzeri). InfiniBand (ya da RoCE), sunucular arasındaki scale-out ağıdır (NIC başına yüzlerce Gb/sn)."
+},
+{
+"id": "c84c840f55",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.2 — GPU ve hızlandırıcı donanımı",
+"url": "10-ai/02-gpu/",
+"q": "GPUDirect RDMA neyi kazandırır?",
+"a": "CPU ve sistem RAM'i üzerinden yapılan kopyaları. NIC doğrudan GPU belleğinden okur ve ona yazar. Bu gecikmeyi düşürür ve CPU'yu serbest bırakır."
+},
+{
+"id": "3374d3b22d",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.2 — GPU ve hızlandırıcı donanımı",
+"url": "10-ai/02-gpu/",
+"q": "Bir AI sunucusunda neden her GPU'nun kendi NIC'i vardır?",
+"a": "Toplu işlemler (all-reduce gibi) tüm GPU'ların aynı anda veri göndermesine yol açar. GPU başına bir NIC, her biri kendi \"rail\"inde olunca, her GPU'ya paylaşmadan tam ağ bant genişliği verir."
+},
+{
+"id": "bbd6c6e365",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.3 — GPU yazılım yığını ve paylaşım",
+"url": "10-ai/03-software/",
+"q": "Pod'un \\\"CUDA driver version is insufficient for CUDA runtime version\\\" hatasıyla düşüyor. Sorun nerede?",
+"a": "Host'un sürücüsü, imajın içindeki CUDA runtime'ın ihtiyaç duyduğundan daha eski. Ya node sürücüsünü yükselt (GPU Operator / node imajı) ya da daha eski bir CUDA versiyonu için hazırlanmış bir imaj kullan."
+},
+{
+"id": "668e360d7d",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.3 — GPU yazılım yığını ve paylaşım",
+"url": "10-ai/03-software/",
+"q": "Bir CUDA container imajı neden GPU sürücüsünü içermez?",
+"a": "Sürücü, host kernel'iyle eşleşmesi gereken ve host'ta yüklenen bir kernel modülü (nvidia.ko) içerir. Toolkit, eşleşen user space kısmını (libcuda.so) container başlarken host'tan container'a bağlar."
+},
+{
+"id": "aaadbb0d1c",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.3 — GPU yazılım yığını ve paylaşım",
+"url": "10-ai/03-software/",
+"q": "Zaman dilimleme yerine ne zaman MIG seçersin?",
+"a": "Farklı ekiplerin ya da kiracıların iş yükleri bir GPU'yu paylaşıyor ve tahmin edilebilir performansla garantili bellek ve hata izolasyonuna ihtiyaç duyuyorsa. Zaman dilimleme ne izolasyon ne de bellek limiti verir."
+},
+{
+"id": "607c120773",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.3 — GPU yazılım yığını ve paylaşım",
+"url": "10-ai/03-software/",
+"q": "nvidia-smi %100 kullanım gösteriyor ama verim düşük. Neye bakarsın?",
+"a": "SM activity, tensor pipe activity ve bellek bant genişliği gibi DCGM metriklerine. %100 \"kullanım\", örnekleme süresinde bir kernel'in çalıştığı anlamına gelir. O kernel minik olabilir, bellek sınırlı olabilir ya da bekliyor olabilir."
+},
+{
+"id": "6e3370b059",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.3 — GPU yazılım yığını ve paylaşım",
+"url": "10-ai/03-software/",
+"q": "NCCL ne yapar ve hangi donanım yollarını kullanır?",
+"a": "GPU'lar arasında toplu iletişimi (all-reduce, all-gather, reduce-scatter…) uygular. Node içinde NVLink/NVSwitch'i, node'lar arasında GPUDirect RDMA ile InfiniBand/RoCE'yi seçer."
+},
+{
+"id": "095b940795",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.4 — Dağıtık eğitim",
+"url": "10-ai/04-training/",
+"q": "Tensor parallelism neden genelde tek bir sunucunun (ya da NVLink alanının) içinde tutulur?",
+"a": "TP, kısmi sonuçları her katmanda, forward ve backward'da değiş tokuş eder. Bu, NVLink'in TB/sn bant genişliğini ve düşük gecikmesini gerektirir. Ağ üzerinden yapılsa her adımı bekletirdi."
+},
+{
+"id": "a85a372ae4",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.4 — Dağıtık eğitim",
+"url": "10-ai/04-training/",
+"q": "AdamW ve karma hassasiyetle 13B'lik bir modelin tam eğitim durumu kabaca ne kadar bellek ister?",
+"a": "Parametre başına yaklaşık 16 byte → aktivasyonlar hariç ~208 GB. Bu tek bir GPU'dan fazla, bu yüzden birkaç GPU üzerinde FSDP/ZeRO kullanırsın."
+},
+{
+"id": "a6912501fc",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.4 — Dağıtık eğitim",
+"url": "10-ai/04-training/",
+"q": "Gang scheduling nedir ve dağıtık eğitim neden ona ihtiyaç duyar?",
+"a": "Bir işin tüm process'lerini ya hep birlikte başlatmak ya da hiç başlatmamak. Rank'lerin sadece bir kısmı başlarsa, pahalı GPU'ları tutarken diğerlerini bekleyerek kilitlenirler. Böyle iki iş cluster'ı kilitleyebilir."
+},
+{
+"id": "0d29cf585e",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.4 — Dağıtık eğitim",
+"url": "10-ai/04-training/",
+"q": "512 GPU'luk bir işteki bir node'un NIC'i yavaş. Tüm işe ne olur?",
+"a": "Her toplu işlem en yavaş katılımcıyı bekler, bu yüzden her adım o node'un hızına düşer. Yavaş kalanları tespit etmek ve node'u değiştirmek önemlidir."
+},
+{
+"id": "b7c0f4edcf",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.4 — Dağıtık eğitim",
+"url": "10-ai/04-training/",
+"q": "1.000 GPU'luk koşun her 3 saatte bir checkpoint alıyor ve ortalama her 4 saatte bir node arızalanıyor. Bu neden kötü?",
+"a": "Her arıza 3 saate kadar × 1.000 GPU'luk işi artı yeniden başlatma süresini kaybettirir ve arızalar neredeyse checkpoint'ler kadar sık olur. Goodput'u artırmak için daha sık (asenkron) checkpoint al."
+},
+{
+"id": "2d257ff82b",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.5 — Inference ve servis: derinlemesine",
+"url": "10-ai/05-inference/",
+"q": "Kullanıcılar ilk kelimenin 4 saniyede çıktığından ama sonra metnin hızlı aktığından şikâyet ediyor. Hangi metrik ve hangi aşama?",
+"a": "Yüksek TTFT: ya kuyrukta bekleme (yetersiz kapasite ya da kötü yönlendirme) ya da yavaş prefill (çok uzun prompt'lar). Prefix caching, parçalı prefill, daha fazla replika ya da P/D ayrıştırma yardımcı olur."
+},
+{
+"id": "7625559f22",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.5 — Inference ve servis: derinlemesine",
+"url": "10-ai/05-inference/",
+"q": "Round-robin yük dağıtımı LLM servisine neden zarar verir?",
+"a": "Her sohbetin KV cache'inin (önekinin) nerede durduğunu yok sayar. Bu yüzden istekler prefill'i yeniden hesaplamak zorunda olan pod'lara düşmeye devam eder. KV duyarlı yönlendirme onları öneki zaten tutan pod'a gönderir."
+},
+{
+"id": "835a68c32c",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.5 — Inference ve servis: derinlemesine",
+"url": "10-ai/05-inference/",
+"q": "8 KV head'li, head boyutu 128 olan 32 katmanlı bir model, BF16'da 4k token'lık 100 eşzamanlı istek için ne kadar KV cache'e ihtiyaç duyar?",
+"a": "2 × 32 × 8 × 128 × 2 byte = token başına 128 KB → × 4.096 token × 100 istek ≈ 54 GB."
+},
+{
+"id": "08a337bf56",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.5 — Inference ve servis: derinlemesine",
+"url": "10-ai/05-inference/",
+"q": "Speculative decoding modelin cevaplarını değiştirir mi?",
+"a": "Hayır. Kabul edilen token'lar tam olarak hedef modelin üreteceği token'lardır. Taslak sadece birkaçının tek bir forward pass'te onaylanmasını sağlar."
+},
+{
+"id": "5ccb1f40fb",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.5 — Inference ve servis: derinlemesine",
+"url": "10-ai/05-inference/",
+"q": "Prefill ve decode neden farklı GPU'lara ayrılır?",
+"a": "Farklı kaynakları zorlarlar (hesaplama ve bellek bant genişliği). Bir arada olduklarında uzun prefill'ler herkesin decode adımlarını takılmaya uğratır. Ayrı havuzlar bağımsız olarak boyutlandırılabilir, ölçeklenebilir ve kendi darboğazlarına göre ayarlanabilir."
+},
+{
+"id": "19504eb781",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.6 — Kubernetes üzerinde AI platformu",
+"url": "10-ai/06-kubernetes/",
+"q": "DRA, nvidia.com/gpu: 1'in ifade edemediği neyi ifade edebilir?",
+"a": "Özellikleri ve ilişkileri: belirli bir model ya da bellek boyutu, bir MIG profili, aynı NVLink alanındaki birkaç GPU, pod'lar arasında ortak talepler. Device plugin sadece bir sayı açar."
+},
+{
+"id": "93314ee82b",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.6 — Kubernetes üzerinde AI platformu",
+"url": "10-ai/06-kubernetes/",
+"q": "64 GPU'luk bir eğitim işinin 40 pod'u zamanlanıyor ve geri kalanı Pending'de kalıyor. Sorun ne ve ne düzeltir?",
+"a": "Gang scheduling yok: varsayılan scheduler pod'ları tek tek yerleştirdi. Çalışan 40 pod, diğerlerini beklerken GPU'ları tutuyor. Kueue (ya da KAI/Volcano) işi ancak 64 GPU'nun hepsi müsait olduğunda kabul eder."
+},
+{
+"id": "26d9d5ce0e",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.6 — Kubernetes üzerinde AI platformu",
+"url": "10-ai/06-kubernetes/",
+"q": "GPU node'ları neden taint'lenmeli?",
+"a": "Sıradan pod'lar (web uygulamaları, sidecar'lar, sistem işleri) çok pahalı GPU node'larına düşüp GPU iş yüklerinin ihtiyaç duyduğu CPU/belleği almasın diye. Oraya sadece taint'i tolere eden ve GPU isteyen pod'lar gider."
+},
+{
+"id": "ebc1f1412f",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.6 — Kubernetes üzerinde AI platformu",
+"url": "10-ai/06-kubernetes/",
+"q": "LLM Deployment'ın ölçekleniyor ama yeni pod'ların Ready olması 8 dakika sürüyor. Neyi değiştirirsin?",
+"a": "Model ağırlıklarını node'a yakın önbellekle (yerel NVMe'ye önceden çekme, ortak PVC, OCI artifact'ler), akış halinde bir yükleyici kullan, asgari sayıda sıcak replika tut ve daha erken ölçekle (SLO ihlallerine değil kuyruk uzunluğuna göre)."
+},
+{
+"id": "cb2e1f022f",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.6 — Kubernetes üzerinde AI platformu",
+"url": "10-ai/06-kubernetes/",
+"q": "Gateway API Inference Extension'daki endpoint seçici, normal bir Service'in yapmadığı neyi yapar?",
+"a": "İstek başına bir model sunucusu pod'unu LLM'e özgü sinyallere göre seçer: önek/KV cache yerelliği, kuyruk uzunluğu, KV cache kullanımı, yüklü LoRA adaptörleri. Bir Service sadece bağlantıları dağıtır."
+},
+{
+"id": "adf5edf7b3",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme",
+"url": "10-ai/07-applications/",
+"q": "Neden sadece vektör araması yerine hibrit arama kullanılır?",
+"a": "Vektörler anlamı yakalar ama hata kodları, ticket ID'leri ya da ürün isimleri gibi tam token'larda zayıftır. BM25 anahtar kelime araması bunları yakalar. İkisini birleştirmek geri çağırmayı (recall) artırır."
+},
+{
+"id": "c533689487",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme",
+"url": "10-ai/07-applications/",
+"q": "Bir RAG sisteminde izinler nerede uygulanmalı?",
+"a": "Getirme anında: her parçayla birlikte ACL üst verisini sakla ve aramayı kullanıcının kimliğine göre filtrele. Böylece model, kullanıcının okumaya yetkisi olmayan dokümanları hiç görmez."
+},
+{
+"id": "37ca783b3f",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme",
+"url": "10-ai/07-applications/",
+"q": "Araç çağırmada model tam olarak ne üretir ve aracı kim çalıştırır?",
+"a": "Model, aracın adını ve JSON argümanlarını belirten yapılandırılmış bir mesaj üretir. Uygulama (ya da MCP istemcisi) çağrıyı doğrular ve çalıştırır, sonra sonucu modele geri gönderir."
+},
+{
+"id": "cba7252505",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme",
+"url": "10-ai/07-applications/",
+"q": "Prompt injection nedir ve ajanlar için neden daha büyük bir risktir?",
+"a": "Kullanıcı girdisine, dokümanlara ya da araç sonuçlarına gizlenmiş, sistemin talimatlarını geçersiz kılmaya çalışan talimatlardır. Ajanlar kimlik bilgileriyle sistemler üzerinde iş yapar. Başarılı bir injection sadece kötü bir cevaba değil, gerçek yan etkilere yol açabilir."
+},
+{
+"id": "261208deee",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme",
+"url": "10-ai/07-applications/",
+"q": "Bir şikâyeti düzeltmek için sistem prompt'unu değiştiriyorsun. Başka bir şeyi bozmadığını nereden bilirsin?",
+"a": "Değişiklikten önce ve sonra eval setini (değerlendiricileri olan versiyonlu bir test seti) çalıştır, puanları kategori bazında karşılaştır ve canlı trafikten örnekleyip puanlayarak kademeli dağıt."
+},
+{
+"id": "efacd79a6a",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "Bölüm 10 — AI altyapısı",
+"url": "10-ai/",
+"q": "Decode neden genelde hesaplamayla değil de bellek bant genişliğiyle sınırlıdır?",
+"a": "Her decode adımı istek başına tek bir token üretir, ama yine de tüm model ağırlıklarını (ve KV cache'i) HBM'den okumak zorundadır. Okunan byte başına az hesap düşer, bu yüzden GPU belleği bekler. Birçok isteği bir araya toplamak (batching), her ağırlık okumasını daha fazla token için kullandırır."
+},
+{
+"id": "c8b9613f7b",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "Bölüm 10 — AI altyapısı",
+"url": "10-ai/",
+"q": "FP16'daki 70B'lik bir model tek bir 80 GB GPU'da çalışabilir mi?",
+"a": "Hayır. Sadece ağırlıklar ~140 GB. Seçenekler: quantize etmek (FP8 ≈ 70 GB, KV cache ile hâlâ sıkışık; INT4 ≈ 35 GB) ya da modeli tensor parallelism ile birkaç GPU'ya bölmek."
+},
+{
+"id": "c4ab1ad6f7",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "Bölüm 10 — AI altyapısı",
+"url": "10-ai/",
+"q": "KV cache nedir ve eşzamanlılığı neden sınırlar?",
+"a": "Her aktif isteğin önceki tüm token'larının attention key ve value'larını saklar ki her adımda yeniden hesaplanmasınlar. Bağlam uzunluğu ve eşzamanlı istek sayısıyla büyür ve ağırlıkların yanında GPU belleğine sığmak zorundadır."
+},
+{
+"id": "e34de96597",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "Bölüm 10 — AI altyapısı",
+"url": "10-ai/",
+"q": "Bir LLM servisi neden CPU'ya göre değil de kuyruk uzunluğu ya da KV cache kullanımına göre ölçeklenir?",
+"a": "İş GPU'da yapılır. GPU doyduğunda ve istekler kuyrukta beklerken bile CPU kullanımı düşük kalır. CPU tabanlı otomatik ölçekleme hiç tepki vermezdi."
+},
+{
+"id": "2554cebf86",
+"ch": "10-ai",
+"chTitle": "Bölüm 10 — AI altyapısı",
+"page": "Bölüm 10 — AI altyapısı",
+"url": "10-ai/",
+"q": "RAG'de embedding modeli ne yapar, vector DB ne yapar?",
+"a": "Embedding modeli metni (parçaları ve soruları) anlamı yakalayan vektörlere çevirir. Vector DB parça vektörlerini saklar ve sorunun vektörüne en yakın olanları hızlıca bulur. Bunlar sonra prompt'a eklenir."
+},
+{
+"id": "b18ee5f507",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "Kimlik doğrulama ile yetkilendirme arasındaki fark ne?",
+"a": "Kimlik doğrulama kim olduğunu kanıtlar (giriş, token, sertifika); yetkilendirme o kimliğin ne yapabileceğine karar verir (roller, politikalar)."
+},
+{
+"id": "e6208f5992",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "CI'dan buluta OIDC federasyonu, erişim anahtarını CI secret'ı olarak saklamaktan neden daha güvenli?",
+"a": "Sızacak uzun ömürlü bir secret yok: her iş tam olarak hangi repo/branch olduğunu tarif eden imzalı bir token alır, bu da yaklaşık bir saatte dolan ve sadece kapsamlı bir rol için geçerli kimlik bilgileriyle değiştirilir."
+},
+{
+"id": "66c1884e89",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "Kubernetes Secret'ları şifreli mi?",
+"a": "Varsayılan olarak sadece base64 kodlu; RBAC'ta get secrets yetkisi olan herkes okuyabilir ve durağan şifreleme yapılandırılmazsa etcd onları düz metin saklar."
+},
+{
+"id": "134b9be147",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "'Zero trust' klasik bir çevre ağına göre neyi değiştirir?",
+"a": "Ağın içinde olmak hiçbir şey kazandırmaz: her istek genelde mTLS ve politikalarla kimliğe göre doğrulanır ve yetkilendirilir; ele geçirilmiş tek bir makine her şeye ulaşamaz."
+},
+{
+"id": "6fc445ac6b",
+"ch": "11-security",
+"chTitle": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"page": "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri",
+"url": "11-security/",
+"q": "Yeni bir kritik CVE sırasında SBOM hangi soruyu cevaplamana yardım eder?",
+"a": "Hangi imajlarının ve servislerinin etkilenen paketi ve sürümü içerdiğini; böylece neyi yamalayacağını günler yerine dakikalar içinde bilirsin."
+},
+{
+"id": "31e7b6a2e6",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "Çökmüş bir node'u yavaş olandan neden güvenilir şekilde ayıramazsın?",
+"a": "İkisi de \"henüz cevap yok\" gibi görünür. Tek araç bir tahmin olan zaman aşımıdır; sistemlerin yanlış hata tespitini ele alması gerekmesinin sebebi bu."
+},
+{
+"id": "e5fa085fac",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "CAP seni neyi seçmeye zorlar ve ne zaman?",
+"a": "Bir ağ bölünmesi sırasında ya tutarlı kal (bazı istekleri reddet) ya da erişilebilir kal (çakışabilecek istekleri kabul et). Bölünme yoksa ikisi de mümkün (ama PACELC tutarlılığın yine de gecikmeye mal olduğunu söyler)."
+},
+{
+"id": "7a0cb3c944",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "etcd bir yazmayı commit etmek için neden çoğunluğa ihtiyaç duyar?",
+"a": "Herhangi iki çoğunluk kesişir; commit edilmiş bir girdi gelecekteki her çoğunluğun en az bir üyesi tarafından bilinir, bu da iki liderin çelişen geçmişleri commit etmesini önler."
+},
+{
+"id": "e46926f289",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "4 üyeli bir etcd cluster'ı hatalar için neden 3'ten daha iyi değil?",
+"a": "4'ün çoğunluğu 3'tür; yine sadece 1 hatayı tolere eder, üstelik daha pahalıdır ve gecikme ekler."
+},
+{
+"id": "c2e34aa145",
+"ch": "12-distributed",
+"chTitle": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"page": "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık",
+"url": "12-distributed/",
+"q": "Bir yeniden deneme fırtınası nasıl olur, nasıl önlersin?",
+"a": "Birden fazla katman backoff olmadan yeniden dener ve zorlanan bir bağımlılık üzerindeki yükü katlar. Tek bir katmanda üstel backoff, jitter ve yeniden deneme bütçesiyle yeniden dene; circuit breaker ve yük atma ekle."
+},
+{
+"id": "52daf77db2",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "CPU kullanımı %15'ken bir Kubernetes cluster'ı neden 'dolu' olabilir?",
+"a": "Scheduler kullanıma göre değil request'lere göre yerleştirir. Pod'lar kullandıklarından çok daha fazlasını isterse node'lar kâğıt üzerinde dolar ve autoscaler çoğunlukla boşta kalan node'lar ekler."
+},
+{
+"id": "280454d5ee",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Savings Plan ya da taahhütlü kullanım indirimi ne zaman alınmalı?",
+"a": "1–3 yıl çalıştıracağından emin olduğun sabit taban için ve sadece doğru boyutlandırmadan sonra; yoksa israfın parasını ödemeyi taahhüt edersin."
+},
+{
+"id": "18b55d2b1b",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Hangi iş yükleri spot instance için iyi adaydır?",
+"a": "Durumsuz, hataya dayanıklı ya da yeniden denenebilir olanlar: load balancer arkasındaki web replikaları, batch işler, CI runner'ları, checkpoint'li eğitim. Tek instance'lı veritabanları değil."
+},
+{
+"id": "e748db9ba0",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Private subnet'lerden S3'e trafik neden pahalı olabilir ve nasıl düzeltilir?",
+"a": "VPC endpoint olmadan işlenen GB başına ücret alan NAT gateway'den geçer. S3 için gateway endpoint ücretsizdir ve trafiği özel tutar."
+},
+{
+"id": "1ab319cbd6",
+"ch": "13-finops",
+"chTitle": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"page": "Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur",
+"url": "13-finops/",
+"q": "Birim ekonomisi nedir ve neden toplam faturadan daha önemlidir?",
+"a": "İş birimi başına maliyet (1.000 istek başına, müşteri başına). Birim maliyet düşüyorsa büyüyen fatura sağlıklı olabilir; sabit bir fatura düşen verimliliği gizleyebilir."
+},
+{
+"id": "4d45010528",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "m7g.xlarge'ın her parçası ne anlama geliyor?",
+"a": "m = genel amaçlı aile, 7 = nesil, g = Graviton (ARM) işlemci, xlarge = boyut (bu ailede 4 vCPU, 16 GiB)."
+},
+{
+"id": "7216cd1530",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Sunucuları boot'tan sonra SSH betikleriyle yapılandırmak yerine neden imaj pişirmeli?",
+"a": "Pişirilmiş imajlar özdeş, test edilmiş ve hızlı boot eder; elle yapılandırılan sunucular yeniden üretilemeyen ve güvenle değiştirilemeyen benzersiz kar tanelerine dönüşür."
+},
+{
+"id": "e502452298",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Bir Auto Scaling grubu bozuk bir instance'ı nasıl iyileştirir?",
+"a": "Sağlık kontrolleri (instance durumu ve load balancer kontrolleri) onu sağlıksız işaretler; grup onu sonlandırır ve istenen sayıyı korumak için launch template'ten yenisini başlatır."
+},
+{
+"id": "6a96e19ed3",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Soğuk başlangıç nedir ve nasıl azaltılır?",
+"a": "Yeni bir çalışma ortamı başlarken oluşan gecikme (runtime boot + başlatma). Küçük paketler ve hızlı runtime'lar, tembel başlatma, provisioned/minimum instance'lar ya da snapshot tabanlı başlatmayla azaltılır."
+},
+{
+"id": "6aff0da826",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.1 — Compute: VM'ler, container'lar ve sunucusuz",
+"url": "14-cloud/01-compute/",
+"q": "Fonksiyonlar container'lardan ne zaman daha pahalıdır?",
+"a": "Sabit, yüksek trafikli iş yüklerinde: istek ve ms başına fiyatlandırma, aynı anda çok isteğe hizmet veren sürekli açık container ya da VM'lerin maliyetini aşar."
+},
+{
+"id": "390dfaddde",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Bir EBS volume'u neden başka bir erişilebilirlik zone'undaki instance'a bağlanamaz?",
+"a": "Blok volume'lar tek bir AZ'nin depolama ağı içinde replike edilir; veriyi zone'lar arasında taşımak için (bölgesel saklanan) snapshot'lar ya da uygulama seviyesinde replikasyon kullanılır."
+},
+{
+"id": "424faa2be0",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "S3 için dayanıklılık ile erişilebilirlik arasındaki fark ne?",
+"a": "Dayanıklılık verinin kaybolmama olasılığıdır (11 dokuz); erişilebilirlik belli bir anda ona ulaşabilme olasılığıdır (Standard için %99,99)."
+},
+{
+"id": "e798c48604",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Multi-AZ bir veritabanı okuma replikasının vermediği neyi verir?",
+"a": "Otomatik failover'lı ve veri kaybı olmayan senkron bir yedek; okuma replikası asenkrondur, okuma ölçeklemesi için kullanılır ve geride kalabilir."
+},
+{
+"id": "447cad0e62",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Kubernetes'te PostgreSQL'in önünde neden bir bağlantı havuzlayıcısına ihtiyaç var?",
+"a": "Her bağlantı bellek maliyeti olan bir backend sürecidir; çok bağlantılı çok sayıda pod veritabanını tüketebilir. Havuzlayıcı onları daha az bağlantıya çoğullar."
+},
+{
+"id": "3206a82a7d",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.2 — Bulutta depolama ve veritabanları",
+"url": "14-cloud/02-storage-databases/",
+"q": "Yedekler neden başka bir hesaba kopyalanmalı?",
+"a": "Saldırganlar ya da kötü bir betik production hesabında admin erişimi elde ederse orada saklanan yedekleri silebilir; ayrı, kilitli bir hesap onları korur."
+},
+{
+"id": "ebf52fd5d3",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Terraform neden bir state dosyasına ihtiyaç duyar?",
+"a": "Koddaki her kaynağı oluşturduğu gerçek nesneye (ID'ler ve özellikler) eşlemek için; böylece farkları hesaplayabilir, doğru şeyleri güncelleyip yok edebilir. Bulut API'si tek başına hangi kaynakların senin yapılandırmana ait olduğunu bilmez."
+},
+{
+"id": "52809f91c2",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Bir planda -/+ ne demek ve neden tehlikeli?",
+"a": "Değiştirme: değişmez bir özellik değiştiği için kaynak yok edilip yeniden oluşturulacak. Veritabanı ya da disk gibi durum tutan kaynaklarda veri kaybı ya da kesinti demektir."
+},
+{
+"id": "2303ed4b5d",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Neden kilitli uzak state kullanılır?",
+"a": "Bütün ekip ve CI tek bir doğruluk kaynağını paylaşsın ve iki apply aynı anda çalışıp state'i bozamasın diye."
+},
+{
+"id": "5146b1176d",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Elle oluşturulmuş bir bucket'ı yeniden oluşturmadan Terraform yönetimine nasıl alırsın?",
+"a": "Eşleşen kaynak bloğunu ve bir import bloğunu yaz (ya da terraform import), sonra plan değişiklik göstermeyene kadar çalıştır."
+},
+{
+"id": "b15fa191a7",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.3 — Terraform ile kod olarak altyapı",
+"url": "14-cloud/03-terraform/",
+"q": "Bir Terraform pull request'inde CI pipeline'ı ne yapmalı?",
+"a": "Biçimlendir ve doğrula, lint ve politika/güvenlik taraması yap, planı çalıştırıp (maliyet farkıyla birlikte) incelenmek üzere PR'a yaz; merge'den sonra kısa ömürlü OIDC kimlik bilgileriyle sadece incelenen planı uygula."
+},
+{
+"id": "bf16ac12b8",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Neden etiketli tek bir hesap yerine prod ve dev için ayrı hesaplar kullanılır?",
+"a": "Hesaplar IAM, kotalar ve etki alanı için sert izolasyon sınırlarıdır; etiketler ve isimlendirme kuralları dev tarafındaki bir hatanın ya da ele geçirilmiş bir anahtarın prod'a dokunmasını durdurmaz."
+},
+{
+"id": "fa067e0570",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Bir SCP, hesaptaki IAM politikalarının yapamadığı neyi yapabilir?",
+"a": "Hesaptaki herkes için, admin'leri dahil, bir tavan koyar; böylece \"CloudTrail'i asla kapatma\" ya da \"sadece AB bölgeleri\" gibi kurallar yerel olarak aşılamaz."
+},
+{
+"id": "2992ac03c3",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Pilot ışığı ile ılık yedek arasındaki fark ne?",
+"a": "Pilot ışığı veriyi replike ve altyapıyı hazır tutar ama compute çoğunlukla kapalıdır; ılık yedek tüm yığının küçük çalışan bir kopyasını çalıştırır; daha hızlı kurtarır ama daha pahalıdır."
+},
+{
+"id": "b7d83cafb1",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Hangi felaketler tam bir bölge kesintisinden daha yaygındır ve onlara karşı ne korur?",
+"a": "Kötü deploy'lar, yanlışlıkla silmeler, veri bozulması ve fidye yazılımı. Zamanda geri dönüş, versiyonlama ve ayrı bir hesaptaki değişmez yedekler onlara karşı korur."
+},
+{
+"id": "d255342695",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma",
+"url": "14-cloud/04-landing-zones-dr/",
+"q": "Neden game day yapılır?",
+"a": "Test edilmemiş DR planları detaylarda başarısız olur (süresi dolmuş kimlik bilgileri, eksik kotalar, sabit kodlanmış endpoint'ler); tatbikatlar bunları ortaya çıkarır ve gerçek RTO ile RPO'yu ölçer."
+},
+{
+"id": "b456583c22",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Bölge ile erişilebilirlik zone'u arasındaki fark ne?",
+"a": "Bölge bağımsız API'lere ve veriye sahip coğrafi bir alandır; erişilebilirlik zone'u bir bölge içinde kendi enerji ve ağına sahip, senkron replikasyon için diğerlerine yeterince yakın izole bir veri merkezidir (ya da grubu)."
+},
+{
+"id": "2655fe86a4",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Paylaşılan sorumluluk modelinde herkese açık bir S3 bucket'ından veri sızmasından kim sorumlu?",
+"a": "Müşteri. Sağlayıcı altyapıyı korur; yapılandırma, erişim kontrolü ve veri her zaman müşterinin sorumluluğundadır."
+},
+{
+"id": "19216e1312",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Yüksek erişilebilirlik için 'çok AZ' neden genelde yeterli ve ne zaman çok bölge gerekir?",
+"a": "AZ'lerin bağımsız hata alanları vardır; onlara yaymak veri merkezi hatalarından düşük gecikme ve maliyetle sağ çıkarır. Çok bölge; bölgesel kesintiler, sıkı RTO/RPO, veri yerelliği ya da global gecikme için gerekir ve çok daha karmaşıktır."
+},
+{
+"id": "ce59cc126c",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "Production değişiklikleri neden konsol yerine kod olarak altyapıyla yapılmalı?",
+"a": "Kod incelenir, sürümlenir, tekrarlanabilir ve bir felaketten sonra ortamı yeniden kurabilir; konsol değişiklikleri görünmez, tekrar üretilemez ve herkesin var sandığından uzaklaşır."
+},
+{
+"id": "5c89caefdb",
+"ch": "14-cloud",
+"chTitle": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"page": "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun",
+"url": "14-cloud/",
+"q": "RPO ve RTO ne demek?",
+"a": "RPO ne kadar veri (zaman) kaybetmeyi göze alabileceğindir; RTO servisin ne kadar süre erişilemez kalabileceğidir. Birlikte yedek ve DR stratejisini ve maliyetini belirlerler."
+},
+{
+"id": "b73de9452a",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "4 replikalı bir Deployment için maxSurge: 25% ve maxUnavailable: 0 ne anlama gelir?",
+"a": "Rollout sırasında en fazla 1 ek pod olabilir (toplam 5) ve erişilebilir pod sayısı asla 4'ün altına düşmez: eskisi kaldırılmadan önce yeni bir pod hazır olmalıdır."
+},
+{
+"id": "f3b21d7d0c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "Veritabanını kontrol eden bir liveness probe neden bir kesintiyi kötüleştirebilir?",
+"a": "Veritabanı yavaşlarsa her pod liveness'ta başarısız olur ve aynı anda yeniden başlatılır; önbellekler ve bağlantılar kaybolur ve sistem zorlandığı anda tam da ek yük gelir."
+},
+{
+"id": "23fd585ded",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "Startup probe neden faydalı?",
+"a": "Liveness ve readiness probe'larını gevşetmeden yavaş açılan uygulamalara boot süresi verir; onlar ancak startup probe başarılı olunca başlar."
+},
+{
+"id": "a54fd32b7c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "kubectl delete pod ile container'ın durması arasında ne olur?",
+"a": "Pod sonlanıyor olarak işaretlenir; paralelde endpoint Service'lerden çıkarılır ve kubelet preStop'u çalıştırıp SIGTERM gönderir; bekleme süresinden sonra kalan süreç SIGKILL alır."
+},
+{
+"id": "fa3c738d7b",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "Taint ile node affinity arasındaki fark ne?",
+"a": "Node üzerindeki taint onu tolere etmeyen pod'ları iter (node seçer); pod üzerindeki node affinity onu belli label'lara sahip node'lara çeker (pod seçer). Özel node'lar genelde ikisini birden kullanır."
+},
+{
+"id": "c9c5921801",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "envFrom ile kullanılan bir ConfigMap'i değiştirdin. Uygulama neden yeni değeri görmüyor?",
+"a": "Ortam değişkenleri container başlarken ayarlanır; çalışan bir süreçte güncellenmez. Pod'ları yeniden başlat (ör. bir yapılandırma checksum annotation'ıyla) ya da ConfigMap'i dosya olarak mount et."
+},
+{
+"id": "567bf736cf",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Kubernetes Secret'ları tek başına neden yeterli değil?",
+"a": "Sadece base64 kodludurlar, get secrets yetkisi olan herkes okuyabilir ve yapılandırılmazsa etcd'de şifresiz saklanırlar. Durağan şifreleme, sıkı RBAC ve ideal olarak harici bir secret yöneticisi kullan."
+},
+{
+"id": "423391fa67",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "WaitForFirstConsumer neyi çözer?",
+"a": "Diski oluşturmayı pod zamanlanana kadar erteler; volume node ile aynı zone'da oluşturulur. Yoksa disk pod'un çalışamayacağı bir zone'a düşebilir."
+},
+{
+"id": "465f6da064",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "RWO PVC'li bir pod bir zone hatasından sonra neden Pending'de takılabilir?",
+"a": "Disk çöken zone'da yaşar ve sadece oradaki node'lara takılabilir; scheduler pod'u başka bir yere yerleştiremez."
+},
+{
+"id": "5b97b8ed72",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Önemli volume'lar için geri alma politikası olarak neden Retain kullanılır?",
+"a": "Delete ile PVC'yi (ya da namespace'ini) silmek alttaki diski de siler; Retain diski tutar, böylece veri kurtarılabilir."
+},
+{
+"id": "2b451eef98",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Helm bir release hakkındaki bilgiyi nerede saklar?",
+"a": "Release'in namespace'inde, revizyon başına üretilmiş manifest'i, değerleri ve meta veriyi içeren bir Secret olarak; helm history ve rollback bunu kullanır."
+},
+{
+"id": "ab725eaaa7",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Helm ile Kustomize arasındaki temel fark ne?",
+"a": "Helm şablonları değerlerle üretir (ve release'leri yönetir); Kustomize düz YAML base'lerini şablon ya da release takibi olmadan overlay'lerle yamalar."
+},
+{
+"id": "34a397de42",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "ConfigMap'in checksum'ını neden pod şablonu annotation'larına eklenir?",
+"a": "Yapılandırma değişikliği pod şablonunu değiştirsin ve kademeli bir güncelleme tetiklensin diye; yoksa pod'lar eski yapılandırmayla çalışmaya devam eder."
+},
+{
+"id": "1d7158898c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Operator deseni nedir?",
+"a": "Bir CRD yeni bir kaynak tipi tanımlar ve bir controller o kaynakları sürekli istenen duruma uzlaştırır; provizyon, failover, yedekler ve yükseltmeler gibi operasyonel görevleri otomatikleştirir."
+},
+{
+"id": "3325e9a90e",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Bir operator'ü production'da çalıştırmadan önce neyi kontrol etmelisin?",
+"a": "Olgunluk ve bakım, operator'ün ve CRD'lerinin nasıl yükseltildiği, ihtiyaç duyduğu RBAC, operator kapalıyken davranış ve yedek/geri yükleme ile hata ele alımı."
+},
+{
+"id": "50af2c9c4f",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "5 pod CPU request'lerinin %90'ında çalışıyor; hedef %60. HPA kaç replika ister?",
+"a": "ceil(5 × 90 / 60) = ceil(7,5) = 8 replika (min/max içinde)."
+},
+{
+"id": "bf71192db7",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "CPU tabanlı HPA neden doğru request'lere bağlı?",
+"a": "Kullanım request'in yüzdesi olarak ölçülür. Request'ler gerçek kullanımdan çok yüksekse kullanım hedefe hiç ulaşmaz ve HPA ölçeklemez (node'lar da israf olur)."
+},
+{
+"id": "ee41d3d5ef",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "KEDA tek başına HPA'nın yapamadığı neyi yapabilir?",
+"a": "Birçok harici olay kaynağına göre hazır ölçekleme yapabilir ve iş yüklerini sıfıra indirip olaylar gelince tekrar büyütebilir."
+},
+{
+"id": "d3dcc5139b",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "Karpenter, Cluster Autoscaler'dan nasıl farklı?",
+"a": "Önceden tanımlı node gruplarını büyütmek yerine bekleyen pod'lara bakar ve en uygun instance tiplerini doğrudan başlatır; node'ları kaldırarak ya da daha ucuzlarıyla değiştirerek aktif konsolide eder."
+},
+{
+"id": "d1fdbe101e",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "Hızlı autoscaler'larla bile neden pay bırakılır?",
+"a": "Yeni node'ların boot etmesi, katılması ve imaj çekmesi dakikalar sürer; boş kapasite olmadan ani artışlar yeni kapasite hazır olmadan gelir."
+},
+{
+"id": "1ace210035",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Bir pod Pending. İlk nereye bakarsın ve yaygın sebepler neler?",
+"a": "kubectl describe pod'daki olaylara: request'leri için yetersiz CPU/bellek, toleration'sız taint'ler, karşılanamayan affinity/yayılım, bağlanmamış ya da başka zone'daki bir PVC ya da namespace kotası."
+},
+{
+"id": "c50d0a77fb",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Bir container 137 çıkış kodu gösteriyor. Ne oldu?",
+"a": "SIGKILL ile öldürüldü; çoğunlukla bellek limitini aştığı için OOM killer tarafından (Reason: OOMKilled) ya da sonlanma bekleme süresi içinde durmadığı için."
+},
+{
+"id": "813f295a5c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "CrashLoopBackOff için neden kubectl logs --previous kullanılır?",
+"a": "Mevcut container az önce yeniden başlamış ve işe yarar bir şey loglamamış olabilir; --previous çöken örneğin çıktısını gösterir."
+},
+{
+"id": "3db0921b72",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Bir Service bağlantı hataları dönüyor ama pod'lar Running. Neyi kontrol edersin?",
+"a": "Pod'ların Ready olup Service'in EndpointSlice'larında görünüp görünmediğini, seçici ve hedef portun eşleşip eşleşmediğini, NetworkPolicy'leri ve debug pod'dan DNS çözümlemesini."
+},
+{
+"id": "701a53af3d",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Kubernetes 1.31'den doğrudan 1.34'e neden atlayamazsın?",
+"a": "Bileşenleri desteklenen uyum içinde tutmak ve depolama/API taşımalarına izin vermek için control plane her seferinde bir minor sürüm yükseltilmelidir; kaldırılan API'ler de her adımda taşınmalıdır."
+},
+{
+"id": "277effe933",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Deployment yerine ne zaman StatefulSet kullanılır?",
+"a": "Pod'ların sabit kimliğe ve kendi depolamalarına ihtiyacı olduğunda: sabit isimler, sıralı başlatma/durdurma ve replika başına bir PVC (veritabanları, broker'lar, cluster'lı uygulamalar)."
+},
+{
+"id": "8a8f9f7e52",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Readiness ile liveness probe arasındaki fark ne?",
+"a": "Readiness bir pod'un trafik alıp almayacağına karar verir (başarısız olunca Service endpoint'lerinden çıkarılır); liveness container'ın yeniden başlatılıp başlatılmayacağına karar verir."
+},
+{
+"id": "1228c2af63",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Kubernetes readiness'ı beklese de pod'lar kademeli güncellemede neden istek düşürebilir?",
+"a": "Endpoint'ten çıkarma SIGTERM'den sonra asenkron yayılır; uygulama hemen çıkarsa load balancer'lar ona birkaç istek daha yönlendirir. preStop beklemesi ve düzgün boşaltma bunu düzeltir."
+},
+{
+"id": "6f8a71fee8",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Bir PodDisruptionBudget neye karşı korur?",
+"a": "Gönüllü kesintilerin (node drain'leri, yükseltmeler, autoscaler konsolidasyonu) aynı anda çok fazla pod'u tahliye etmesine; çökmelere ya da node hatalarına karşı korumaz."
+},
+{
+"id": "8d5ea8929f",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Kubernetes cluster'ları neden düzenli yükseltilmeli?",
+"a": "Minor sürümler sadece yaklaşık 14 ay desteklenir; yönetilen servisler yükseltmeye zorlar, API'ler kaldırılır ve güvenlik düzeltmeleri sadece desteklenen sürümlere gelir."
+},
+{
+"id": "febe8dcf98",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.1 — Git akışları ve kod incelemesi",
+"url": "16-devops/01-git-review/",
+"q": "Uzun ömürlü özellik branch'leri teslimi neden zorlaştırır?",
+"a": "Entegrasyonu geciktirirler; çakışmalar ve etkileşimler geç ve hep birden ortaya çıkar; incelemeler devasa olur ve sürümler büyük, riskli partilere dönüşür."
+},
+{
+"id": "fc8a4ebfdc",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.1 — Git akışları ve kod incelemesi",
+"url": "16-devops/01-git-review/",
+"q": "Bitmemiş işi kullanıcılara göstermeden her gün nasıl merge edersin?",
+"a": "Onu bir feature flag'in arkasına koyarak (ya da erişilemez tutarak); kod entegre edilir ve deploy edilir ama release edilmez (16.2)."
+},
+{
+"id": "e0e0cee675",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.1 — Git akışları ve kod incelemesi",
+"url": "16-devops/01-git-review/",
+"q": "Merge kuyruğu hangi sorunu çözer?",
+"a": "CI'ı ayrı ayrı geçen iki PR birleşince main'i bozabilir; kuyruk her PR'ı merge etmeden önce main artı önündeki PR'larla test eder."
+},
+{
+"id": "216073771f",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.1 — Git akışları ve kod incelemesi",
+"url": "16-devops/01-git-review/",
+"q": "SemVer'de 2.4.1'den 3.0.0'a geçiş neyi işaret eder?",
+"a": "Kırıcı bir değişikliği: tüketicilerin yükseltmek için kodlarını ya da yapılandırmalarını değiştirmesi gerekebilir."
+},
+{
+"id": "231dba90f2",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.1 — Git akışları ve kod incelemesi",
+"url": "16-devops/01-git-review/",
+"q": "GitFlow hâlâ ne zaman mantıklıdır?",
+"a": "Birkaç sürümün bakımının yapıldığı ve sürekli deploy yerine ayrı sürümlerle dağıtılan yazılımlarda (mobil uygulamalar, kütüphaneler, şirket içi ürünler)."
+},
+{
+"id": "74ba87836b",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler",
+"url": "16-devops/02-safe-releases/",
+"q": "Deploy etmek ile release etmek arasındaki fark ne?",
+"a": "Deploy etmek yeni kodu production'a koyar; release etmek yeni davranışı kullanıcılara açar. Feature flag'ler sürekli deploy edip kademeli ve bağımsız release etmeni sağlar."
+},
+{
+"id": "1ed0c1e371",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler",
+"url": "16-devops/02-safe-releases/",
+"q": "Feature flag'ler lansmandan sonra neden kaldırılmalı?",
+"a": "Her flag kod yolları, test kombinasyonları ve kafa karışıklığı ekler; eskimiş flag'ler teknik borca ve biri onları beklenmedik şekilde değiştirdiğinde olay kaynağına dönüşür."
+},
+{
+"id": "5f01341295",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler",
+"url": "16-devops/02-safe-releases/",
+"q": "Bir veritabanı kolonunu neden tek bir sürümde yeniden adlandıramazsın?",
+"a": "Kademeli bir deploy sırasında (ve bir geri almadan sonra) eski sürüm hâlâ çalışır ve eski kolonu okur; tek adımlı bir yeniden adlandırma onu bozar. Genişlet/daralt iki sürümü de çalışır tutar."
+},
+{
+"id": "018441b965",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler",
+"url": "16-devops/02-safe-releases/",
+"q": "Bir canary'nin terfi ettirilip ettirilmeyeceğine ne karar vermeli?",
+"a": "Kararlı sürümle karşılaştırılan önceden tanımlı metrikler (hata oranı, gecikme, SLO burn, temel iş metrikleri); ideal olarak hata durumunda geri almayla otomatik değerlendirilir."
+},
+{
+"id": "2dc577d533",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler",
+"url": "16-devops/02-safe-releases/",
+"q": "Değişiklik dondurmaları neden çoğu zaman ters etki yapar?",
+"a": "Değişiklikler yazılmaya devam eder; dondurmadan sonra bir kerede release edilen büyük, riskli bir partiye birikir; bu da küçük güvenli değişikliklerin tam tersidir."
+},
+{
+"id": "0600b437a5",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.3 — Olaylar, nöbet ve postmortem'ler",
+"url": "16-devops/03-incidents/",
+"q": "Gece bir insanı ne çağırmalı, ne çağırmamalı?",
+"a": "Acil, aksiyon alınabilir, kullanıcının gördüğü belirtiler (SLO burn, yüksek hata oranı, servis kapalı) çağırmalı; sebepler ve acil olmayan sinyaller (yüksek CPU, tek bir pod'un yeniden başlaması, %70 dolu disk) dashboard'lara ya da ticket'lara gitmeli."
+},
+{
+"id": "b6b3167a1a",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.3 — Olaylar, nöbet ve postmortem'ler",
+"url": "16-devops/03-incidents/",
+"q": "Olay komutanı neden genelde debug etmemeli?",
+"a": "Görevi koordinasyondur: büyük resmi korumak, iş dağıtmak, karar vermek ve iletişimi sağlamak. Debug etmek onu detaylara çeker ve dümende kimse kalmaz."
+},
+{
+"id": "7a481c8079",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.3 — Olaylar, nöbet ve postmortem'ler",
+"url": "16-devops/03-incidents/",
+"q": "Kök nedeni bulmadan önce neden hafifletilir?",
+"a": "Kullanıcılar şu anda etkileniyor; geri almak, bir flag'i kapatmak ya da failover genelde hizmeti dakikalar içinde geri getirir; kök neden analizi saatler sürebilir ve sonrasında daha güvenlidir."
+},
+{
+"id": "b546464f31",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.3 — Olaylar, nöbet ve postmortem'ler",
+"url": "16-devops/03-incidents/",
+"q": "Bir postmortem'i suçlamasız yapan nedir ve neden önemlidir?",
+"a": "Kimin hata yaptığına değil, sistemin ve sürecin hataya nasıl izin verdiğine odaklanır; suçlanma korkusu olmadan insanlar gerçekte ne olduğunu paylaşır ve doğru düzeltmeler bulunur."
+},
+{
+"id": "1e0613f0bc",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.3 — Olaylar, nöbet ve postmortem'ler",
+"url": "16-devops/03-incidents/",
+"q": "İyi bir postmortem aksiyon maddesini ne yapar?",
+"a": "Somut olması; bir sahibi, bitiş tarihi ve ticket'ı olması; katkıda bulunan bir etkeni ele alması (\"daha dikkatli ol\" değil) ve gerçekten önceliklendirilip tamamlanana kadar takip edilmesi."
+},
+{
+"id": "22e381a4ef",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.4 — Platform mühendisliği ve geliştirici deneyimi",
+"url": "16-devops/04-platform/",
+"q": "Platform mühendisliği hangi sorunu çözer?",
+"a": "Birçok altyapı aracında uzmanlaşmak zorunda kalan ürün ekiplerinin artan bilişsel yükünü; platform self-servis, görüşlü yollar sunar ve ekipler iş değerine odaklanabilir."
+},
+{
+"id": "1adc02f1cd",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.4 — Platform mühendisliği ve geliştirici deneyimi",
+"url": "16-devops/04-platform/",
+"q": "Altın yol nedir?",
+"a": "Yaygın bir işi (ör. servis oluşturmak) en iyi pratikler içine gömülü olarak yapmanın desteklenen, uçtan uca, görüşlü bir yolu; ekipler sapabilir ama o zaman ek karmaşıklığa sahip olurlar."
+},
+{
+"id": "3f50d178d2",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.4 — Platform mühendisliği ve geliştirici deneyimi",
+"url": "16-devops/04-platform/",
+"q": "Yazılım kataloğu ne içindir?",
+"a": "Servisleri, API'leri ve kaynakları sahipleri, dokümanları, bağımlılıkları ve sağlıklarıyla listeleyen tek bir yer; keşif, standartlar ve olay müdahalesi için kullanılır."
+},
+{
+"id": "b7e8808575",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.4 — Platform mühendisliği ve geliştirici deneyimi",
+"url": "16-devops/04-platform/",
+"q": "'Ticket-ops' neden bir karşı desendir?",
+"a": "Talepler insanları bekleyen kuyruklarda bekler, gecikmeler ve darboğazlar yaratır; korkuluklu self-servis API'ler beklemeden aynı kontrolü sağlar."
+},
+{
+"id": "57d4027111",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "16.4 — Platform mühendisliği ve geliştirici deneyimi",
+"url": "16-devops/04-platform/",
+"q": "Bir iç platformun başarılı olduğunu nasıl anlarsın?",
+"a": "Ekipler onu gönüllü benimser, teslim metrikleri (teslim süresi, deploy sıklığı, değişiklik hata oranı) ve ilk deploy'a kadar geçen süre iyileşir ve geliştirici memnuniyeti artar."
+},
+{
+"id": "36c5797995",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"url": "16-devops/",
+"q": "DevOps bir rol mü, araç mı, yoksa başka bir şey mi?",
+"a": "Öncelikle bir kültür ve pratikler bütünü: yazılımı geliştirme ve çalıştırmanın ortak sahipliği, küçük otomatik değişiklikler ve hızlı geri bildirim. Araçlar ve roller onu destekler ama yaratmaz."
+},
+{
+"id": "9afa6c7ed3",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"url": "16-devops/",
+"q": "Dört DORA metriği hangileri?",
+"a": "Deploy sıklığı, değişiklik teslim süresi, değişiklik hata oranı ve başarısız deploy kurtarma süresi."
+},
+{
+"id": "9395b27116",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"url": "16-devops/",
+"q": "Küçük ve sık deploy'lar kararlılığı neden artırır?",
+"a": "Her değişikliği incelemek ve test etmek daha kolaydır, hatalar daha seyrek ve küçüktür, sorunu hangi değişikliğin yarattığı bellidir ve geri almak az şeyi etkiler."
+},
+{
+"id": "ebe2d2bfde",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"url": "16-devops/",
+"q": "DevOps, SRE ve platform mühendisliği nasıl ilişkilidir?",
+"a": "DevOps ortak sahiplik ve akış felsefesidir; SRE güvenilirliği SLO'lar, hata bütçeleri ve angarya limitleriyle uygular; platform mühendisliği ikisini ekiplere self-servis altın yollar vererek ölçekler."
+},
+{
+"id": "388b4ad6ae",
+"ch": "16-devops",
+"chTitle": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"page": "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir",
+"url": "16-devops/",
+"q": "DORA metrikleri neden bireyleri sıralamak için kullanılmamalı?",
+"a": "Bir ekibin çalışma sistemini tarif ederler; kişisel hedef olarak kullanmak oyunlaştırmayı (ör. küçük anlamsız deploy'lar) davet eder ve dürüst geri bildirim değerlerini yok eder."
+}
+]

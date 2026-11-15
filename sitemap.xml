@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/changelog/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/changelog/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/changelog/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/paths/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/paths/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/paths/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/practice/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/practice/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/practice/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/01-interrupts-drivers/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/01-interrupts-drivers/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/01-interrupts-drivers/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/02-usb-hid/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/02-usb-hid/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/02-usb-hid/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/03-input-stack/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/03-input-stack/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/03-input-stack/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/01-isa-assembly/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/01-isa-assembly/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/01-isa-assembly/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/02-caches-memory/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/02-caches-memory/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/02-caches-memory/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/03-pipeline-speculation/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/03-pipeline-speculation/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/03-pipeline-speculation/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/01-processes-threads/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/01-processes-threads/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/01-processes-threads/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/02-scheduler/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/02-scheduler/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/02-scheduler/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/03-virtual-memory/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/03-virtual-memory/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/03-virtual-memory/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/04-io-filesystems/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/04-io-filesystems/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/04-io-filesystems/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/05-namespaces-cgroups/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/05-namespaces-cgroups/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/05-namespaces-cgroups/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/01-compile-link/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/01-compile-link/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/01-compile-link/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/02-elf-loader/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/02-elf-loader/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/02-elf-loader/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/03-runtimes/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/03-runtimes/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/03-runtimes/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/01-ethernet-arp-vlan/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/01-ethernet-arp-vlan/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/01-ethernet-arp-vlan/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/02-ip-routing/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/02-ip-routing/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/02-ip-routing/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/03-nat-firewall/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/03-nat-firewall/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/03-nat-firewall/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/04-cloud-networking/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/04-cloud-networking/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/04-cloud-networking/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/01-headers/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/01-headers/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/01-headers/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/02-dns/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/02-dns/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/02-dns/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/03-tcp/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/03-tcp/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/03-tcp/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/04-tls/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/04-tls/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/04-tls/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/05-http2-http3/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/05-http2-http3/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/05-http2-http3/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/06-apis/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/06-apis/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/06-apis/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/01-load-balancing/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/01-load-balancing/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/01-load-balancing/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/02-caching/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/02-caching/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/02-caching/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/03-databases/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/03-databases/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/03-databases/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/04-queues-events/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/04-queues-events/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/04-queues-events/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/01-rendering/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/01-rendering/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/01-rendering/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/02-javascript-event-loop/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/02-javascript-event-loop/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/02-javascript-event-loop/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/03-web-performance/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/03-web-performance/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/03-web-performance/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/04-browser-security/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/04-browser-security/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/04-browser-security/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/01-containers-images/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/01-containers-images/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/01-containers-images/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/02-kubernetes-architecture/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/02-kubernetes-architecture/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/02-kubernetes-architecture/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/03-kubernetes-networking/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/03-kubernetes-networking/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/03-kubernetes-networking/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/04-cicd-gitops/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/04-cicd-gitops/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/04-cicd-gitops/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/05-observability/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/05-observability/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/05-observability/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/01-fundamentals/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/01-fundamentals/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/01-fundamentals/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/02-gpu/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/02-gpu/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/02-gpu/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/03-software/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/03-software/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/03-software/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/04-training/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/04-training/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/04-training/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/05-inference/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/05-inference/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/05-inference/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/06-kubernetes/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/06-kubernetes/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/06-kubernetes/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/07-applications/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/07-applications/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/07-applications/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/glossary/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/glossary/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/glossary/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/11-security/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/11-security/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/11-security/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/12-distributed/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/12-distributed/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/12-distributed/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/13-finops/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/13-finops/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/13-finops/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/01-compute/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/01-compute/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/01-compute/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/02-storage-databases/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/02-storage-databases/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/02-storage-databases/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/03-terraform/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/03-terraform/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/03-terraform/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/04-landing-zones-dr/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/04-landing-zones-dr/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/04-landing-zones-dr/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/01-workloads/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/01-workloads/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/01-workloads/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/02-config-storage/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/02-config-storage/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/02-config-storage/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/03-helm-operators/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/03-helm-operators/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/03-helm-operators/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/04-autoscaling/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/04-autoscaling/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/04-autoscaling/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/05-troubleshooting/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/05-troubleshooting/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/05-troubleshooting/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/01-git-review/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/01-git-review/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/01-git-review/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/02-safe-releases/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/02-safe-releases/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/02-safe-releases/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/03-incidents/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/03-incidents/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/03-incidents/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/04-platform/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/04-platform/"/>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/04-platform/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/changelog/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/changelog/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/changelog/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/paths/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/paths/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/paths/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/practice/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/practice/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/practice/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/01-interrupts-drivers/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/01-interrupts-drivers/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/01-interrupts-drivers/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/02-usb-hid/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/02-usb-hid/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/02-usb-hid/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/03-input-stack/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/01-keypress/03-input-stack/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/03-input-stack/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/01-isa-assembly/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/01-isa-assembly/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/01-isa-assembly/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/02-caches-memory/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/02-caches-memory/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/02-caches-memory/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/03-pipeline-speculation/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/03-pipeline-speculation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/02-cpu/03-pipeline-speculation/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/01-processes-threads/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/01-processes-threads/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/01-processes-threads/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/02-scheduler/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/02-scheduler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/02-scheduler/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/03-virtual-memory/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/03-virtual-memory/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/03-virtual-memory/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/04-io-filesystems/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/04-io-filesystems/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/04-io-filesystems/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/05-namespaces-cgroups/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/03-os/05-namespaces-cgroups/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/03-os/05-namespaces-cgroups/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/01-compile-link/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/01-compile-link/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/01-compile-link/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/02-elf-loader/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/02-elf-loader/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/02-elf-loader/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/03-runtimes/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/04-program/03-runtimes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/03-runtimes/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/01-ethernet-arp-vlan/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/01-ethernet-arp-vlan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/01-ethernet-arp-vlan/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/02-ip-routing/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/02-ip-routing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/02-ip-routing/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/03-nat-firewall/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/03-nat-firewall/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/03-nat-firewall/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/04-cloud-networking/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/05-network/04-cloud-networking/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/05-network/04-cloud-networking/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/01-headers/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/01-headers/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/01-headers/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/02-dns/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/02-dns/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/02-dns/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/03-tcp/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/03-tcp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/03-tcp/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/04-tls/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/04-tls/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/04-tls/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/05-http2-http3/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/05-http2-http3/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/05-http2-http3/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/06-apis/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/06-apis/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/06-apis/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/01-load-balancing/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/01-load-balancing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/01-load-balancing/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/02-caching/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/02-caching/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/02-caching/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/03-databases/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/03-databases/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/03-databases/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/04-queues-events/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/07-server/04-queues-events/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/07-server/04-queues-events/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/01-rendering/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/01-rendering/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/01-rendering/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/02-javascript-event-loop/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/02-javascript-event-loop/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/02-javascript-event-loop/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/03-web-performance/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/03-web-performance/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/03-web-performance/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/04-browser-security/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/08-browser/04-browser-security/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/08-browser/04-browser-security/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/01-containers-images/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/01-containers-images/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/01-containers-images/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/02-kubernetes-architecture/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/02-kubernetes-architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/02-kubernetes-architecture/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/03-kubernetes-networking/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/03-kubernetes-networking/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/03-kubernetes-networking/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/04-cicd-gitops/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/04-cicd-gitops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/04-cicd-gitops/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/05-observability/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/09-infra/05-observability/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/09-infra/05-observability/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/01-fundamentals/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/01-fundamentals/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/01-fundamentals/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/02-gpu/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/02-gpu/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/02-gpu/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/03-software/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/03-software/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/03-software/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/04-training/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/04-training/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/04-training/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/05-inference/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/05-inference/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/05-inference/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/06-kubernetes/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/06-kubernetes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/06-kubernetes/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/07-applications/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/07-applications/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/07-applications/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/glossary/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/glossary/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/10-ai/glossary/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/11-security/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/11-security/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/11-security/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/12-distributed/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/12-distributed/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/12-distributed/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/13-finops/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/13-finops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/13-finops/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/01-compute/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/01-compute/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/01-compute/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/02-storage-databases/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/02-storage-databases/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/02-storage-databases/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/03-terraform/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/03-terraform/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/03-terraform/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/04-landing-zones-dr/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/14-cloud/04-landing-zones-dr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/14-cloud/04-landing-zones-dr/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/01-workloads/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/01-workloads/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/01-workloads/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/02-config-storage/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/02-config-storage/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/02-config-storage/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/03-helm-operators/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/03-helm-operators/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/03-helm-operators/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/04-autoscaling/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/04-autoscaling/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/04-autoscaling/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/05-troubleshooting/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/15-kubernetes/05-troubleshooting/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/15-kubernetes/05-troubleshooting/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/01-git-review/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/01-git-review/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/01-git-review/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/02-safe-releases/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/02-safe-releases/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/02-safe-releases/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/03-incidents/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/03-incidents/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/03-incidents/"/>
+    </url>
+    <url>
+        <loc>https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/04-platform/</loc>
+        <lastmod>2026-11-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="tr" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/16-devops/04-platform/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gaskinimbuspro.github.io/silicon-to-cloud/16-devops/04-platform/"/>
+    </url>
+</urlset>

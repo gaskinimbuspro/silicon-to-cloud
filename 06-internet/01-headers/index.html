@@ -1,0 +1,2991 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="What an HTTP header is, how a message is built, and what headers do for routing, content negotiation, caching, authentication, cookies, security, CORS, proxies and tracing.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/01-headers/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-dns/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../tr/06-internet/01-headers/" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>6.1 — HTTP headers deep dive - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="6.1 — HTTP headers deep dive - Silicon to Cloud">
+<meta property="og:description" content="What an HTTP header is, how a message is built, and what headers do for routing, content negotiation, caching, authentication, cookies, security, CORS, proxies and tracing.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/06-internet/01-headers.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/06-internet/01-headers/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="6.1 — HTTP headers deep dive - Silicon to Cloud">
+<meta property="twitter:description" content="What an HTTP header is, how a message is built, and what headers do for routing, content negotiation, caching, authentication, cookies, security, CORS, proxies and tracing.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/06-internet/01-headers.png">
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#61-http-headers-deep-dive" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              6.1 — HTTP headers deep dive
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../tr/06-internet/01-headers/" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.1 · HTTP headers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.1 · HTTP headers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-is-a-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · What is a header?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · What is a header?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-header-families" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · The header families
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-content-negotiation-and-compression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Content negotiation and compression
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · Content negotiation and compression">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-caching-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Caching headers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Caching headers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-authentication-and-cookies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Authentication and cookies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Authentication and cookies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-authorization-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does Authorization work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-cookies-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do cookies work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-security-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Security headers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · CORS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7 · CORS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-proxies-and-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · Proxies and tracing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8 · Proxies and tracing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-x-forwarded-for-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does X-Forwarded-For work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-traceparent-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does traceparent work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps connection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-dns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.2 · DNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-tcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.3 · TCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.4 · TLS &amp; certificates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-http2-http3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.5 · HTTP/2 &amp; HTTP/3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.6 · Methods, status codes &amp; APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-is-a-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · What is a header?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · What is a header?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-header-families" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · The header families
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-content-negotiation-and-compression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Content negotiation and compression
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · Content negotiation and compression">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-caching-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Caching headers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Caching headers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-authentication-and-cookies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Authentication and cookies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Authentication and cookies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-authorization-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does Authorization work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-cookies-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do cookies work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-security-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Security headers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · CORS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7 · CORS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-it_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does it work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-proxies-and-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · Proxies and tracing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8 · Proxies and tracing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-x-forwarded-for-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does X-Forwarded-For work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-traceparent-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does traceparent work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps connection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    6 · DNS, TCP, TLS, HTTP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="61-http-headers-deep-dive">6.1 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> headers deep dive<a class="headerlink" href="#61-http-headers-deep-dive" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">In short</p>
+<p>A <strong>header</strong> is a <code>Name: value</code> line of <strong>metadata</strong> that travels with every <abbr title="HyperText Transfer Protocol">HTTP</abbr> request and response. The body is
+the content. The headers say <strong>who it is for, what format it is in, how long it may be cached, who is asking, what
+the browser is allowed to do with it, and which hops it passed through</strong>. Most of what CDNs, load balancers, ingress
+controllers, auth and browser security do is driven by headers.</p>
+</div>
+<h2 id="key-terms-abbreviations">📖 Key terms &amp; abbreviations<a class="headerlink" href="#key-terms-abbreviations" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Stands for</th>
+<th>What it is</th>
+<th>How it works (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Header (field)</strong></td>
+<td>—</td>
+<td>A <code>Name: value</code> line of metadata</td>
+<td>Names are case-insensitive; sent before the body</td>
+</tr>
+<tr>
+<td><strong>Request / response header</strong></td>
+<td>—</td>
+<td>Metadata sent by the client / by the server</td>
+<td><code>Accept</code>, <code>Authorization</code> vs <code>Content-Type</code>, <code>Set-Cookie</code></td>
+</tr>
+<tr>
+<td><strong>Start line / status line</strong></td>
+<td>—</td>
+<td>First line of a request / response</td>
+<td><code>GET /path HTTP/1.1</code> / <code>HTTP/1.1 200 OK</code></td>
+</tr>
+<tr>
+<td><strong>MIME type</strong></td>
+<td>Multipurpose Internet Mail Extensions</td>
+<td>Format label like <code>application/json</code></td>
+<td>Put in <code>Content-Type</code> and <code>Accept</code></td>
+</tr>
+<tr>
+<td><strong>Content negotiation</strong></td>
+<td>—</td>
+<td>Client says what it can take, server picks</td>
+<td><code>Accept-*</code> in, <code>Content-*</code> + <code>Vary</code> out</td>
+</tr>
+<tr>
+<td><strong>Hop-by-hop / end-to-end</strong></td>
+<td>—</td>
+<td>Headers for one connection / for the final recipient</td>
+<td>Proxies strip hop-by-hop ones (<code>Connection</code>, <code>Keep-Alive</code>)</td>
+</tr>
+<tr>
+<td><strong>Cache-Control</strong></td>
+<td>—</td>
+<td>Caching rules for browsers and CDNs</td>
+<td><code>max-age</code>, <code>no-store</code>, <code>private</code>, <code>s-maxage</code> …</td>
+</tr>
+<tr>
+<td><strong><abbr title="Entity Tag">ETag</abbr></strong></td>
+<td>Entity Tag</td>
+<td>Version id of a response</td>
+<td>Client sends it back in <code>If-None-Match</code>; unchanged → <code>304</code></td>
+</tr>
+<tr>
+<td><strong>Cookie / Set-Cookie</strong></td>
+<td>—</td>
+<td>Small state the browser stores and sends back</td>
+<td>Server sets it; browser adds <code>Cookie</code> to matching requests</td>
+</tr>
+<tr>
+<td><strong>Authorization / Bearer</strong></td>
+<td>—</td>
+<td>Credentials for a request</td>
+<td><code>Authorization: Bearer &lt;token&gt;</code>; missing/invalid → <code>401</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="Cross-Origin Resource Sharing">CORS</abbr></strong></td>
+<td>Cross-Origin Resource Sharing</td>
+<td>Browser rule for cross-origin reads</td>
+<td>API answers with <code>Access-Control-Allow-*</code> headers</td>
+</tr>
+<tr>
+<td><strong>Origin</strong></td>
+<td>—</td>
+<td>scheme + host + port of a page</td>
+<td><code>https://app.example.com</code> ≠ <code>https://api.example.com</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="HTTP Strict Transport Security">HSTS</abbr></strong></td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr> Strict Transport Security</td>
+<td>"Always use HTTPS for this site"</td>
+<td><code>Strict-Transport-Security: max-age=…</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="Content Security Policy">CSP</abbr></strong></td>
+<td>Content Security Policy</td>
+<td>Allow-list of where scripts/styles may load from</td>
+<td>Browser blocks everything else (stops most <abbr title="Cross-Site Scripting">XSS</abbr>)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Cross-Site Scripting">XSS</abbr></strong></td>
+<td>Cross-Site Scripting</td>
+<td>Attacker's script running in your page</td>
+<td>Prevented by escaping output + <abbr title="Content Security Policy">CSP</abbr></td>
+</tr>
+<tr>
+<td><strong>X-Forwarded-For (XFF)</strong></td>
+<td>—</td>
+<td>Original client <abbr title="Internet Protocol">IP</abbr> behind proxies</td>
+<td>Each proxy appends the address it received from</td>
+</tr>
+<tr>
+<td><strong>traceparent</strong></td>
+<td>W3C Trace Context</td>
+<td>Distributed-trace id passed between services</td>
+<td><code>00-&lt;trace-id&gt;-&lt;span-id&gt;-&lt;flags&gt;</code></td>
+</tr>
+<tr>
+<td><strong>HPACK / QPACK</strong></td>
+<td>—</td>
+<td>Header compression in <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 / <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3</td>
+<td>Static + dynamic tables replace repeated headers with indexes</td>
+</tr>
+<tr>
+<td><strong>Pseudo-header</strong></td>
+<td>—</td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2+ fields that replace the start line</td>
+<td><code>:method</code>, <code>:path</code>, <code>:authority</code>, <code>:scheme</code>, <code>:status</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="big-picture">🗺️ Big picture<a class="headerlink" href="#big-picture" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1a-path.png" data-desc-position="bottom"><img alt="Who reads and writes which headers" src="../../assets/diagrams/06-1a-path.png"></a></p>
+<hr>
+<h2 id="1-what-is-a-header">1 · What is a header?<a class="headerlink" href="#1-what-is-a-header" title="Permanent link">¶</a></h2>
+<h3 id="what-is-it">What is it?<a class="headerlink" href="#what-is-it" title="Permanent link">¶</a></h3>
+<p>An <abbr title="HyperText Transfer Protocol">HTTP</abbr> message has four parts: a <strong>start line</strong>, a block of <strong>headers</strong>, an <strong>empty line</strong>, and an optional <strong>body</strong>.
+The headers are metadata: they describe the body and the request, and they tell every hop what to do.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1-anatomy.png" data-desc-position="bottom"><img alt="Anatomy of an HTTP message" src="../../assets/diagrams/06-1-anatomy.png"></a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">POST</span> <span class="nn">/api/cart</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">Host</span><span class="o">:</span> <span class="l">shop.example.com</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">Content-Length</span><span class="o">:</span> <span class="l">11</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">Authorization</span><span class="o">:</span> <span class="l">Bearer eyJhbGciOi…</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">{</span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Format:</strong> <code>Name: value</code>, one per line, ending with <code>\r\n</code>. An empty line ends the header block; then come exactly <code>Content-Length</code> bytes of body (or <code>chunked</code> pieces).</li>
+<li><strong>Names are case-insensitive:</strong> <code>content-type</code> = <code>Content-Type</code>. <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 and <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3 require them lowercase on the wire.</li>
+<li><strong>Repeated headers</strong> can be merged with commas (<code>Accept: a, b</code>), <strong>except</strong> <code>Set-Cookie</code>, which must stay one per line.</li>
+<li><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 and <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3</strong> don't send text lines. The start line becomes <strong>pseudo-headers</strong> (<code>:method: POST</code>, <code>:path: /api/cart</code>, <code>:authority: shop.example.com</code>), and all headers are <strong>compressed</strong> with HPACK / QPACK, so a repeated <code>Cookie</code> or <code>User-Agent</code> costs only a few bytes after the first request.</li>
+<li><strong>Size limits exist.</strong> Servers and proxies cap header size (nginx: <code>large_client_header_buffers</code>, default 4 × 8 KB). Too-large cookies or JWTs give <code>400 Request Header Or Cookie Too Large</code> or <code>431 Request Header Fields Too Large</code>.</li>
+<li><strong>Custom headers:</strong> just pick a name (<code>X-Tenant-Id</code>, <code>Acme-Feature-Flag</code>). The <code>X-</code> prefix is an old convention and is no longer recommended for new standards, but it's still common.</li>
+</ul>
+<h2 id="2-the-header-families">2 · The header families<a class="headerlink" href="#2-the-header-families" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Request headers</th>
+<th>Response headers</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Routing</strong></td>
+<td><code>Host</code> (<code>:authority</code> in h2/h3)</td>
+<td><code>Location</code> (with 3xx / 201)</td>
+<td>Virtual hosting, ingress rules, redirects</td>
+</tr>
+<tr>
+<td><strong>Content negotiation</strong></td>
+<td><code>Accept</code>, <code>Accept-Encoding</code>, <code>Accept-Language</code></td>
+<td><code>Content-Type</code>, <code>Content-Encoding</code>, <code>Content-Language</code>, <code>Vary</code></td>
+<td>JSON vs HTML, gzip/br/zstd, language</td>
+</tr>
+<tr>
+<td><strong>Body framing</strong></td>
+<td><code>Content-Length</code>, <code>Transfer-Encoding</code></td>
+<td>same</td>
+<td>Where the body ends</td>
+</tr>
+<tr>
+<td><strong>Connection</strong></td>
+<td><code>Connection</code>, <code>Upgrade</code></td>
+<td><code>Connection</code>, <code>Keep-Alive</code></td>
+<td>Keep-alive, WebSocket upgrade (hop-by-hop)</td>
+</tr>
+<tr>
+<td><strong>Caching</strong></td>
+<td><code>Cache-Control</code>, <code>If-None-Match</code>, <code>If-Modified-Since</code></td>
+<td><code>Cache-Control</code>, <code>ETag</code>, <code>Last-Modified</code>, <code>Age</code>, <code>Expires</code></td>
+<td>Browser and <abbr title="Content Delivery Network">CDN</abbr> caching</td>
+</tr>
+<tr>
+<td><strong>Auth</strong></td>
+<td><code>Authorization</code>, <code>Cookie</code></td>
+<td><code>WWW-Authenticate</code>, <code>Set-Cookie</code></td>
+<td>Logins, API tokens, sessions</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td><code>Origin</code>, <code>Sec-Fetch-*</code></td>
+<td><code>Strict-Transport-Security</code>, <code>Content-Security-Policy</code>, <code>X-Content-Type-Options</code>, <code>Referrer-Policy</code></td>
+<td>Telling the browser how to protect the user</td>
+</tr>
+<tr>
+<td><strong><abbr title="Cross-Origin Resource Sharing">CORS</abbr></strong></td>
+<td><code>Origin</code>, <code>Access-Control-Request-*</code></td>
+<td><code>Access-Control-Allow-*</code></td>
+<td>Cross-origin API calls from JS</td>
+</tr>
+<tr>
+<td><strong>Proxies</strong></td>
+<td><code>X-Forwarded-For</code>, <code>X-Forwarded-Proto</code>, <code>Forwarded</code>, <code>Via</code></td>
+<td><code>Via</code></td>
+<td>Real client <abbr title="Internet Protocol">IP</abbr> and scheme behind LBs</td>
+</tr>
+<tr>
+<td><strong>Observability</strong></td>
+<td><code>X-Request-ID</code>, <code>traceparent</code>, <code>tracestate</code></td>
+<td><code>X-Request-ID</code>, <code>Server-Timing</code></td>
+<td>Correlating logs and traces</td>
+</tr>
+<tr>
+<td><strong>Rate limiting</strong></td>
+<td>—</td>
+<td><code>Retry-After</code> (+ <code>RateLimit-*</code> drafts)</td>
+<td>Telling clients when to retry after <code>429</code> / <code>503</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-content-negotiation-and-compression">3 · Content negotiation and compression<a class="headerlink" href="#3-content-negotiation-and-compression" title="Permanent link">¶</a></h2>
+<h3 id="how-does-it-work_1">How does it work?<a class="headerlink" href="#how-does-it-work_1" title="Permanent link">¶</a></h3>
+<ol>
+<li>The client lists what it accepts: <code>Accept: application/json</code>, <code>Accept-Encoding: gzip, br, zstd</code>, <code>Accept-Language: tr, en;q=0.8</code> (<code>q</code> = preference weight).</li>
+<li>The server picks one and labels the response: <code>Content-Type: application/json; charset=utf-8</code>, <code>Content-Encoding: br</code>.</li>
+<li>It adds <strong><code>Vary: Accept-Encoding</code></strong> so caches know the <abbr title="Uniform Resource Locator">URL</abbr> has several versions and must key on that header too. A missing <code>Vary</code> is a classic <abbr title="Content Delivery Network">CDN</abbr> bug: users get a compressed (or wrong-language) copy meant for someone else.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title"><abbr title="Development + Operations">DevOps</abbr> note</p>
+<p>A wrong <code>Content-Type</code> breaks things quietly: JSON served as <code>text/html</code>, or JS as <code>text/plain</code> is blocked when
+<code>X-Content-Type-Options: nosniff</code> is set. Check it with <code>curl -sI</code>.</p>
+</div>
+<h2 id="4-caching-headers">4 · Caching headers<a class="headerlink" href="#4-caching-headers" title="Permanent link">¶</a></h2>
+<h3 id="what-is-it_1">What is it?<a class="headerlink" href="#what-is-it_1" title="Permanent link">¶</a></h3>
+<p>Caching headers tell browsers and CDNs <strong>whether</strong> they may keep a copy, <strong>for how long</strong> it stays fresh, and <strong>how to check</strong> whether it has changed.</p>
+<table>
+<thead>
+<tr>
+<th><code>Cache-Control</code> directive</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max-age=3600</code></td>
+<td>Fresh for 3600 s; use it without asking</td>
+</tr>
+<tr>
+<td><code>s-maxage=600</code></td>
+<td>Same, but only for shared caches (<abbr title="Content Delivery Network">CDN</abbr>); overrides <code>max-age</code> there</td>
+</tr>
+<tr>
+<td><code>no-cache</code></td>
+<td>You may store it but <strong>must revalidate</strong> before every use (not "don't cache"!)</td>
+</tr>
+<tr>
+<td><code>no-store</code></td>
+<td>Never store it (bank pages, personal data)</td>
+</tr>
+<tr>
+<td><code>private</code> / <code>public</code></td>
+<td>Only the browser may cache it / CDNs may too</td>
+</tr>
+<tr>
+<td><code>immutable</code></td>
+<td>Will never change during its lifetime; don't revalidate even on reload</td>
+</tr>
+<tr>
+<td><code>stale-while-revalidate=60</code></td>
+<td>Serve the stale copy for up to 60 s while fetching a new one in the background</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-does-it-work_2">How does it work?<a class="headerlink" href="#how-does-it-work_2" title="Permanent link">¶</a></h3>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1b-caching.png" data-desc-position="bottom"><img alt="HTTP caching: freshness and revalidation" src="../../assets/diagrams/06-1b-caching.png"></a></p>
+<ul>
+<li><strong>Freshness:</strong> while <code>max-age</code> hasn't expired, the cache answers on its own, without any request.</li>
+<li><strong>Revalidation:</strong> after that, the cache sends a <strong>conditional request</strong> with <code>If-None-Match: "&lt;etag&gt;"</code> (or <code>If-Modified-Since</code>). If nothing changed the server answers <strong><code>304 Not Modified</code></strong> with no body, and the copy is fresh again.</li>
+<li><strong>The common pattern:</strong> HTML gets <code>no-cache</code> (always check), static assets with a hash in the file name get <code>max-age=31536000, immutable</code> (cache forever; a new deploy means a new file name).</li>
+</ul>
+<h2 id="5-authentication-and-cookies">5 · Authentication and cookies<a class="headerlink" href="#5-authentication-and-cookies" title="Permanent link">¶</a></h2>
+<h3 id="how-does-authorization-work">How does <code>Authorization</code> work?<a class="headerlink" href="#how-does-authorization-work" title="Permanent link">¶</a></h3>
+<p>The client sends credentials on every request: <code>Authorization: Bearer &lt;token&gt;</code> (OAuth/<abbr title="JSON Web Token">JWT</abbr>) or <code>Authorization: Basic &lt;base64(user:pass)&gt;</code>. If they are missing or invalid, the server answers <strong><code>401 Unauthorized</code></strong> with <code>WWW-Authenticate</code> saying which scheme to use. <strong><code>403 Forbidden</code></strong> means "I know who you are, but you're not allowed."</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Base64 is <strong>encoding, not encryption</strong>. Basic auth and bearer tokens are only safe over HTTPS, and they must never be logged.</p>
+</div>
+<h3 id="how-do-cookies-work">How do cookies work?<a class="headerlink" href="#how-do-cookies-work" title="Permanent link">¶</a></h3>
+<ol>
+<li>The server sends <code>Set-Cookie: session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400</code>.</li>
+<li>The browser stores it, and on every later request to a matching site and path it adds <code>Cookie: session=abc123</code>.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HttpOnly</code></td>
+<td>JavaScript can't read it, so <abbr title="Cross-Site Scripting">XSS</abbr> can't steal the session</td>
+</tr>
+<tr>
+<td><code>Secure</code></td>
+<td>Only sent over HTTPS</td>
+</tr>
+<tr>
+<td><code>SameSite=Lax / Strict / None</code></td>
+<td>Whether it's sent on cross-site requests (<abbr title="Cross-Site Request Forgery">CSRF</abbr> protection). <code>None</code> requires <code>Secure</code></td>
+</tr>
+<tr>
+<td><code>Domain</code> / <code>Path</code></td>
+<td>Which hosts and paths receive it</td>
+</tr>
+<tr>
+<td><code>Max-Age</code> / <code>Expires</code></td>
+<td>Lifetime; without them it's a session cookie</td>
+</tr>
+<tr>
+<td><code>__Host-</code> name prefix</td>
+<td>Forces <code>Secure</code>, <code>Path=/</code> and no <code>Domain</code> (strongest scoping)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-security-headers">6 · Security headers<a class="headerlink" href="#6-security-headers" title="Permanent link">¶</a></h2>
+<p>These headers ask the <strong>browser</strong> to enforce rules that protect the user:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Example</th>
+<th>Protects against</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Strict-Transport-Security</code> (<abbr title="HTTP Strict Transport Security">HSTS</abbr>)</td>
+<td><code>max-age=31536000; includeSubDomains</code></td>
+<td>Downgrade to <abbr title="HyperText Transfer Protocol">HTTP</abbr>, <abbr title="Secure Sockets Layer">SSL</abbr> stripping</td>
+</tr>
+<tr>
+<td><code>Content-Security-Policy</code> (<abbr title="Content Security Policy">CSP</abbr>)</td>
+<td><code>default-src 'self'; script-src 'self' cdn.example.com</code></td>
+<td><abbr title="Cross-Site Scripting">XSS</abbr>, injected scripts</td>
+</tr>
+<tr>
+<td><code>X-Content-Type-Options</code></td>
+<td><code>nosniff</code></td>
+<td>The browser guessing a file's type</td>
+</tr>
+<tr>
+<td><code>X-Frame-Options</code> / <abbr title="Content Security Policy">CSP</abbr> <code>frame-ancestors</code></td>
+<td><code>DENY</code> / <code>frame-ancestors 'none'</code></td>
+<td>Clickjacking (your page inside an iframe)</td>
+</tr>
+<tr>
+<td><code>Referrer-Policy</code></td>
+<td><code>strict-origin-when-cross-origin</code></td>
+<td>Leaking full URLs to other sites</td>
+</tr>
+<tr>
+<td><code>Permissions-Policy</code></td>
+<td><code>camera=(), geolocation=()</code></td>
+<td>Pages using powerful browser features</td>
+</tr>
+</tbody>
+</table>
+<p><code>X-XSS-Protection</code> is obsolete; modern browsers ignore it. Use <abbr title="Content Security Policy">CSP</abbr> instead.</p>
+<h2 id="7-cors">7 · <abbr title="Cross-Origin Resource Sharing">CORS</abbr><a class="headerlink" href="#7-cors" title="Permanent link">¶</a></h2>
+<h3 id="what-is-it_2">What is it?<a class="headerlink" href="#what-is-it_2" title="Permanent link">¶</a></h3>
+<p>Browsers apply the <strong>same-origin policy</strong>: JavaScript from <code>https://app.example.com</code> can't read responses from <code>https://api.example.com</code> (a different <strong>origin</strong>), unless the API explicitly allows it. <abbr title="Cross-Origin Resource Sharing">CORS</abbr> is how the API gives that permission, using headers.</p>
+<h3 id="how-does-it-work_3">How does it work?<a class="headerlink" href="#how-does-it-work_3" title="Permanent link">¶</a></h3>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1c-cors.png" data-desc-position="bottom"><img alt="How CORS works" src="../../assets/diagrams/06-1c-cors.png"></a></p>
+<ul>
+<li><strong>Simple requests</strong> (GET/POST with basic content types) go straight out with an <code>Origin</code> header. The browser lets JS read the response only if it contains a matching <code>Access-Control-Allow-Origin</code>.</li>
+<li><strong>Other requests</strong> (PUT/DELETE, <code>Content-Type: application/json</code>, custom headers) first send an <strong><code>OPTIONS</code> preflight</strong>. The API answers with the allowed origin, methods and headers; <code>Access-Control-Max-Age</code> lets the browser cache that answer.</li>
+<li><strong>With cookies</strong> (<code>credentials: 'include'</code>), <code>Access-Control-Allow-Origin: *</code> is not allowed: name the exact origin and add <code>Access-Control-Allow-Credentials: true</code>.</li>
+<li><abbr title="Cross-Origin Resource Sharing">CORS</abbr> is enforced <strong>only by browsers</strong>. It is not authentication, and it doesn't protect your API from curl or scripts.</li>
+</ul>
+<h2 id="8-proxies-and-tracing">8 · Proxies and tracing<a class="headerlink" href="#8-proxies-and-tracing" title="Permanent link">¶</a></h2>
+<h3 id="how-does-x-forwarded-for-work">How does <code>X-Forwarded-For</code> work?<a class="headerlink" href="#how-does-x-forwarded-for-work" title="Permanent link">¶</a></h3>
+<p>Behind a load balancer, your app sees the <strong><abbr title="Load Balancer">LB</abbr>'s <abbr title="Internet Protocol">IP</abbr></strong>, not the user's. So each proxy appends the address it received the connection from:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="err">X-Forwarded-For: 203.0.113.7, 10.0.1.12</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="err">X-Forwarded-Proto: https</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="err">X-Forwarded-Host: shop.example.com</span>
+</code></pre></div>
+<p>The leftmost value is the client <strong>as claimed</strong>. A client can send a fake <code>X-Forwarded-For</code>, so configure your app or ingress to trust only your own proxies' entries (nginx <code>set_real_ip_from</code> + <code>real_ip_header</code>, Express <code>trust proxy</code>). The standard form is <code>Forwarded: for=203.0.113.7;proto=https</code>.</p>
+<h3 id="how-does-traceparent-work">How does <code>traceparent</code> work?<a class="headerlink" href="#how-does-traceparent-work" title="Permanent link">¶</a></h3>
+<p>The first service (or the ingress) creates a trace id. Every service passes it on in outgoing calls and adds its own span id:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="err">             ver ── trace-id (16 bytes) ───────── parent span ─── sampled</span>
+</code></pre></div>
+<p>OpenTelemetry SDKs read and write this header automatically, so one request can be followed across the <abbr title="Load Balancer">LB</abbr>, the services and the database calls. <code>X-Request-ID</code> is the simpler version: one id to grep for in all logs.</p>
+<h2 id="devops-connection">🔧 <abbr title="Development + Operations">DevOps</abbr> connection<a class="headerlink" href="#devops-connection" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Ingress / nginx:</strong> <code>proxy_set_header Host $host; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto $scheme;</code>. Add security headers with <code>add_header … always;</code> so they're present on error pages too.</li>
+<li><strong>WebSockets through nginx</strong> need <code>proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection "upgrade";</code>, because these are hop-by-hop headers and aren't forwarded by default.</li>
+<li><strong>"Login loops behind the <abbr title="Load Balancer">LB</abbr>"</strong> usually mean the app thinks the request is <code>http</code> because it ignores <code>X-Forwarded-Proto</code>, so it redirects forever or sets <code>Secure</code> cookies wrongly.</li>
+<li><strong><abbr title="Content Delivery Network">CDN</abbr> hit ratio</strong> depends on <code>Cache-Control</code>, <code>Vary</code> and cookies. A <code>Set-Cookie</code> on a static response, or <code>Vary: User-Agent</code>, can make it uncacheable.</li>
+<li><strong>Big JWTs or many cookies</strong> hit header size limits on ingress or the <abbr title="Load Balancer">LB</abbr>. Raise the buffers or slim the tokens.</li>
+</ul>
+<h2 id="try-it-yourself">🧪 Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. Only the response headers (HEAD request)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>curl<span class="w"> </span>-sI<span class="w"> </span>https://github.com<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-25
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 2. Everything: request headers (&gt;) and response headers (&lt;)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>curl<span class="w"> </span>-sv<span class="w"> </span>https://example.com<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[&lt;&gt;]'</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 3. Content negotiation and compression</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>curl<span class="w"> </span>-sI<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Accept-Encoding: br, gzip'</span><span class="w"> </span>https://www.wikipedia.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">'content-(type|encoding)|vary'</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># 4. Conditional request: get the ETag, then ask "changed?"</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="nv">URL</span><span class="o">=</span>https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nv">ETAG</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sI<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">'^etag'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">' '</span><span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">'\r'</span><span class="k">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">"If-None-Match: </span><span class="nv">$ETAG</span><span class="s2">"</span><span class="w"> </span><span class="nv">$URL</span><span class="w">   </span><span class="c1"># → 304</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># 5. A CORS preflight by hand</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>curl<span class="w"> </span>-si<span class="w"> </span>-X<span class="w"> </span>OPTIONS<span class="w"> </span>https://api.github.com/user<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span>-H<span class="w"> </span><span class="s1">'Origin: https://example.com'</span><span class="w"> </span>-H<span class="w"> </span><span class="s1">'Access-Control-Request-Method: GET'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">'^access-control'</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># 6. See exactly what a server receives</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PYEOF'</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="s">from http.server import BaseHTTPRequestHandler, HTTPServer</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="s">class H(BaseHTTPRequestHandler):</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="s">    def do_GET(self):</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="s">        print(self.requestline); print(self.headers)</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="s">        self.send_response(200); self.send_header('Content-Type','text/plain'); self.end_headers()</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="s">        self.wfile.write(b'ok\n')</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="s">HTTPServer(('127.0.0.1', 8080), H).handle_request()</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="s">PYEOF</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="c1"># in another terminal: curl -H 'X-Hello: world' http://127.0.0.1:8080/</span>
+</code></pre></div>
+<h2 id="cheat-sheet">🃏 Cheat sheet<a class="headerlink" href="#cheat-sheet" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>I want to…</th>
+<th>Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Route by hostname</td>
+<td><code>Host</code></td>
+</tr>
+<tr>
+<td>Say what the body is</td>
+<td><code>Content-Type</code></td>
+</tr>
+<tr>
+<td>Compress responses</td>
+<td><code>Accept-Encoding</code> → <code>Content-Encoding</code> + <code>Vary</code></td>
+</tr>
+<tr>
+<td>Cache static files forever</td>
+<td><code>Cache-Control: max-age=31536000, immutable</code></td>
+</tr>
+<tr>
+<td>Always revalidate HTML</td>
+<td><code>Cache-Control: no-cache</code> + <code>ETag</code></td>
+</tr>
+<tr>
+<td>Never store a response</td>
+<td><code>Cache-Control: no-store</code></td>
+</tr>
+<tr>
+<td>Send an API token</td>
+<td><code>Authorization: Bearer …</code></td>
+</tr>
+<tr>
+<td>Keep a safe session cookie</td>
+<td><code>Set-Cookie: …; HttpOnly; Secure; SameSite=Lax</code></td>
+</tr>
+<tr>
+<td>Force HTTPS</td>
+<td><code>Strict-Transport-Security</code></td>
+</tr>
+<tr>
+<td>Block injected scripts</td>
+<td><code>Content-Security-Policy</code></td>
+</tr>
+<tr>
+<td>Allow a front-end on another origin</td>
+<td><code>Access-Control-Allow-Origin</code> (+ preflight)</td>
+</tr>
+<tr>
+<td>Know the real client <abbr title="Internet Protocol">IP</abbr></td>
+<td><code>X-Forwarded-For</code> / <code>Forwarded</code> (from trusted proxies only)</td>
+</tr>
+<tr>
+<td>Follow a request across services</td>
+<td><code>traceparent</code>, <code>X-Request-ID</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="test-yourself">❓ Test yourself<a class="headerlink" href="#test-yourself" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. What does <code>Cache-Control: no-cache</code> actually mean?</summary>
+<p>The response <strong>may</strong> be stored, but it must be revalidated with the server (e.g. <code>If-None-Match</code>) before each use. To forbid storing, use <code>no-store</code>.</p>
+</details>
+<details class="question">
+<summary>2. Your API works with curl but the browser shows a <abbr title="Cross-Origin Resource Sharing">CORS</abbr> error. Why, and where is the fix?</summary>
+<p><abbr title="Cross-Origin Resource Sharing">CORS</abbr> is enforced only by browsers. The API (or the ingress in front of it) must return <code>Access-Control-Allow-Origin</code> for that origin, and answer the <code>OPTIONS</code> preflight with the allowed methods and headers.</p>
+</details>
+<details class="question">
+<summary>3. Behind your load balancer every log line shows the same client <abbr title="Internet Protocol">IP</abbr>. What's wrong?</summary>
+<p>The app logs the <abbr title="Transmission Control Protocol">TCP</abbr> peer (the <abbr title="Load Balancer">LB</abbr>). Read the client <abbr title="Internet Protocol">IP</abbr> from <code>X-Forwarded-For</code> / <code>Forwarded</code>, and trust only entries added by your own proxies.</p>
+</details>
+<details class="question">
+<summary>4. Why must a <abbr title="Content Delivery Network">CDN</abbr> see <code>Vary: Accept-Encoding</code>?</summary>
+<p>The same <abbr title="Uniform Resource Locator">URL</abbr> exists in several encodings (br, gzip, none). Without <code>Vary</code> the <abbr title="Content Delivery Network">CDN</abbr> may serve a brotli body to a client that can't decode it.</p>
+</details>
+<details class="question">
+<summary>5. Which cookie attributes stop JavaScript from reading a session cookie and stop it being sent over <abbr title="HyperText Transfer Protocol">HTTP</abbr>?</summary>
+<p><code>HttpOnly</code> (no JS access) and <code>Secure</code> (HTTPS only). Add <code>SameSite=Lax</code> or <code>Strict</code> against <abbr title="Cross-Site Request Forgery">CSRF</abbr>.</p>
+</details>
+<hr>
+<h2 id="sources">📚 Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9110">RFC 9110 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> Semantics</a> · <a href="https://www.rfc-editor.org/rfc/rfc9111">RFC 9111 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> Caching</a> · <a href="https://www.rfc-editor.org/rfc/rfc9113">RFC 9113 — <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers">MDN — <abbr title="HyperText Transfer Protocol">HTTP</abbr> headers</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching">MDN — <abbr title="HyperText Transfer Protocol">HTTP</abbr> caching</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">MDN — <abbr title="Cross-Origin Resource Sharing">CORS</abbr></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie">MDN — Set-Cookie</a></li>
+<li><a href="https://owasp.org/www-project-secure-headers/">OWASP Secure Headers Project</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc7239">RFC 7239 — Forwarded</a> · <a href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a></li>
+</ul>
+<h2 id="my-notes">✍️ My notes<a class="headerlink" href="#my-notes" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Pick one site you work on. Run <code>curl -sI</code> against it and explain every response header in one line each. Which security headers are missing?</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-dns/" class="md-footer__link md-footer__link--next" aria-label="Next: 6.2 · DNS">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                6.2 · DNS
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

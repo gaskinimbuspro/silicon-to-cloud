@@ -1,0 +1,2279 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Bulut faturasının gerçekte nasıl oluştuğu (compute, depolama, veri transferi, NAT ve zone'lar arası trafik, yönetilen servisler), Kubernetes cluster'larının neden para israf ettiği (request ve kullanım), doğru boyutlandırma, otomatik ölçekleme, spot ve taahhüt indirimleri, etiketlerle maliyet dağıtımı, OpenCost ve FOCUS, ve FinOps'un maliyeti nasıl bir mühendislik metriğine dönüştürdüğü.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/13-finops/">
+      
+      
+        <link rel="prev" href="../12-distributed/">
+      
+      
+        <link rel="next" href="../14-cloud/">
+      
+      
+        
+          <link rel="alternate" href="../../13-finops/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur - Silicon to Cloud">
+<meta property="og:description" content="Bulut faturasının gerçekte nasıl oluştuğu (compute, depolama, veri transferi, NAT ve zone'lar arası trafik, yönetilen servisler), Kubernetes cluster'larının neden para israf ettiği (request ve kullanım), doğru boyutlandırma, otomatik ölçekleme, spot ve taahhüt indirimleri, etiketlerle maliyet dağıtımı, OpenCost ve FOCUS, ve FinOps'un maliyeti nasıl bir mühendislik metriğine dönüştürdüğü.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/13-finops/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/13-finops/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur - Silicon to Cloud">
+<meta property="twitter:description" content="Bulut faturasının gerçekte nasıl oluştuğu (compute, depolama, veri transferi, NAT ve zone'lar arası trafik, yönetilen servisler), Kubernetes cluster'larının neden para israf ettiği (request ve kullanım), doğru boyutlandırma, otomatik ölçekleme, spot ve taahhüt indirimleri, etiketlerle maliyet dağıtımı, OpenCost ve FOCUS, ve FinOps'un maliyeti nasıl bir mühendislik metriğine dönüştürdüğü.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/13-finops/index.png">
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bolum-13-bulut-maliyeti-finops-para-nereye-gidiyor-ve-nasl-korunur" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../13-finops/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-fatura-nasl-olusur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Fatura nasıl oluşur
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-kubernetes-neden-para-israf-eder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Kubernetes neden para israf eder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · Kubernetes neden para israf eder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-indirim-merdiveni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · İndirim merdiveni
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ag-maliyetleri-gizli-fatura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Ağ maliyetleri: gizli fatura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-dagtm-ve-gorunurluk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Dağıtım ve görünürlük
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-bir-pratik-olarak-finops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Bir pratik olarak FinOps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#olay-hikayesi-nat-gateway-faturas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Olay hikâyesi: NAT gateway faturası
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-fatura-nasl-olusur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Fatura nasıl oluşur
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-kubernetes-neden-para-israf-eder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Kubernetes neden para israf eder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · Kubernetes neden para israf eder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-indirim-merdiveni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · İndirim merdiveni
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ag-maliyetleri-gizli-fatura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Ağ maliyetleri: gizli fatura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-dagtm-ve-gorunurluk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Dağıtım ve görünürlük
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-bir-pratik-olarak-finops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Bir pratik olarak FinOps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#olay-hikayesi-nat-gateway-faturas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Olay hikâyesi: NAT gateway faturası
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="bolum-13-bulut-maliyeti-finops-para-nereye-gidiyor-ve-nasl-korunur">Bölüm 13 — Bulut maliyeti (<abbr title="Financial Operations">FinOps</abbr>): para nereye gidiyor ve nasıl korunur<a class="headerlink" href="#bolum-13-bulut-maliyeti-finops-para-nereye-gidiyor-ve-nasl-korunur" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p>Bulut seni <strong>kullandığın için değil, ayırdığın için</strong> faturalar. Yani istediğin <abbr title="Central Processing Unit">CPU</abbr> ve bellek, provizyonladığın
+diskler, bir <strong>zone'u, bölgeyi ya da <abbr title="Network Address Translation">NAT</abbr> gateway'i</strong> geçen her gigabayt ve her yönetilen servis saati. <strong><abbr title="Financial Operations">FinOps</abbr></strong> bu
+maliyeti <strong>görünür</strong> yapar (etiketler, dağıtım, birim ekonomisi) ve <strong>optimize</strong> eder (doğru boyutlandırma, otomatik
+ölçekleme, spot, taahhütler). Bunu sürekli <strong>işletir</strong>; böylece mühendisler maliyeti gecikmeyi gördükleri gibi
+görür.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Rakamlar hakkında</p>
+<p>Bu bölümdeki fiyatlar büyüklük sırasını göstermek için <strong>yaklaşık herkese açık liste fiyatlarıdır</strong> (çoğunlukla AWS us-east-1, 2026 sonu).
+Sağlayıcıya, bölgeye ve sözleşmeye göre değişir ve zamanla değişirler; karar vermeden önce sağlayıcının fiyat sayfalarını kontrol et.</p>
+</div>
+<h2 id="temel-terimler-ve-ksaltmalar">📖 Temel terimler ve kısaltmalar<a class="headerlink" href="#temel-terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Financial Operations">FinOps</abbr></strong></td>
+<td>Financial Operations</td>
+<td>Bulut maliyetini birlikte yönetme pratiği</td>
+<td>Bilgilendir → Optimize et → İşlet</td>
+</tr>
+<tr>
+<td><strong>On-demand</strong></td>
+<td>—</td>
+<td>Saniye/saat başına öde, taahhüt yok</td>
+<td>En esnek, en pahalı</td>
+</tr>
+<tr>
+<td><strong><abbr title="Reserved Instance">RI</abbr> / Savings Plan / <abbr title="Committed Use Discount">CUD</abbr></strong></td>
+<td>Reserved Instance / — / Committed Use Discount</td>
+<td>~%30–70 indirim için 1–3 yıl taahhüt</td>
+<td>Kullanılmasa da taahhüdü ödersin</td>
+</tr>
+<tr>
+<td><strong>Spot / preemptible</strong></td>
+<td>—</td>
+<td>Boş kapasite, ~%60–90 indirimli</td>
+<td>~2 dk uyarıyla geri alınabilir</td>
+</tr>
+<tr>
+<td><strong>Egress</strong></td>
+<td>—</td>
+<td>Bir bölgeden/buluttan çıkan veri</td>
+<td>Genelde GB başına ücretli; giriş genelde ücretsiz</td>
+</tr>
+<tr>
+<td><strong>Zone'lar arası trafik</strong></td>
+<td>Availability Zone</td>
+<td>Bir bölgedeki zone'lar arası veri</td>
+<td>İki yönde de ücretli (her yön ~$0.01/GB)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Network Address Translation">NAT</abbr> gateway</strong></td>
+<td>Network Address Translation</td>
+<td>Private subnet'ler için dışarı internet</td>
+<td>Saatlik + GB başına işleme ücreti</td>
+</tr>
+<tr>
+<td><strong>Request / limit</strong></td>
+<td>—</td>
+<td>Kubernetes'te ayrılan / en fazla kaynak</td>
+<td>Scheduler node'ları <strong>request'lere</strong> göre doldurur</td>
+</tr>
+<tr>
+<td><strong>Doğru boyutlandırma</strong></td>
+<td>Right-sizing</td>
+<td>Kaynakları gerçek kullanıma eşlemek</td>
+<td>p95 kullanım + pay temelinde</td>
+</tr>
+<tr>
+<td><strong>Bin packing</strong></td>
+<td>—</td>
+<td>Pod'ları node'lara sıkı yerleştirmek</td>
+<td>Daha az, daha dolu node</td>
+</tr>
+<tr>
+<td><strong>Showback / chargeback</strong></td>
+<td>—</td>
+<td>Ekip başına maliyeti göstermek / faturalamak</td>
+<td>Etiket ve dağıtım gerekir</td>
+</tr>
+<tr>
+<td><strong>Birim ekonomisi</strong></td>
+<td>Unit economics</td>
+<td>İş birimi başına maliyet</td>
+<td>€/1000 istek, €/müşteri, €/eğitim çalıştırması</td>
+</tr>
+<tr>
+<td><strong><abbr title="FinOps Open Cost and Usage Specification">FOCUS</abbr></strong></td>
+<td><abbr title="Financial Operations">FinOps</abbr> Open Cost and Usage Specification</td>
+<td>Standart faturalama veri formatı</td>
+<td>Bulutlar arasında aynı kolonlar</td>
+</tr>
+<tr>
+<td><strong>OpenCost</strong></td>
+<td>—</td>
+<td>Kubernetes maliyet dağıtımı için CNCF aracı</td>
+<td>Namespace, iş yükü, label başına maliyet</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/13-finops.png" data-desc-position="bottom"><img alt="Bulut parası nereye gidiyor" src="../assets/diagrams/13-finops.png"></a></p>
+<hr>
+<h2 id="1-fatura-nasl-olusur">1 · Fatura nasıl oluşur<a class="headerlink" href="#1-fatura-nasl-olusur" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Kategori</th>
+<th>Neye göre faturalanır</th>
+<th>Tipik sürpriz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compute</strong> (<abbr title="Virtual Machine (language runtime)">VM</abbr>, node, <abbr title="Graphics Processing Unit">GPU</abbr>)</td>
+<td>Instance boyutu × çalışma süresi</td>
+<td>7/24 çalışan boşta dev cluster'ları (haftada 168 saat var, mesai ~50)</td>
+</tr>
+<tr>
+<td><strong>Blok depolama</strong> (diskler)</td>
+<td>Provizyonlanan GB + <abbr title="I/O Operations Per Second">IOPS</abbr>/throughput</td>
+<td>Silinen <abbr title="Virtual Machine (language runtime)">VM</abbr>'lerden kalan sahipsiz diskler ve snapshot'lar</td>
+</tr>
+<tr>
+<td><strong>Nesne depolama</strong></td>
+<td>Saklanan GB + istekler + geri alma</td>
+<td>Milyonlarca küçük PUT/GET isteği; yaşam döngüsü kuralı yok</td>
+</tr>
+<tr>
+<td><strong>Veri transferi</strong></td>
+<td>Zone/bölge/interneti geçen GB</td>
+<td>Zone'lar arası geveze mikroservisler; kullanıcılara egress</td>
+</tr>
+<tr>
+<td><strong><abbr title="Network Address Translation">NAT</abbr> gateway</strong></td>
+<td>Saat + <strong>işlenen her GB</strong></td>
+<td>İmajları ya da bulut API'lerini <abbr title="Network Address Translation">NAT</abbr> üzerinden çekmek</td>
+</tr>
+<tr>
+<td><strong>Load balancer'lar</strong></td>
+<td>Saat + kapasite birimleri</td>
+<td>Paylaşılan ingress yerine servis başına bir <abbr title="Load Balancer">LB</abbr></td>
+</tr>
+<tr>
+<td><strong>Yönetilen servisler</strong></td>
+<td>Instance saatleri, istekler, depolama</td>
+<td>"Ne olur ne olmaz" diye büyük veritabanları; boşta replikalar</td>
+</tr>
+<tr>
+<td><strong>Loglar ve metrikler</strong></td>
+<td>Alınan + saklanan GB, seri sayısı</td>
+<td>Prod'da debug log; yüksek kardinaliteli label'lar (9.4)</td>
+</tr>
+</tbody>
+</table>
+<p>Pratik kural: <strong>en büyük kalem compute'tur, en sürpriz olanı veri transferidir, en hızlı büyüyeni gözlemlenebilirliktir.</strong></p>
+<h2 id="2-kubernetes-neden-para-israf-eder">2 · Kubernetes neden para israf eder<a class="headerlink" href="#2-kubernetes-neden-para-israf-eder" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/13a-k8s-cost.png" data-desc-position="bottom"><img alt="Kubernetes maliyeti: istenen ve kullanılan" src="../assets/diagrams/13a-k8s-cost.png"></a></p>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li>Scheduler pod'ları gerçek kullanıma göre değil <strong>request'lerine</strong> göre yerleştirir (3.x, 9.2).</li>
+<li>Ekipler "güvende olmak için" request'leri yüksek ayarlar (ya da bir şablondan kopyalar); 2 <abbr title="Central Processing Unit">CPU</abbr> isteyen bir pod 0,2 kullanabilir.</li>
+<li>Node'lar <strong>kâğıt üzerinde</strong> dolar; cluster autoscaler daha fazla node ekler ve onların parasını ödersin.</li>
+<li>Sonuç: ortalama cluster'lar ödediklerinin sadece bir kısmını kullanır; boşta <strong>pay</strong> + fazla <strong>request'ler</strong> + her node'daki <strong>daemonset</strong>'ler ve sistem pod'ları birikir.</li>
+</ol>
+<p>Çözümler, çaba sırasına göre:</p>
+<ul>
+<li>Gerçek kullanımdan <strong>request'leri doğru boyutlandır</strong> (öneri modunda <abbr title="Vertical Pod Autoscaler">VPA</abbr>, Goldilocks, Kubecost/OpenCost raporları): request ≈ p95 kullanım + pay; öngörülebilirlik için bellek limiti = request.</li>
+<li><strong>Pod'ları yükle ölçekle</strong> (<abbr title="Horizontal Pod Autoscaler">HPA</abbr> / <abbr title="Kubernetes Event-Driven Autoscaling">KEDA</abbr>) ve dev, önizleme ve batch iş yükleri için <strong>sıfıra ölçekle</strong>.</li>
+<li><strong>Daha iyi node seçimi ve yerleştirme</strong>: karışık instance tipleriyle Karpenter ya da cluster autoscaler, konsolidasyon, daha az ama daha büyük node (node başına daha az ek yük).</li>
+<li>Durumsuz, hataya dayanıklı iş yükleri için <strong>spot</strong> (PodDisruptionBudget ve düzgün kapanışla); sabit taban için on-demand + taahhütler.</li>
+</ul>
+<h2 id="3-indirim-merdiveni">3 · İndirim merdiveni<a class="headerlink" href="#3-indirim-merdiveni" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Seçenek</th>
+<th>On-demand'e göre indirim</th>
+<th>Uygun olduğu yer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>On-demand</td>
+<td>%0</td>
+<td>Ani, bilinmeyen, kısa ömürlü</td>
+</tr>
+<tr>
+<td>Savings Plan / <abbr title="Reserved Instance">RI</abbr> / <abbr title="Committed Use Discount">CUD</abbr> (1–3 yıl)</td>
+<td>~%30–70</td>
+<td>Zaten çalıştıracağın <strong>sabit taban</strong></td>
+</tr>
+<tr>
+<td>Spot / preemptible</td>
+<td>~%60–90</td>
+<td>Durumsuz, batch, <abbr title="Continuous Integration">CI</abbr> runner'ları, yeniden denenebilir eğitim</td>
+</tr>
+<tr>
+<td>Yeni nesil / ARM (Graviton, Axion, Cobalt)</td>
+<td>~%10–40 daha iyi fiyat-performans</td>
+<td>Test sonrası çoğu container'lı iş yükü</td>
+</tr>
+<tr>
+<td><strong>Kapatmak</strong></td>
+<td>%100</td>
+<td>Mesai dışında dev/test, unutulmuş kaynaklar</td>
+</tr>
+</tbody>
+</table>
+<p>Sadece doğru boyutlandırmadan <strong>sonra</strong> kullanacağından emin olduğun şeyi taahhüt et; yoksa israfı kilitlersin.</p>
+<h2 id="4-ag-maliyetleri-gizli-fatura">4 · Ağ maliyetleri: gizli fatura<a class="headerlink" href="#4-ag-maliyetleri-gizli-fatura" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Zone'lar arası</strong>: başka bir zone'daki servisi çağıran servis iki tarafı da öder (gidiş-dönüş ≈ $0.02/GB). Topoloji farkında yönlendirme / zone farkında yük dengeleme kullan; geveze çiftleri aynı zone'da tut (HA'yı korurken).</li>
+<li><strong><abbr title="Network Address Translation">NAT</abbr> gateway</strong>: saatlik ücretin üstüne işlenen GB başına ≈ $0.045. S3, ECR ve diğer bulut API'leri için <strong><abbr title="Virtual Private Cloud">VPC</abbr> endpoint / Private Link</strong> kullan; imajları bir önbellek ya da registry endpoint'i üzerinden çek.</li>
+<li><strong>İnternete egress</strong>: ≈ $0.05–0.09/GB. Önüne bir <strong><abbr title="Content Delivery Network">CDN</abbr></strong> koy (6.6), sıkıştır (gzip/brotli), önbelleğe al.</li>
+<li><strong>Bölgeler arası replikasyon</strong>: neyin gerçekten çok bölgeli olması gerektiğine karar ver.</li>
+</ul>
+<h2 id="5-dagtm-ve-gorunurluk">5 · Dağıtım ve görünürlük<a class="headerlink" href="#5-dagtm-ve-gorunurluk" title="Permanent link">¶</a></h2>
+<p>Kimsenin sahip olmadığı şeyi optimize edemezsin.</p>
+<ol>
+<li><strong>Her şeyi etiketle</strong> (<code>team</code>, <code>service</code>, <code>env</code>, <code>cost-center</code>); politika (Bölüm 11, kod olarak politika) ve <abbr title="Infrastructure as Code">IaC</abbr> varsayılanlarıyla zorunlu kıl.</li>
+<li><strong>Kubernetes dağıtımı</strong>: OpenCost/Kubecost node maliyetini boşta ve paylaşılan maliyetler dahil namespace/label'a göre böler.</li>
+<li>Faturalama verisini bulutlar arasında <strong><abbr title="FinOps Open Cost and Usage Specification">FOCUS</abbr></strong> export'larıyla <strong>normalize et</strong>; bir veri ambarına/dashboard'a yükle.</li>
+<li>Ekip başına haftalık <strong>showback</strong>; hesap/proje başına <strong>bütçe ve anomali alarmları</strong>.</li>
+<li><strong>Birim ekonomisi</strong>: 1.000 istek başına, aktif müşteri başına, eğitim <abbr title="Graphics Processing Unit">GPU</abbr>-saati başına maliyet. Birim maliyet düşüyorsa artan fatura sorun değildir.</li>
+</ol>
+<h2 id="6-bir-pratik-olarak-finops">6 · Bir pratik olarak <abbr title="Financial Operations">FinOps</abbr><a class="headerlink" href="#6-bir-pratik-olarak-finops" title="Permanent link">¶</a></h2>
+<p><abbr title="Financial Operations">FinOps</abbr> Foundation bir döngü tarif eder: <strong>Bilgilendir</strong> (görünürlük, dağıtım) → <strong>Optimize et</strong> (fiyatlar ve kullanım) → <strong>İşlet</strong> (hedefler, yönetişim, otomasyon). Pratikte:</p>
+<ul>
+<li>Maliyet güvenilirlikle aynı yerde gözden geçirilir (<abbr title="Service Level Objective">SLO</abbr>'ların yanında dashboard'lar, 9.4).</li>
+<li>Mühendisler deploy ettiklerinin maliyetine sahip çıkar; finans tahmin ve taahhütlere birlikte sahip çıkar.</li>
+<li>Otomasyon kahramanlığı yener: zamanlamalar, önizleme ortamlarında <abbr title="Time To Live">TTL</abbr>'ler, yaşam döngüsü kuralları, doğru boyutlandırma <abbr title="Pull">PR</abbr>'ları.</li>
+</ul>
+<h2 id="devops-baglants">🔧 <abbr title="Development + Operations">DevOps</abbr> bağlantısı<a class="headerlink" href="#devops-baglants" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Pipeline'da maliyet</strong>: Infracost bir Terraform <abbr title="Pull">PR</abbr>'ının aylık maliyet değişimini merge'den önce gösterir.</li>
+<li><strong>Şablonlarda varsayılanlar</strong>: makul request'ler, <abbr title="Horizontal Pod Autoscaler">HPA</abbr>, spot dostu node havuzları, log seviyeleri, saklama süreleri.</li>
+<li><abbr title="Time To Live">TTL</abbr>'li <strong>geçici ortamlar</strong>; prod dışının gece kapatılması.</li>
+<li><strong><abbr title="Graphics Processing Unit">GPU</abbr>/<abbr title="Artificial Intelligence">AI</abbr> maliyeti</strong> (Bölüm 10): kullanım oranı, batching, quantization ve doğru <abbr title="Graphics Processing Unit">GPU</abbr> tipi her şeyden önemli; boşta bir H100 node'u yılda kabaca orta sınıf bir araba fiyatına mal olur.</li>
+</ul>
+<h2 id="olay-hikayesi-nat-gateway-faturas">🚨 Olay hikâyesi: <abbr title="Network Address Translation">NAT</abbr> gateway faturası<a class="headerlink" href="#olay-hikayesi-nat-gateway-faturas" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">Alarm</p>
+<p>Aylık bulut faturası <strong>+18.000 $</strong> sıçradı. Yeni servis açılmadı ve compute maliyeti sabit.</p>
+</div>
+<p>Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.</p>
+<details class="info">
+<summary>🔍 İpucu 1</summary>
+<p>Cost explorer: artışın tamamı tek bir bölgede <strong>"NatGateway-Bytes"</strong>, yaklaşık <strong>400 TB</strong> işlenmiş.</p>
+</details>
+<details class="info">
+<summary>🔍 İpucu 2</summary>
+<p>Yeni bir log gönderme DaemonSet'i her node'un loglarını S3'e gönderiyor ve <abbr title="Machine Learning">ML</abbr> ekibinin eğitim işleri her başlangıçta S3'ten 30 GB'lık bir veri seti çekiyor. Node'lar S3 gateway endpoint'i olmayan private subnet'lerde.</p>
+</details>
+<details class="success">
+<summary>🎯 Kök neden</summary>
+<p>S3'e giden tüm trafik, bulut sağlayıcısından hiç çıkmamasına rağmen, işlenen GB başına ücret alan <abbr title="Network Address Translation">NAT</abbr> gateway üzerinden çıktı (~400 TB × $0.045 ≈ $18.000).</p>
+</details>
+<details class="tip">
+<summary>🛠️ Çözüm ve ders</summary>
+<p>Bir <strong>S3 gateway <abbr title="Virtual Private Cloud">VPC</abbr> endpoint'i</strong> (ücretsiz) ve ECR ile diğer API'ler için interface endpoint'ler ekle, veri setini node'un yerel diskinde ya da paylaşılan bir dosya sisteminde önbelleğe al ve <abbr title="Network Address Translation">NAT</abbr> baytları için bir anomali alarmı kur. <strong>Ders:</strong> bulutta verinin izlediği <em>yolun</em> bir fiyatı vardır; ağ diyagramlarına maliyet gözüyle bak.</p>
+</details>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Cluster'ında istenen ve gerçekten kullanılan kaynaklar</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>kubectl<span class="w"> </span>top<span class="w"> </span>nodes
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span><span class="s1">'NS:.metadata.namespace,POD:.metadata.name,CPU_REQ:.spec.containers[*].resources.requests.cpu,MEM_REQ:.spec.containers[*].resources.requests.memory'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span>--sort-by<span class="o">=</span>cpu<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>nodes<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A6<span class="w"> </span><span class="s2">"Allocated resources"</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># OpenCost'u kur (Prometheus gerekir) ve namespace başına maliyete bak</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>opencost<span class="w"> </span>https://opencost.github.io/opencost-helm-chart<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>helm<span class="w"> </span>repo<span class="w"> </span>update
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># helm install opencost opencost/opencost -n opencost --create-namespace</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Bir Terraform değişikliğinin maliyet tahmini (Infracost, ücretsiz CLI)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># infracost breakdown --path . ; infracost diff --path .</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1"># Hızlı kaba hesap: boşta bir node ayda ne tutar?</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"print('m7i.2xlarge ≈ \$%.0f/ay' % (0.4032*730))"</span>
+</code></pre></div>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>İsraf</th>
+<th>Çözüm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fazla request</td>
+<td>p95 kullanımdan doğru boyutlandır (<abbr title="Vertical Pod Autoscaler">VPA</abbr> öneri, OpenCost)</td>
+</tr>
+<tr>
+<td>Boşta geceler/hafta sonları</td>
+<td>Zamanlamalar, sıfıra ölçekleme, önizlemelerde <abbr title="Time To Live">TTL</abbr></td>
+</tr>
+<tr>
+<td>On-demand'de sabit taban</td>
+<td>Doğru boyutlandırmadan <strong>sonra</strong> Savings Plan / <abbr title="Committed Use Discount">CUD</abbr></td>
+</tr>
+<tr>
+<td>On-demand'de durumsuz iş</td>
+<td><abbr title="PodDisruptionBudget">PDB</abbr> ve düzgün kapanışla spot</td>
+</tr>
+<tr>
+<td><abbr title="Network Address Translation">NAT</abbr> ve zone'lar arası trafik</td>
+<td><abbr title="Virtual Private Cloud">VPC</abbr> endpoint'leri, zone farkında yönlendirme</td>
+</tr>
+<tr>
+<td>Kullanıcılara egress</td>
+<td><abbr title="Content Delivery Network">CDN</abbr>, sıkıştırma, önbellek</td>
+</tr>
+<tr>
+<td>Sahipsizler (diskler, <abbr title="Internet Protocol">IP</abbr>'ler, snapshot'lar, <abbr title="Load Balancer">LB</abbr>'ler)</td>
+<td>Düzenli temizlik işleri, etiketleme politikası</td>
+</tr>
+<tr>
+<td>Log/metrik patlaması</td>
+<td>Örnekleme, saklama katmanları, prod'da debug'ı kapat</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. <abbr title="Central Processing Unit">CPU</abbr> kullanımı %15'ken bir Kubernetes cluster'ı neden 'dolu' olabilir?</summary>
+<p>Scheduler kullanıma göre değil request'lere göre yerleştirir. Pod'lar kullandıklarından çok daha fazlasını isterse node'lar kâğıt üzerinde dolar ve autoscaler çoğunlukla boşta kalan node'lar ekler.</p>
+</details>
+<details class="question">
+<summary>2. Savings Plan ya da taahhütlü kullanım indirimi ne zaman alınmalı?</summary>
+<p>1–3 yıl çalıştıracağından emin olduğun sabit taban için ve sadece doğru boyutlandırmadan sonra; yoksa israfın parasını ödemeyi taahhüt edersin.</p>
+</details>
+<details class="question">
+<summary>3. Hangi iş yükleri spot instance için iyi adaydır?</summary>
+<p>Durumsuz, hataya dayanıklı ya da yeniden denenebilir olanlar: load balancer arkasındaki web replikaları, batch işler, <abbr title="Continuous Integration">CI</abbr> runner'ları, checkpoint'li eğitim. Tek instance'lı veritabanları değil.</p>
+</details>
+<details class="question">
+<summary>4. Private subnet'lerden S3'e trafik neden pahalı olabilir ve nasıl düzeltilir?</summary>
+<p><abbr title="Virtual Private Cloud">VPC</abbr> endpoint olmadan işlenen GB başına ücret alan <abbr title="Network Address Translation">NAT</abbr> gateway'den geçer. S3 için gateway endpoint ücretsizdir ve trafiği özel tutar.</p>
+</details>
+<details class="question">
+<summary>5. Birim ekonomisi nedir ve neden toplam faturadan daha önemlidir?</summary>
+<p>İş birimi başına maliyet (1.000 istek başına, müşteri başına). Birim maliyet düşüyorsa büyüyen fatura sağlıklı olabilir; sabit bir fatura düşen verimliliği gizleyebilir.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.finops.org/framework/"><abbr title="Financial Operations">FinOps</abbr> Foundation — <abbr title="Financial Operations">FinOps</abbr> Framework</a></li>
+<li><a href="https://focus.finops.org/"><abbr title="FinOps Open Cost and Usage Specification">FOCUS</abbr> — <abbr title="Financial Operations">FinOps</abbr> Open Cost and Usage Specification</a></li>
+<li><a href="https://www.opencost.io/">OpenCost</a> · <a href="https://www.infracost.io/">Infracost</a></li>
+<li><a href="https://aws.amazon.com/ec2/pricing/on-demand/">AWS — EC2 On-Demand pricing</a> · <a href="https://aws.amazon.com/vpc/pricing/"><abbr title="Network Address Translation">NAT</abbr> gateway pricing</a></li>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html">AWS Well-Architected — Cost Optimization Pillar</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/">Kubernetes — Resource management for pods and containers</a></li>
+</ul>
+<h2 id="notlarm">✍️ Notlarım<a class="headerlink" href="#notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Bu ayki en büyük üç maliyet kalemin ne, her birinin sahibi kim ve ekibinin takip edebileceği bir birim maliyet metriği ne olabilir?</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../12-distributed/" class="md-footer__link md-footer__link--prev" aria-label="Önceki: 12 · Distributed systems">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                12 · Distributed systems
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../14-cloud/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

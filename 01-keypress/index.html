@@ -1,0 +1,2379 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="How a single keypress travels through hardware, a CPU interrupt, the kernel and an application before it shows up on screen as a letter.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/">
+      
+      
+        <link rel="prev" href="../changelog/">
+      
+      
+        <link rel="next" href="01-interrupts-drivers/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../tr/01-keypress/" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Chapter 1 — What happens when you press “A”? - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/site.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chapter 1 — What happens when you press “A”? - Silicon to Cloud">
+<meta property="og:description" content="How a single keypress travels through hardware, a CPU interrupt, the kernel and an application before it shows up on screen as a letter.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/01-keypress/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/01-keypress/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Chapter 1 — What happens when you press “A”? - Silicon to Cloud">
+<meta property="twitter:description" content="How a single keypress travels through hardware, a CPU interrupt, the kernel and an application before it shows up on screen as a letter.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/01-keypress/index.png">
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-1-what-happens-when-you-press-a" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 1 — What happens when you press “A”?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../tr/01-keypress/" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    1 · Keypress
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-interrupts-drivers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 · Interrupts &amp; drivers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-usb-hid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 · USB &amp; HID
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-input-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 · Linux input stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-by-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer by layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer by layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-keyboard-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Keyboard (hardware)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-usb-transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · USB transport
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-motherboard-cpu-assembly-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Motherboard &amp; CPU (assembly level)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-kernel-space-ring-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Kernel space (ring 0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-user-space-ring-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · User space (ring 3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-display" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Display
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-an-interrupt-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does an interrupt work?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-does-the-latency-come-from-1050-ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where does the latency come from? (~10–50 ms)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incident-story-one-core-drowning-in-interrupts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Incident story: one core drowning in interrupts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-deeper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧭 Go deeper
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself (Linux)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-operating-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other operating systems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href=".." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    1 · Keypress
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-1-what-happens-when-you-press-a">Chapter 1 — What happens when you press “A”?<a class="headerlink" href="#chapter-1-what-happens-when-you-press-a" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">In short</p>
+<p>A tiny computer inside the keyboard turns the keypress into a <strong>number</strong>, and <abbr title="Universal Serial Bus">USB</abbr> carries it to the host. An
+<strong>interrupt</strong> makes the <abbr title="Central Processing Unit">CPU</abbr> drop what it's doing and run the kernel, which hands the event to <strong>user space</strong>. The
+application turns the number into the letter <strong>'a'</strong> using the keyboard layout and draws it. Then the <abbr title="Graphics Processing Unit">GPU</abbr> sends the
+new frame to the monitor. All of this takes <strong>~10–50 ms</strong>.</p>
+</div>
+<h2 id="key-terms-abbreviations">📖 Key terms &amp; abbreviations<a class="headerlink" href="#key-terms-abbreviations" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Stands for</th>
+<th>What it is</th>
+<th>How it works (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Microcontroller Unit">MCU</abbr></strong></td>
+<td>Microcontroller Unit</td>
+<td>Tiny computer inside the keyboard</td>
+<td>Scans the key matrix, debounces, builds <abbr title="Human Interface Device">HID</abbr> reports</td>
+</tr>
+<tr>
+<td><strong><abbr title="Human Interface Device">HID</abbr></strong></td>
+<td>Human Interface Device</td>
+<td><abbr title="Universal Serial Bus">USB</abbr> device class for keyboards and mice</td>
+<td>Sends fixed-format reports (8 bytes for a keyboard)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Universal Serial Bus">USB</abbr></strong></td>
+<td>Universal Serial Bus</td>
+<td>The cable/protocol between keyboard and PC</td>
+<td>Host polls devices at a fixed interval</td>
+</tr>
+<tr>
+<td><strong>xHCI</strong></td>
+<td>eXtensible Host Controller Interface</td>
+<td>The <abbr title="Universal Serial Bus">USB</abbr> host controller chip</td>
+<td>Polls devices, DMAs data to RAM, raises interrupts</td>
+</tr>
+<tr>
+<td><strong><abbr title="Direct Memory Access">DMA</abbr></strong></td>
+<td>Direct Memory Access</td>
+<td>Device writes to RAM without the <abbr title="Central Processing Unit">CPU</abbr></td>
+<td>Controller copies data while the <abbr title="Central Processing Unit">CPU</abbr> keeps working</td>
+</tr>
+<tr>
+<td><strong><abbr title="Interrupt Request">IRQ</abbr> / <abbr title="Message Signaled Interrupt">MSI</abbr></strong></td>
+<td>Interrupt Request / Message Signaled Interrupt</td>
+<td>A device's signal to the <abbr title="Central Processing Unit">CPU</abbr></td>
+<td><abbr title="Message Signaled Interrupt">MSI</abbr> = a write to a special address that the <abbr title="Advanced Programmable Interrupt Controller">APIC</abbr> turns into an interrupt</td>
+</tr>
+<tr>
+<td><strong><abbr title="Advanced Programmable Interrupt Controller">APIC</abbr></strong></td>
+<td>Advanced Programmable Interrupt Controller</td>
+<td>Routes interrupts to <abbr title="Central Processing Unit">CPU</abbr> cores</td>
+<td>Delivers a vector number to a core</td>
+</tr>
+<tr>
+<td><strong><abbr title="Interrupt Descriptor Table">IDT</abbr> / <abbr title="Interrupt Service Routine">ISR</abbr></strong></td>
+<td>Interrupt Descriptor Table / Interrupt Service Routine</td>
+<td>Table of handlers / the handler itself</td>
+<td><abbr title="Central Processing Unit">CPU</abbr> looks up the vector in the <abbr title="Interrupt Descriptor Table">IDT</abbr> and jumps to the <abbr title="Interrupt Service Routine">ISR</abbr></td>
+</tr>
+<tr>
+<td><strong>Ring 0 / ring 3</strong></td>
+<td>—</td>
+<td>Kernel mode / user mode</td>
+<td><abbr title="Central Processing Unit">CPU</abbr> privilege levels; syscalls and interrupts cross them</td>
+</tr>
+<tr>
+<td><strong>evdev</strong></td>
+<td>event device</td>
+<td>Linux's generic input event interface</td>
+<td>Queues key events on /dev/input/eventX</td>
+</tr>
+<tr>
+<td><strong>Compositor</strong></td>
+<td>—</td>
+<td>Display server combining windows (Wayland/X11)</td>
+<td>Reads input, sends it to the focused window, composes frames</td>
+</tr>
+<tr>
+<td><strong>xkb</strong></td>
+<td>X Keyboard Extension</td>
+<td>Keyboard layout database/library</td>
+<td>Maps keycode + layout + modifiers to a character</td>
+</tr>
+<tr>
+<td><strong><abbr title="Graphics Processing Unit">GPU</abbr> / framebuffer</strong></td>
+<td>Graphics Processing Unit</td>
+<td>Graphics chip / memory holding the final frame</td>
+<td>Composes windows into the framebuffer, sent to the monitor</td>
+</tr>
+<tr>
+<td><strong>vsync</strong></td>
+<td>vertical synchronization</td>
+<td>The monitor's refresh tick</td>
+<td>New frames are shown only at each refresh (16.7 ms at 60 Hz)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="big-picture">🗺️ Big picture<a class="headerlink" href="#big-picture" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/01-keypress.png" data-desc-position="bottom"><img alt="End-to-end flow from the A key to the screen" src="../assets/diagrams/01-keypress.png"></a></p>
+<blockquote>
+<p>Reference setup: Linux + Wayland + <abbr title="Universal Serial Bus">USB</abbr> keyboard. On Windows and macOS the layer names differ, but the logic is the same
+(see <a href="#other-operating-systems">Other operating systems</a>).</p>
+</blockquote>
+<hr>
+<h2 id="layer-by-layer">Layer by layer<a class="headerlink" href="#layer-by-layer" title="Permanent link">¶</a></h2>
+<h3 id="1-keyboard-hardware">1 · Keyboard (hardware)<a class="headerlink" href="#1-keyboard-hardware" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>The <strong>key switch</strong> closes: two metal contacts touch and complete a circuit.</td>
+<td>A keyboard has no idea what a "letter" is. It only knows which circuits are closed.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Key matrix:</strong> keys are wired into a rows × columns grid. The microcontroller drives each row in turn and checks which column responds (<em>scanning</em>).</td>
+<td>~8 × 18 lines are enough for 100+ keys instead of 100+ wires.</td>
+</tr>
+<tr>
+<td>—</td>
+<td><strong>Debounce:</strong> contacts physically bounce for a few ms. The <abbr title="Microcontroller Unit">MCU</abbr> filters this so it counts as a single press.</td>
+<td>Without it, one press would type "aaaa".</td>
+</tr>
+<tr>
+<td>3</td>
+<td>The <abbr title="Microcontroller Unit">MCU</abbr> converts the key into a <strong>code</strong>. On <abbr title="Universal Serial Bus">USB</abbr> this is called a <em><abbr title="Human Interface Device">HID</abbr> usage</em>: “A” = <strong><code>0x04</code></strong>.</td>
+<td>The code describes the key's <strong>position</strong>, not a letter. The same physical key sends the same code on any layout.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-usb-transport">2 · <abbr title="Universal Serial Bus">USB</abbr> transport<a class="headerlink" href="#2-usb-transport" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>The <abbr title="Microcontroller Unit">MCU</abbr> builds a <strong><abbr title="Human Interface Device">HID</abbr> report</strong>. In boot protocol it is 8 bytes: <code>[modifiers, 0x00, k1, k2, k3, k4, k5, k6]</code>. Pressing A gives <code>00 00 04 00 00 00 00 00</code>.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>The keyboard never speaks first.</strong> The <strong><abbr title="Universal Serial Bus">USB</abbr> Host Controller (xHCI)</strong> on the computer asks it "anything new?" at a fixed interval (<em>polling</em>): 8 ms (125 Hz) on a normal keyboard, 1 ms (1000 Hz) on a gaming one.</td>
+</tr>
+<tr>
+<td>—</td>
+<td>When a new report arrives, xHCI writes it straight into RAM via <strong><abbr title="Direct Memory Access">DMA</abbr></strong>, without involving the <abbr title="Central Processing Unit">CPU</abbr>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-motherboard-cpu-assembly-level">3 · Motherboard &amp; <abbr title="Central Processing Unit">CPU</abbr> (assembly level)<a class="headerlink" href="#3-motherboard-cpu-assembly-level" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>xHCI raises an <strong>interrupt</strong> to say "done". On modern systems this is a write to a special memory address (<strong><abbr title="Message Signaled Interrupt">MSI</abbr></strong>).</td>
+</tr>
+<tr>
+<td>6</td>
+<td>The <strong><abbr title="Advanced Programmable Interrupt Controller">APIC</abbr></strong> (interrupt controller) delivers it to a <abbr title="Central Processing Unit">CPU</abbr> core as a <strong>vector number</strong>.</td>
+</tr>
+<tr>
+<td>—</td>
+<td>The <abbr title="Central Processing Unit">CPU</abbr> may be running something else, say Spotify. It <strong>finishes the current instruction and stops</strong>.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>It looks up the <strong>handler address (<abbr title="Interrupt Service Routine">ISR</abbr>)</strong> for that vector in the <strong><abbr title="Interrupt Descriptor Table">IDT</abbr></strong> (Interrupt Descriptor Table).</td>
+</tr>
+<tr>
+<td>—</td>
+<td>So it can come back later, the <abbr title="Central Processing Unit">CPU</abbr> pushes <code>RIP</code>, <code>CS</code>, <code>RFLAGS</code>, <code>RSP</code> and <code>SS</code> onto the <strong>kernel stack</strong> (<em>context save</em>) and switches from ring 3 to <strong>ring 0</strong> if needed.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>It jumps to the handler. <strong>Kernel code</strong> is now running.</td>
+</tr>
+</tbody>
+</table>
+<p>Through assembly eyes, simplified:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">; --- The hardware does this automatically (no code from us) ---</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">; push SS, RSP, RFLAGS, CS, RIP   → "where the interrupted program was"</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1">; RIP ← IDT[vector].handler        → jump to the handler</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nl">xhci_isr:</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nf">push</span><span class="w"> </span><span class="nb">rax</span><span class="w">                    </span><span class="c1">; save the registers we will use</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nf">push</span><span class="w"> </span><span class="nb">rdi</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="c1">; ... (in Linux this calls into C: xhci_irq())</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nf">mov</span><span class="w">  </span><span class="kt">dword</span><span class="w"> </span><span class="p">[</span><span class="nv">lapic_eoi</span><span class="p">],</span><span class="w"> </span><span class="mi">0</span><span class="w">   </span><span class="c1">; tell the APIC "interrupt handled" (End Of Interrupt)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nf">pop</span><span class="w">  </span><span class="nb">rdi</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nf">pop</span><span class="w">  </span><span class="nb">rax</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nf">iretq</span><span class="w">                       </span><span class="c1">; restore saved state → Spotify resumes where it was</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Remember this</p>
+<p>An <strong>interrupt</strong> is how hardware says "listen to me" to the <abbr title="Central Processing Unit">CPU</abbr>. The <abbr title="Central Processing Unit">CPU</abbr> drops everything, saves its state,
+runs the kernel, and returns with <code>iretq</code>. <em>Every</em> I/O device works this way: network cards, disks, keyboards.</p>
+</div>
+<h3 id="4-kernel-space-ring-0">4 · Kernel space (ring 0)<a class="headerlink" href="#4-kernel-space-ring-0" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td><code>xhci_irq()</code> reads the event from RAM and tells the <strong>usbhid</strong> driver "your report arrived".</td>
+</tr>
+<tr>
+<td>9</td>
+<td>The <abbr title="Human Interface Device">HID</abbr> layer parses the report: <abbr title="Human Interface Device">HID</abbr> usage <code>0x04</code> maps to the Linux key code <strong><code>KEY_A = 30</code></strong>. The <strong>input core</strong> and <strong>evdev</strong> queue it as an event on <code>/dev/input/eventX</code>: <code>EV_KEY, KEY_A, 1 (pressed)</code> followed by <code>EV_SYN</code>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Linux's "everything is a file" idea applies here too: the keyboard is a file, and keypresses are records you read from it.</p>
+</blockquote>
+<h3 id="5-user-space-ring-3">5 · User space (ring 3)<a class="headerlink" href="#5-user-space-ring-3" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>The compositor (Mutter on GNOME, KWin on KDE) was waiting on that file through <strong>libinput</strong> with <code>epoll</code>. It wakes up and fetches the event with the <strong><code>read()</code> syscall</strong>. This is the dashed line in the diagram: <strong>ring 0 → ring 3</strong>.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>libinput processes the event: is it a shortcut, a key repeat, and so on.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>The compositor knows <strong>which window has keyboard focus</strong> and sends the event to that app over the Wayland protocol: <code>wl_keyboard.key(key=30, state=pressed)</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-application">6 · Application<a class="headerlink" href="#6-application" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13</td>
+<td>The app's <strong>event loop</strong> (GTK or Qt) receives the message.</td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>xkbcommon</strong> translates code <code>30</code> using the <strong>keyboard layout</strong>: <code>30 → keysym 'a' → Unicode U+0061</code>. With Shift held it would be 'A'; on a French AZERTY layout the same key gives 'q'. <strong>This is the first moment a "letter" exists.</strong></td>
+</tr>
+<tr>
+<td>15</td>
+<td>The character is inserted into the <strong>text buffer</strong> and the widget marks itself "needs redraw". The font engine (HarfBuzz + FreeType) turns the shape of 'a' (<em>glyph</em>) into pixels.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>The app draws the new frame into a buffer and hands it to the compositor with <code>wl_surface.commit</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-display">7 · Display<a class="headerlink" href="#7-display" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>17</td>
+<td>The compositor uses the <strong><abbr title="Graphics Processing Unit">GPU</abbr></strong> to combine all windows into a single frame in the <strong>framebuffer</strong>.</td>
+</tr>
+<tr>
+<td>18</td>
+<td>On the monitor's next refresh (<strong>vsync</strong>, every 16.7 ms at 60 Hz) the frame is sent over HDMI/<abbr title="Data Parallel">DP</abbr>, the pixels change, and <strong>'a' appears.</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-does-an-interrupt-work">How does an interrupt work?<a class="headerlink" href="#how-does-an-interrupt-work" title="Permanent link">¶</a></h3>
+<p>The <abbr title="Central Processing Unit">CPU</abbr> is busy running a program. A device raises an <strong><abbr title="Interrupt Request">IRQ</abbr></strong>; at the next instruction boundary the <abbr title="Central Processing Unit">CPU</abbr> saves <abbr title="Instruction Pointer">RIP</abbr>/RFLAGS/<abbr title="Stack Pointer">RSP</abbr> on the kernel stack, switches to ring 0, looks up the vector in the <strong><abbr title="Interrupt Descriptor Table">IDT</abbr></strong> and jumps to the <strong><abbr title="Interrupt Service Routine">ISR</abbr></strong>. The handler does the minimum (acknowledge the device, queue work), then <code>iretq</code> restores the saved state and the program continues as if nothing happened.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/01a-interrupt.png" data-desc-position="bottom"><img alt="How does an interrupt work?" src="../assets/diagrams/01a-interrupt.png"></a></p>
+<hr>
+<h2 id="where-does-the-latency-come-from-1050-ms">Where does the latency come from? (~10–50 ms)<a class="headerlink" href="#where-does-the-latency-come-from-1050-ms" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Typical</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Debounce + <abbr title="Microcontroller Unit">MCU</abbr></td>
+<td>1–5 ms</td>
+</tr>
+<tr>
+<td><abbr title="Universal Serial Bus">USB</abbr> polling</td>
+<td>1–8 ms</td>
+</tr>
+<tr>
+<td>Interrupt + kernel + compositor + app</td>
+<td>&lt; 1–5 ms</td>
+</tr>
+<tr>
+<td>Waiting for the next frame (60 Hz)</td>
+<td>0–16.7 ms</td>
+</tr>
+<tr>
+<td>Monitor processing + pixel response</td>
+<td>2–15 ms</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> connection: an <abbr title="HyperText Transfer Protocol">HTTP</abbr> request's <strong>latency budget</strong> works exactly the same way. The total is the sum of every hop, and the slowest hop sets what users feel.</p>
+</blockquote>
+<hr>
+<h2 id="incident-story-one-core-drowning-in-interrupts">🚨 Incident story: one core drowning in interrupts<a class="headerlink" href="#incident-story-one-core-drowning-in-interrupts" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">The alarm</p>
+<p>After a traffic increase, p99 latency of a busy API node doubles. Average <abbr title="Central Processing Unit">CPU</abbr> is only 35%, but <code>top</code> shows one core at <strong>100% <code>si</code></strong>, and <code>ksoftirqd/0</code> sits at the top of the process list.</p>
+</div>
+<p>Try to diagnose it yourself first, then open the clues one by one.</p>
+<details class="info">
+<summary>🔍 Clue 1</summary>
+<p><code>/proc/interrupts</code>: the <abbr title="Network Interface Card">NIC</abbr>'s queue interrupts all increase only in the <strong>CPU0</strong> column; the other 15 columns barely move.</p>
+</details>
+<details class="info">
+<summary>🔍 Clue 2</summary>
+<p><code>ethtool -l eth0</code> shows <code>Combined: 1</code>: the <abbr title="Network Interface Card">NIC</abbr> runs with <strong>one queue</strong>. <code>systemctl status irqbalance</code> → not installed in the minimal image.</p>
+</details>
+<details class="success">
+<summary>🎯 Root cause</summary>
+<p>All packet processing (hard <abbr title="Interrupt Request">IRQ</abbr> + NET_RX softirq) lands on a single core. That core saturates while the others idle, so packets wait in the queue and latency climbs, even though <em>average</em> <abbr title="Central Processing Unit">CPU</abbr> looks fine.</p>
+</details>
+<details class="tip">
+<summary>🛠️ Fix and lesson</summary>
+<p>Enable multiple queues (<code>ethtool -L eth0 combined 8</code>), spread their IRQs (irqbalance or <code>smp_affinity</code>), and consider RPS/RFS. <strong>Lesson:</strong> average <abbr title="Central Processing Unit">CPU</abbr> hides per-core saturation; check <code>mpstat -P ALL</code> and the <code>si</code> column.</p>
+</details>
+<h2 id="go-deeper">🧭 Go deeper<a class="headerlink" href="#go-deeper" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>What's inside</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="01-interrupts-drivers/">1.1 — Interrupts &amp; device drivers</a></strong></td>
+<td>What interrupts are and why they exist, polling vs interrupts vs <abbr title="Direct Memory Access">DMA</abbr>, <abbr title="Message Signaled Interrupt">MSI</abbr>/<abbr title="Message Signaled Interrupt">MSI</abbr>-X and <abbr title="Interrupt Request">IRQ</abbr> affinity, top and bottom halves, how drivers are matched and loaded, and how this shows up in production (softirq, irqbalance, <abbr title="Network Interface Card">NIC</abbr> queues).</td>
+</tr>
+<tr>
+<td><strong><a href="02-usb-hid/">1.2 — <abbr title="Universal Serial Bus">USB</abbr> &amp; <abbr title="Human Interface Device">HID</abbr></a></strong></td>
+<td>How <abbr title="Universal Serial Bus">USB</abbr> works (host-driven polling, enumeration, descriptors, endpoints and transfer types), the <abbr title="Human Interface Device">HID</abbr> class and report descriptors, the 8-byte keyboard report, polling rate and latency, and <abbr title="Universal Serial Bus">USB</abbr> in servers, VMs and containers.</td>
+</tr>
+<tr>
+<td><strong><a href="03-input-stack/">1.3 — The Linux input stack</a></strong></td>
+<td>evdev and input events, libinput, the compositor and Wayland vs X11, keyboard focus, keymaps with xkbcommon (keycode → keysym → character), key repeat, input methods, and how browsers turn it into KeyboardEvent.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="try-it-yourself-linux">🧪 Try it yourself (Linux)<a class="headerlink" href="#try-it-yourself-linux" title="Permanent link">¶</a></h2>
+<div class="admonition example">
+<p class="admonition-title">🧪 Ready-made lab</p>
+<p>Run this chapter's experiments with one command: <code>./labs/run.sh 01-keypress</code> (<a href="https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/01-keypress/">scripts</a>). No setup? <a href="https://codespaces.new/gaskinimbuspro/silicon-to-cloud">Open in Codespaces</a>. <!-- s2c-lab --></p>
+</div>
+<p>On a Mac, run these labs in a Linux <abbr title="Virtual Machine (language runtime)">VM</abbr> (UTM, Multipass) or on a Linux machine.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 1) Check your keyboard's polling interval (bInterval)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>lsusb<span class="w">                                   </span><span class="c1"># find the keyboard's Bus/Device numbers</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>lsusb<span class="w"> </span>-v<span class="w"> </span>-s<span class="w"> </span>&lt;bus&gt;:&lt;dev&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"bInterval|bInterfaceProtocol"</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># 2) Watch the interrupt counter climb while you type</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>watch<span class="w"> </span>-n0.2<span class="w"> </span><span class="s2">"grep -i xhci /proc/interrupts"</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># 3) See what the kernel produces (step 9): you'll see MSC_SCAN 70004 and KEY_A</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>sudo<span class="w"> </span>evtest<span class="w">                             </span><span class="c1"># pick your keyboard, press A</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1"># 4) Events as libinput sees them (steps 10–11)</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>sudo<span class="w"> </span>libinput<span class="w"> </span>debug-events
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># 5) What the application receives (steps 12–14)</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>wev<span class="w">        </span><span class="c1"># Wayland: key 30 → sym: a, utf8: 'a'</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>xev<span class="w">        </span><span class="c1"># X11:     keycode 38 (= 30 + 8) → keysym 0x61, a</span>
+</code></pre></div>
+<p><strong>Exercise:</strong> in the <code>evtest</code> output, find the <strong>press</strong> (<code>value 1</code>), <strong>hold/repeat</strong> (<code>value 2</code>) and <strong>release</strong> (<code>value 0</code>) events for A. Think about who is responsible for key repeat.</p>
+<hr>
+<h2 id="cheat-sheet">🃏 Cheat sheet<a class="headerlink" href="#cheat-sheet" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Key → circuit closes → matrix scan → MCU: HID usage 0x04
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   → USB HID report (8 bytes) → xHCI polling + DMA → RAM
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   → MSI interrupt → APIC → CPU: stop, save, IDT → ISR (ring 0)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   → xhci → usbhid → KEY_A(30) → evdev /dev/input/eventX
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   → [syscall read()] → libinput → compositor → wl_keyboard.key(30)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   → app event loop → xkbcommon (layout) → 'a' U+0061
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   → text buffer → glyph → buffer commit → GPU compose → vsync → monitor
+</code></pre></div>
+<ul>
+<li>The keyboard sends a <strong>position</strong>, not a <strong>letter</strong>. The letter only appears at the keymap inside the app.</li>
+<li>A <abbr title="Universal Serial Bus">USB</abbr> keyboard <strong>never speaks first</strong>. The host polls it.</li>
+<li><strong>Interrupt = grabbing the <abbr title="Central Processing Unit">CPU</abbr>'s attention.</strong> It saves state, runs the handler, and returns with <code>iret</code>.</li>
+<li>The <strong>ring 0 / ring 3</strong> boundary is crossed with a <strong>syscall</strong>.</li>
+</ul>
+<hr>
+<h2 id="test-yourself">❓ Test yourself<a class="headerlink" href="#test-yourself" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. If you switch from QWERTY to AZERTY, does the code sent over <abbr title="Universal Serial Bus">USB</abbr> change for the same physical key?</summary>
+<p>No. The code (<code>0x04</code>) describes the key's <strong>position</strong>. Translating it to a character is done by the OS or the app, using the layout.</p>
+</details>
+<details class="question">
+<summary>2. With 8 ms polling, how long can a keypress wait in the worst case?</summary>
+<p>About 8 ms. If you press right after a poll, the report waits until the next one.</p>
+</details>
+<details class="question">
+<summary>3. What happens to the program the <abbr title="Central Processing Unit">CPU</abbr> was running when the interrupt arrived?</summary>
+<p>The <abbr title="Central Processing Unit">CPU</abbr> finishes the current instruction, saves the program's state (<code>RIP</code>, <code>RFLAGS</code>, …) on the stack, runs the handler, and resumes the program exactly where it was with <code>iretq</code>. The program never notices.</p>
+</details>
+<details class="question">
+<summary>4. Why don't applications read the keyboard directly from /dev/input?</summary>
+<p>Security and focus. If every app could read every key, every app would be a keylogger. The compositor only delivers events to the <strong>focused</strong> window.</p>
+</details>
+<details class="question">
+<summary>5. Why is the 'A' keycode 38 on X11 but 30 on Wayland?</summary>
+<p>For historical reasons X11 adds 8 to the evdev code (<code>30 + 8 = 38</code>). Wayland sends the evdev code as is.</p>
+</details>
+<hr>
+<h2 id="other-operating-systems">Other operating systems<a class="headerlink" href="#other-operating-systems" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Linux</th>
+<th>Windows</th>
+<th>macOS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><abbr title="Human Interface Device">HID</abbr> driver</td>
+<td>usbhid + input core</td>
+<td>kbdhid.sys / <abbr title="Human Interface Device">HID</abbr> class</td>
+<td>IOHIDFamily (IOKit)</td>
+</tr>
+<tr>
+<td>Event queue</td>
+<td>evdev</td>
+<td>Raw Input / message queue</td>
+<td>IOHIDSystem → WindowServer</td>
+</tr>
+<tr>
+<td>Window system</td>
+<td>Wayland / X11 compositor</td>
+<td>DWM + win32k</td>
+<td>WindowServer</td>
+</tr>
+<tr>
+<td>Message to the app</td>
+<td>wl_keyboard.key</td>
+<td>WM_KEYDOWN / WM_CHAR</td>
+<td>NSEvent keyDown</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="sources">📚 Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.kernel.org/doc/html/latest/input/input.html">Linux Input Subsystem documentation</a></li>
+<li><a href="https://usb.org/document-library/hid-usage-tables-15"><abbr title="Universal Serial Bus">USB</abbr> <abbr title="Human Interface Device">HID</abbr> Usage Tables (Keyboard/Keypad page 0x07)</a></li>
+<li><a href="https://wayland-book.com/seat/keyboard.html">The Wayland Protocol (book): Seat &amp; keyboard</a></li>
+<li><a href="https://xkbcommon.org/">libxkbcommon</a></li>
+<li>Intel® 64 and IA-32 SDM, Vol. 3A, Chapter 6 “Interrupt and Exception Handling”</li>
+</ul>
+<h2 id="my-notes">✍️ My notes<a class="headerlink" href="#my-notes" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>After reading, explain this chapter in your own words in 5 lines. The parts you can't explain are the parts you don't understand yet.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../changelog/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 🆕 What's new">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                🆕 What's new
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-interrupts-drivers/" class="md-footer__link md-footer__link--next" aria-label="Next: 1.1 · Interrupts &amp; drivers">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                1.1 · Interrupts &amp; drivers
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

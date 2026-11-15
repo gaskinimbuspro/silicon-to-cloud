@@ -1,0 +1,2235 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Register'lar, bellek hiyerarşisi, fetch-decode-execute döngüsü ve stack. CPU kodunla gerçekte ne yapıyor?">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/">
+      
+      
+        <link rel="prev" href="../01-keypress/03-input-stack/">
+      
+      
+        <link rel="next" href="01-isa-assembly/">
+      
+      
+        
+          <link rel="alternate" href="../../02-cpu/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Bölüm 2 — CPU &amp; Assembly - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bölüm 2 — CPU &amp; Assembly - Silicon to Cloud">
+<meta property="og:description" content="Register'lar, bellek hiyerarşisi, fetch-decode-execute döngüsü ve stack. CPU kodunla gerçekte ne yapıyor?">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/02-cpu/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/02-cpu/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Bölüm 2 — CPU &amp; Assembly - Silicon to Cloud">
+<meta property="twitter:description" content="Register'lar, bellek hiyerarşisi, fetch-decode-execute döngüsü ve stack. CPU kodunla gerçekte ne yapıyor?">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/02-cpu/index.png">
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bolum-2-cpu-assembly" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bölüm 2 — CPU &amp; Assembly
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../02-cpu/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2 · CPU &amp; Assembly
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-isa-assembly/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 · Instruction sets &amp; assembly
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-caches-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 · Caches &amp; memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-pipeline-speculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 · Pipelines &amp; speculation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-cden-bytelara-derleme-an" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · C'den byte'lara (derleme anı)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-registerlar-cpunun-elleri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Register'lar: CPU'nun elleri
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bellek-hiyerarsisi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Bellek hiyerarşisi
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-komut-dongusu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Komut döngüsü
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-stack-fonksiyonlar-birbirini-nasl-cagrr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Stack: fonksiyonlar birbirini nasıl çağırır
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Stack: fonksiyonlar birbirini nasıl çağırır">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cagr-srasnda-stack-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Çağrı sırasında stack nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#olay-hikayesi-sadece-yeni-nodelarda-coken-servis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Olay hikâyesi: sadece yeni node'larda çöken servis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#daha-derine-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧭 Daha derine in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene (Linux)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    2 · CPU &amp; Assembly
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="bolum-2-cpu-assembly">Bölüm 2 — <abbr title="Central Processing Unit">CPU</abbr> &amp; Assembly<a class="headerlink" href="#bolum-2-cpu-assembly" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p><abbr title="Central Processing Unit">CPU</abbr> çok hızlı ama çok basit bir makinedir. <code>RIP</code> register'ının gösterdiği komutu <strong>okur (fetch)</strong>, ne olduğunu
+<strong>çözer (decode)</strong>, <strong>register</strong>'lardaki değerlerle <strong>çalıştırır (execute)</strong>, sonucu <strong>geri yazar (write back)</strong> ve
+bir sonrakine geçer. Bunu saniyede milyarlarca kez yapar. Önbellekler, RAM ve disk sadece onu veriyle beslemek için
+vardır.</p>
+</div>
+<h2 id="temel-terimler-ve-ksaltmalar">📖 Temel terimler ve kısaltmalar<a class="headerlink" href="#temel-terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Central Processing Unit">CPU</abbr></strong></td>
+<td>Central Processing Unit</td>
+<td>Kodunu çalıştıran işlemci</td>
+<td>Komutları okur, çözer ve çalıştırır</td>
+</tr>
+<tr>
+<td><strong><abbr title="Instruction Set Architecture">ISA</abbr></strong></td>
+<td>Instruction Set Architecture</td>
+<td><abbr title="Central Processing Unit">CPU</abbr>'nun anladığı komutlar (x86-64, ARM64)</td>
+<td>Derleyiciler kodu bu komut setine çevirir</td>
+</tr>
+<tr>
+<td><strong>Register</strong></td>
+<td>—</td>
+<td>Çekirdeğin içindeki minik depolama hücreleri</td>
+<td>Hesabın doğrudan yapıldığı tek yer</td>
+</tr>
+<tr>
+<td><strong><abbr title="Instruction Pointer">RIP</abbr> / <abbr title="Stack Pointer">RSP</abbr></strong></td>
+<td>Instruction Pointer / Stack Pointer</td>
+<td>Sıradaki komut adresi / stack'in tepesi</td>
+<td>Her komut, call, ret ve push/pop ile güncellenir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Arithmetic Logic Unit">ALU</abbr></strong></td>
+<td>Arithmetic Logic Unit</td>
+<td>Hesap ve mantık işlemlerini yapan kısım</td>
+<td>Register'lardaki değerleri toplar, karşılaştırır, kaydırır</td>
+</tr>
+<tr>
+<td><strong>Cache line</strong></td>
+<td>—</td>
+<td>RAM ile önbellekler arasında taşınan 64 byte'lık birim</td>
+<td>Bir byte okumak 63 komşusunu da getirir</td>
+</tr>
+<tr>
+<td><strong>L1 / L2 / L3</strong></td>
+<td>Level 1/2/3 cache</td>
+<td>Çip üstü bellekler, küçük olan hızlı</td>
+<td>Son kullanılan veriyi çekirdeğe yakın tutar</td>
+</tr>
+<tr>
+<td><strong>Pipeline</strong></td>
+<td>—</td>
+<td>Birkaç komutun fetch/decode/execute'unu üst üste bindirmek</td>
+<td>Her döngüde her aşamayı meşgul tutar</td>
+</tr>
+<tr>
+<td><strong>Branch prediction</strong></td>
+<td>—</td>
+<td>Bir if'in hangi yöne gideceğini tahmin etmek</td>
+<td>Yanlış tahmin → boru hattı boşaltılır, döngüler boşa gider</td>
+</tr>
+<tr>
+<td><strong>Stack frame</strong></td>
+<td>—</td>
+<td>Bir fonksiyonun stack üzerindeki alanı</td>
+<td>Dönüş adresi, kaydedilmiş register'lar ve yerelleri tutar</td>
+</tr>
+<tr>
+<td><strong><abbr title="Application Binary Interface">ABI</abbr></strong></td>
+<td>Application Binary Interface</td>
+<td>Derlenmiş kodlar arası ikili düzey kurallar</td>
+<td>Argüman/dönüş register'ları, stack düzeni</td>
+</tr>
+<tr>
+<td><strong><abbr title="gigahertz">GHz</abbr></strong></td>
+<td>gigahertz</td>
+<td>Saat frekansı</td>
+<td>3 <abbr title="gigahertz">GHz</abbr> = saniyede 3 milyar döngü</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/02-cpu.png" data-desc-position="bottom"><img alt="CPU'nun içi" src="../assets/diagrams/02-cpu.png"></a></p>
+<blockquote>
+<p>Örnek ortam: Linux üzerinde x86-64 (Intel/AMD). ARM'da (Apple M serisi, AWS Graviton) register isimleri farklıdır ama fikirler aynıdır.</p>
+</blockquote>
+<hr>
+<h2 id="1-cden-bytelara-derleme-an">1 · C'den byte'lara (derleme anı)<a class="headerlink" href="#1-cden-bytelara-derleme-an" title="Permanent link">¶</a></h2>
+<p><abbr title="Central Processing Unit">CPU</abbr> senin C, Go ya da Python kodunu hiç görmez. Sadece <strong>makine kodunu</strong>, yani komutları temsil eden byte'ları görür.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">int</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p><code>gcc -O2 -S -masm=intel add.c</code> şunu üretir:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nl">add:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nf">lea</span><span class="w">  </span><span class="nb">eax</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="nb">rdi</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">rsi</span><span class="p">]</span><span class="w">   </span><span class="c1">; eax = a + b   (a RDI'da, b RSI'da gelir)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nf">ret</span><span class="w">                     </span><span class="c1">; çağırana dön, sonuç EAX'te</span>
+</code></pre></div>
+<p><code>objdump -d add.o</code> gerçek byte'ları gösterir: <strong><code>8d 04 37</code></strong> (<code>lea</code>) ve <strong><code>c3</code></strong> (<code>ret</code>). Fonksiyonun tamamı dört byte.</p>
+<blockquote>
+<p>Ubuntu'da başta bir de <code>endbr64</code> (<code>f3 0f 1e fa</code>) görürsün. Derleyicinin varsayılan olarak eklediği bir güvenlik işaretidir (Intel CET); burada görmezden gelebilirsin.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Adım</th>
+<th>Araç</th>
+<th>Çıktı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Derle (compile)</td>
+<td><code>gcc -S</code></td>
+<td>Assembly metni (insanın okuyabildiği komutlar)</td>
+</tr>
+<tr>
+<td>Çevir (assemble)</td>
+<td><code>as</code></td>
+<td>Object dosyası (makine kodu + semboller)</td>
+</tr>
+<tr>
+<td>Bağla (link)</td>
+<td><code>ld</code></td>
+<td>Diskte çalıştırılabilir <strong><abbr title="Executable and Linkable Format">ELF</abbr></strong> dosyası (Bölüm 4'te derinlemesine)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Çağırma kuralı (System V, Linux x86-64)</p>
+<p>Argümanlar <code>RDI, RSI, RDX, RCX, R8, R9</code> register'larına konur, dönüş değeri <code>RAX</code>'te gelir. Bu, derleyiciler
+arasında bir <strong>anlaşmadır</strong>. Bu sayede GCC ile derlenmiş kod, Clang ya da Rust ile derlenmiş kodu çağırabilir.</p>
+</div>
+<hr>
+<h2 id="2-registerlar-cpunun-elleri">2 · Register'lar: <abbr title="Central Processing Unit">CPU</abbr>'nun elleri<a class="headerlink" href="#2-registerlar-cpunun-elleri" title="Permanent link">¶</a></h2>
+<p>Register'lar, <abbr title="Central Processing Unit">CPU</abbr> çekirdeğinin <strong>içinde</strong> duran birkaç küçük depolama hücresidir. <abbr title="Central Processing Unit">CPU</abbr>'nun doğrudan hesap yapabildiği tek yer burasıdır.</p>
+<table>
+<thead>
+<tr>
+<th>Register</th>
+<th>Görevi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAX, RBX, RCX, RDX, RSI, RDI, R8–R15</code></td>
+<td><strong>Genel amaçlı</strong>, her biri 64 bit. <code>EAX</code>, <code>RAX</code>'in alt 32 bitidir.</td>
+</tr>
+<tr>
+<td><code>RIP</code></td>
+<td><strong>Komut işaretçisi</strong> (instruction pointer): <em>sıradaki</em> komutun adresi. "Programın neresindeyim?"</td>
+</tr>
+<tr>
+<td><code>RSP</code></td>
+<td><strong>Stack işaretçisi</strong>: stack'in tepesi.</td>
+</tr>
+<tr>
+<td><code>RBP</code></td>
+<td>Çerçeve işaretçisi (opsiyonel): o anki fonksiyonun stack çerçevesinin tabanı.</td>
+</tr>
+<tr>
+<td><code>RFLAGS</code></td>
+<td>Sonuç bayrakları: sıfır mı? negatif mi? taşma var mı? <code>if</code> bunları kullanır (<code>cmp</code> + <code>je/jne</code>).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Bölüm 1 bağlantısı: kesme geldiğinde <abbr title="Central Processing Unit">CPU</abbr> tam olarak bunları (<code>RIP</code>, <code>RFLAGS</code>, <code>RSP</code>, …) kaydeder ki sonra kaldığı yerden devam edebilsin.</p>
+</blockquote>
+<hr>
+<h2 id="3-bellek-hiyerarsisi">3 · Bellek hiyerarşisi<a class="headerlink" href="#3-bellek-hiyerarsisi" title="Permanent link">¶</a></h2>
+<p><abbr title="Central Processing Unit">CPU</abbr>, bellekten çok daha hızlıdır. Bu farkı gizlemek için veri, çekirdeğe yaklaştıkça <strong>küçülen ama hızlanan</strong> katmanlardan geçer.</p>
+<table>
+<thead>
+<tr>
+<th>Seviye</th>
+<th>Tipik boyut</th>
+<th>Tipik gecikme</th>
+<th><abbr title="Central Processing Unit">CPU</abbr> döngüsü (3 <abbr title="gigahertz">GHz</abbr>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Register</td>
+<td>~16 × 8 byte</td>
+<td>~0,3 ns</td>
+<td>1</td>
+</tr>
+<tr>
+<td>L1 önbellek (çekirdek başına, L1i/L1d ayrı)</td>
+<td>32–64 KB</td>
+<td>~1 ns</td>
+<td>~4</td>
+</tr>
+<tr>
+<td>L2 önbellek (çekirdek başına)</td>
+<td>1–2 MB</td>
+<td>~4 ns</td>
+<td>~12</td>
+</tr>
+<tr>
+<td>L3 önbellek (ortak)</td>
+<td>16–100+ MB</td>
+<td>~10–20 ns</td>
+<td>~40</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>GB'lar</td>
+<td>~80–100 ns</td>
+<td>~300</td>
+</tr>
+<tr>
+<td>NVMe SSD</td>
+<td>TB'lar</td>
+<td>~20–100 µs</td>
+<td>~100.000</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Veri RAM ile önbellek arasında <strong>64 byte</strong>'lık <strong>cache line</strong>'lar halinde taşınır. Tek bir byte okusan bile yanındaki 63 byte da gelir.</li>
+<li>Bu yüzden <strong>diziler hızlıdır</strong> (komşular zaten önbellekte), <strong>bağlı listeler yavaştır</strong> (her düğüm RAM'e yeni bir yolculuk).</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Bunu hatırla</p>
+<p>L1 erişimi 1 saniye olsaydı, RAM ~1,5 dakika, SSD okuması ~1 gün sürerdi. "Performans işi" denen şeyin çoğu
+aslında <strong>"belleği beklemeyi bırak"</strong> işidir.</p>
+</div>
+<hr>
+<h2 id="4-komut-dongusu">4 · Komut döngüsü<a class="headerlink" href="#4-komut-dongusu" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Aşama</th>
+<th>Ne oluyor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>—</td>
+<td><code>RIP</code>, bellekteki (L1i önbelleği üzerinden) sıradaki komutu gösterir.</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Fetch</strong></td>
+<td><code>RIP</code> adresindeki komut byte'larını oku: <code>8d 04 37</code>.</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Decode</strong></td>
+<td>Ne anlama geldiklerini çöz: <code>lea eax, [rdi+rsi]</code>. Modern x86 çekirdekleri bunu daha basit dahili <strong>mikro-op</strong>'lara çevirir.</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Execute</strong></td>
+<td><strong><abbr title="Arithmetic Logic Unit">ALU</abbr></strong> (aritmetik mantık birimi) <code>2 + 3</code>'ü hesaplar.</td>
+</tr>
+<tr>
+<td>—</td>
+<td><strong>Write back</strong></td>
+<td>Sonucu register'a yaz: <code>EAX = 5</code>. <code>RIP</code>'i komutun uzunluğu kadar ilerlet ve baştan başla.</td>
+</tr>
+</tbody>
+</table>
+<p>Gerçek çekirdekler bunu bir <strong>boru hattı (pipeline)</strong> olarak yapar: bir komut çalışırken sonraki çözülür, ondan sonraki
+okunur. Boş kalmamak için komutları <strong>sırasız (out-of-order)</strong> çalıştırır ve <strong>dallanmaları tahmin eder (branch prediction)</strong>.
+Tahmin yanlışsa boru hattı boşaltılır ve iş çöpe gider. Bu yüzden sık çalışan döngülerdeki tahmin edilemeyen <code>if</code>'ler performansa mal olur.</p>
+<hr>
+<h2 id="5-stack-fonksiyonlar-birbirini-nasl-cagrr">5 · Stack: fonksiyonlar birbirini nasıl çağırır<a class="headerlink" href="#5-stack-fonksiyonlar-birbirini-nasl-cagrr" title="Permanent link">¶</a></h2>
+<p>Optimizasyonsuz (<code>-O0</code>) derlendiğinde aynı <code>add</code> fonksiyonu <strong>stack</strong>'i iş başında gösterir:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nl">add:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nf">push</span><span class="w"> </span><span class="nb">rbp</span><span class="w">                    </span><span class="c1">; çağıranın çerçeve işaretçisini stack'e kaydet</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nf">mov</span><span class="w">  </span><span class="nb">rbp</span><span class="p">,</span><span class="w"> </span><span class="nb">rsp</span><span class="w">               </span><span class="c1">; benim çerçevem burada başlıyor</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nf">mov</span><span class="w">  </span><span class="kt">DWORD</span><span class="w"> </span><span class="nv">PTR</span><span class="w"> </span><span class="p">[</span><span class="nb">rbp</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="nb">edi</span><span class="w"> </span><span class="c1">; a'yı çerçeveme yaz</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nf">mov</span><span class="w">  </span><span class="kt">DWORD</span><span class="w"> </span><span class="nv">PTR</span><span class="w"> </span><span class="p">[</span><span class="nb">rbp</span><span class="o">-</span><span class="mi">8</span><span class="p">],</span><span class="w"> </span><span class="nb">esi</span><span class="w"> </span><span class="c1">; b'yi çerçeveme yaz</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nf">mov</span><span class="w">  </span><span class="nb">edx</span><span class="p">,</span><span class="w"> </span><span class="kt">DWORD</span><span class="w"> </span><span class="nv">PTR</span><span class="w"> </span><span class="p">[</span><span class="nb">rbp</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nf">mov</span><span class="w">  </span><span class="nb">eax</span><span class="p">,</span><span class="w"> </span><span class="kt">DWORD</span><span class="w"> </span><span class="nv">PTR</span><span class="w"> </span><span class="p">[</span><span class="nb">rbp</span><span class="o">-</span><span class="mi">8</span><span class="p">]</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nf">add</span><span class="w">  </span><span class="nb">eax</span><span class="p">,</span><span class="w"> </span><span class="nb">edx</span><span class="w">               </span><span class="c1">; eax = a + b</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nf">pop</span><span class="w">  </span><span class="nb">rbp</span><span class="w">                    </span><span class="c1">; çağıranın çerçeve işaretçisini geri yükle</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nf">ret</span><span class="w">                         </span><span class="c1">; dönüş adresini RIP'e al → geri atla</span>
+</code></pre></div>
+<ul>
+<li><code>call add</code> <strong>dönüş adresini</strong> (çağrıdan sonraki komutu) stack'e koyar (push) ve <code>add</code>'e atlar.</li>
+<li>Stack bellekte <strong>aşağı doğru büyür</strong>: <code>push</code> <code>RSP</code>'yi azaltır, <code>pop</code> artırır.</li>
+<li><code>ret</code> o adresi stack'ten alıp <code>RIP</code>'e koyar ve çalışma çağıran fonksiyonda devam eder.</li>
+<li>Her fonksiyon çağrısı kendi <strong>stack çerçevesini (stack frame)</strong> alır. Sonsuz özyineleme yer bitene kadar çerçeve ekler: <strong>stack overflow</strong>.</li>
+</ul>
+<h3 id="cagr-srasnda-stack-nasl-calsr">Çağrı sırasında stack nasıl çalışır?<a class="headerlink" href="#cagr-srasnda-stack-nasl-calsr" title="Permanent link">¶</a></h3>
+<p><code>call</code> dönüş adresini push eder ve atlar. <strong>Prologue</strong> eski frame pointer'ı kaydeder ve yereller için yer ayırır. <strong>Epilogue</strong> bunu geri alır, <code>ret</code> dönüş adresini <abbr title="Instruction Pointer">RIP</abbr>'e pop eder. Her çağrı stack'i aşağı doğru büyütür, her dönüş geri küçültür.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/02a-stack.png" data-desc-position="bottom"><img alt="Çağrı sırasında stack nasıl çalışır?" src="../assets/diagrams/02a-stack.png"></a></p>
+<hr>
+<h2 id="olay-hikayesi-sadece-yeni-nodelarda-coken-servis">🚨 Olay hikâyesi: sadece yeni node'larda çöken servis<a class="headerlink" href="#olay-hikayesi-sadece-yeni-nodelarda-coken-servis" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">Alarm</p>
+<p>Platform ekibi daha ucuz bir instance tipiyle yeni bir node havuzu ekliyor. Oraya zamanlanan pod'lar anında <strong>çıkış kodu 132</strong> ile ölüyor; aynı imaj eski node'larda sorunsuz çalışıyor.</p>
+</div>
+<p>Önce kendin teşhis etmeye çalış, sonra ipuçlarını tek tek aç.</p>
+<details class="info">
+<summary>🔍 İpucu 1</summary>
+<p>132 = 128 + 4 → <strong>SIGILL</strong>, <em>illegal instruction</em>. Node'da <code>dmesg</code>: <code>traps: app[...] trap invalid opcode</code>.</p>
+</details>
+<details class="info">
+<summary>🔍 İpucu 2</summary>
+<p>Dockerfile, AVX-512'li bir <abbr title="Continuous Integration">CI</abbr> runner'ında <code>-march=native</code> ile derliyor. Yeni node'larda <code>grep -o avx512f /proc/cpuinfo</code> → hiçbir şey.</p>
+</details>
+<details class="success">
+<summary>🎯 Kök neden</summary>
+<p><em>Build</em> makinesinde AVX-512 olduğu için derleyici AVX-512 komutları üretti. Yeni <abbr title="Central Processing Unit">CPU</abbr>'lar bu komutları uygulamıyor; çalıştırılan ilki trap ediyor.</p>
+</details>
+<details class="tip">
+<summary>🛠️ Çözüm ve ders</summary>
+<p>Bir taban seviye için derle (<code>-march=x86-64-v3</code> ya da v2) veya varyantlar gönderip çalışma anında seç; gerçekten AVX-512 gerekiyorsa node affinity kullan. <strong>Ders:</strong> <abbr title="Instruction Set Architecture">ISA</abbr> bir sözleşmedir; binary'ler çalışabilecekleri en eski <abbr title="Central Processing Unit">CPU</abbr>'yu hedeflemeli.</p>
+</details>
+<h2 id="daha-derine-in">🧭 Daha derine in<a class="headerlink" href="#daha-derine-in" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sayfa</th>
+<th>Neler var</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="01-isa-assembly/">2.1 — Komut setleri ve assembly</a></strong></td>
+<td><abbr title="Instruction Set Architecture">ISA</abbr> nedir, x86-64 ve ARM64 (ve <abbr title="Reduced Instruction Set Computer">RISC</abbr>-V), <abbr title="Complex">CISC</abbr> ve <abbr title="Reduced Instruction Set Computer">RISC</abbr>, komutların byte'lara nasıl kodlandığı, adresleme modları, bayraklar ve atlamalar, <abbr title="Single Instruction, Multiple Data">SIMD</abbr>, System V çağrı kuralı, derleyici çıktısı ve crash dump okumak.</td>
+</tr>
+<tr>
+<td><strong><a href="02-caches-memory/">2.2 — Önbellekler ve bellek hiyerarşisi</a></strong></td>
+<td>Önbellekler neden var, gecikme rakamları, cache line ve yerellik, ilişkisellik ve tahliye, önbellek tutarlılığı (MESI) ve false sharing, <abbr title="Non-Uniform Memory Access">NUMA</abbr>, <abbr title="Translation Lookaside Buffer">TLB</abbr> ve huge page, bellek bant genişliği ve bunların performans çalışmaları ve Kubernetes için anlamı.</td>
+</tr>
+<tr>
+<td><strong><a href="03-pipeline-speculation/">2.3 — Boru hatları, dal tahmini ve spekülasyon</a></strong></td>
+<td><abbr title="Central Processing Unit">CPU</abbr>'ların komutları boru hattında nasıl üst üste bindirdiği, superscalar ve sıra dışı çalıştırma, dal tahmini ve yanlış tahminler, spekülatif çalıştırma ve Spectre/Meltdown, SMT (Hyper-Threading), frekans ve güç, perf ile <abbr title="Instructions Per Cycle">IPC</abbr> okumak.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kendin-dene-linux">🧪 Kendin dene (Linux)<a class="headerlink" href="#kendin-dene-linux" title="Permanent link">¶</a></h2>
+<div class="admonition example">
+<p class="admonition-title">🧪 Hazır lab</p>
+<p>Bu bölümün deneyleri tek komutla: <code>./labs/run.sh 02-cpu</code> (<a href="https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/02-cpu/">script'ler</a>). Kurulum istemiyorsan <a href="https://codespaces.new/gaskinimbuspro/silicon-to-cloud">Codespaces'te aç</a>. <!-- s2c-lab --></p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1) CPU'nu tanı: çekirdekler, önbellek boyutları, özellikler</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>lscpu
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>lscpu<span class="w"> </span>-C<span class="w">                          </span><span class="c1"># seviye başına önbellek boyutları</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 2) C → assembly → byte'lar</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'int add(int a,int b){return a+b;}'</span><span class="w"> </span>&gt;<span class="w"> </span>add.c
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>gcc<span class="w"> </span>-O2<span class="w"> </span>-S<span class="w"> </span>-masm<span class="o">=</span>intel<span class="w"> </span>add.c<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cat<span class="w"> </span>add.s
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>gcc<span class="w"> </span>-O0<span class="w"> </span>-S<span class="w"> </span>-masm<span class="o">=</span>intel<span class="w"> </span>add.c<span class="w"> </span>-o<span class="w"> </span>add-O0.s<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cat<span class="w"> </span>add-O0.s<span class="w">   </span><span class="c1"># stack çerçeveli hali</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>gcc<span class="w"> </span>-O2<span class="w"> </span>-c<span class="w"> </span>add.c<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>objdump<span class="w"> </span>-d<span class="w"> </span>-M<span class="w"> </span>intel<span class="w"> </span>add.o<span class="w">              </span><span class="c1"># gerçek byte'lar</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># 3) Bir komutun çalıştırdığı komut sayısı ve önbellek ıskaları</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </span>cycles,instructions,cache-misses<span class="w"> </span>ls<span class="w"> </span>-R<span class="w"> </span>/usr<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># 4) Komut komut ilerle ve register'ların değişimini izle</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>gcc<span class="w"> </span>-g<span class="w"> </span>-O0<span class="w"> </span>-o<span class="w"> </span>add<span class="w"> </span>add.c<span class="w"> </span>-x<span class="w"> </span>c<span class="w"> </span>-<span class="w"> </span><span class="o">&lt;&lt;&lt;</span><span class="w"> </span><span class="s1">'int add(int,int);int main(){return add(2,3);}'</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>gdb<span class="w"> </span>-q<span class="w"> </span>./add<span class="w"> </span>-ex<span class="w"> </span><span class="s1">'break add'</span><span class="w"> </span>-ex<span class="w"> </span><span class="s1">'run'</span><span class="w"> </span>-ex<span class="w"> </span><span class="s1">'layout asm'</span><span class="w"> </span>-ex<span class="w"> </span><span class="s1">'info registers rip rsp rdi rsi'</span>
+</code></pre></div>
+<p><strong>Görev:</strong> <code>gdb</code> içinde <code>add</code> fonksiyonundayken birkaç kez <code>stepi</code> çalıştır. <code>push rbp</code>'den sonra <code>RSP</code>'nin azaldığını, <code>ret</code>'ten sonra <code>RIP</code>'in geri atladığını izle.</p>
+<hr>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>C → derleyici → assembly → assembler → makine kodu (byte'lar) → diskte ELF dosyası
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>   → RAM'e yüklenir → cache line'lar (64 B) → L3 → L2 → L1 → register'lar
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>   → FETCH (RIP'te) → DECODE → EXECUTE (ALU) → WRITE BACK → RIP += uzunluk → tekrar
+</code></pre></div>
+<ul>
+<li><abbr title="Central Processing Unit">CPU</abbr> sadece <strong>byte</strong> anlar. Assembly, o byte'ların insanın okuyabildiği yazımıdır.</li>
+<li>İş <strong>register</strong>'larda yapılır. <code>RIP</code> = neredeyim, <code>RSP</code> = stack'in tepesi.</li>
+<li>Bellek bir <strong>hiyerarşidir</strong>: küçük olan hızlıdır. Yakınlık (locality) her şeydir.</li>
+<li><strong>call / ret</strong>, nereye döneceğini hatırlamak için stack'i kullanır.</li>
+<li>Argümanlar <code>RDI, RSI, …</code>'de, dönüş değeri <code>RAX</code>'te (System V çağırma kuralı).</li>
+</ul>
+<hr>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Aynı sayıda elemanı olan bir diziyi gezmek neden bağlı listeyi gezmekten hızlıdır?</summary>
+<p>Dizinin elemanları yan yana durur. Tek bir 64 byte'lık cache line birkaçını birden getirir ve önceden getirici
+(prefetcher) sıradakini tahmin edebilir. Bağlı listenin düğümleri dağınıktır, her biri ~100 ns'lik bir RAM yolculuğu gerektirebilir.</p>
+</details>
+<details class="question">
+<summary>2. <code>RIP</code> register'ı ne tutar ve onu kim değiştirir?</summary>
+<p>Sıradaki komutun adresini tutar. Normalde komutun uzunluğu kadar ilerler. Atlama (jump), <code>call</code>, <code>ret</code> ve kesmeler onu doğrudan değiştirir.</p>
+</details>
+<details class="question">
+<summary>3. <code>ret</code> aslında ne yapar?</summary>
+<p><code>call</code>'un stack'e koyduğu dönüş adresini alır ve <code>RIP</code>'e yazar. Böylece çalışma çağrının hemen sonrasından devam eder.</p>
+</details>
+<details class="question">
+<summary>4. GCC ile derlenmiş bir program, Clang ile derlenmiş bir kütüphaneyi neden çağırabilir?</summary>
+<p>İkisi de aynı <strong>çağırma kuralına</strong> (System V <abbr title="Application Binary Interface">ABI</abbr>) uyar: argümanlar ve dönüş değeri hangi register'larda taşınır, hangi register'ları hangi taraf korumak zorundadır.</p>
+</details>
+<details class="question">
+<summary>5. 3 <abbr title="gigahertz">GHz</abbr>'de bir RAM erişimi kabaca kaç <abbr title="Central Processing Unit">CPU</abbr> döngüsüne mal olur?</summary>
+<p>Yaklaşık 300 döngü (~100 ns × 3 döngü/ns). Bu sürede çekirdek yüzlerce komut çalıştırabilirdi.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://godbolt.org/">Compiler Explorer (godbolt.org)</a>: C yaz, assembly'yi canlı gör</li>
+<li><a href="https://gitlab.com/x86-psABIs/x86-64-ABI">System V AMD64 <abbr title="Application Binary Interface">ABI</abbr></a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
+<li><a href="https://people.freebsd.org/~lstewart/articles/cpumemory.pdf">What Every Programmer Should Know About Memory, Ulrich Drepper</a></li>
+<li><a href="https://colin-scott.github.io/personal_website/research/interactive_latency.html">Latency numbers every programmer should know</a></li>
+</ul>
+<h2 id="kendi-notlarm">✍️ Kendi notlarım<a class="headerlink" href="#kendi-notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Fetch-decode-execute döngüsünü ve stack'i kendi cümlelerinle 5 satırda anlat.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../01-keypress/03-input-stack/" class="md-footer__link md-footer__link--prev" aria-label="Önceki: 1.3 · Linux input stack">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                1.3 · Linux input stack
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-isa-assembly/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 2.1 · Instruction sets &amp; assembly">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                2.1 · Instruction sets &amp; assembly
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

@@ -1,0 +1,2709 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Bir LLM isteğinin yaşamı, gecikme ve verim metrikleri, KV cache hesabı ve sayfalama, sürekli batching, quantization, speculative decoding, prefix caching, prefill/decode ayrıştırma, KV'ye duyarlı yönlendirme ve başlıca servis motorları.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/05-inference/">
+      
+      
+        <link rel="prev" href="../04-training/">
+      
+      
+        <link rel="next" href="../06-kubernetes/">
+      
+      
+        
+          <link rel="alternate" href="../../../10-ai/05-inference/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>10.5 — Inference ve servis: derinlemesine - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="10.5 — Inference ve servis: derinlemesine - Silicon to Cloud">
+<meta property="og:description" content="Bir LLM isteğinin yaşamı, gecikme ve verim metrikleri, KV cache hesabı ve sayfalama, sürekli batching, quantization, speculative decoding, prefix caching, prefill/decode ayrıştırma, KV'ye duyarlı yönlendirme ve başlıca servis motorları.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/10-ai/05-inference.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/05-inference/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="10.5 — Inference ve servis: derinlemesine - Silicon to Cloud">
+<meta property="twitter:description" content="Bir LLM isteğinin yaşamı, gecikme ve verim metrikleri, KV cache hesabı ve sayfalama, sürekli batching, quantization, speculative decoding, prefix caching, prefill/decode ayrıştırma, KV'ye duyarlı yönlendirme ve başlıca servis motorları.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/10-ai/05-inference.png">
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#105-inference-ve-servis-derinlemesine" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10.5 — Inference ve servis: derinlemesine
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../10-ai/05-inference/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14" id="__nav_14_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 · AI infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-fundamentals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.1 · AI fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.2 · GPU hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.3 · Software stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.4 · Distributed training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.5 · Inference &amp; serving
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.5 · Inference &amp; serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-tek-bir-istege-ne-olur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Tek bir isteğe ne olur?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-onemli-metrikler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Önemli metrikler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-kv-cache-nedir-ve-sayfalama-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · KV cache nedir ve sayfalama nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · KV cache nedir ve sayfalama nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sayfalama-nasl-calsr-pagedattention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sayfalama nasıl çalışır? (PagedAttention)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-surekli-batching-nedir-ve-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Sürekli batching nedir ve nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Sürekli batching nedir ve nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-her-adm-ucuzlatmak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Her adımı ucuzlatmak
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Her adımı ucuzlatmak">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#speculative-decoding-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speculative decoding nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-olcegi-buyutmek-replikalar-bolme-ayrstrma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Ölçeği büyütmek: replikalar, bölme, ayrıştırma
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-motorlar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Motorlar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.6 · AI platform on Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.7 · Applications: RAG &amp; agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📖 AI glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-tek-bir-istege-ne-olur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Tek bir isteğe ne olur?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-onemli-metrikler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Önemli metrikler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-kv-cache-nedir-ve-sayfalama-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · KV cache nedir ve sayfalama nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · KV cache nedir ve sayfalama nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sayfalama-nasl-calsr-pagedattention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sayfalama nasıl çalışır? (PagedAttention)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-surekli-batching-nedir-ve-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Sürekli batching nedir ve nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Sürekli batching nedir ve nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-her-adm-ucuzlatmak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Her adımı ucuzlatmak
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Her adımı ucuzlatmak">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#speculative-decoding-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speculative decoding nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-olcegi-buyutmek-replikalar-bolme-ayrstrma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Ölçeği büyütmek: replikalar, bölme, ayrıştırma
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-motorlar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Motorlar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    10 · AI infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="105-inference-ve-servis-derinlemesine">10.5 — Inference ve servis: derinlemesine<a class="headerlink" href="#105-inference-ve-servis-derinlemesine" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p>Bir <abbr title="Large Language Model">LLM</abbr>'i servis etmek, <strong>ilk token'a kadar geçen süreyi</strong> ve <strong>çıktı token'ı başına süreyi</strong> düşük tutarken <abbr title="Graphics Processing Unit">GPU</abbr>
+bellek bant genişliğini aynı anda çok sayıda kullanıcı için <strong>saniyede token</strong>'a çevirmek demektir. Araçlar şunlar:
+sanal bellek gibi yönetilen bir <strong>KV cache</strong>, <abbr title="Graphics Processing Unit">GPU</abbr>'yu dolu tutmak için <strong>sürekli batching</strong>, her adımı ucuzlatmak
+için <strong>quantization</strong> ve <strong>speculative decoding</strong>, tekrarlanan işi atlamak için <strong>prefix caching</strong>. Ölçek büyüyünce
+de <strong>KV'ye duyarlı yönlendirme</strong> ve <strong>ayrı prefill ve decode havuzları</strong>.</p>
+</div>
+<h2 id="terimler-ve-ksaltmalar">📖 Terimler ve kısaltmalar<a class="headerlink" href="#terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inference / servis</strong></td>
+<td>—</td>
+<td>Eğitilmiş bir modeli kullanıcılar için çalıştırmak</td>
+<td>Bir motor ağırlıkları yükler, istekleri kabul eder, token'ları akıtır</td>
+</tr>
+<tr>
+<td><strong>Prefill</strong></td>
+<td>—</td>
+<td>Tüm prompt'u işlemek</td>
+<td>Tüm prompt token'ları paralel işlenir, KV cache kurulur</td>
+</tr>
+<tr>
+<td><strong>Decode</strong></td>
+<td>—</td>
+<td>Çıktı token'larını üretmek</td>
+<td>Adım başına istek başına bir token</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time To First Token">TTFT</abbr></strong></td>
+<td>Time To First Token</td>
+<td>İlk çıktı token'ına kadar geçen gecikme</td>
+<td>Kuyruk + prefill</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time Per Output Token">TPOT</abbr> / <abbr title="Inter-Token Latency">ITL</abbr></strong></td>
+<td>Time Per Output Token / Inter-Token Latency</td>
+<td>Çıktı token'ları arası süre</td>
+<td>Bu istek için bir decode adımı</td>
+</tr>
+<tr>
+<td><strong>E2E gecikme</strong></td>
+<td>End-to-End</td>
+<td>Toplam istek süresi</td>
+<td><abbr title="Time To First Token">TTFT</abbr> + <abbr title="Time Per Output Token">TPOT</abbr> × (çıktı token sayısı − 1)</td>
+</tr>
+<tr>
+<td><strong>Verim (throughput)</strong></td>
+<td>—</td>
+<td>Bir kurulumun toplam token/sn'si (ya da istek/sn)</td>
+<td>Gecikme <abbr title="Service Level Objective">SLO</abbr>'ları bozulana kadar batch boyutuyla büyür</td>
+</tr>
+<tr>
+<td><strong>Goodput</strong></td>
+<td>—</td>
+<td>Gecikme <abbr title="Service Level Objective">SLO</abbr>'sunu karşılayan verim</td>
+<td>Kullanıcı için gerçekten sayılan şey</td>
+</tr>
+<tr>
+<td><strong><abbr title="Service Level Objective">SLO</abbr></strong></td>
+<td>Service Level Objective</td>
+<td>Bir gecikme/erişilebilirlik hedefi</td>
+<td>ör. p95 <abbr title="Time To First Token">TTFT</abbr> &lt; 1 sn, p95 <abbr title="Time Per Output Token">TPOT</abbr> &lt; 50 ms</td>
+</tr>
+<tr>
+<td><strong>KV cache</strong></td>
+<td>Key-Value cache</td>
+<td>Geçmiş token'ların saklanan attention K ve V'leri</td>
+<td>Bağlam uzunluğu × eşzamanlı istek sayısıyla büyür</td>
+</tr>
+<tr>
+<td><strong><abbr title="Grouped-Query">GQA</abbr> / <abbr title="Multi-Query Attention">MQA</abbr></strong></td>
+<td>Grouped-Query / Multi-Query Attention</td>
+<td>Q head'lerinden daha az K/V head'i</td>
+<td>KV cache'i birkaç kat küçültür</td>
+</tr>
+<tr>
+<td><strong>PagedAttention</strong></td>
+<td>—</td>
+<td>Sabit boyutlu bloklarda saklanan KV cache</td>
+<td>Bir blok tablosu mantıksal blokları fiziksellere eşler (page table gibi)</td>
+</tr>
+<tr>
+<td><strong>Sürekli batching</strong></td>
+<td>Continuous batching</td>
+<td>Batch'i her decode adımında yeniden kur</td>
+<td>Yeni istekler katılır, bitenler hemen ayrılır</td>
+</tr>
+<tr>
+<td><strong>Parçalı prefill</strong></td>
+<td>Chunked prefill</td>
+<td>Uzun prompt'ları parçalara böl</td>
+<td>Prefill parçalarını decode adımlarıyla karıştırır, decode'lar durmaz</td>
+</tr>
+<tr>
+<td><strong>Prefix caching</strong></td>
+<td>—</td>
+<td>Ortak bir prompt önekinin KV'sini yeniden kullan</td>
+<td>Sistem prompt'u / sohbet geçmişi bir kez hesaplanır</td>
+</tr>
+<tr>
+<td><strong>Quantization</strong></td>
+<td>—</td>
+<td>Ağırlıkları (belki KV/aktivasyonları da) daha az bitle sakla</td>
+<td>FP8, INT8, INT4 (AWQ, GPTQ), FP4</td>
+</tr>
+<tr>
+<td><strong>Speculative decoding</strong></td>
+<td>—</td>
+<td>Birkaç token'ı ucuza taslak olarak çıkar, tek büyük adımda doğrula</td>
+<td>Çıktı normal decode'la aynı, daha az yavaş adım</td>
+</tr>
+<tr>
+<td><strong><abbr title="Multi-Token Prediction">MTP</abbr></strong></td>
+<td>Multi-Token Prediction</td>
+<td>Sıradaki birkaç token'ı tahmin eden ek head'ler</td>
+<td>Speculative decoding için yerleşik taslak</td>
+</tr>
+<tr>
+<td><strong>P/D ayrıştırma</strong></td>
+<td>Prefill/Decode disaggregation</td>
+<td>Prefill ve decode farklı worker'larda</td>
+<td>KV cache aralarında <abbr title="Remote Direct Memory Access">RDMA</abbr> ile aktarılır</td>
+</tr>
+<tr>
+<td><strong>KV'ye duyarlı yönlendirme</strong></td>
+<td>KV-aware routing</td>
+<td>İsteği önekinin KV'sinin zaten bulunduğu yere gönder</td>
+<td>Router hangi pod'da hangi önek olduğunu takip eder</td>
+</tr>
+<tr>
+<td><strong><abbr title="Endpoint Picker">EPP</abbr></strong></td>
+<td>Endpoint Picker</td>
+<td>Gateway API Inference Extension'daki yönlendirme beyni</td>
+<td>Pod'ları KV cache isabeti, kuyruk ve yüke göre puanlar</td>
+</tr>
+<tr>
+<td><strong><abbr title="NVIDIA Inference Xfer Library">NIXL</abbr></strong></td>
+<td>NVIDIA Inference Xfer Library</td>
+<td>Hızlı KV cache aktarım kütüphanesi</td>
+<td>KV'yi <abbr title="Graphics Processing Unit">GPU</abbr>'lar/node'lar/depolama katmanları arasında taşır</td>
+</tr>
+<tr>
+<td><strong>Multi-<abbr title="Low-Rank Adaptation">LoRA</abbr></strong></td>
+<td>—</td>
+<td>Tek temel modelin üstünde çok sayıda ince ayarlı adaptör</td>
+<td>Adaptör istek başına seçilir, temel ağırlıklar ortak</td>
+</tr>
+<tr>
+<td><strong><abbr title="Server-Sent Events">SSE</abbr></strong></td>
+<td>Server-Sent Events</td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr> akış formatı</td>
+<td>Token(lar) başına bir <code>data: {...}</code> parçası</td>
+</tr>
+<tr>
+<td><strong>OpenAI uyumlu API</strong></td>
+<td>—</td>
+<td><code>/v1/chat/completions</code>, <code>/v1/completions</code>, <code>/v1/embeddings</code></td>
+<td>Fiilî standart istek/cevap formatı</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-5-serving.png" data-desc-position="bottom"><img alt="LLM'leri ölçekte servis etmek" src="../../assets/diagrams/10-5-serving.png"></a></p>
+<hr>
+<h2 id="1-tek-bir-istege-ne-olur">1 · Tek bir isteğe ne olur?<a class="headerlink" href="#1-tek-bir-istege-ne-olur" title="Permanent link">¶</a></h2>
+<ol>
+<li>İstemci <code>stream: true</code> ile <code>POST /v1/chat/completions</code> gönderir.</li>
+<li><strong>Gateway</strong> kimlik doğrular, kotaları uygular, modeli seçer. <strong>Router</strong> bir replika seçer (ideal olarak bu prompt önekini zaten önbellekte tutan bir replika).</li>
+<li>Motorun <strong>zamanlayıcısı</strong> isteği kuyruğa alır, KV cache'te yer açılınca çalışan batch'e kabul eder.</li>
+<li><strong>Prefill</strong>: prompt token'lara çevrilir ve tek büyük paralel geçişte işlenir. KV cache dolar. İlk token çıkar → <strong><abbr title="Time To First Token">TTFT</abbr></strong>.</li>
+<li><strong>Decode</strong>: her adımda motor, istek başına bir token daha için tüm batch'i çalıştırır → <strong><abbr title="Time Per Output Token">TPOT</abbr></strong>. Her token bir <abbr title="Server-Sent Events">SSE</abbr> parçası olarak geri akar.</li>
+<li>Durdurma token'ında ya da <code>max_tokens</code>'ta istek batch'ten ayrılır ve KV blokları serbest bırakılır (ya da önek yeniden kullanımı için tutulur).</li>
+</ol>
+<h2 id="2-onemli-metrikler">2 · Önemli metrikler<a class="headerlink" href="#2-onemli-metrikler" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Metrik</th>
+<th>Neye bağlı</th>
+<th>Kullanıcı nasıl hisseder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Time To First Token">TTFT</abbr></strong></td>
+<td>Kuyruk süresi + prompt uzunluğu (prefill hesabı)</td>
+<td>"Hemen cevap vermeye başlıyor"</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time Per Output Token">TPOT</abbr></strong></td>
+<td>Batch boyutu, model boyutu, bellek bant genişliği</td>
+<td>"Hızlı yazıyor" (~20–50 ms/token akıcı hissettirir)</td>
+</tr>
+<tr>
+<td><strong>Verim</strong> (<abbr title="Graphics Processing Unit">GPU</abbr> başına token/sn)</td>
+<td>Batch boyutu, KV cache kapasitesi, optimizasyonlar</td>
+<td>Milyon token başına maliyet</td>
+</tr>
+<tr>
+<td><strong>Goodput</strong></td>
+<td><abbr title="Service Level Objective">SLO</abbr>'lar <strong>içinde</strong> kalan verim</td>
+<td>Planlamada kullanılacak gerçek kapasite sayısı</td>
+</tr>
+</tbody>
+</table>
+<p>Temel ödünleşim: <strong>büyük batch → yüksek verim ama yüksek <abbr title="Time Per Output Token">TPOT</abbr></strong>. Kapasite planlaması = p95 <abbr title="Time To First Token">TTFT</abbr> ve <abbr title="Time Per Output Token">TPOT</abbr>'un hâlâ <abbr title="Service Level Objective">SLO</abbr>'yu karşıladığı en büyük batch'i (eşzamanlılığı) bulmak.</p>
+<h2 id="3-kv-cache-nedir-ve-sayfalama-nasl-calsr">3 · KV cache nedir ve sayfalama nasıl çalışır?<a class="headerlink" href="#3-kv-cache-nedir-ve-sayfalama-nasl-calsr" title="Permanent link">¶</a></h2>
+<h3 id="nedir">Nedir?<a class="headerlink" href="#nedir" title="Permanent link">¶</a></h3>
+<p>Bir istekteki her token için her katman, attention <strong>Key</strong> ve <strong>Value</strong> vektörlerini saklar ki her decode adımında yeniden hesaplanmasınlar.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Token başına KV byte'ı = 2 (K ve V) × katman × KV head × head boyutu × değer başına byte
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Llama-3-8B (32 katman, 8 KV head, 128 boyut, BF16): 2 × 32 × 8 × 128 × 2 ≈ token başına 128 KB
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>→ 8.000 token'lık bir sohbet ≈ 1 GB · bunlardan 50 kullanıcı ≈ 16 GB ağırlığın üstüne 50 GB KV cache
+</code></pre></div>
+<h3 id="sayfalama-nasl-calsr-pagedattention">Sayfalama nasıl çalışır? (PagedAttention)<a class="headerlink" href="#sayfalama-nasl-calsr-pagedattention" title="Permanent link">¶</a></h3>
+<ol>
+<li>Ağırlıklardan sonra kalan <abbr title="Graphics Processing Unit">GPU</abbr> belleği <strong>sabit boyutlu bloklara</strong> bölünür (ör. her biri 16 token).</li>
+<li>Her isteğin, mantıksal bloklarını fiziksel bloklara eşleyen bir <strong>blok tablosu</strong> vardır. Tam olarak bir OS page table'ı gibi (Bölüm 3).</li>
+<li>Bloklar istek büyüdükçe <strong>ihtiyaç anında</strong> ayrılır. Hiç üretilmeyebilecek token'lar için bellek ayrılmaz.</li>
+<li><strong>Aynı öneke</strong> sahip istekler <strong>aynı fiziksel bloklara</strong> işaret edebilir (copy-on-write). Prefix caching böyle çalışır.</li>
+<li>Bellek dolduğunda zamanlayıcı bir isteği <strong>askıya alır (preempt)</strong> ya da blokları <abbr title="Central Processing Unit">CPU</abbr> RAM'ine/SSD'ye <strong>boşaltır (offload)</strong>.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-5a-kvcache.png" data-desc-position="bottom"><img alt="Sayfalamalı KV cache" src="../../assets/diagrams/10-5a-kvcache.png"></a></p>
+<h2 id="4-surekli-batching-nedir-ve-nasl-calsr">4 · Sürekli batching nedir ve nasıl çalışır?<a class="headerlink" href="#4-surekli-batching-nedir-ve-nasl-calsr" title="Permanent link">¶</a></h2>
+<h3 id="nedir_1">Nedir?<a class="headerlink" href="#nedir_1" title="Permanent link">¶</a></h3>
+<p>Sabit bir batch başlatıp en uzun isteğinin bitmesini beklemek yerine, motor <strong>batch'i her decode adımında yeniden oluşturur</strong>.</p>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li>Her aktif istek için bir decode adımı çalıştır (her birine +1 token).</li>
+<li>Az önce bitenleri çıkar, KV bloklarını boşalt, kullanıcılara döndür.</li>
+<li>Bekleyen istekleri boşalan yere kabul et. Prompt'ları <strong>parçalı prefill</strong> ile işlenir ve decode adımlarına karıştırılır, böylece mevcut kullanıcılar takılmaz.</li>
+<li>Tekrarla. <abbr title="Graphics Processing Unit">GPU</abbr>, uzun bir cevabı beklerken hiçbir zaman yarı boş oturmaz.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-5b-batching.png" data-desc-position="bottom"><img alt="Statik ve sürekli batching" src="../../assets/diagrams/10-5b-batching.png"></a></p>
+<h2 id="5-her-adm-ucuzlatmak">5 · Her adımı ucuzlatmak<a class="headerlink" href="#5-her-adm-ucuzlatmak" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Teknik</th>
+<th>Neyi kazandırır</th>
+<th>Bedeli</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Quantization</strong> (FP8 / INT8 / INT4 / FP4 ağırlıklar, FP8 KV cache)</td>
+<td>Token başına bellek ve bant genişliği → daha çok token/sn, daha büyük batch'ler</td>
+<td>Küçük doğruluk kaybı, değerlendirilmeli</td>
+</tr>
+<tr>
+<td><strong>FlashAttention / birleşik kernel'ler / <abbr title="Compute Unified Device Architecture">CUDA</abbr> Graphs</strong></td>
+<td><abbr title="High Bandwidth Memory">HBM</abbr> trafiği ve <abbr title="Central Processing Unit">CPU</abbr> başlatma yükü</td>
+<td>Yok (motorlarda varsayılan)</td>
+</tr>
+<tr>
+<td><strong>Prefix caching</strong></td>
+<td>Tekrarlanan sistem prompt'ları, <abbr title="Retrieval-Augmented Generation">RAG</abbr> bağlamı, sohbet geçmişi için prefill</td>
+<td>Önbellekteki blokları tutacak bellek</td>
+</tr>
+<tr>
+<td><strong>Speculative decoding / <abbr title="Multi-Token Prediction">MTP</abbr></strong></td>
+<td>Yavaş decode adımlarının sayısı</td>
+<td>Ekstra taslak hesabı; en iyi düşük batch boyutlarında</td>
+</tr>
+<tr>
+<td><strong><abbr title="Grouped-Query">GQA</abbr> / MLA</strong> (model mimarisi)</td>
+<td>KV cache boyutu</td>
+<td>Eğitim anında seçilir</td>
+</tr>
+</tbody>
+</table>
+<h3 id="speculative-decoding-nasl-calsr">Speculative decoding nasıl çalışır?<a class="headerlink" href="#speculative-decoding-nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li>Bir <strong>taslak</strong> (küçük bir model ya da büyük modelin üstünde ek <abbr title="Multi-Token Prediction">MTP</abbr> head'leri), sıradaki <em>k</em> token'ı hızlıca önerir.</li>
+<li>Büyük <strong>hedef</strong> model <em>k</em> token'ın hepsini <strong>tek bir forward pass</strong>'te kontrol eder (minik bir prefill gibi; ucuzdur çünkü decode bant genişliği sınırlıdır ve boş hesap gücü vardır).</li>
+<li>Hedefin üreteceğiyle eşleşen en uzun önek <strong>kabul edilir</strong>. İlk uyuşmazlık, hedefin token'ıyla değiştirilir.</li>
+<li>Çıktı normal decode ile <strong>aynıdır</strong>. Sadece büyük adım başına birkaç token elde edersin.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-5c-speculative.png" data-desc-position="bottom"><img alt="Speculative decoding" src="../../assets/diagrams/10-5c-speculative.png"></a></p>
+<h2 id="6-olcegi-buyutmek-replikalar-bolme-ayrstrma">6 · Ölçeği büyütmek: replikalar, bölme, ayrıştırma<a class="headerlink" href="#6-olcegi-buyutmek-replikalar-bolme-ayrstrma" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Durum</th>
+<th>Ne yaparsın</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model tek <abbr title="Graphics Processing Unit">GPU</abbr>'ya sığıyor, trafik artıyor</td>
+<td>Load balancer arkasında <strong>daha fazla replika</strong></td>
+</tr>
+<tr>
+<td>Model tek <abbr title="Graphics Processing Unit">GPU</abbr>'ya sığmıyor</td>
+<td>Node içinde <strong>tensor parallel</strong> (<abbr title="Tensor Parallel">TP</abbr>=2/4/8). Çok büyük ya da <abbr title="Mixture of Experts">MoE</abbr> modeller için node'lar arası pipeline/expert parallel</td>
+</tr>
+<tr>
+<td>Birçok istek önek paylaşıyor</td>
+<td>İstekler KV'lerinin zaten bulunduğu yere düşsün diye <strong>KV/önek duyarlı yönlendirme</strong> (round robin cache isabetlerini yok eder)</td>
+</tr>
+<tr>
+<td>Uzun prompt'lar herkesin <abbr title="Time Per Output Token">TPOT</abbr>'unu bozuyor</td>
+<td><strong>P/D ayrıştırma</strong>: prefill havuzu ve decode havuzu, KV <abbr title="Remote Direct Memory Access">RDMA</abbr> ile aktarılır, her havuz kendi yüküne göre ölçeklenir</td>
+</tr>
+<tr>
+<td>KV cache sığmıyor</td>
+<td><strong>Katmanlı KV</strong>: <abbr title="High Bandwidth Memory">HBM</abbr> → <abbr title="Central Processing Unit">CPU</abbr> RAM → yerel SSD → ortak depolama</td>
+</tr>
+<tr>
+<td>Çok sayıda ince ayarlı varyant</td>
+<td><strong>Multi-<abbr title="Low-Rank Adaptation">LoRA</abbr></strong>: tek temel model, adaptörler istek başına yüklenir</td>
+</tr>
+</tbody>
+</table>
+<p>Kubernetes'te bu iş <strong>Gateway API Inference Extension</strong>'ın (InferencePool + bir endpoint seçici), <strong>llm-d</strong>'nin (Kubernetes üzerinde dağıtık vLLM/SGLang servisi için CNCF projesi) ve <strong>NVIDIA Dynamo</strong>'nun (motordan bağımsız dağıtık servis framework'ü) işidir. Bkz. <a href="../06-kubernetes/">10.6</a>.</p>
+<h2 id="7-motorlar">7 · Motorlar<a class="headerlink" href="#7-motorlar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Motor</th>
+<th>Güçlü yanları</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>vLLM</strong></td>
+<td>En geniş model ve donanım desteği, PagedAttention, OpenAI uyumlu, topluluğun varsayılanı</td>
+</tr>
+<tr>
+<td><strong>SGLang</strong></td>
+<td>Çok hızlı prefix caching (RadixAttention), yapılandırılmış çıktılar, ajan iş yükleri için güçlü</td>
+</tr>
+<tr>
+<td><strong>TensorRT-<abbr title="Large Language Model">LLM</abbr></strong></td>
+<td>NVIDIA için optimize kernel'ler ve FP8/FP4, ayarlandığında NVIDIA'da en yüksek performans</td>
+</tr>
+<tr>
+<td><strong>Triton Inference Server</strong></td>
+<td>Her model tipi için (sadece <abbr title="Large Language Model">LLM</abbr> değil) çok framework'lü sunucu</td>
+</tr>
+<tr>
+<td><strong>llama.cpp / Ollama</strong></td>
+<td><abbr title="Central Processing Unit">CPU</abbr>'lar, laptoplar, edge cihazlar, GGUF quantize modeller</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> bağlantısı: bir <abbr title="Large Language Model">LLM</abbr> endpoint'i <strong>kılık değiştirmiş stateful bir servistir</strong>. KV cache yüzünden "hangi pod" önemlidir, yeniden başlatmadan sonra ısınma yavaştır (onlarca GB ağırlık yüklenir) ve otomatik ölçekleme <abbr title="Central Processing Unit">CPU</abbr>'ya değil <abbr title="Large Language Model">LLM</abbr> sinyallerine (kuyruk uzunluğu, KV kullanımı, <abbr title="Time To First Token">TTFT</abbr>) dayanmalıdır.</p>
+</blockquote>
+<hr>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 1) Herhangi bir model yapılandırması için KV cache hesabı</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="s">layers, kv_heads, head_dim, bytes_ = 32, 8, 128, 2      # Llama-3-8B, BF16</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="s">per_tok = 2 * layers * kv_heads * head_dim * bytes_</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="s">print(f"{per_tok/1024:.0f} KB/token · 8k bağlam = {per_tok*8192/1e9:.2f} GB · 50 kullanıcı = {per_tok*8192*50/1e9:.0f} GB")</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="s">EOF</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># 2) vLLM ile küçük bir model servis et (GPU) ve motorun kendi metriklerini izle</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>vllm<span class="w"> </span>serve<span class="w"> </span>Qwen/Qwen2.5-0.5B-Instruct<span class="w"> </span>--max-num-seqs<span class="w"> </span><span class="m">64</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>curl<span class="w"> </span>-N<span class="w"> </span>localhost:8000/v1/chat/completions<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Content-Type: application/json'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"model":"Qwen/Qwen2.5-0.5B-Instruct","stream":true,"messages":[{"role":"user","content":"10a kadar say"}]}'</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>curl<span class="w"> </span>-s<span class="w"> </span>localhost:8000/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"num_requests_running|num_requests_waiting|kv_cache_usage|time_to_first_token"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># 3) Yük testi: farklı eşzamanlılıklarda verim ve gecikme</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>vllm<span class="w"> </span>bench<span class="w"> </span>serve<span class="w"> </span>--model<span class="w"> </span>Qwen/Qwen2.5-0.5B-Instruct<span class="w"> </span>--dataset-name<span class="w"> </span>random<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span>--random-input-len<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--random-output-len<span class="w"> </span><span class="m">200</span><span class="w"> </span>--num-prompts<span class="w"> </span><span class="m">200</span><span class="w"> </span>--max-concurrency<span class="w"> </span><span class="m">8</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="c1">#   --max-concurrency 64 ile tekrarla; token/sn, TTFT ve TPOT'u karşılaştır</span>
+</code></pre></div>
+<p><strong>Görev:</strong> benchmark'ı 1, 8, 32 ve 128 eşzamanlılıkta çalıştır. Çıktı token/sn'yi p95 <abbr title="Time Per Output Token">TPOT</abbr>'a karşı çiz. 50 ms'lik bir <abbr title="Time Per Output Token">TPOT</abbr> <abbr title="Service Level Objective">SLO</abbr>'su için sınırı nereye koyardın?</p>
+<hr>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>İstek: gateway → router (önek duyarlı) → kuyruk → PREFILL (TTFT) → DECODE adımları (TPOT) → SSE akışı → KV'yi boşalt
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>E2E ≈ TTFT + TPOT × (çıktı token − 1) · batch ile verim ↑, TPOT da ↑ → goodput'a göre planla
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Token başına KV = 2 × katman × KV head × head boyutu × byte (8B ≈ 128 KB) · bloklarda sayfalı, ortak önekler, boşaltma katmanları
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Sürekli batching + parçalı prefill GPU'yu dolu tutar
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Ucuz adımlar: quantization (FP8/INT4/FP4) · FlashAttention · prefix caching · speculative decoding / MTP
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Ölçek: replikalar → büyük modeller için TP → KV duyarlı yönlendirme → P/D ayrıştırma (llm-d, Dynamo, Inference Gateway)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Motorlar: vLLM · SGLang · TensorRT-LLM · Triton · llama.cpp/Ollama
+</code></pre></div>
+<hr>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. Kullanıcılar ilk kelimenin 4 saniyede çıktığından ama sonra metnin hızlı aktığından şikâyet ediyor. Hangi metrik ve hangi aşama?</summary>
+<p>Yüksek <abbr title="Time To First Token">TTFT</abbr>: ya kuyrukta bekleme (yetersiz kapasite ya da kötü yönlendirme) ya da yavaş prefill (çok uzun prompt'lar). Prefix caching, parçalı prefill, daha fazla replika ya da P/D ayrıştırma yardımcı olur.</p>
+</details>
+<details class="question">
+<summary>2. Round-robin yük dağıtımı <abbr title="Large Language Model">LLM</abbr> servisine neden zarar verir?</summary>
+<p>Her sohbetin KV cache'inin (önekinin) nerede durduğunu yok sayar. Bu yüzden istekler prefill'i yeniden hesaplamak zorunda olan pod'lara düşmeye devam eder. KV duyarlı yönlendirme onları öneki zaten tutan pod'a gönderir.</p>
+</details>
+<details class="question">
+<summary>3. 8 KV head'li, head boyutu 128 olan 32 katmanlı bir model, BF16'da 4k token'lık 100 eşzamanlı istek için ne kadar KV cache'e ihtiyaç duyar?</summary>
+<p>2 × 32 × 8 × 128 × 2 byte = token başına 128 KB → × 4.096 token × 100 istek ≈ 54 GB.</p>
+</details>
+<details class="question">
+<summary>4. Speculative decoding modelin cevaplarını değiştirir mi?</summary>
+<p>Hayır. Kabul edilen token'lar tam olarak hedef modelin üreteceği token'lardır. Taslak sadece birkaçının tek bir forward pass'te onaylanmasını sağlar.</p>
+</details>
+<details class="question">
+<summary>5. Prefill ve decode neden farklı <abbr title="Graphics Processing Unit">GPU</abbr>'lara ayrılır?</summary>
+<p>Farklı kaynakları zorlarlar (hesaplama ve bellek bant genişliği). Bir arada olduklarında uzun prefill'ler herkesin decode adımlarını takılmaya uğratır. Ayrı havuzlar bağımsız olarak boyutlandırılabilir, ölçeklenebilir ve kendi darboğazlarına göre ayarlanabilir.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://docs.vllm.ai/">vLLM dokümanları</a> · <a href="https://arxiv.org/abs/2309.06180">PagedAttention makalesi</a></li>
+<li><a href="https://docs.sglang.ai/">SGLang dokümanları</a> · <a href="https://nvidia.github.io/TensorRT-LLM/">TensorRT-<abbr title="Large Language Model">LLM</abbr> dokümanları</a></li>
+<li><a href="https://gateway-api-inference-extension.sigs.k8s.io/">Gateway API Inference Extension</a> · <a href="https://llm-d.ai/">llm-d</a> · <a href="https://docs.nvidia.com/dynamo/latest/">NVIDIA Dynamo</a></li>
+<li><a href="https://arxiv.org/abs/2401.09670">DistServe: prefill ve decode'u ayrıştırmak</a></li>
+<li><a href="https://arxiv.org/abs/2211.17192">Speculative decoding (Leviathan vd.)</a></li>
+</ul>
+<h2 id="kendi-notlarm">✍️ Kendi notlarım<a class="headerlink" href="#kendi-notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p><abbr title="Time To First Token">TTFT</abbr> ile <abbr title="Time Per Output Token">TPOT</abbr>'u, KV cache'in neden eşzamanlılığı sınırladığını ve sürekli batching'in ne yaptığını kendi cümlelerinle 5 satırda anlat.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../04-training/" class="md-footer__link md-footer__link--prev" aria-label="Önceki: 10.4 · Distributed training">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                10.4 · Distributed training
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../06-kubernetes/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 10.6 · AI platform on Kubernetes">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                10.6 · AI platform on Kubernetes
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

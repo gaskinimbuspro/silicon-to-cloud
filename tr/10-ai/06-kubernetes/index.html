@@ -1,0 +1,2725 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kubernetes'te GPU çalıştırmak: GPU Operator, device plugin ve Dynamic Resource Allocation, GPU node havuzları, Kueue ve gang scheduling, JobSet ve LeaderWorkerSet, KServe, llm-d ve Gateway API Inference Extension, model önbellekleme, otomatik ölçekleme, gözlemlenebilirlik ve maliyet.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/06-kubernetes/">
+      
+      
+        <link rel="prev" href="../05-inference/">
+      
+      
+        <link rel="next" href="../07-applications/">
+      
+      
+        
+          <link rel="alternate" href="../../../10-ai/06-kubernetes/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>10.6 — Kubernetes üzerinde AI platformu - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="10.6 — Kubernetes üzerinde AI platformu - Silicon to Cloud">
+<meta property="og:description" content="Kubernetes'te GPU çalıştırmak: GPU Operator, device plugin ve Dynamic Resource Allocation, GPU node havuzları, Kueue ve gang scheduling, JobSet ve LeaderWorkerSet, KServe, llm-d ve Gateway API Inference Extension, model önbellekleme, otomatik ölçekleme, gözlemlenebilirlik ve maliyet.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/10-ai/06-kubernetes.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/10-ai/06-kubernetes/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="10.6 — Kubernetes üzerinde AI platformu - Silicon to Cloud">
+<meta property="twitter:description" content="Kubernetes'te GPU çalıştırmak: GPU Operator, device plugin ve Dynamic Resource Allocation, GPU node havuzları, Kueue ve gang scheduling, JobSet ve LeaderWorkerSet, KServe, llm-d ve Gateway API Inference Extension, model önbellekleme, otomatik ölçekleme, gözlemlenebilirlik ve maliyet.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/10-ai/06-kubernetes.png">
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#106-kubernetes-uzerinde-ai-platformu" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10.6 — Kubernetes üzerinde AI platformu
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../10-ai/06-kubernetes/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14" id="__nav_14_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 · AI infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-fundamentals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.1 · AI fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.2 · GPU hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.3 · Software stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.4 · Distributed training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.5 · Inference &amp; serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.6 · AI platform on Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.6 · AI platform on Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-gpu-nodelarn-hazrlamak-gpu-operator-ne-yapar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · GPU node'larını hazırlamak: GPU Operator ne yapar?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · GPU node'larını hazırlamak: GPU Operator ne yapar?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-gpu-istemek-device-plugin-ve-dra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · GPU istemek: device plugin ve DRA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · GPU istemek: device plugin ve DRA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dra-nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DRA nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-gpular-adil-paylasmak-kueue-ve-gang-scheduling-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · GPU'ları adil paylaşmak: Kueue ve gang scheduling nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · GPU'ları adil paylaşmak: Kueue ve gang scheduling nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-is-yuku-turleri-ve-kubernetes-yap-taslar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · İş yükü türleri ve Kubernetes yapı taşları
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-model-agrlklar-soguk-baslangc-sorunu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Model ağırlıkları: soğuk başlangıç sorunu
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-llm-sunucularn-otomatik-olceklemek" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · LLM sunucularını otomatik ölçeklemek
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-gozlemlenebilirlik-ve-maliyet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Gözlemlenebilirlik ve maliyet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10.7 · Applications: RAG &amp; agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📖 AI glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-gpu-nodelarn-hazrlamak-gpu-operator-ne-yapar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · GPU node'larını hazırlamak: GPU Operator ne yapar?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · GPU node'larını hazırlamak: GPU Operator ne yapar?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-gpu-istemek-device-plugin-ve-dra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · GPU istemek: device plugin ve DRA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · GPU istemek: device plugin ve DRA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dra-nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DRA nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-gpular-adil-paylasmak-kueue-ve-gang-scheduling-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · GPU'ları adil paylaşmak: Kueue ve gang scheduling nasıl çalışır?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · GPU'ları adil paylaşmak: Kueue ve gang scheduling nasıl çalışır?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-is-yuku-turleri-ve-kubernetes-yap-taslar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · İş yükü türleri ve Kubernetes yapı taşları
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-model-agrlklar-soguk-baslangc-sorunu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Model ağırlıkları: soğuk başlangıç sorunu
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-llm-sunucularn-otomatik-olceklemek" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · LLM sunucularını otomatik ölçeklemek
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-gozlemlenebilirlik-ve-maliyet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Gözlemlenebilirlik ve maliyet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendi-notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Kendi notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    10 · AI infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="106-kubernetes-uzerinde-ai-platformu">10.6 — Kubernetes üzerinde <abbr title="Artificial Intelligence">AI</abbr> platformu<a class="headerlink" href="#106-kubernetes-uzerinde-ai-platformu" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p>Kubernetes birkaç katman eklenerek bir <abbr title="Artificial Intelligence">AI</abbr> platformuna dönüşür. <strong><abbr title="Graphics Processing Unit">GPU</abbr> Operator</strong> <abbr title="Graphics Processing Unit">GPU</abbr> node'larını hazırlar (sürücü,
+toolkit, metrikler). <strong><abbr title="Dynamic Resource Allocation">DRA</abbr></strong> (ya da eski device plugin) pod'ların <abbr title="Graphics Processing Unit">GPU</abbr> talep etmesini sağlar. <strong>Kueue/KAI</strong> işleri
+<strong>gang scheduling</strong> ile kuyruğa alır ve adil kabul eder. <strong>JobSet/LeaderWorkerSet</strong> çok pod'lu eğitimi ve çok
+node'lu inference'ı çalıştırır. Bir <strong>inference gateway</strong> (Gateway API Inference Extension, llm-d, KServe) de
+istekleri <strong><abbr title="Large Language Model">LLM</abbr> sinyallerine göre otomatik ölçeklenen</strong> model sunucularına yönlendirir. Platform ekibinin işi:
+yüksek <abbr title="Graphics Processing Unit">GPU</abbr> kullanımı, adil paylaşım, hızlı soğuk başlangıç, net maliyet.</p>
+</div>
+<h2 id="terimler-ve-ksaltmalar">📖 Terimler ve kısaltmalar<a class="headerlink" href="#terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Graphics Processing Unit">GPU</abbr> Operator</strong></td>
+<td>—</td>
+<td>Tüm <abbr title="Graphics Processing Unit">GPU</abbr> node yığınını yöneten operator</td>
+<td>Sürücü, container toolkit, device plugin / <abbr title="Dynamic Resource Allocation">DRA</abbr> sürücüsü, <abbr title="Data Center GPU Manager">DCGM</abbr> exporter, <abbr title="Multi-Instance GPU">MIG</abbr> manager kurar</td>
+</tr>
+<tr>
+<td><strong><abbr title="Node Feature Discovery">NFD</abbr> / <abbr title="GPU Feature Discovery">GFD</abbr></strong></td>
+<td>Node Feature Discovery / <abbr title="Graphics Processing Unit">GPU</abbr> Feature Discovery</td>
+<td>Node'ları donanımlarıyla etiketler</td>
+<td>ör. <code>nvidia.com/gpu.product=H100-SXM</code></td>
+</tr>
+<tr>
+<td><strong>Device plugin</strong></td>
+<td>—</td>
+<td>Cihazları açmanın klasik yolu</td>
+<td>Bir <strong>sayıyı</strong> (<code>nvidia.com/gpu: 8</code>) extended resource olarak ilan eder</td>
+</tr>
+<tr>
+<td><strong><abbr title="Dynamic Resource Allocation">DRA</abbr></strong></td>
+<td>Dynamic Resource Allocation</td>
+<td>Yeni cihaz API'si (v1.34'ten beri GA, <code>resource.k8s.io/v1</code>)</td>
+<td>Pod'lar cihazları <strong>özelliklerine göre</strong> talep eder; scheduler eşler ve ayırır</td>
+</tr>
+<tr>
+<td><strong>ResourceSlice</strong></td>
+<td>—</td>
+<td>Bir sürücünün yayınladığı <abbr title="Dynamic Resource Allocation">DRA</abbr> nesnesi</td>
+<td>Bir node'daki cihazları özellikleriyle listeler</td>
+</tr>
+<tr>
+<td><strong>DeviceClass</strong></td>
+<td>—</td>
+<td>Yöneticilerin tanımladığı <abbr title="Dynamic Resource Allocation">DRA</abbr> nesnesi</td>
+<td>Bir cihaz türünü ve seçim kurallarını adlandırır</td>
+</tr>
+<tr>
+<td><strong>ResourceClaim / Template</strong></td>
+<td>—</td>
+<td>Bir pod'un istediği şey</td>
+<td>"≥80 GB'lık 1 <abbr title="Graphics Processing Unit">GPU</abbr>" ya da "aynı NVLink'te 2 <abbr title="Graphics Processing Unit">GPU</abbr>"</td>
+</tr>
+<tr>
+<td><strong>Taint / toleration</strong></td>
+<td>—</td>
+<td>Normal pod'ları <abbr title="Graphics Processing Unit">GPU</abbr> node'larından uzak tutar</td>
+<td><abbr title="Graphics Processing Unit">GPU</abbr> node'ları taint'lenir; sadece <abbr title="Graphics Processing Unit">GPU</abbr> iş yükleri tolere eder</td>
+</tr>
+<tr>
+<td><strong>Kueue</strong></td>
+<td>—</td>
+<td>Kubernetes'e özgü iş kuyruklama</td>
+<td>LocalQueue → kotaları, ödünç alma ve öncelikle kesme olan ClusterQueue</td>
+</tr>
+<tr>
+<td><strong>KAI Scheduler</strong></td>
+<td>—</td>
+<td>NVIDIA'nın açık kaynak, <abbr title="Artificial Intelligence">AI</abbr>'a duyarlı zamanlayıcısı</td>
+<td>Hiyerarşik kuyruklar, gang scheduling, <abbr title="Graphics Processing Unit">GPU</abbr> paylaşımı</td>
+</tr>
+<tr>
+<td><strong>Gang scheduling</strong></td>
+<td>—</td>
+<td>Bir işin tüm pod'ları ya birlikte başlar ya hiç</td>
+<td>Kilitlenmeleri ve yarım başlamış işleri önler</td>
+</tr>
+<tr>
+<td><strong>JobSet</strong></td>
+<td>—</td>
+<td>Tek birim olarak yönetilen bir Job grubu</td>
+<td>Ortak yaşam döngülü çok pod'lu dağıtık eğitim</td>
+</tr>
+<tr>
+<td><strong><abbr title="LeaderWorkerSet">LWS</abbr></strong></td>
+<td>LeaderWorkerSet</td>
+<td>Tek replika olarak pod grupları (lider + worker'lar)</td>
+<td>Tek node'a sığmayan modellerin çok node'lu inference'ı</td>
+</tr>
+<tr>
+<td><strong>KubeRay</strong></td>
+<td>—</td>
+<td>Ray cluster'ları için operator</td>
+<td>Kubernetes üzerinde Ray Train / Ray Serve</td>
+</tr>
+<tr>
+<td><strong>KServe</strong></td>
+<td>—</td>
+<td>Kubernetes üzerinde model servis platformu</td>
+<td><code>InferenceService</code> <abbr title="CustomResourceDefinition">CRD</abbr>'leri, otomatik ölçekleme, canary</td>
+</tr>
+<tr>
+<td><strong>Gateway API Inference Extension</strong></td>
+<td>—</td>
+<td><abbr title="Large Language Model">LLM</abbr> yönlendirmesi için Kubernetes SIG projesi</td>
+<td><code>InferencePool</code> + pod'ları KV cache ve yüke göre puanlayan bir <strong>endpoint seçici (<abbr title="Endpoint Picker">EPP</abbr>)</strong></td>
+</tr>
+<tr>
+<td><strong>llm-d</strong></td>
+<td>—</td>
+<td>Dağıtık <abbr title="Large Language Model">LLM</abbr> inference için CNCF projesi</td>
+<td>vLLM/SGLang + inference gateway + P/D ayrıştırma + KV duyarlı yönlendirme</td>
+</tr>
+<tr>
+<td><strong><abbr title="Kubernetes Event-Driven Autoscaling">KEDA</abbr></strong></td>
+<td>Kubernetes Event-Driven Autoscaling</td>
+<td>Dış metriklerle sürülen otomatik ölçekleyici</td>
+<td>Kuyruk uzunluğu, KV kullanımı, Prometheus sorgularına göre ölçekler</td>
+</tr>
+<tr>
+<td><strong><abbr title="Horizontal Pod Autoscaler">HPA</abbr></strong></td>
+<td>Horizontal Pod Autoscaler</td>
+<td>Yerleşik otomatik ölçekleyici</td>
+<td>Replikaları <abbr title="Central Processing Unit">CPU</abbr>/bellek ya da özel metriklere göre ölçekler</td>
+</tr>
+<tr>
+<td><strong>Model önbelleği</strong></td>
+<td>Model cache</td>
+<td>Model ağırlıklarını <abbr title="Graphics Processing Unit">GPU</abbr>'lara yakın tut</td>
+<td>Node'a yerel NVMe, ortak <abbr title="PersistentVolumeClaim">PVC</abbr> ya da <abbr title="Open Container Initiative">OCI</abbr> imaj volume'ları</td>
+</tr>
+<tr>
+<td><strong><abbr title="Data Center GPU Manager">DCGM</abbr> exporter</strong></td>
+<td>Data Center <abbr title="Graphics Processing Unit">GPU</abbr> Manager exporter</td>
+<td>Prometheus için <abbr title="Graphics Processing Unit">GPU</abbr> metrikleri</td>
+<td><abbr title="Graphics Processing Unit">GPU</abbr>/pod başına kullanım, bellek, güç, XID hataları</td>
+</tr>
+<tr>
+<td><strong>OpenCost</strong></td>
+<td>—</td>
+<td>Kubernetes maliyet dağıtımı</td>
+<td><abbr title="Graphics Processing Unit">GPU</abbr>'lar dahil namespace/ekip başına maliyet</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-6-platform.png" data-desc-position="bottom"><img alt="Kubernetes üzerinde bir AI platformu" src="../../assets/diagrams/10-6-platform.png"></a></p>
+<hr>
+<h2 id="1-gpu-nodelarn-hazrlamak-gpu-operator-ne-yapar">1 · <abbr title="Graphics Processing Unit">GPU</abbr> node'larını hazırlamak: <abbr title="Graphics Processing Unit">GPU</abbr> Operator ne yapar?<a class="headerlink" href="#1-gpu-nodelarn-hazrlamak-gpu-operator-ne-yapar" title="Permanent link">¶</a></h2>
+<h3 id="nedir">Nedir?<a class="headerlink" href="#nedir" title="Permanent link">¶</a></h3>
+<p>NVIDIA kartı olan sıradan bir node'u kullanıma hazır bir <abbr title="Graphics Processing Unit">GPU</abbr> node'una çeviren ve öyle kalmasını sağlayan bir operator.</p>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong><abbr title="Node Feature Discovery">NFD</abbr>/<abbr title="GPU Feature Discovery">GFD</abbr></strong> <abbr title="Graphics Processing Unit">GPU</abbr>'yu tespit eder ve node'u etiketler (ürün, bellek, <abbr title="Multi-Instance GPU">MIG</abbr> yeteneği, sürücü versiyonu).</li>
+<li><strong>Sürücü</strong> container'ı, node'un kernel'i için <code>nvidia.ko</code>'yu kurar (ya da önceden kurulu bir sürücüyü kullanır).</li>
+<li><strong>Container toolkit</strong>, container'ların <abbr title="Graphics Processing Unit">GPU</abbr> alabilmesi için containerd'yi yapılandırır (<abbr title="Container Device Interface">CDI</abbr> üzerinden).</li>
+<li><strong>Device plugin</strong> ya da <strong><abbr title="Dynamic Resource Allocation">DRA</abbr> sürücüsü</strong> <abbr title="Graphics Processing Unit">GPU</abbr>'ları Kubernetes'e ilan eder.</li>
+<li><strong><abbr title="Data Center GPU Manager">DCGM</abbr> exporter</strong> <abbr title="Graphics Processing Unit">GPU</abbr> başına metrikleri açar. <strong><abbr title="Multi-Instance GPU">MIG</abbr> manager</strong> bir node etiketinden <abbr title="Multi-Instance GPU">MIG</abbr> düzenlerini uygular.</li>
+<li>Bir <strong>validator</strong> test iş yükü çalıştırır. Node ancak ondan sonra <abbr title="Graphics Processing Unit">GPU</abbr> pod'ları için hazır olur.</li>
+</ol>
+<blockquote>
+<p>Platform ipucu: <abbr title="Graphics Processing Unit">GPU</abbr> node'larını <abbr title="Graphics Processing Unit">GPU</abbr> tipi başına <strong>ayrı, taint'li node havuzlarında</strong> tut ve sürücü versiyonlarını kernel versiyonları gibi yönet: sabitle, kademeli dağıt, havuza katılmadan önce <code>dcgmi diag</code> çalıştır.</p>
+</blockquote>
+<h2 id="2-gpu-istemek-device-plugin-ve-dra">2 · <abbr title="Graphics Processing Unit">GPU</abbr> istemek: device plugin ve <abbr title="Dynamic Resource Allocation">DRA</abbr><a class="headerlink" href="#2-gpu-istemek-device-plugin-ve-dra" title="Permanent link">¶</a></h2>
+<h3 id="dra-nedir"><abbr title="Dynamic Resource Allocation">DRA</abbr> nedir?<a class="headerlink" href="#dra-nedir" title="Permanent link">¶</a></h3>
+<p><strong>Dynamic Resource Allocation</strong>, "bana <em>n</em> tane <code>nvidia.com/gpu</code> ver" yerine, <em>hangi</em> cihaza ihtiyacın olduğunu tanımlayan bir <strong>talep (claim)</strong> kullanır. Bu, PersistentVolumeClaim'lerin depolamayı tanımlamasına benzer. Temel <abbr title="Dynamic Resource Allocation">DRA</abbr>, Kubernetes <strong>v1.34</strong>'ten beri GA'dir (<code>resource.k8s.io/v1</code>). NVIDIA'nın <abbr title="Graphics Processing Unit">GPU</abbr>'lar için <abbr title="Dynamic Resource Allocation">DRA</abbr> sürücüsü artık Kubernetes SIGs organizasyonunda duruyor.</p>
+<h3 id="nasl-calsr_1">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr_1" title="Permanent link">¶</a></h3>
+<ol>
+<li>Her node'daki <strong><abbr title="Dynamic Resource Allocation">DRA</abbr> sürücüsü</strong> <strong>ResourceSlice</strong>'lar yayınlar: her <abbr title="Graphics Processing Unit">GPU</abbr>, özellikleriyle birlikte (model, bellek, <abbr title="Multi-Instance GPU">MIG</abbr> profili, NVLink alanı…).</li>
+<li>Bir yönetici <strong>DeviceClass</strong>'lar tanımlar (ör. <code>gpu.nvidia.com</code>).</li>
+<li>Bir pod, istekler ve seçicilerle bir <strong>ResourceClaim</strong>'e (ya da şablona) referans verir, ör. "≥80 GB'lık 1 <abbr title="Graphics Processing Unit">GPU</abbr>".</li>
+<li><strong>Scheduler</strong>, cihazları talebi karşılayan bir node bulur, onları <strong>ayırır</strong> ve sonucu talebe yazar.</li>
+<li><strong>Kubelet</strong> sürücüden cihazı hazırlamasını ister ve container onunla başlar.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-6a-dra.png" data-desc-position="bottom"><img alt="Device plugin ve DRA" src="../../assets/diagrams/10-6a-dra.png"></a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Klasik device plugin</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">resources</span><span class="p">:</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">nvidia.com/gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nn">---</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># DRA (resource.k8s.io/v1)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource.k8s.io/v1</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ResourceClaimTemplate</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">single-gpu</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nt">spec</span><span class="p">:</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">spec</span><span class="p">:</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nt">devices</span><span class="p">:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">        </span><span class="nt">exactly</span><span class="p">:</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">          </span><span class="nt">deviceClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu.nvidia.com</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="nn">---</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">vllm</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="nt">spec</span><span class="p">:</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">  </span><span class="nt">resourceClaims</span><span class="p">:</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">    </span><span class="nt">resourceClaimTemplateName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">single-gpu</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vllm</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vllm/vllm-openai</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="nt">claims</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu</span>
+</code></pre></div>
+<h2 id="3-gpular-adil-paylasmak-kueue-ve-gang-scheduling-nasl-calsr">3 · <abbr title="Graphics Processing Unit">GPU</abbr>'ları adil paylaşmak: Kueue ve gang scheduling nasıl çalışır?<a class="headerlink" href="#3-gpular-adil-paylasmak-kueue-ve-gang-scheduling-nasl-calsr" title="Permanent link">¶</a></h2>
+<h3 id="nedir_1">Nedir?<a class="headerlink" href="#nedir_1" title="Permanent link">¶</a></h3>
+<p>Varsayılan scheduler pod'ları tek tek yerleştirir. 64 pod'un tek bir eğitim işine ait olduğunu ya da <abbr title="Graphics Processing Unit">GPU</abbr>'ların yarısının A ekibine ait olduğunu bilmez. <strong>Kueue</strong> (ve <strong>KAI</strong> ya da Volcano gibi <abbr title="Artificial Intelligence">AI</abbr> zamanlayıcıları) <strong>kuyruklar, kotalar ve ya-hep-ya-hiç kabul</strong> ekler.</p>
+<h3 id="nasl-calsr_2">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr_2" title="Permanent link">¶</a></h3>
+<ol>
+<li>Bir Job/JobSet, <code>kueue.x-k8s.io/queue-name: training</code> etiketiyle oluşturulur. Kueue onu <strong>askıda</strong> tutar.</li>
+<li>İş, namespace'in <strong>LocalQueue</strong>'sunda bekler. LocalQueue, bir kotanın sahibi olan bir <strong>ClusterQueue</strong>'yu gösterir (ör. "H100" türünden 64 <abbr title="Graphics Processing Unit">GPU</abbr>).</li>
+<li>İşin <strong>tamamı</strong> kotaya sığdığında (izin varsa diğer kuyrukların kullanılmayan kotasını ödünç alarak) Kueue onu <strong>kabul eder</strong> ve askıdan çıkarır. Böylece tüm pod'lar birlikte oluşturulur.</li>
+<li>Daha yüksek öncelikli bir iş <abbr title="Graphics Processing Unit">GPU</abbr>'lara ihtiyaç duyarsa Kueue ödünç verilmiş kapasiteyi <strong>öncelikle kesebilir (preempt)</strong>.</li>
+</ol>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/10-6b-kueue.png" data-desc-position="bottom"><img alt="Kueue GPU'ları nasıl paylaştırır" src="../../assets/diagrams/10-6b-kueue.png"></a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># (API versiyonu Kueue sürümüne bağlıdır)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kueue.x-k8s.io/v1beta1</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterQueue</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">gpu-cq</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">spec</span><span class="p">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">namespaceSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">resourceGroups</span><span class="p">:</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">coveredResources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"nvidia.com/gpu"</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">flavors</span><span class="p">:</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">h100</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"nvidia.com/gpu"</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="nt">nominalQuota</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="nn">---</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kueue.x-k8s.io/v1beta1</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LocalQueue</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">team-a</span><span class="p p-Indicator">,</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">training</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="nt">spec</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> clusterQueue</span><span class="p">:</span><span class="w"> </span><span class="nv">gpu-cq</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</code></pre></div>
+<h2 id="4-is-yuku-turleri-ve-kubernetes-yap-taslar">4 · İş yükü türleri ve Kubernetes yapı taşları<a class="headerlink" href="#4-is-yuku-turleri-ve-kubernetes-yap-taslar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>İş yükü</th>
+<th>Yapı taşları</th>
+<th>Notlar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dağıtık eğitim / fine-tuning</td>
+<td><strong>JobSet</strong>, PyTorchJob (Kubeflow Trainer), Kueue, topolojiye duyarlı yerleştirme</td>
+<td>Gang scheduling, nesne depolamaya checkpoint</td>
+</tr>
+<tr>
+<td>Batch inference / değerlendirme</td>
+<td>Job / JobSet + Kueue ya da Ray</td>
+<td>Verim odaklı, spot kapasite kullanabilir</td>
+</tr>
+<tr>
+<td>Online <abbr title="Large Language Model">LLM</abbr> servisi (tek node)</td>
+<td>Deployment + vLLM/SGLang, <strong>Inference Gateway</strong> / KServe</td>
+<td>Model yüklendikten sonra readiness, KV duyarlı yönlendirme</td>
+</tr>
+<tr>
+<td>Online servis (çok node'lu model)</td>
+<td><strong>LeaderWorkerSet</strong> (bir replika = lider + worker'lar)</td>
+<td>Node içinde <abbr title="Tensor Parallel">TP</abbr>, node'lar arası <abbr title="Pipeline Parallel">PP</abbr></td>
+</tr>
+<tr>
+<td>Ölçekte dağıtık servis</td>
+<td><strong>llm-d</strong> ya da <strong>NVIDIA Dynamo</strong></td>
+<td>P/D ayrıştırma, KV cache katmanları, KV duyarlı yönlendirme (<a href="../05-inference/">10.5</a>)</td>
+</tr>
+<tr>
+<td>Notebook / geliştirme</td>
+<td>JupyterHub, zaman dilimli ya da <abbr title="Multi-Instance GPU">MIG</abbr> <abbr title="Graphics Processing Unit">GPU</abbr>'lar</td>
+<td><abbr title="Graphics Processing Unit">GPU</abbr>'ları boşaltmak için boşta olanları kapatma</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-model-agrlklar-soguk-baslangc-sorunu">5 · Model ağırlıkları: soğuk başlangıç sorunu<a class="headerlink" href="#5-model-agrlklar-soguk-baslangc-sorunu" title="Permanent link">¶</a></h2>
+<p>70B'lik bir model ~140 GB'tır. Bunu her pod başlangıcında nesne depolamadan çekmek <strong>dakikalarca</strong> soğuk başlangıç demektir.</p>
+<table>
+<thead>
+<tr>
+<th>Yaklaşım</th>
+<th>Nasıl</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Node'a yerel önbellek</strong></td>
+<td>Bir DaemonSet ya da init container ağırlıkları önceden yerel NVMe'ye çeker</td>
+</tr>
+<tr>
+<td><strong>Ortak volume</strong></td>
+<td>Hızlı paralel dosya sistemi üzerinde ReadOnlyMany <abbr title="PersistentVolumeClaim">PVC</abbr></td>
+</tr>
+<tr>
+<td><strong><abbr title="Open Container Initiative">OCI</abbr> artifact / imaj volume'ları</strong></td>
+<td>Ağırlıkları <abbr title="Open Container Initiative">OCI</abbr> artifact olarak gönder, registry'yi ve node imaj önbelleğini yeniden kullan</td>
+</tr>
+<tr>
+<td><strong>Hızlı yükleyiciler</strong></td>
+<td>Daha erken servise başlamak için akış halinde yükleyiciler (ör. safetensors streaming)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-llm-sunucularn-otomatik-olceklemek">6 · <abbr title="Large Language Model">LLM</abbr> sunucularını otomatik ölçeklemek<a class="headerlink" href="#6-llm-sunucularn-otomatik-olceklemek" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sinyal</th>
+<th>Neden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Kuyruk uzunluğu / bekleyen istekler</strong></td>
+<td>Eksik kapasitenin doğrudan işareti</td>
+</tr>
+<tr>
+<td><strong>KV cache kullanımı</strong></td>
+<td>%100'e yaklaşınca yeni istekler bekler ya da öncelikle kesilir</td>
+</tr>
+<tr>
+<td><strong><abbr title="Time To First Token">TTFT</abbr> / <abbr title="Time Per Output Token">TPOT</abbr> p95</strong></td>
+<td>Gerçekte söz verdiğin <abbr title="Service Level Objective">SLO</abbr></td>
+</tr>
+<tr>
+<td>~~<abbr title="Central Processing Unit">CPU</abbr> kullanımı~~</td>
+<td>Anlamsız: iş <abbr title="Graphics Processing Unit">GPU</abbr>'da yapılıyor</td>
+</tr>
+</tbody>
+</table>
+<p>Motorun Prometheus metrikleriyle (<code>/metrics</code>) <strong><abbr title="Kubernetes Event-Driven Autoscaling">KEDA</abbr></strong> ya da <abbr title="Horizontal Pod Autoscaler">HPA</abbr> kullan, <strong>asgari sıcak replika sayısı</strong> tut (soğuk başlangıçlar yavaş) ve ayrıştırılmış kurulumlarda <strong>prefill ve decode havuzlarını ayrı ayrı</strong> ölçekle.</p>
+<h2 id="7-gozlemlenebilirlik-ve-maliyet">7 · Gözlemlenebilirlik ve maliyet<a class="headerlink" href="#7-gozlemlenebilirlik-ve-maliyet" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong><abbr title="Data Center GPU Manager">DCGM</abbr> exporter</strong> → Prometheus → Grafana: pod başına <abbr title="Streaming Multiprocessor">SM</abbr> etkinliği, tensor etkinliği, bellek, güç, XID hataları.</li>
+<li><strong>Motor metrikleri</strong>: çalışan/bekleyen istekler, KV kullanımı, <abbr title="Time To First Token">TTFT</abbr>, <abbr title="Time Per Output Token">TPOT</abbr>, token/sn.</li>
+<li><strong>Maliyet</strong>: namespace/ekip başına <abbr title="Graphics Processing Unit">GPU</abbr>-saat (OpenCost/Kubecost), model başına milyon token maliyeti, boşta geçen <abbr title="Graphics Processing Unit">GPU</abbr>-saatler.</li>
+</ul>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> bağlantısı: klasik platform metriklerinin anlamı değişir. "Kullanım" <strong><abbr title="Streaming Multiprocessor">SM</abbr>/tensor etkinliği</strong> demektir, "kapasite" <strong>KV cache ve token/sn</strong> demektir, "deploy süresi" <strong>100+ GB ağırlığın yüklenmesini</strong> içerir. <abbr title="Graphics Processing Unit">GPU</abbr>'larda %10'luk bir kullanım artışı çoğu zaman cluster'daki diğer her şeyin toplamından daha değerlidir.</p>
+</blockquote>
+<hr>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1) GPU Operator'ı kur (NVIDIA GPU node'ları olan bir cluster'da)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>nvidia<span class="w"> </span>https://helm.ngc.nvidia.com/nvidia<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>helm<span class="w"> </span>repo<span class="w"> </span>update
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>helm<span class="w"> </span>install<span class="w"> </span>gpu-operator<span class="w"> </span>nvidia/gpu-operator<span class="w"> </span>-n<span class="w"> </span>gpu-operator<span class="w"> </span>--create-namespace
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>gpu-operator
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-L<span class="w"> </span>nvidia.com/gpu.product,nvidia.com/gpu.count
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 2) Bir GPU duman testi</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>kubectl<span class="w"> </span>run<span class="w"> </span>gpu-test<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--image<span class="o">=</span>nvidia/cuda:12.6.3-base-ubuntu24.04<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>--overrides<span class="o">=</span><span class="s1">'{"spec":{"containers":[{"name":"gpu-test","image":"nvidia/cuda:12.6.3-base-ubuntu24.04","command":["nvidia-smi"],"resources":{"limits":{"nvidia.com/gpu":1}}}]}}'</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># 3) DRA nesneleri (DRA etkin bir cluster'da)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deviceclasses
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>kubectl<span class="w"> </span>get<span class="w"> </span>resourceslices<span class="w"> </span>-o<span class="w"> </span>wide
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="c1"># 4) Kueue: kur, sonra kabulleri izle</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>kubectl<span class="w"> </span>get<span class="w"> </span>clusterqueues,localqueues<span class="w"> </span>-A
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>kubectl<span class="w"> </span>get<span class="w"> </span>workloads<span class="w"> </span>-A<span class="w">        </span><span class="c1"># kuyruktaki her iş için bir Workload: kabul edildi mi, bekliyor mu ve neden</span>
+</code></pre></div>
+<p><strong>Görev (<abbr title="Graphics Processing Unit">GPU</abbr> gerekmez):</strong> <code>cpu</code> üzerinde sahte bir kotayla bir kind cluster'ına Kueue kur, her biri kotanın %60'ına ihtiyaç duyan üç Job gönder ve aynı anda sadece birinin kabul edildiğini izle.</p>
+<hr>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>GPU node: GPU Operator = sürücü + toolkit (CDI) + device plugin/DRA sürücüsü + DCGM exporter + MIG manager · taint'li havuzlar
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>GPU iste: limits nvidia.com/gpu: N (sayı)  →  DRA: ResourceSlice → DeviceClass → ResourceClaim → scheduler ayırır
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Adil paylaşım: Kueue LocalQueue → ClusterQueue (kota, ödünç, öncelikle kesme) · gang kabulü · KAI / Volcano
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>İş yükleri: JobSet (eğitim) · LWS (çok node'lu servis) · KServe / Inference Gateway / llm-d (online servis)
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Soğuk başlangıç: ağırlıkları node NVMe / PVC / OCI artifact'te önbellekle · sıcak replika tut
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>CPU'ya değil kuyruk uzunluğuna, KV kullanımına, TTFT/TPOT'a göre ölçekle
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>İzle: DCGM (SM/tensor etkinliği, XID) · motor metrikleri · ekip başına GPU-saat ve $/1M token
+</code></pre></div>
+<hr>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. <abbr title="Dynamic Resource Allocation">DRA</abbr>, <code>nvidia.com/gpu: 1</code>'in ifade edemediği neyi ifade edebilir?</summary>
+<p>Özellikleri ve ilişkileri: belirli bir model ya da bellek boyutu, bir <abbr title="Multi-Instance GPU">MIG</abbr> profili, aynı NVLink alanındaki birkaç <abbr title="Graphics Processing Unit">GPU</abbr>, pod'lar arasında ortak talepler. Device plugin sadece bir sayı açar.</p>
+</details>
+<details class="question">
+<summary>2. 64 <abbr title="Graphics Processing Unit">GPU</abbr>'luk bir eğitim işinin 40 pod'u zamanlanıyor ve geri kalanı Pending'de kalıyor. Sorun ne ve ne düzeltir?</summary>
+<p>Gang scheduling yok: varsayılan scheduler pod'ları tek tek yerleştirdi. Çalışan 40 pod, diğerlerini beklerken <abbr title="Graphics Processing Unit">GPU</abbr>'ları tutuyor. Kueue (ya da KAI/Volcano) işi ancak 64 <abbr title="Graphics Processing Unit">GPU</abbr>'nun hepsi müsait olduğunda kabul eder.</p>
+</details>
+<details class="question">
+<summary>3. <abbr title="Graphics Processing Unit">GPU</abbr> node'ları neden taint'lenmeli?</summary>
+<p>Sıradan pod'lar (web uygulamaları, sidecar'lar, sistem işleri) çok pahalı <abbr title="Graphics Processing Unit">GPU</abbr> node'larına düşüp <abbr title="Graphics Processing Unit">GPU</abbr> iş yüklerinin ihtiyaç duyduğu <abbr title="Central Processing Unit">CPU</abbr>/belleği almasın diye. Oraya sadece taint'i tolere eden ve <abbr title="Graphics Processing Unit">GPU</abbr> isteyen pod'lar gider.</p>
+</details>
+<details class="question">
+<summary>4. <abbr title="Large Language Model">LLM</abbr> Deployment'ın ölçekleniyor ama yeni pod'ların Ready olması 8 dakika sürüyor. Neyi değiştirirsin?</summary>
+<p>Model ağırlıklarını node'a yakın önbellekle (yerel NVMe'ye önceden çekme, ortak <abbr title="PersistentVolumeClaim">PVC</abbr>, <abbr title="Open Container Initiative">OCI</abbr> artifact'ler), akış halinde bir yükleyici kullan, asgari sayıda sıcak replika tut ve daha erken ölçekle (<abbr title="Service Level Objective">SLO</abbr> ihlallerine değil kuyruk uzunluğuna göre).</p>
+</details>
+<details class="question">
+<summary>5. Gateway API Inference Extension'daki endpoint seçici, normal bir Service'in yapmadığı neyi yapar?</summary>
+<p>İstek başına bir model sunucusu pod'unu <abbr title="Large Language Model">LLM</abbr>'e özgü sinyallere göre seçer: önek/KV cache yerelliği, kuyruk uzunluğu, KV cache kullanımı, yüklü <abbr title="Low-Rank Adaptation">LoRA</abbr> adaptörleri. Bir Service sadece bağlantıları dağıtır.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html">NVIDIA <abbr title="Graphics Processing Unit">GPU</abbr> Operator dokümanları</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/dynamic-resource-allocation/">Kubernetes: Dynamic Resource Allocation</a></li>
+<li><a href="https://kueue.sigs.k8s.io/docs/">Kueue dokümanları</a> · <a href="https://jobset.sigs.k8s.io/">JobSet</a> · <a href="https://lws.sigs.k8s.io/">LeaderWorkerSet</a></li>
+<li><a href="https://gateway-api-inference-extension.sigs.k8s.io/">Gateway API Inference Extension</a> · <a href="https://llm-d.ai/">llm-d</a> · <a href="https://kserve.github.io/website/">KServe</a></li>
+<li><a href="https://keda.sh/"><abbr title="Kubernetes Event-Driven Autoscaling">KEDA</abbr></a> · <a href="https://www.opencost.io/">OpenCost</a></li>
+</ul>
+<h2 id="kendi-notlarm">✍️ Kendi notlarım<a class="headerlink" href="#kendi-notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Bir <abbr title="Graphics Processing Unit">GPU</abbr> isteğinin pod spec'inden bir <abbr title="Graphics Processing Unit">GPU</abbr> node'unda çalışan bir container'a nasıl gittiğini kendi cümlelerinle 5 satırda anlat.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../05-inference/" class="md-footer__link md-footer__link--prev" aria-label="Önceki: 10.5 · Inference &amp; serving">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                10.5 · Inference &amp; serving
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../07-applications/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 10.7 · Applications: RAG &amp; agents">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                10.7 · Applications: RAG &amp; agents
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

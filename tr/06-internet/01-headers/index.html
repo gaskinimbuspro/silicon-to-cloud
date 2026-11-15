@@ -1,0 +1,2992 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="HTTP header'ı nedir, bir mesaj nasıl kurulur, header'lar yönlendirme, içerik pazarlığı, önbellek, kimlik doğrulama, cookie, güvenlik, CORS, proxy ve trace için ne işe yarar.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/01-headers/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-dns/">
+      
+      
+        
+          <link rel="alternate" href="../../../06-internet/01-headers/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>6.1 — HTTP header'larına derin dalış - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="6.1 — HTTP header'larına derin dalış - Silicon to Cloud">
+<meta property="og:description" content="HTTP header'ı nedir, bir mesaj nasıl kurulur, header'lar yönlendirme, içerik pazarlığı, önbellek, kimlik doğrulama, cookie, güvenlik, CORS, proxy ve trace için ne işe yarar.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/06-internet/01-headers.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/01-headers/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="6.1 — HTTP header'larına derin dalış - Silicon to Cloud">
+<meta property="twitter:description" content="HTTP header'ı nedir, bir mesaj nasıl kurulur, header'lar yönlendirme, içerik pazarlığı, önbellek, kimlik doğrulama, cookie, güvenlik, CORS, proxy ve trace için ne işe yarar.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/06-internet/01-headers.png">
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#61-http-headerlarna-derin-dals" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              6.1 — HTTP header'larına derin dalış
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../06-internet/01-headers/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.1 · HTTP headers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.1 · HTTP headers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-header-nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Header nedir?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · Header nedir?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-header-aileleri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Header aileleri
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-icerik-pazarlg-ve-skstrma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · İçerik pazarlığı ve sıkıştırma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · İçerik pazarlığı ve sıkıştırma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-onbellek-headerlar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Önbellek header'ları
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Önbellek header'ları">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kimlik-dogrulama-ve-cookieler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Kimlik doğrulama ve cookie'ler
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Kimlik doğrulama ve cookie'ler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authorization-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorization nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cookieler-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cookie'ler nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-guvenlik-headerlar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Güvenlik header'ları
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · CORS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7 · CORS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-proxyler-ve-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · Proxy'ler ve trace
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8 · Proxy'ler ve trace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#x-forwarded-for-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X-Forwarded-For nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traceparent-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        traceparent nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-dns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.2 · DNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-tcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.3 · TCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.4 · TLS &amp; certificates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-http2-http3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.5 · HTTP/2 &amp; HTTP/3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.6 · Methods, status codes &amp; APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-header-nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Header nedir?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · Header nedir?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-header-aileleri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Header aileleri
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-icerik-pazarlg-ve-skstrma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · İçerik pazarlığı ve sıkıştırma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · İçerik pazarlığı ve sıkıştırma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-onbellek-headerlar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Önbellek header'ları
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · Önbellek header'ları">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kimlik-dogrulama-ve-cookieler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Kimlik doğrulama ve cookie'ler
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Kimlik doğrulama ve cookie'ler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authorization-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorization nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cookieler-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cookie'ler nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-guvenlik-headerlar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Güvenlik header'ları
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · CORS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7 · CORS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nedir_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nedir?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-proxyler-ve-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · Proxy'ler ve trace
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8 · Proxy'ler ve trace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#x-forwarded-for-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X-Forwarded-For nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traceparent-nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        traceparent nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    6 · DNS, TCP, TLS, HTTP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="61-http-headerlarna-derin-dals">6.1 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> header'larına derin dalış<a class="headerlink" href="#61-http-headerlarna-derin-dals" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p><strong>Header</strong>, her <abbr title="HyperText Transfer Protocol">HTTP</abbr> istek ve cevabıyla birlikte giden <code>Ad: değer</code> biçiminde bir <strong>üst veri (metadata)</strong> satırıdır.
+Gövde içeriktir. Header'lar ise <strong>kime gittiğini, hangi formatta olduğunu, ne kadar önbellekte tutulabileceğini,
+kimin sorduğunu, tarayıcının onunla neler yapabileceğini ve hangi duraklardan geçtiğini</strong> söyler. <abbr title="Content Delivery Network">CDN</abbr>'lerin, load
+balancer'ların, ingress controller'ların, kimlik doğrulamanın ve tarayıcı güvenliğinin yaptığı işlerin çoğu
+header'larla yürür.</p>
+</div>
+<h2 id="temel-terimler-ve-ksaltmalar">📖 Temel terimler ve kısaltmalar<a class="headerlink" href="#temel-terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Header (alan)</strong></td>
+<td>—</td>
+<td><code>Ad: değer</code> biçiminde bir üst veri satırı</td>
+<td>Adlar büyük/küçük harfe duyarsız; gövdeden önce gönderilir</td>
+</tr>
+<tr>
+<td><strong>İstek / cevap header'ı</strong></td>
+<td>—</td>
+<td>İstemcinin / sunucunun gönderdiği üst veri</td>
+<td><code>Accept</code>, <code>Authorization</code> ve <code>Content-Type</code>, <code>Set-Cookie</code></td>
+</tr>
+<tr>
+<td><strong>Başlangıç / durum satırı</strong></td>
+<td>—</td>
+<td>İsteğin / cevabın ilk satırı</td>
+<td><code>GET /yol HTTP/1.1</code> / <code>HTTP/1.1 200 OK</code></td>
+</tr>
+<tr>
+<td><strong>MIME tipi</strong></td>
+<td>Multipurpose Internet Mail Extensions</td>
+<td><code>application/json</code> gibi format etiketi</td>
+<td><code>Content-Type</code> ve <code>Accept</code> içine yazılır</td>
+</tr>
+<tr>
+<td><strong>İçerik pazarlığı</strong></td>
+<td>Content negotiation</td>
+<td>İstemci ne alabileceğini söyler, sunucu seçer</td>
+<td>Gelen <code>Accept-*</code>, giden <code>Content-*</code> + <code>Vary</code></td>
+</tr>
+<tr>
+<td><strong>Hop-by-hop / end-to-end</strong></td>
+<td>—</td>
+<td>Tek bağlantıya ait / son alıcıya ait header'lar</td>
+<td>Proxy'ler hop-by-hop olanları siler (<code>Connection</code>, <code>Keep-Alive</code>)</td>
+</tr>
+<tr>
+<td><strong>Cache-Control</strong></td>
+<td>—</td>
+<td>Tarayıcı ve <abbr title="Content Delivery Network">CDN</abbr> için önbellek kuralları</td>
+<td><code>max-age</code>, <code>no-store</code>, <code>private</code>, <code>s-maxage</code> …</td>
+</tr>
+<tr>
+<td><strong><abbr title="Entity Tag">ETag</abbr></strong></td>
+<td>Entity Tag</td>
+<td>Bir cevabın sürüm kimliği</td>
+<td>İstemci <code>If-None-Match</code> ile geri yollar; değişmediyse <code>304</code></td>
+</tr>
+<tr>
+<td><strong>Cookie / Set-Cookie</strong></td>
+<td>—</td>
+<td>Tarayıcının saklayıp geri yolladığı küçük durum</td>
+<td>Sunucu koyar; tarayıcı uyan isteklere <code>Cookie</code> ekler</td>
+</tr>
+<tr>
+<td><strong>Authorization / Bearer</strong></td>
+<td>—</td>
+<td>Bir isteğin kimlik bilgisi</td>
+<td><code>Authorization: Bearer &lt;token&gt;</code>; yok/geçersiz → <code>401</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="Cross-Origin Resource Sharing">CORS</abbr></strong></td>
+<td>Cross-Origin Resource Sharing</td>
+<td>Farklı origin'den okuma için tarayıcı kuralı</td>
+<td>API <code>Access-Control-Allow-*</code> header'larıyla izin verir</td>
+</tr>
+<tr>
+<td><strong>Origin</strong></td>
+<td>—</td>
+<td>Bir sayfanın şema + host + port'u</td>
+<td><code>https://app.example.com</code> ≠ <code>https://api.example.com</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="HTTP Strict Transport Security">HSTS</abbr></strong></td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr> Strict Transport Security</td>
+<td>"Bu siteye hep HTTPS ile gel"</td>
+<td><code>Strict-Transport-Security: max-age=…</code></td>
+</tr>
+<tr>
+<td><strong><abbr title="Content Security Policy">CSP</abbr></strong></td>
+<td>Content Security Policy</td>
+<td>Script/stillerin nereden yüklenebileceğinin izin listesi</td>
+<td>Tarayıcı geri kalanını engeller (<abbr title="Cross-Site Scripting">XSS</abbr>'in çoğunu durdurur)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Cross-Site Scripting">XSS</abbr></strong></td>
+<td>Cross-Site Scripting</td>
+<td>Saldırganın script'inin senin sayfanda çalışması</td>
+<td>Çıktıyı escape etmek + <abbr title="Content Security Policy">CSP</abbr> ile önlenir</td>
+</tr>
+<tr>
+<td><strong>X-Forwarded-For (XFF)</strong></td>
+<td>—</td>
+<td>Proxy'lerin arkasındaki asıl istemci <abbr title="Internet Protocol">IP</abbr>'si</td>
+<td>Her proxy bağlantıyı aldığı adresi ekler</td>
+</tr>
+<tr>
+<td><strong>traceparent</strong></td>
+<td>W3C Trace Context</td>
+<td>Servisler arasında taşınan dağıtık trace kimliği</td>
+<td><code>00-&lt;trace-id&gt;-&lt;span-id&gt;-&lt;flags&gt;</code></td>
+</tr>
+<tr>
+<td><strong>HPACK / QPACK</strong></td>
+<td>—</td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 / <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3'te header sıkıştırma</td>
+<td>Statik + dinamik tablolar tekrarlanan header'ları indeksle değiştirir</td>
+</tr>
+<tr>
+<td><strong>Pseudo-header</strong></td>
+<td>—</td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2+'da başlangıç satırının yerini alan alanlar</td>
+<td><code>:method</code>, <code>:path</code>, <code>:authority</code>, <code>:scheme</code>, <code>:status</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1a-path.png" data-desc-position="bottom"><img alt="Hangi header'ı kim okur, kim yazar" src="../../assets/diagrams/06-1a-path.png"></a></p>
+<hr>
+<h2 id="1-header-nedir">1 · Header nedir?<a class="headerlink" href="#1-header-nedir" title="Permanent link">¶</a></h2>
+<h3 id="nedir">Nedir?<a class="headerlink" href="#nedir" title="Permanent link">¶</a></h3>
+<p>Bir <abbr title="HyperText Transfer Protocol">HTTP</abbr> mesajının dört parçası var: bir <strong>başlangıç satırı</strong>, bir <strong>header</strong> bloğu, bir <strong>boş satır</strong> ve isteğe bağlı bir <strong>gövde</strong>.
+Header'lar üst veridir: gövdeyi ve isteği tarif eder, yoldaki her durağa ne yapacağını söyler.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1-anatomy.png" data-desc-position="bottom"><img alt="Bir HTTP mesajının anatomisi" src="../../assets/diagrams/06-1-anatomy.png"></a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">POST</span> <span class="nn">/api/cart</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">Host</span><span class="o">:</span> <span class="l">shop.example.com</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">Content-Length</span><span class="o">:</span> <span class="l">11</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">Authorization</span><span class="o">:</span> <span class="l">Bearer eyJhbGciOi…</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">{</span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Format:</strong> her satıra bir <code>Ad: değer</code>, satır sonu <code>\r\n</code>. Boş satır header bloğunu bitirir; ardından tam olarak <code>Content-Length</code> byte'lık gövde (ya da <code>chunked</code> parçalar) gelir.</li>
+<li><strong>Adlar büyük/küçük harfe duyarsızdır:</strong> <code>content-type</code> = <code>Content-Type</code>. <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 ve <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3'te kabloda küçük harf zorunludur.</li>
+<li><strong>Tekrarlanan header'lar</strong> virgülle birleştirilebilir (<code>Accept: a, b</code>). <strong>İstisna</strong> <code>Set-Cookie</code>: her biri ayrı satırda kalmalıdır.</li>
+<li><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 ve <abbr title="HyperText Transfer Protocol">HTTP</abbr>/3</strong> metin satırı göndermez. Başlangıç satırı <strong>pseudo-header</strong>'lara dönüşür (<code>:method: POST</code>, <code>:path: /api/cart</code>, <code>:authority: shop.example.com</code>), tüm header'lar HPACK / QPACK ile <strong>sıkıştırılır</strong>. Böylece ilk istekten sonra tekrarlanan bir <code>Cookie</code> ya da <code>User-Agent</code> sadece birkaç byte tutar.</li>
+<li><strong>Boyut limiti vardır.</strong> Sunucular ve proxy'ler header boyutunu sınırlar (nginx: <code>large_client_header_buffers</code>, varsayılan 4 × 8 KB). Çok büyük cookie'ler ya da <abbr title="JSON Web Token">JWT</abbr>'ler <code>400 Request Header Or Cookie Too Large</code> veya <code>431 Request Header Fields Too Large</code> hatası verir.</li>
+<li><strong>Özel header'lar:</strong> bir isim seçmen yeterli (<code>X-Tenant-Id</code>, <code>Acme-Feature-Flag</code>). <code>X-</code> öneki eski bir gelenek; yeni standartlar için artık önerilmiyor ama hâlâ çok yaygın.</li>
+</ul>
+<h2 id="2-header-aileleri">2 · Header aileleri<a class="headerlink" href="#2-header-aileleri" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aile</th>
+<th>İstek header'ları</th>
+<th>Cevap header'ları</th>
+<th>Ne için kullanılır</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yönlendirme</strong></td>
+<td><code>Host</code> (h2/h3'te <code>:authority</code>)</td>
+<td><code>Location</code> (3xx / 201 ile)</td>
+<td>Sanal hosting, ingress kuralları, yönlendirmeler</td>
+</tr>
+<tr>
+<td><strong>İçerik pazarlığı</strong></td>
+<td><code>Accept</code>, <code>Accept-Encoding</code>, <code>Accept-Language</code></td>
+<td><code>Content-Type</code>, <code>Content-Encoding</code>, <code>Content-Language</code>, <code>Vary</code></td>
+<td>JSON mu HTML mi, gzip/br/zstd, dil</td>
+</tr>
+<tr>
+<td><strong>Gövde sınırı</strong></td>
+<td><code>Content-Length</code>, <code>Transfer-Encoding</code></td>
+<td>aynı</td>
+<td>Gövdenin nerede bittiği</td>
+</tr>
+<tr>
+<td><strong>Bağlantı</strong></td>
+<td><code>Connection</code>, <code>Upgrade</code></td>
+<td><code>Connection</code>, <code>Keep-Alive</code></td>
+<td>Keep-alive, WebSocket'e yükseltme (hop-by-hop)</td>
+</tr>
+<tr>
+<td><strong>Önbellek</strong></td>
+<td><code>Cache-Control</code>, <code>If-None-Match</code>, <code>If-Modified-Since</code></td>
+<td><code>Cache-Control</code>, <code>ETag</code>, <code>Last-Modified</code>, <code>Age</code>, <code>Expires</code></td>
+<td>Tarayıcı ve <abbr title="Content Delivery Network">CDN</abbr> önbelleği</td>
+</tr>
+<tr>
+<td><strong>Kimlik</strong></td>
+<td><code>Authorization</code>, <code>Cookie</code></td>
+<td><code>WWW-Authenticate</code>, <code>Set-Cookie</code></td>
+<td>Girişler, API token'ları, oturumlar</td>
+</tr>
+<tr>
+<td><strong>Güvenlik</strong></td>
+<td><code>Origin</code>, <code>Sec-Fetch-*</code></td>
+<td><code>Strict-Transport-Security</code>, <code>Content-Security-Policy</code>, <code>X-Content-Type-Options</code>, <code>Referrer-Policy</code></td>
+<td>Tarayıcıya kullanıcıyı nasıl koruyacağını söylemek</td>
+</tr>
+<tr>
+<td><strong><abbr title="Cross-Origin Resource Sharing">CORS</abbr></strong></td>
+<td><code>Origin</code>, <code>Access-Control-Request-*</code></td>
+<td><code>Access-Control-Allow-*</code></td>
+<td>JS'ten farklı origin'deki API'lere çağrı</td>
+</tr>
+<tr>
+<td><strong>Proxy</strong></td>
+<td><code>X-Forwarded-For</code>, <code>X-Forwarded-Proto</code>, <code>Forwarded</code>, <code>Via</code></td>
+<td><code>Via</code></td>
+<td><abbr title="Load Balancer">LB</abbr> arkasında gerçek istemci <abbr title="Internet Protocol">IP</abbr>'si ve şeması</td>
+</tr>
+<tr>
+<td><strong>Gözlemlenebilirlik</strong></td>
+<td><code>X-Request-ID</code>, <code>traceparent</code>, <code>tracestate</code></td>
+<td><code>X-Request-ID</code>, <code>Server-Timing</code></td>
+<td>Log ve trace'leri ilişkilendirmek</td>
+</tr>
+<tr>
+<td><strong>Hız sınırı</strong></td>
+<td>—</td>
+<td><code>Retry-After</code> (+ <code>RateLimit-*</code> taslakları)</td>
+<td><code>429</code> / <code>503</code> sonrası istemciye ne zaman tekrar deneyeceğini söylemek</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-icerik-pazarlg-ve-skstrma">3 · İçerik pazarlığı ve sıkıştırma<a class="headerlink" href="#3-icerik-pazarlg-ve-skstrma" title="Permanent link">¶</a></h2>
+<h3 id="nasl-calsr_1">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr_1" title="Permanent link">¶</a></h3>
+<ol>
+<li>İstemci neleri kabul ettiğini listeler: <code>Accept: application/json</code>, <code>Accept-Encoding: gzip, br, zstd</code>, <code>Accept-Language: tr, en;q=0.8</code> (<code>q</code> = tercih ağırlığı).</li>
+<li>Sunucu birini seçer ve cevabı etiketler: <code>Content-Type: application/json; charset=utf-8</code>, <code>Content-Encoding: br</code>.</li>
+<li><strong><code>Vary: Accept-Encoding</code></strong> ekler; böylece önbellekler o <abbr title="Uniform Resource Locator">URL</abbr>'nin birden fazla sürümü olduğunu ve anahtara bu header'ı da katmaları gerektiğini bilir. Eksik <code>Vary</code> klasik bir <abbr title="Content Delivery Network">CDN</abbr> hatasıdır: kullanıcılar başkası için hazırlanmış sıkıştırılmış (ya da yanlış dilde) kopyayı alır.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title"><abbr title="Development + Operations">DevOps</abbr> notu</p>
+<p>Yanlış <code>Content-Type</code> sessizce bozar: <code>text/html</code> olarak sunulan JSON ya da <code>X-Content-Type-Options: nosniff</code>
+açıkken <code>text/plain</code> olarak sunulduğu için engellenen JS. <code>curl -sI</code> ile kontrol et.</p>
+</div>
+<h2 id="4-onbellek-headerlar">4 · Önbellek header'ları<a class="headerlink" href="#4-onbellek-headerlar" title="Permanent link">¶</a></h2>
+<h3 id="nedir_1">Nedir?<a class="headerlink" href="#nedir_1" title="Permanent link">¶</a></h3>
+<p>Önbellek header'ları tarayıcılara ve <abbr title="Content Delivery Network">CDN</abbr>'lere bir kopyayı <strong>tutup tutamayacaklarını</strong>, <strong>ne kadar süre</strong> taze kalacağını ve <strong>değişip değişmediğini nasıl kontrol edeceklerini</strong> söyler.</p>
+<table>
+<thead>
+<tr>
+<th><code>Cache-Control</code> direktifi</th>
+<th>Anlamı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max-age=3600</code></td>
+<td>3600 sn taze; sormadan kullan</td>
+</tr>
+<tr>
+<td><code>s-maxage=600</code></td>
+<td>Aynısı ama sadece paylaşımlı önbellekler (<abbr title="Content Delivery Network">CDN</abbr>) için; orada <code>max-age</code>'i ezer</td>
+</tr>
+<tr>
+<td><code>no-cache</code></td>
+<td>Saklayabilirsin ama her kullanımdan önce <strong>yeniden doğrulamalısın</strong> ("önbelleğe alma" demek değil!)</td>
+</tr>
+<tr>
+<td><code>no-store</code></td>
+<td>Asla saklama (banka sayfaları, kişisel veri)</td>
+</tr>
+<tr>
+<td><code>private</code> / <code>public</code></td>
+<td>Sadece tarayıcı önbelleğe alabilir / <abbr title="Content Delivery Network">CDN</abbr>'ler de alabilir</td>
+</tr>
+<tr>
+<td><code>immutable</code></td>
+<td>Ömrü boyunca hiç değişmeyecek; sayfa yenilense bile yeniden doğrulama</td>
+</tr>
+<tr>
+<td><code>stale-while-revalidate=60</code></td>
+<td>Arka planda yenisi alınırken eski kopyayı 60 sn'ye kadar sun</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nasl-calsr_2">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr_2" title="Permanent link">¶</a></h3>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1b-caching.png" data-desc-position="bottom"><img alt="HTTP önbelleği: tazelik ve yeniden doğrulama" src="../../assets/diagrams/06-1b-caching.png"></a></p>
+<ul>
+<li><strong>Tazelik:</strong> <code>max-age</code> dolmadığı sürece önbellek hiç istek atmadan kendisi cevap verir.</li>
+<li><strong>Yeniden doğrulama:</strong> süre dolunca önbellek <code>If-None-Match: "&lt;etag&gt;"</code> (ya da <code>If-Modified-Since</code>) ile <strong>koşullu istek</strong> atar. Bir şey değişmediyse sunucu gövdesiz <strong><code>304 Not Modified</code></strong> döner ve kopya yeniden taze olur.</li>
+<li><strong>Yaygın desen:</strong> HTML'e <code>no-cache</code> (hep kontrol et), dosya adında hash olan statik dosyalara <code>max-age=31536000, immutable</code> (sonsuza dek önbellekte tut; yeni deploy yeni dosya adı demek).</li>
+</ul>
+<h2 id="5-kimlik-dogrulama-ve-cookieler">5 · Kimlik doğrulama ve cookie'ler<a class="headerlink" href="#5-kimlik-dogrulama-ve-cookieler" title="Permanent link">¶</a></h2>
+<h3 id="authorization-nasl-calsr"><code>Authorization</code> nasıl çalışır?<a class="headerlink" href="#authorization-nasl-calsr" title="Permanent link">¶</a></h3>
+<p>İstemci her istekte kimlik bilgisini yollar: <code>Authorization: Bearer &lt;token&gt;</code> (OAuth/<abbr title="JSON Web Token">JWT</abbr>) ya da <code>Authorization: Basic &lt;base64(kullanıcı:şifre)&gt;</code>. Eksik ya da geçersizse sunucu, hangi şemanın kullanılacağını söyleyen <code>WWW-Authenticate</code> ile <strong><code>401 Unauthorized</code></strong> döner. <strong><code>403 Forbidden</code></strong> ise "kim olduğunu biliyorum ama iznin yok" demektir.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Base64 <strong>şifreleme değil, kodlamadır</strong>. Basic auth ve bearer token'lar sadece HTTPS üzerinde güvenlidir ve asla loglanmamalıdır.</p>
+</div>
+<h3 id="cookieler-nasl-calsr">Cookie'ler nasıl çalışır?<a class="headerlink" href="#cookieler-nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li>Sunucu şunu gönderir: <code>Set-Cookie: session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400</code>.</li>
+<li>Tarayıcı saklar ve sonraki her uyan site/yol isteğine <code>Cookie: session=abc123</code> ekler.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Öznitelik</th>
+<th>Ne yapar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HttpOnly</code></td>
+<td>JavaScript okuyamaz, <abbr title="Cross-Site Scripting">XSS</abbr> oturumu çalamaz</td>
+</tr>
+<tr>
+<td><code>Secure</code></td>
+<td>Sadece HTTPS üzerinden gönderilir</td>
+</tr>
+<tr>
+<td><code>SameSite=Lax / Strict / None</code></td>
+<td>Siteler arası isteklerde gönderilip gönderilmeyeceği (<abbr title="Cross-Site Request Forgery">CSRF</abbr> koruması). <code>None</code>, <code>Secure</code> gerektirir</td>
+</tr>
+<tr>
+<td><code>Domain</code> / <code>Path</code></td>
+<td>Hangi host ve yolların alacağı</td>
+</tr>
+<tr>
+<td><code>Max-Age</code> / <code>Expires</code></td>
+<td>Ömür; yoksa oturum cookie'sidir</td>
+</tr>
+<tr>
+<td><code>__Host-</code> ad öneki</td>
+<td><code>Secure</code>, <code>Path=/</code> ve <code>Domain</code> yokluğunu zorunlu kılar (en sıkı kapsam)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-guvenlik-headerlar">6 · Güvenlik header'ları<a class="headerlink" href="#6-guvenlik-headerlar" title="Permanent link">¶</a></h2>
+<p>Bu header'lar <strong>tarayıcıdan</strong> kullanıcıyı koruyan kuralları uygulamasını ister:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Örnek</th>
+<th>Neye karşı korur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Strict-Transport-Security</code> (<abbr title="HTTP Strict Transport Security">HSTS</abbr>)</td>
+<td><code>max-age=31536000; includeSubDomains</code></td>
+<td><abbr title="HyperText Transfer Protocol">HTTP</abbr>'ye düşürme, <abbr title="Secure Sockets Layer">SSL</abbr> stripping</td>
+</tr>
+<tr>
+<td><code>Content-Security-Policy</code> (<abbr title="Content Security Policy">CSP</abbr>)</td>
+<td><code>default-src 'self'; script-src 'self' cdn.example.com</code></td>
+<td><abbr title="Cross-Site Scripting">XSS</abbr>, enjekte edilen script'ler</td>
+</tr>
+<tr>
+<td><code>X-Content-Type-Options</code></td>
+<td><code>nosniff</code></td>
+<td>Tarayıcının dosya tipini tahmin etmesi</td>
+</tr>
+<tr>
+<td><code>X-Frame-Options</code> / <abbr title="Content Security Policy">CSP</abbr> <code>frame-ancestors</code></td>
+<td><code>DENY</code> / <code>frame-ancestors 'none'</code></td>
+<td>Clickjacking (sayfanın bir iframe içinde açılması)</td>
+</tr>
+<tr>
+<td><code>Referrer-Policy</code></td>
+<td><code>strict-origin-when-cross-origin</code></td>
+<td>Tam <abbr title="Uniform Resource Locator">URL</abbr>'lerin başka sitelere sızması</td>
+</tr>
+<tr>
+<td><code>Permissions-Policy</code></td>
+<td><code>camera=(), geolocation=()</code></td>
+<td>Sayfaların güçlü tarayıcı özelliklerini kullanması</td>
+</tr>
+</tbody>
+</table>
+<p><code>X-XSS-Protection</code> artık geçersiz; modern tarayıcılar yok sayıyor. Yerine <abbr title="Content Security Policy">CSP</abbr> kullan.</p>
+<h2 id="7-cors">7 · <abbr title="Cross-Origin Resource Sharing">CORS</abbr><a class="headerlink" href="#7-cors" title="Permanent link">¶</a></h2>
+<h3 id="nedir_2">Nedir?<a class="headerlink" href="#nedir_2" title="Permanent link">¶</a></h3>
+<p>Tarayıcılar <strong>same-origin policy</strong> (aynı köken kuralı) uygular: <code>https://app.example.com</code>'dan gelen JavaScript, API açıkça izin vermedikçe <code>https://api.example.com</code>'un (farklı bir <strong>origin</strong>) cevaplarını okuyamaz. <abbr title="Cross-Origin Resource Sharing">CORS</abbr>, API'nin bu izni header'larla vermesinin yoludur.</p>
+<h3 id="nasl-calsr_3">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr_3" title="Permanent link">¶</a></h3>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-1c-cors.png" data-desc-position="bottom"><img alt="CORS nasıl çalışır" src="../../assets/diagrams/06-1c-cors.png"></a></p>
+<ul>
+<li><strong>Basit istekler</strong> (temel içerik tipleriyle GET/POST) doğrudan <code>Origin</code> header'ıyla gider. Tarayıcı, cevapta eşleşen bir <code>Access-Control-Allow-Origin</code> varsa JS'in okumasına izin verir.</li>
+<li><strong>Diğer istekler</strong> (PUT/DELETE, <code>Content-Type: application/json</code>, özel header'lar) önce bir <strong><code>OPTIONS</code> preflight</strong> gönderir. API izin verilen origin, metot ve header'larla cevaplar; <code>Access-Control-Max-Age</code> bu cevabın tarayıcıda önbelleğe alınmasını sağlar.</li>
+<li><strong>Cookie ile</strong> (<code>credentials: 'include'</code>) <code>Access-Control-Allow-Origin: *</code> kullanılamaz: tam origin'i yaz ve <code>Access-Control-Allow-Credentials: true</code> ekle.</li>
+<li><abbr title="Cross-Origin Resource Sharing">CORS</abbr>'u <strong>sadece tarayıcılar</strong> uygular. Kimlik doğrulama değildir; API'ni curl'e ya da script'lere karşı korumaz.</li>
+</ul>
+<h2 id="8-proxyler-ve-trace">8 · Proxy'ler ve trace<a class="headerlink" href="#8-proxyler-ve-trace" title="Permanent link">¶</a></h2>
+<h3 id="x-forwarded-for-nasl-calsr"><code>X-Forwarded-For</code> nasıl çalışır?<a class="headerlink" href="#x-forwarded-for-nasl-calsr" title="Permanent link">¶</a></h3>
+<p>Load balancer arkasında uygulaman kullanıcının değil <strong><abbr title="Load Balancer">LB</abbr>'nin <abbr title="Internet Protocol">IP</abbr>'sini</strong> görür. Bu yüzden her proxy bağlantıyı aldığı adresi ekler:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="err">X-Forwarded-For: 203.0.113.7, 10.0.1.12</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="err">X-Forwarded-Proto: https</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="err">X-Forwarded-Host: shop.example.com</span>
+</code></pre></div>
+<p>En soldaki değer istemcinin <strong>iddia ettiği</strong> adrestir. İstemci sahte bir <code>X-Forwarded-For</code> gönderebilir; uygulamanı ya da ingress'ini sadece kendi proxy'lerinin eklediği girdilere güvenecek şekilde ayarla (nginx <code>set_real_ip_from</code> + <code>real_ip_header</code>, Express <code>trust proxy</code>). Standart biçimi <code>Forwarded: for=203.0.113.7;proto=https</code>.</p>
+<h3 id="traceparent-nasl-calsr"><code>traceparent</code> nasıl çalışır?<a class="headerlink" href="#traceparent-nasl-calsr" title="Permanent link">¶</a></h3>
+<p>İlk servis (ya da ingress) bir trace kimliği üretir. Her servis bunu giden çağrılarına aktarır ve kendi span kimliğini ekler:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="err">             sürüm ── trace-id (16 byte) ──────── üst span ─────── örneklendi</span>
+</code></pre></div>
+<p>OpenTelemetry SDK'ları bu header'ı otomatik okur ve yazar; böylece tek bir istek <abbr title="Load Balancer">LB</abbr>, servisler ve veritabanı çağrıları boyunca izlenebilir. <code>X-Request-ID</code> daha basit versiyonu: tüm loglarda grep'lenecek tek bir kimlik.</p>
+<h2 id="devops-baglants">🔧 <abbr title="Development + Operations">DevOps</abbr> bağlantısı<a class="headerlink" href="#devops-baglants" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Ingress / nginx:</strong> <code>proxy_set_header Host $host; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto $scheme;</code>. Güvenlik header'larını <code>add_header … always;</code> ile ekle ki hata sayfalarında da olsunlar.</li>
+<li><strong>nginx üzerinden WebSocket</strong> için <code>proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection "upgrade";</code> gerekir; bunlar hop-by-hop header'lardır ve varsayılan olarak iletilmez.</li>
+<li><strong>"<abbr title="Load Balancer">LB</abbr> arkasında giriş döngüsü"</strong> genelde uygulamanın <code>X-Forwarded-Proto</code>'yu yok saydığı için isteği <code>http</code> sandığı anlamına gelir: sonsuz yönlendirme yapar ya da <code>Secure</code> cookie'leri yanlış koyar.</li>
+<li><strong><abbr title="Content Delivery Network">CDN</abbr> isabet oranı</strong> <code>Cache-Control</code>, <code>Vary</code> ve cookie'lere bağlıdır. Statik bir cevaptaki <code>Set-Cookie</code> ya da <code>Vary: User-Agent</code> onu önbelleğe alınamaz yapabilir.</li>
+<li><strong>Büyük <abbr title="JSON Web Token">JWT</abbr>'ler ya da çok sayıda cookie</strong> ingress ya da <abbr title="Load Balancer">LB</abbr>'de header boyut limitine takılır. Buffer'ları büyüt ya da token'ları küçült.</li>
+</ul>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. Sadece cevap header'ları (HEAD isteği)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>curl<span class="w"> </span>-sI<span class="w"> </span>https://github.com<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-25
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 2. Hepsi: istek header'ları (&gt;) ve cevap header'ları (&lt;)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>curl<span class="w"> </span>-sv<span class="w"> </span>https://example.com<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[&lt;&gt;]'</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 3. İçerik pazarlığı ve sıkıştırma</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>curl<span class="w"> </span>-sI<span class="w"> </span>-H<span class="w"> </span><span class="s1">'Accept-Encoding: br, gzip'</span><span class="w"> </span>https://www.wikipedia.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">'content-(type|encoding)|vary'</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># 4. Koşullu istek: ETag'i al, sonra "değişti mi?" diye sor</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="nv">URL</span><span class="o">=</span>https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nv">ETAG</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sI<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">'^etag'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">' '</span><span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">'\r'</span><span class="k">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">"If-None-Match: </span><span class="nv">$ETAG</span><span class="s2">"</span><span class="w"> </span><span class="nv">$URL</span><span class="w">   </span><span class="c1"># → 304</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># 5. Elle bir CORS preflight</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>curl<span class="w"> </span>-si<span class="w"> </span>-X<span class="w"> </span>OPTIONS<span class="w"> </span>https://api.github.com/user<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span>-H<span class="w"> </span><span class="s1">'Origin: https://example.com'</span><span class="w"> </span>-H<span class="w"> </span><span class="s1">'Access-Control-Request-Method: GET'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">'^access-control'</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># 6. Bir sunucunun tam olarak ne aldığını gör</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PYEOF'</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="s">from http.server import BaseHTTPRequestHandler, HTTPServer</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="s">class H(BaseHTTPRequestHandler):</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="s">    def do_GET(self):</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="s">        print(self.requestline); print(self.headers)</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="s">        self.send_response(200); self.send_header('Content-Type','text/plain'); self.end_headers()</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="s">        self.wfile.write(b'ok\n')</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="s">HTTPServer(('127.0.0.1', 8080), H).handle_request()</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="s">PYEOF</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="c1"># başka bir terminalde: curl -H 'X-Hello: world' http://127.0.0.1:8080/</span>
+</code></pre></div>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Şunu istiyorum…</th>
+<th>Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Host adına göre yönlendirmek</td>
+<td><code>Host</code></td>
+</tr>
+<tr>
+<td>Gövdenin ne olduğunu söylemek</td>
+<td><code>Content-Type</code></td>
+</tr>
+<tr>
+<td>Cevapları sıkıştırmak</td>
+<td><code>Accept-Encoding</code> → <code>Content-Encoding</code> + <code>Vary</code></td>
+</tr>
+<tr>
+<td>Statik dosyaları sonsuza dek önbellekte tutmak</td>
+<td><code>Cache-Control: max-age=31536000, immutable</code></td>
+</tr>
+<tr>
+<td>HTML'i hep yeniden doğrulamak</td>
+<td><code>Cache-Control: no-cache</code> + <code>ETag</code></td>
+</tr>
+<tr>
+<td>Bir cevabı asla saklamamak</td>
+<td><code>Cache-Control: no-store</code></td>
+</tr>
+<tr>
+<td>API token'ı göndermek</td>
+<td><code>Authorization: Bearer …</code></td>
+</tr>
+<tr>
+<td>Güvenli oturum cookie'si</td>
+<td><code>Set-Cookie: …; HttpOnly; Secure; SameSite=Lax</code></td>
+</tr>
+<tr>
+<td>HTTPS'i zorlamak</td>
+<td><code>Strict-Transport-Security</code></td>
+</tr>
+<tr>
+<td>Enjekte script'leri engellemek</td>
+<td><code>Content-Security-Policy</code></td>
+</tr>
+<tr>
+<td>Başka origin'deki front-end'e izin vermek</td>
+<td><code>Access-Control-Allow-Origin</code> (+ preflight)</td>
+</tr>
+<tr>
+<td>Gerçek istemci <abbr title="Internet Protocol">IP</abbr>'sini bilmek</td>
+<td><code>X-Forwarded-For</code> / <code>Forwarded</code> (sadece güvenilen proxy'lerden)</td>
+</tr>
+<tr>
+<td>Bir isteği servisler arasında izlemek</td>
+<td><code>traceparent</code>, <code>X-Request-ID</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. <code>Cache-Control: no-cache</code> aslında ne demek?</summary>
+<p>Cevap saklanabilir <strong>ama</strong> her kullanımdan önce sunucuyla yeniden doğrulanmalıdır (ör. <code>If-None-Match</code>). Saklamayı yasaklamak için <code>no-store</code> kullanılır.</p>
+</details>
+<details class="question">
+<summary>2. API'n curl ile çalışıyor ama tarayıcı <abbr title="Cross-Origin Resource Sharing">CORS</abbr> hatası veriyor. Neden, düzeltme nerede?</summary>
+<p><abbr title="Cross-Origin Resource Sharing">CORS</abbr>'u sadece tarayıcılar uygular. API'nin (ya da önündeki ingress'in) o origin için <code>Access-Control-Allow-Origin</code> döndürmesi ve <code>OPTIONS</code> preflight'ına izin verilen metot ve header'larla cevap vermesi gerekir.</p>
+</details>
+<details class="question">
+<summary>3. Load balancer arkasında her log satırı aynı istemci <abbr title="Internet Protocol">IP</abbr>'sini gösteriyor. Sorun ne?</summary>
+<p>Uygulama <abbr title="Transmission Control Protocol">TCP</abbr> karşı tarafını (<abbr title="Load Balancer">LB</abbr>'yi) logluyor. İstemci <abbr title="Internet Protocol">IP</abbr>'sini <code>X-Forwarded-For</code> / <code>Forwarded</code>'dan oku ve sadece kendi proxy'lerinin eklediği girdilere güven.</p>
+</details>
+<details class="question">
+<summary>4. Bir <abbr title="Content Delivery Network">CDN</abbr> neden <code>Vary: Accept-Encoding</code> görmeli?</summary>
+<p>Aynı <abbr title="Uniform Resource Locator">URL</abbr> birden fazla kodlamada var (br, gzip, sıkıştırmasız). <code>Vary</code> olmadan <abbr title="Content Delivery Network">CDN</abbr>, brotli çözemeyen bir istemciye brotli gövde sunabilir.</p>
+</details>
+<details class="question">
+<summary>5. Hangi cookie öznitelikleri oturum cookie'sinin JavaScript ile okunmasını ve <abbr title="HyperText Transfer Protocol">HTTP</abbr> üzerinden gönderilmesini engeller?</summary>
+<p><code>HttpOnly</code> (JS erişimi yok) ve <code>Secure</code> (sadece HTTPS). <abbr title="Cross-Site Request Forgery">CSRF</abbr>'e karşı <code>SameSite=Lax</code> ya da <code>Strict</code> ekle.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9110">RFC 9110 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> Semantics</a> · <a href="https://www.rfc-editor.org/rfc/rfc9111">RFC 9111 — <abbr title="HyperText Transfer Protocol">HTTP</abbr> Caching</a> · <a href="https://www.rfc-editor.org/rfc/rfc9113">RFC 9113 — <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers">MDN — <abbr title="HyperText Transfer Protocol">HTTP</abbr> header'ları</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching">MDN — <abbr title="HyperText Transfer Protocol">HTTP</abbr> önbelleği</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">MDN — <abbr title="Cross-Origin Resource Sharing">CORS</abbr></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie">MDN — Set-Cookie</a></li>
+<li><a href="https://owasp.org/www-project-secure-headers/">OWASP Secure Headers Project</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc7239">RFC 7239 — Forwarded</a> · <a href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a></li>
+</ul>
+<h2 id="notlarm">✍️ Notlarım<a class="headerlink" href="#notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Üzerinde çalıştığın bir siteyi seç. <code>curl -sI</code> çalıştır ve her cevap header'ını birer satırda açıkla. Hangi güvenlik header'ları eksik?</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Önceki: Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-dns/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 6.2 · DNS">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                6.2 · DNS
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

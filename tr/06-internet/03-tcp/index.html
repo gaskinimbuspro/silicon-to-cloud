@@ -1,0 +1,2329 @@
+<!DOCTYPE html><html lang="tr" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="TCP bağlantı yaşam döngüsü ve durumları, sıra numaraları ve ACK'ler, akış kontrolü ve tıkanıklık kontrolü (CUBIC, BBR), keep-alive ve bağlantı yeniden kullanımı, üretimde görülen TCP sorunları.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/03-tcp/">
+      
+      
+        <link rel="prev" href="../02-dns/">
+      
+      
+        <link rel="next" href="../04-tls/">
+      
+      
+        
+          <link rel="alternate" href="../../../06-internet/03-tcp/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>6.3 — TCP'ye derin dalış - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/site.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="6.3 — TCP'ye derin dalış - Silicon to Cloud">
+<meta property="og:description" content="TCP bağlantı yaşam döngüsü ve durumları, sıra numaraları ve ACK'ler, akış kontrolü ve tıkanıklık kontrolü (CUBIC, BBR), keep-alive ve bağlantı yeniden kullanımı, üretimde görülen TCP sorunları.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/06-internet/03-tcp.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/tr/06-internet/03-tcp/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="6.3 — TCP'ye derin dalış - Silicon to Cloud">
+<meta property="twitter:description" content="TCP bağlantı yaşam döngüsü ve durumları, sıra numaraları ve ACK'ler, akış kontrolü ve tıkanıklık kontrolü (CUBIC, BBR), keep-alive ve bağlantı yeniden kullanımı, üretimde görülen TCP sorunları.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/tr/06-internet/03-tcp.png">
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#63-tcpye-derin-dals" class="md-skip">
+          Ana içeriğe geç
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Başlık">
+    <a href="../../" title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              6.3 — TCP'ye derin dalış
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Dil seç">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../06-internet/03-tcp/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Ara" placeholder="Ara" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Ara">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Paylaş" aria-label="Paylaş" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Temizle" aria-label="Temizle" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Arama başlatılıyor
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasyon" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Depoya git" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../04-program/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-headers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.1 · HTTP headers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-dns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.2 · DNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.3 · TCP
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.3 · TCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-acls-3-adml-el-sksma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Açılış: 3 adımlı el sıkışma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · Açılış: 3 adımlı el sıkışma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-veri-gonderme-sra-numaralar-ackler-ve-pencereler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Veri gönderme: sıra numaraları, ACK'ler ve pencereler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tkanklk-kontrolu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Tıkanıklık kontrolü
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-kapans-fin-time_wait-ve-close_wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Kapanış: FIN, TIME_WAIT ve CLOSE_WAIT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-keep-alive-ve-baglant-yeniden-kullanm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Keep-alive ve bağlantı yeniden kullanımı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.4 · TLS &amp; certificates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-http2-http3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.5 · HTTP/2 &amp; HTTP/3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6.6 · Methods, status codes &amp; APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="İçindekiler">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      İçindekiler
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#temel-terimler-ve-ksaltmalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Temel terimler ve kısaltmalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buyuk-resim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Büyük resim
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-acls-3-adml-el-sksma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Açılış: 3 adımlı el sıkışma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 · Açılış: 3 adımlı el sıkışma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nasl-calsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nasıl çalışır?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-veri-gonderme-sra-numaralar-ackler-ve-pencereler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · Veri gönderme: sıra numaraları, ACK'ler ve pencereler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tkanklk-kontrolu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Tıkanıklık kontrolü
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-kapans-fin-time_wait-ve-close_wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Kapanış: FIN, TIME_WAIT ve CLOSE_WAIT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-keep-alive-ve-baglant-yeniden-kullanm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Keep-alive ve bağlantı yeniden kullanımı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#devops-baglants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 DevOps bağlantısı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendin-dene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Kendin dene
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatrlatma-kart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Hatırlatma kartı
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kendini-test-et" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Kendini test et
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kaynaklar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Kaynaklar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notlarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ Notlarım
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasyon">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    6 · DNS, TCP, TLS, HTTP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="63-tcpye-derin-dals">6.3 — <abbr title="Transmission Control Protocol">TCP</abbr>'ye derin dalış<a class="headerlink" href="#63-tcpye-derin-dals" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Kısaca</p>
+<p><strong><abbr title="Transmission Control Protocol">TCP</abbr></strong>, güvenilmez <abbr title="Internet Protocol">IP</abbr> paketlerini iki soket arasında <strong>güvenilir ve sıralı bir byte akışına</strong> çevirir. <strong>3 adımlı
+el sıkışma</strong> ile açılır, her byte'ı numaralar ve <strong><abbr title="acknowledge">ACK</abbr></strong> gelmeyeni yeniden gönderir. Alıcı (<strong>akış kontrolü</strong>) ya da
+ağ (<strong>tıkanıklık kontrolü</strong>) yetişemediğinde göndereni yavaşlatır. <strong><abbr title="finish">FIN</abbr></strong> paketleriyle kapanır.</p>
+</div>
+<h2 id="temel-terimler-ve-ksaltmalar">📖 Temel terimler ve kısaltmalar<a class="headerlink" href="#temel-terimler-ve-ksaltmalar" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Terim</th>
+<th>Açılımı</th>
+<th>Nedir</th>
+<th>Nasıl çalışır (tek satır)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Transmission Control Protocol">TCP</abbr></strong></td>
+<td>Transmission Control Protocol</td>
+<td><abbr title="Internet Protocol">IP</abbr> üzerinde güvenilir byte akışı</td>
+<td>El sıkışma, sıra numaraları, <abbr title="acknowledge">ACK</abbr>, yeniden gönderim</td>
+</tr>
+<tr>
+<td><strong>Soket</strong></td>
+<td>Socket</td>
+<td>Bir uç: <abbr title="Internet Protocol">IP</abbr> + port (+ protokol)</td>
+<td>Bağlantı = 4'lü (kaynak <abbr title="Internet Protocol">IP</abbr>, kaynak port, hedef <abbr title="Internet Protocol">IP</abbr>, hedef port)</td>
+</tr>
+<tr>
+<td><strong>Segment</strong></td>
+<td>—</td>
+<td>Tek bir <abbr title="Transmission Control Protocol">TCP</abbr> paketi</td>
+<td>Başlık (20+ byte) + yük</td>
+</tr>
+<tr>
+<td><strong><abbr title="synchronize">SYN</abbr> / <abbr title="acknowledge">ACK</abbr> / <abbr title="finish">FIN</abbr> / <abbr title="reset">RST</abbr></strong></td>
+<td>synchronize / acknowledge / finish / reset</td>
+<td>Başlık bayrakları</td>
+<td>Aç / onayla / kibarca kapat / iptal et</td>
+</tr>
+<tr>
+<td><strong>Sıra numarası</strong></td>
+<td>Sequence number</td>
+<td>Segment verisinin byte konumu</td>
+<td>Alıcının sıralamasını ve boşlukları bulmasını sağlar</td>
+</tr>
+<tr>
+<td><strong><abbr title="Maximum Segment Size">MSS</abbr></strong></td>
+<td>Maximum Segment Size</td>
+<td>Segment başına en büyük yük</td>
+<td>Genelde 1460 byte (1500 <abbr title="Maximum Transmission Unit">MTU</abbr> − 40 byte başlık)</td>
+</tr>
+<tr>
+<td><strong>rwnd</strong></td>
+<td>receive window</td>
+<td>Alıcıdaki boş tampon alanı</td>
+<td>Akış kontrolü: gönderen bunu aşamaz</td>
+</tr>
+<tr>
+<td><strong>cwnd</strong></td>
+<td>congestion window</td>
+<td>Gönderenin ağın kaldırabileceği miktar tahmini</td>
+<td><abbr title="acknowledge">ACK</abbr>'lerle büyür, kayıpta küçülür</td>
+</tr>
+<tr>
+<td><strong><abbr title="Round-Trip Time">RTT</abbr> / <abbr title="Retransmission TimeOut">RTO</abbr></strong></td>
+<td>Round-Trip Time / Retransmission TimeOut</td>
+<td>Ölçülen gecikme / yeniden gönderim zamanlayıcısı</td>
+<td><abbr title="Retransmission TimeOut">RTO</abbr> ölçülen <abbr title="Round-Trip Time">RTT</abbr>'ye göre ayarlanır</td>
+</tr>
+<tr>
+<td><strong><abbr title="—">CUBIC</abbr> / <abbr title="Bottleneck Bandwidth and RTT">BBR</abbr></strong></td>
+<td>— / Bottleneck Bandwidth and <abbr title="Round-Trip Time">RTT</abbr></td>
+<td>Tıkanıklık kontrol algoritmaları</td>
+<td>Kayıp tabanlı (Linux varsayılanı) / model tabanlı</td>
+</tr>
+<tr>
+<td><strong>TIME_WAIT</strong></td>
+<td>—</td>
+<td>Aktif kapanıştan sonraki durum</td>
+<td>4'lüyü Linux'ta ~60 sn ayrılmış tutar</td>
+</tr>
+<tr>
+<td><strong>Keep-alive</strong></td>
+<td>—</td>
+<td>Bir bağlantıyı çok istek için kullanmak (<abbr title="HyperText Transfer Protocol">HTTP</abbr>) ya da boştakileri yoklamak (<abbr title="Transmission Control Protocol">TCP</abbr>)</td>
+<td>El sıkışmadan tasarruf / ölü karşı tarafı bulur</td>
+</tr>
+<tr>
+<td><strong>Backlog</strong></td>
+<td>—</td>
+<td><code>accept()</code> bekleyen bağlantı kuyruğu</td>
+<td>Kuyruk dolu → <abbr title="synchronize">SYN</abbr>'ler düşer, bağlanma yavaşlar</td>
+</tr>
+<tr>
+<td><strong>Ephemeral port</strong></td>
+<td>—</td>
+<td>İstemci tarafında rastgele port</td>
+<td>Linux'ta <code>32768–60999</code> aralığı</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buyuk-resim">🗺️ Büyük resim<a class="headerlink" href="#buyuk-resim" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-3-lifecycle.png" data-desc-position="bottom"><img alt="Bir TCP bağlantısının hayatı" src="../../assets/diagrams/06-3-lifecycle.png"></a></p>
+<hr>
+<h2 id="1-acls-3-adml-el-sksma">1 · Açılış: 3 adımlı el sıkışma<a class="headerlink" href="#1-acls-3-adml-el-sksma" title="Permanent link">¶</a></h2>
+<h3 id="nasl-calsr">Nasıl çalışır?<a class="headerlink" href="#nasl-calsr" title="Permanent link">¶</a></h3>
+<ol>
+<li>İstemci rastgele bir başlangıç sıra numarası <code>x</code> ile <strong><abbr title="synchronize">SYN</abbr></strong> gönderir.</li>
+<li>Sunucu <strong><abbr title="synchronize">SYN</abbr>-<abbr title="acknowledge">ACK</abbr></strong> ile cevaplar: kendi numarası <code>y</code> ve <code>ack = x+1</code>.</li>
+<li>İstemci <code>ack = y+1</code> ile <strong><abbr title="acknowledge">ACK</abbr></strong> gönderir. İki taraf da artık <code>ESTABLISHED</code>.</li>
+</ol>
+<p>Veri akmadan önce <strong>bir <abbr title="Round-Trip Time">RTT</abbr></strong> harcanır. Sunucuda el sıkışmaları kernel kendisi tamamlar ve hazır bağlantıları uygulama <code>accept()</code> çağırana kadar <strong>accept kuyruğuna</strong> (backlog) koyar. Uygulama çok yavaşsa kuyruk dolar ve yeni <abbr title="synchronize">SYN</abbr>'ler düşer; bu "rastgele 1 sn / 3 sn bağlanma gecikmesi" gibi görünür.</p>
+<h2 id="2-veri-gonderme-sra-numaralar-ackler-ve-pencereler">2 · Veri gönderme: sıra numaraları, <abbr title="acknowledge">ACK</abbr>'ler ve pencereler<a class="headerlink" href="#2-veri-gonderme-sra-numaralar-ackler-ve-pencereler" title="Permanent link">¶</a></h2>
+<ul>
+<li>Her byte'ın bir <strong>sıra numarası</strong> var. Alıcı "N. byte'a kadar her şey bende" diye <abbr title="acknowledge">ACK</abbr>'ler ve sırası karışan segmentleri düzeltir.</li>
+<li><strong>Yeniden gönderim:</strong> <strong><abbr title="Retransmission TimeOut">RTO</abbr></strong> dolmadan <abbr title="acknowledge">ACK</abbr> gelmezse ya da üç tekrar <abbr title="acknowledge">ACK</abbr> "hâlâ N. byte'ı bekliyorum" derse segment yeniden gönderilir.</li>
+<li><strong>Akış kontrolü:</strong> her <abbr title="acknowledge">ACK</abbr> alıcının boş tamponunu (<code>rwnd</code>) taşır. Yavaş okuyan bir uygulama bunu sıfıra indirir ve gönderen durur.</li>
+<li><strong>Throughput limiti:</strong> en fazla <code>pencere / RTT</code>. 100 ms'lik bir yolda 64 KB pencere sadece ~5 Mbit/s verir; <strong>window scaling</strong> bu yüzden var, uzak mesafeli aktarımlar bu yüzden büyük tampon ister.</li>
+</ul>
+<h2 id="3-tkanklk-kontrolu">3 · Tıkanıklık kontrolü<a class="headerlink" href="#3-tkanklk-kontrolu" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/diagrams/06-3a-congestion.png" data-desc-position="bottom"><img alt="TCP tıkanıklık kontrolü nasıl çalışır" src="../../assets/diagrams/06-3a-congestion.png"></a></p>
+<p>Ağda "yavaşla" mesajı yoktur, gönderen tahmin eder:</p>
+<ul>
+<li><strong>Yavaş başlangıç (slow start):</strong> ~10 segmentle başla, <code>cwnd</code>'yi her <abbr title="Round-Trip Time">RTT</abbr>'de ikiye katla.</li>
+<li><strong>Tıkanıklıktan kaçınma:</strong> bir eşikten sonra daha dikkatli büyü.</li>
+<li><strong>Kayıp = tıkanıklık:</strong> kayıpta <code>cwnd</code>'yi düşür (<abbr title="—">CUBIC</abbr> 0,7 ile çarpar) ve tekrar büyü.</li>
+<li><strong><abbr title="Bottleneck Bandwidth and RTT">BBR</abbr></strong> (Google) ise darboğaz bant genişliğini ve en düşük <abbr title="Round-Trip Time">RTT</abbr>'yi ölçer, paketleri buna göre gönderir; kayıplı ya da uzun yollarda daha iyi çalışır. <code>net.ipv4.tcp_congestion_control=bbr</code> ile açılır.</li>
+</ul>
+<h2 id="4-kapans-fin-time_wait-ve-close_wait">4 · Kapanış: <abbr title="finish">FIN</abbr>, TIME_WAIT ve CLOSE_WAIT<a class="headerlink" href="#4-kapans-fin-time_wait-ve-close_wait" title="Permanent link">¶</a></h2>
+<ul>
+<li>Önce kapatan taraf <strong><abbr title="finish">FIN</abbr></strong> gönderir, sonra 2×MSL (Linux'ta ~60 sn) <strong>TIME_WAIT</strong>'e girer; böylece eski bağlantının geç kalan paketleri aynı 4'lüyü kullanan yeni bir bağlantıyı karıştıramaz.</li>
+<li><strong><abbr title="reset">RST</abbr></strong> hemen iptal eder: kapalı bir porta bağlanınca, firewall'lardan ya da okunmamış veriyle kapatan uygulamalardan gelir.</li>
+<li><strong>İstemcide çok <code>TIME_WAIT</code></strong> = her istekte yeni bağlantı açılıyor. Keep-alive/havuz kullan; yoksa ephemeral port'lar tükenebilir.</li>
+<li><strong>Çok <code>CLOSE_WAIT</code></strong> = karşı taraf kapattı ama <strong>uygulaman hiç <code>close()</code> çağırmadı</strong>. Bu bir hata (sızan soketler), kernel ayarı değil.</li>
+</ul>
+<h2 id="5-keep-alive-ve-baglant-yeniden-kullanm">5 · Keep-alive ve bağlantı yeniden kullanımı<a class="headerlink" href="#5-keep-alive-ve-baglant-yeniden-kullanm" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong><abbr title="HyperText Transfer Protocol">HTTP</abbr> keep-alive / bağlantı havuzları</strong> tek bir <abbr title="Transmission Control Protocol">TCP</abbr> (ve <abbr title="Transport Layer Security">TLS</abbr>) bağlantısını çok istek için kullanır: istek başına el sıkışma yok. Servisler arası gecikmede en büyük kolay kazanç budur.</li>
+<li><strong><abbr title="Transmission Control Protocol">TCP</abbr> keepalive yoklamaları</strong> (<code>SO_KEEPALIVE</code>) boştaki bağlantılarda ölü karşı tarafı bulur. Varsayılan 2 saat sonra; birçok uygulama bunu ayarlar.</li>
+<li><strong>Boşta kalma süreleri uyumlu olmalı:</strong> load balancer boştaki bağlantıları 60 sn'de keserken istemci havuzu 90 sn tutarsa istemci ölü bir bağlantıya yazar ve reset alır (<code>connection reset by peer</code>, 502'ler). <strong>İstemcinin boşta süresi sunucunun/<abbr title="Load Balancer">LB</abbr>'ninkinden kısa olsun.</strong></li>
+</ul>
+<h2 id="devops-baglants">🔧 <abbr title="Development + Operations">DevOps</abbr> bağlantısı<a class="headerlink" href="#devops-baglants" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong><abbr title="Load Balancer">LB</abbr> arkasında 502 / 504</strong> genelde boşta süre uyumsuzluğundan ya da <abbr title="Load Balancer">LB</abbr>'nin hâlâ kullandığı keep-alive bağlantılarını backend'in kapatmasından gelir.</li>
+<li><strong>Uzun ömürlü bağlantıları dağıtmak:</strong> gRPC/<abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 tek bir <abbr title="Transmission Control Protocol">TCP</abbr> bağlantısını tutar; L4 bir dağıtıcı bir istemcinin tüm isteklerini tek pod'a yollar. L7 (istek başına) dağıtım ya da istemci tarafı dağıtım kullan.</li>
+<li><strong>SNAT port tükenmesi</strong> (bulut <abbr title="Network Address Translation">NAT</abbr> gateway'leri, tek bir hedefe çok bağlantı) bağlantı zaman aşımı olarak görünür. Bağlantıları yeniden kullan ya da <abbr title="Network Address Translation">NAT</abbr> <abbr title="Internet Protocol">IP</abbr>'si ekle.</li>
+<li><strong>İşe yarar sysctl'ler:</strong> <code>net.core.somaxconn</code> (accept backlog), <code>net.ipv4.ip_local_port_range</code>, <code>net.ipv4.tcp_congestion_control</code>.</li>
+</ul>
+<h2 id="kendin-dene">🧪 Kendin dene<a class="headerlink" href="#kendin-dene" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ss<span class="w"> </span>-tan<span class="w"> </span>state<span class="w"> </span>established<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w">           </span><span class="c1"># mevcut bağlantılar</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ss<span class="w"> </span>-tan<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $1}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq<span class="w"> </span>-c<span class="w"> </span><span class="c1"># duruma göre bağlantı sayısı</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ss<span class="w"> </span>-ltn<span class="w">                                     </span><span class="c1"># dinleyen soketler + backlog (Recv-Q / Send-Q)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ss<span class="w"> </span>-ti<span class="w"> </span>dst<span class="w"> </span><span class="m">1</span>.1.1.1<span class="w">                          </span><span class="c1"># bağlantı detayları: rtt, cwnd, retrans</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-ni<span class="w"> </span>any<span class="w"> </span><span class="s1">'tcp port 443 and host example.com'</span><span class="w"> </span>-c<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="p">&amp;</span><span class="w">   </span><span class="c1"># el sıkışmayı izle</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>https://example.com
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>curl<span class="w"> </span>-so<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'tcp=%{time_connect}s tls=%{time_appconnect}s ttfb=%{time_starttransfer}s\n'</span><span class="w"> </span>https://example.com
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sysctl<span class="w"> </span>net.ipv4.tcp_congestion_control<span class="w"> </span>net.core.somaxconn
+</code></pre></div>
+<h2 id="hatrlatma-kart">🃏 Hatırlatma kartı<a class="headerlink" href="#hatrlatma-kart" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Belirti</th>
+<th>Muhtemel sebep</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bağlanmalar tam +1 sn / +3 sn sürüyor</td>
+<td><abbr title="synchronize">SYN</abbr> düştü ve yeniden denendi (dolu backlog, firewall)</td>
+</tr>
+<tr>
+<td><code>connection refused</code></td>
+<td>Dinleyen yok → <abbr title="reset">RST</abbr></td>
+</tr>
+<tr>
+<td><code>connection timed out</code></td>
+<td><abbr title="synchronize">SYN</abbr> kayboldu: firewall, security group, routing, <abbr title="Network Address Translation">NAT</abbr></td>
+</tr>
+<tr>
+<td><code>connection reset by peer</code></td>
+<td>Karşı taraf/<abbr title="Load Balancer">LB</abbr> kapattı (boşta süre, çökme, proxy)</td>
+</tr>
+<tr>
+<td>Binlerce <code>CLOSE_WAIT</code></td>
+<td>Uygulama soketleri kapatmıyor</td>
+</tr>
+<tr>
+<td>Binlerce <code>TIME_WAIT</code> (istemci)</td>
+<td>Bağlantı yeniden kullanılmıyor</td>
+</tr>
+<tr>
+<td>Uzak mesafede yavaş aktarım</td>
+<td>Küçük pencere, kayıp → <abbr title="Bottleneck Bandwidth and RTT">BBR</abbr> dene, tamponları ayarla</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kendini-test-et">❓ Kendini test et<a class="headerlink" href="#kendini-test-et" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. <abbr title="Transmission Control Protocol">TCP</abbr> neden veri göndermeden önce el sıkışmaya ihtiyaç duyar?</summary>
+<p>İki taraf başlangıç sıra numaralarında anlaşmalı ve karşı tarafın ulaşılabilir ve istekli olduğunu doğrulamalıdır.</p>
+</details>
+<details class="question">
+<summary>2. Akış kontrolü ile tıkanıklık kontrolü arasındaki fark ne?</summary>
+<p>Akış kontrolü <strong>alıcıyı</strong> korur (rwnd, tamponu). Tıkanıklık kontrolü <strong>ağı</strong> korur (cwnd, kayıptan ya da bant genişliği/<abbr title="Round-Trip Time">RTT</abbr>'den tahmin edilir).</p>
+</details>
+<details class="question">
+<summary>3. Servisinde CLOSE_WAIT'te 20.000 soket var. Neyi düzeltirsin?</summary>
+<p>Uygulamayı: karşı tarafın <abbr title="finish">FIN</abbr>'ini alıyor ama soketini hiç kapatmıyor (sızan bağlantılar, eksik <code>close()</code> / kapatılmamış response body).</p>
+</details>
+<details class="question">
+<summary>4. <abbr title="Load Balancer">LB</abbr> boşta süresi 60 sn, backend keep-alive süresi 30 sn iken neden ara sıra 502 alırsın?</summary>
+<p>Backend boştaki bağlantıları önce kapatır; <abbr title="Load Balancer">LB</abbr> az önce kapanan bir bağlantıya yeni istek yollayabilir. Backend'in süresini <abbr title="Load Balancer">LB</abbr>'ninkinden uzun yap.</p>
+</details>
+<details class="question">
+<summary>5. Tek bir gRPC istemcisi neden bir Kubernetes Service arkasındaki tek pod'u boğabilir?</summary>
+<p>kube-proxy <abbr title="Transmission Control Protocol">TCP</abbr> bağlantısı başına dağıtır, gRPC ise tüm istekleri tek bir uzun ömürlü <abbr title="HyperText Transfer Protocol">HTTP</abbr>/2 bağlantısından yollar. L7 dağıtım (mesh, gateway) ya da istemci tarafı dağıtım kullan.</p>
+</details>
+<hr>
+<h2 id="kaynaklar">📚 Kaynaklar<a class="headerlink" href="#kaynaklar" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9293">RFC 9293 — <abbr title="Transmission Control Protocol">TCP</abbr></a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9438">RFC 9438 — <abbr title="—">CUBIC</abbr></a> · <a href="https://research.google/pubs/bbr-congestion-based-congestion-control-2/"><abbr title="Bottleneck Bandwidth and RTT">BBR</abbr> (Google)</a></li>
+<li><a href="https://blog.cloudflare.com/this-is-strictly-a-violation-of-the-tcp-specification/">Cloudflare — This is strictly a violation of the <abbr title="Transmission Control Protocol">TCP</abbr> specification (CLOSE_WAIT)</a></li>
+<li><a href="https://man7.org/linux/man-pages/man8/ss.8.html"><code>ss</code> man sayfası</a></li>
+</ul>
+<h2 id="notlarm">✍️ Notlarım<a class="headerlink" href="#notlarm" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Sunucularından birinde <code>ss -tan | awk '{print $1}' | sort | uniq -c</code> çalıştır. Gördüğün her durumu açıkla.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Başa dön
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Altbilgi">
+        
+          
+          <a href="../02-dns/" class="md-footer__link md-footer__link--prev" aria-label="Önceki: 6.2 · DNS">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Önceki
+              </span>
+              <div class="md-ellipsis">
+                6.2 · DNS
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../04-tls/" class="md-footer__link md-footer__link--next" aria-label="Sonraki: 6.4 · TLS &amp; certificates">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sonraki
+              </span>
+              <div class="md-ellipsis">
+                6.4 · TLS &amp; certificates
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Kopyaland\u0131", "clipboard.copy": "Kopyala", "search.result.more.one": "Bu sayfada 1 tane daha", "search.result.more.other": "Bu sayfada # tane daha", "search.result.none": "E\u015fle\u015fen dok\u00fcman bulunamad\u0131", "search.result.one": "1 dok\u00fcman bulundu", "search.result.other": "# dok\u00fcman bulundu", "search.result.placeholder": "Aramaya ba\u015flamak i\u00e7in yaz\u0131n", "search.result.term.missing": "Eksik", "select.version": "Versiyon se\u00e7"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

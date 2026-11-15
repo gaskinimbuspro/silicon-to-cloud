@@ -1,0 +1,2227 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preprocess, compile, assemble, link, the ELF file, fork/execve, the dynamic linker, main() — and how Java, Python and Node.js differ.">
+      
+      
+        <meta name="author" content="Gökhan Aşkın">
+      
+      
+        <link rel="canonical" href="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/">
+      
+      
+        <link rel="prev" href="../03-os/05-namespaces-cgroups/">
+      
+      
+        <link rel="next" href="01-compile-link/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../tr/04-program/" hreflang="tr">
+        
+      
+      
+      <link rel="icon" href="../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Chapter 4 — How a program runs - Silicon to Cloud</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/site.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chapter 4 — How a program runs - Silicon to Cloud">
+<meta property="og:description" content="Preprocess, compile, assemble, link, the ELF file, fork/execve, the dynamic linker, main() — and how Java, Python and Node.js differ.">
+<meta property="og:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/04-program/index.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://gaskinimbuspro.github.io/silicon-to-cloud/04-program/">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Chapter 4 — How a program runs - Silicon to Cloud">
+<meta property="twitter:description" content="Preprocess, compile, assemble, link, the ELF file, fork/execve, the dynamic linker, main() — and how Java, Python and Node.js differ.">
+<meta property="twitter:image" content="https://gaskinimbuspro.github.io/silicon-to-cloud/assets/images/social/04-program/index.png">
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-4-how-a-program-runs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Silicon to Cloud" class="md-header__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Silicon to Cloud
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 4 — How a program runs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"></path></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../tr/04-program/" hreflang="tr" class="md-select__link">
+              Türkçe
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Silicon to Cloud" class="md-nav__button md-logo" aria-label="Silicon to Cloud" data-md-component="logo">
+      
+  <img src="../assets/images/logo.svg" alt="logo">
+
+    </a>
+    Silicon to Cloud
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    silicon-to-cloud
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧭 Learning paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🆕 What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-keypress/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Keypress
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../02-cpu/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · CPU &amp; Assembly
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../03-os/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 · Operating system
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 · How a program runs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4 · How a program runs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-compile-link/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.1 · Compiling &amp; linking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-elf-loader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.2 · ELF &amp; the loader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-runtimes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.3 · Language runtimes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-network/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 · Networking
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../06-internet/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 · DNS, TCP, TLS, HTTP
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../07-server/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 · Server side
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../08-browser/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 · The browser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-infra/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 · Modern infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../10-ai/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 · AI infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 · Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 · Distributed systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-finops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 · Cloud cost (FinOps)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../14-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 · Cloud platforms
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-kubernetes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 · Kubernetes in depth
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../16-devops/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 · DevOps practices
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#key-terms-abbreviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Key terms &amp; abbreviations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-build-from-mainc-to-an-executable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Build: from main.c to an executable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-elf-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · The ELF file
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-start-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · Start: ./app
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-inside-the-new-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · Inside the new process
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-other-languages-same-os-different-runtimes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Other languages: same OS, different runtimes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · Other languages: same OS, different runtimes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-aot-interpreters-and-jit-differ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do AOT, interpreters and JIT differ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incident-story-no-such-file-or-directory-for-a-file-that-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Incident story: “no such file or directory” for a file that exists
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-deeper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧭 Go deeper
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-it-yourself-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Try it yourself (Linux)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🃏 Cheat sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Test yourself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✍️ My notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href=".." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    🏠 Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    4 · How a program runs
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-4-how-a-program-runs">Chapter 4 — How a program runs<a class="headerlink" href="#chapter-4-how-a-program-runs" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">In short</p>
+<p>A toolchain turns your source code into an <strong><abbr title="Executable and Linkable Format">ELF</abbr></strong> file on disk. When you type <code>./app</code>, the shell <strong>forks</strong>, the
+child calls <strong><code>execve</code></strong>, the kernel <strong>maps</strong> the file into a fresh address space, the <strong>dynamic linker</strong> pulls in
+shared libraries, and finally your <strong><code>main()</code></strong> runs. Java, Python and Node.js add a <strong>runtime/<abbr title="Virtual Machine (language runtime)">VM</abbr></strong> in between.</p>
+</div>
+<h2 id="key-terms-abbreviations">📖 Key terms &amp; abbreviations<a class="headerlink" href="#key-terms-abbreviations" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Stands for</th>
+<th>What it is</th>
+<th>How it works (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compiler</strong></td>
+<td>—</td>
+<td>Translates source code to assembly/machine code</td>
+<td>Parses, type-checks, optimizes, emits code</td>
+</tr>
+<tr>
+<td><strong>Preprocessor</strong></td>
+<td>—</td>
+<td>Text-level step before compiling (C/C++)</td>
+<td>Expands #include and #define</td>
+</tr>
+<tr>
+<td><strong>Assembler</strong></td>
+<td>—</td>
+<td>Assembly → object file</td>
+<td>Encodes instructions into bytes, records symbols</td>
+</tr>
+<tr>
+<td><strong>Linker</strong></td>
+<td>—</td>
+<td>Combines object files and libraries</td>
+<td>Resolves symbols, writes the executable</td>
+</tr>
+<tr>
+<td><strong><abbr title="Executable and Linkable Format">ELF</abbr></strong></td>
+<td>Executable and Linkable Format</td>
+<td>Linux's binary file format</td>
+<td>Header + segments to load + sections</td>
+</tr>
+<tr>
+<td><strong>Static / dynamic linking</strong></td>
+<td>—</td>
+<td>Copy libraries in / load them at start</td>
+<td>Dynamic: ld.so maps .so files and fixes addresses</td>
+</tr>
+<tr>
+<td><strong>ld.so</strong></td>
+<td>dynamic linker/loader</td>
+<td>Program that loads shared libraries</td>
+<td>Named in PT_INTERP, runs before main()</td>
+</tr>
+<tr>
+<td><strong>fork / execve</strong></td>
+<td>—</td>
+<td>Copy the process / replace its program</td>
+<td>Shell forks a child, child execs the new program</td>
+</tr>
+<tr>
+<td><strong>libc</strong></td>
+<td>C standard library</td>
+<td>Wrappers for syscalls + standard functions</td>
+<td>printf, malloc, open → syscalls underneath</td>
+</tr>
+<tr>
+<td><strong>Bytecode</strong></td>
+<td>—</td>
+<td>Portable intermediate code for a <abbr title="Virtual Machine (language runtime)">VM</abbr></td>
+<td>Run by an interpreter or <abbr title="Just-In-Time compiler">JIT</abbr> (JVM, CPython, V8)</td>
+</tr>
+<tr>
+<td><strong><abbr title="Just-In-Time compiler">JIT</abbr> / <abbr title="Ahead-Of-Time">AOT</abbr></strong></td>
+<td>Just-In-Time / Ahead-Of-Time</td>
+<td>Compile while running / before running</td>
+<td><abbr title="Just-In-Time compiler">JIT</abbr> compiles hot code at runtime; <abbr title="Ahead-Of-Time">AOT</abbr> produces native binaries</td>
+</tr>
+<tr>
+<td><strong><abbr title="Virtual Machine (language runtime)">VM</abbr></strong></td>
+<td>Virtual Machine (language runtime)</td>
+<td>Runtime executing bytecode</td>
+<td>JVM, CPython <abbr title="Virtual Machine (language runtime)">VM</abbr>, V8 engine</td>
+</tr>
+</tbody>
+</table>
+<h2 id="big-picture">🗺️ Big picture<a class="headerlink" href="#big-picture" title="Permanent link">¶</a></h2>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/04-program.png" data-desc-position="bottom"><img alt="How a program runs" src="../assets/diagrams/04-program.png"></a></p>
+<hr>
+<h2 id="1-build-from-mainc-to-an-executable">1 · Build: from <code>main.c</code> to an executable<a class="headerlink" href="#1-build-from-mainc-to-an-executable" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gcc<span class="w"> </span>main.c<span class="w"> </span>-o<span class="w"> </span>app<span class="w">        </span><span class="c1"># one command, four stages:</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Stage</th>
+<th>Tool</th>
+<th>Input → output</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Preprocess</td>
+<td><code>cpp</code></td>
+<td><code>main.c</code> → <code>main.i</code></td>
+<td>Pastes <code>#include</code> files in, expands <code>#define</code> macros. Still C.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Compile</td>
+<td><code>cc1</code></td>
+<td><code>main.i</code> → <code>main.s</code></td>
+<td>C → assembly. Type checks, <strong>optimizations</strong> (<code>-O2</code>) happen here.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Assemble</td>
+<td><code>as</code></td>
+<td><code>main.s</code> → <code>main.o</code></td>
+<td>Assembly → machine code. Calls to <code>printf</code> are left as <strong>unresolved symbols</strong> ("fill this address in later").</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Link</td>
+<td><code>ld</code></td>
+<td><code>main.o</code> + libs → <code>app</code></td>
+<td>Combines object files, <strong>resolves symbols</strong>, writes the final <abbr title="Executable and Linkable Format">ELF</abbr>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Static vs dynamic linking</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Static</th>
+<th>Dynamic (default for C on Linux)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Library code</td>
+<td>Copied <strong>into</strong> the binary</td>
+<td>Loaded at start from <code>libc.so.6</code></td>
+</tr>
+<tr>
+<td>Binary size</td>
+<td>Larger</td>
+<td>Smaller</td>
+</tr>
+<tr>
+<td>Security updates</td>
+<td>Rebuild everything</td>
+<td>Update the <code>.so</code>, all programs benefit</td>
+</tr>
+<tr>
+<td>Runs on a minimal system</td>
+<td>Yes, even <code>FROM scratch</code></td>
+<td>Needs the right libraries present</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><abbr title="Development + Operations">DevOps</abbr> connection: Go builds static binaries by default (with <code>CGO_ENABLED=0</code>), which is why Go apps fit in tiny <code>scratch</code> or <code>distroless</code> images.</p>
+</blockquote>
+<h2 id="2-the-elf-file">2 · The <abbr title="Executable and Linkable Format">ELF</abbr> file<a class="headerlink" href="#2-the-elf-file" title="Permanent link">¶</a></h2>
+<p><strong><abbr title="Executable and Linkable Format">ELF</abbr></strong> (Executable and Linkable Format) is the file format for programs on Linux. It starts with the magic bytes <code>7f 45 4c 46</code> (<code>.ELF</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><abbr title="Executable and Linkable Format">ELF</abbr> header</strong></td>
+<td>Architecture (x86-64, arm64), <strong>entry point</strong> address</td>
+</tr>
+<tr>
+<td><strong>Program headers (segments)</strong></td>
+<td>What to load where: code (<code>R-X</code>), data (<code>RW-</code>), plus <code>PT_INTERP</code> = path of the dynamic linker</td>
+</tr>
+<tr>
+<td><strong>Sections</strong></td>
+<td><code>.text</code> (code), <code>.rodata</code> (constants, strings), <code>.data</code> (initialized globals), <code>.bss</code> (zeroed globals), <code>.dynamic</code> (needed libraries)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-start-app">3 · Start: <code>./app</code><a class="headerlink" href="#3-start-app" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Step</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>You type <code>./app</code>. The shell calls <strong><code>fork()</code></strong>: a copy of the shell process is created (cheaply, with copy-on-write, Chapter 3).</td>
+</tr>
+<tr>
+<td>7</td>
+<td>The child calls <strong><code>execve("./app", argv, envp)</code></strong>. The kernel checks permissions, reads the <abbr title="Executable and Linkable Format">ELF</abbr> header, throws away the shell's memory, <strong>maps the segments</strong> into a new address space and builds the initial <strong>stack</strong> (<code>argc</code>, <code>argv</code>, environment variables, auxiliary vector).</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Because the <abbr title="Executable and Linkable Format">ELF</abbr> has a <code>PT_INTERP</code> entry, the kernel first jumps to the <strong>dynamic linker</strong> <code>/lib64/ld-linux-x86-64.so.2</code>, not to your code.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-inside-the-new-process">4 · Inside the new process<a class="headerlink" href="#4-inside-the-new-process" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Step</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>The dynamic linker reads the <code>NEEDED</code> list (<code>libc.so.6</code>, …), finds the libraries, <strong><code>mmap</code>s</strong> them in, and fixes up addresses (relocations, <abbr title="Global Offset Table">GOT</abbr>/<abbr title="Procedure Linkage Table">PLT</abbr>).</td>
+</tr>
+<tr>
+<td>10</td>
+<td>It jumps to the program's entry point <code>_start</code>, which calls <code>__libc_start_main</code>, which calls <strong><code>main(argc, argv)</code></strong>.</td>
+</tr>
+<tr>
+<td>—</td>
+<td>When <code>main</code> returns, <code>exit()</code> flushes buffers and calls the <strong><code>exit_group</code></strong> syscall. The parent shell receives <code>SIGCHLD</code>, collects the exit code with <code>wait()</code>, and you see it as <code>$?</code>.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Remember this</p>
+<p>A running program = <strong>kernel loader (<code>execve</code>) + dynamic linker (<code>ld.so</code>) + libraries + your code</strong>.
+Two classic container errors come from this chain:
+<code>exec format error</code> = the binary is for a different <abbr title="Central Processing Unit">CPU</abbr> architecture (arm64 vs amd64), and
+<code>no such file or directory</code> for a file that clearly exists = its <strong>dynamic linker</strong> is missing (e.g. a glibc binary on Alpine, which uses musl).</p>
+</div>
+<h2 id="5-other-languages-same-os-different-runtimes">5 · Other languages: same OS, different runtimes<a class="headerlink" href="#5-other-languages-same-os-different-runtimes" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>What you ship</th>
+<th>What runs</th>
+<th>Speed trick</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>C / C++ / Rust / Go</strong></td>
+<td>Native <abbr title="Executable and Linkable Format">ELF</abbr> binary</td>
+<td>The <abbr title="Central Processing Unit">CPU</abbr> directly</td>
+<td>Ahead-of-time (<abbr title="Ahead-Of-Time">AOT</abbr>) compilation</td>
+</tr>
+<tr>
+<td><strong>Java / Kotlin</strong></td>
+<td><code>.class</code>/<code>.jar</code> bytecode</td>
+<td>The <strong>JVM</strong> (itself an <abbr title="Executable and Linkable Format">ELF</abbr>) interprets bytecode</td>
+<td><strong><abbr title="Just-In-Time compiler">JIT</abbr></strong>: hot methods are compiled to machine code at runtime (HotSpot)</td>
+</tr>
+<tr>
+<td><strong>JavaScript (Node.js)</strong></td>
+<td><code>.js</code> source</td>
+<td><strong>V8</strong> parses to bytecode (Ignition)</td>
+<td><strong><abbr title="Just-In-Time compiler">JIT</abbr></strong>: hot functions are optimized to machine code (TurboFan)</td>
+</tr>
+<tr>
+<td><strong>Python</strong></td>
+<td><code>.py</code> source</td>
+<td><strong>CPython</strong> compiles to bytecode (<code>.pyc</code>) and runs it in an interpreter loop</td>
+<td>Mostly interpreted, so <abbr title="Central Processing Unit">CPU</abbr>-heavy work goes to C extensions (NumPy, PyTorch)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>In every case, what the kernel actually starts with <code>execve</code> is an <abbr title="Executable and Linkable Format">ELF</abbr>: your binary, or <code>java</code>, <code>node</code>, <code>python3</code>.</p>
+</blockquote>
+<h3 id="how-do-aot-interpreters-and-jit-differ">How do <abbr title="Ahead-Of-Time">AOT</abbr>, interpreters and <abbr title="Just-In-Time compiler">JIT</abbr> differ?<a class="headerlink" href="#how-do-aot-interpreters-and-jit-differ" title="Permanent link">¶</a></h3>
+<p><strong><abbr title="Ahead-Of-Time">AOT</abbr></strong> compilers (C, Go, Rust) produce machine code before you run it: fast start, nothing to warm up. <strong>Interpreters</strong> (CPython) execute bytecode one instruction at a time: flexible but slower. <strong><abbr title="Just-In-Time compiler">JIT</abbr></strong> runtimes (JVM, V8) start interpreting, profile which code is hot, then compile just that to machine code while running.</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/diagrams/04a-runtimes.png" data-desc-position="bottom"><img alt="How do AOT, interpreters and JIT differ?" src="../assets/diagrams/04a-runtimes.png"></a></p>
+<hr>
+<h2 id="incident-story-no-such-file-or-directory-for-a-file-that-exists">🚨 Incident story: “no such file or directory” for a file that exists<a class="headerlink" href="#incident-story-no-such-file-or-directory-for-a-file-that-exists" title="Permanent link">¶</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">The alarm</p>
+<p>To shrink images, a team switches the runtime stage from <code>debian:bookworm-slim</code> to <code>alpine</code>. The new pods crash-loop with <code>exec /app/server: no such file or directory</code>, yet <code>ls -l /app/server</code> inside the image shows the file.</p>
+</div>
+<p>Try to diagnose it yourself first, then open the clues one by one.</p>
+<details class="info">
+<summary>🔍 Clue 1</summary>
+<p><code>file /app/server</code> → <em>dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2</em>.</p>
+</details>
+<details class="info">
+<summary>🔍 Clue 2</summary>
+<p><code>ls /lib64/ld-linux-x86-64.so.2</code> in the Alpine image → missing. Alpine uses musl and its loader is <code>/lib/ld-musl-x86_64.so.1</code>.</p>
+</details>
+<details class="success">
+<summary>🎯 Root cause</summary>
+<p><code>execve</code> succeeds in finding the file, but the kernel must start the <abbr title="Executable and Linkable Format">ELF</abbr>'s <strong>interpreter</strong> (PT_INTERP) first, and that path doesn't exist. The error refers to the missing loader, not to your binary.</p>
+</details>
+<details class="tip">
+<summary>🛠️ Fix and lesson</summary>
+<p>Build statically (<code>CGO_ENABLED=0</code> for Go, musl targets for Rust), or use a glibc-based slim/distroless base. <strong>Lesson:</strong> a dynamic binary drags its loader and libc <abbr title="Application Binary Interface">ABI</abbr> with it; check with <code>readelf -l</code> and <code>ldd</code>.</p>
+</details>
+<h2 id="go-deeper">🧭 Go deeper<a class="headerlink" href="#go-deeper" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>What's inside</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="01-compile-link/">4.1 — Compiling &amp; linking</a></strong></td>
+<td>What compilers do inside (front end, <abbr title="Intermediate Representation">IR</abbr>, optimizer, back end), optimization levels, object files and symbols, static vs dynamic linking, <abbr title="Link-Time Optimization">LTO</abbr>, cross-compilation, reproducible builds and build caching, with Go, Rust and C examples.</td>
+</tr>
+<tr>
+<td><strong><a href="02-elf-loader/">4.2 — <abbr title="Executable and Linkable Format">ELF</abbr> &amp; the program loader</a></strong></td>
+<td>The <abbr title="Executable and Linkable Format">ELF</abbr> file format (header, segments, sections), what execve does, <abbr title="Address Space Layout Randomization">ASLR</abbr> and <abbr title="Position-Independent Executable">PIE</abbr>, the dynamic loader ld.so, library search paths, <abbr title="Procedure Linkage Table">PLT</abbr>/<abbr title="Global Offset Table">GOT</abbr> and lazy binding, LD_PRELOAD, security hardening flags, and the classic "not found" and "symbol not found" errors.</td>
+</tr>
+<tr>
+<td><strong><a href="03-runtimes/">4.3 — Language runtimes: JVM, V8, Python, Go</a></strong></td>
+<td>What a language runtime adds to a process - interpreters and <abbr title="Just-In-Time compiler">JIT</abbr> compilers, garbage collection, threading models (<abbr title="Global Interpreter Lock">GIL</abbr>, event loop, goroutines, virtual threads) - and how to size and tune JVM, Node.js, Python and Go services in containers.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="try-it-yourself-linux">🧪 Try it yourself (Linux)<a class="headerlink" href="#try-it-yourself-linux" title="Permanent link">¶</a></h2>
+<div class="admonition example">
+<p class="admonition-title">🧪 Ready-made lab</p>
+<p>Run this chapter's experiments with one command: <code>./labs/run.sh 04-program</code> (<a href="https://github.com/gaskinimbuspro/silicon-to-cloud/tree/main/labs/04-program/">scripts</a>). No setup? <a href="https://codespaces.new/gaskinimbuspro/silicon-to-cloud">Open in Codespaces</a>. <!-- s2c-lab --></p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>main.c<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s">#include &lt;stdio.h&gt;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="s">int main(void) { printf("hello\n"); return 0; }</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="s">EOF</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># 1) The four stages, one at a time</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>gcc<span class="w"> </span>-E<span class="w"> </span>main.c<span class="w"> </span>-o<span class="w"> </span>main.i<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="w"> </span>main.i<span class="w">     </span><span class="c1"># preprocessed: hundreds of lines</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>gcc<span class="w"> </span>-S<span class="w"> </span>main.c<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cat<span class="w"> </span>main.s<span class="w">                 </span><span class="c1"># assembly</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>gcc<span class="w"> </span>-c<span class="w"> </span>main.c<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>nm<span class="w"> </span>main.o<span class="w">                  </span><span class="c1"># 'U puts' = undefined symbol</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>gcc<span class="w"> </span>main.o<span class="w"> </span>-o<span class="w"> </span>app<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>./app
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1"># 2) Look inside the ELF</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>file<span class="w"> </span>app
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>readelf<span class="w"> </span>-h<span class="w"> </span>app<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"Class|Machine|Entry"</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>readelf<span class="w"> </span>-l<span class="w"> </span>app<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>INTERP<span class="w">            </span><span class="c1"># the dynamic linker path</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>ldd<span class="w"> </span>app<span class="w">                                     </span><span class="c1"># shared libraries it needs</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="c1"># 3) Watch the start-up</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>strace<span class="w"> </span>-f<span class="w"> </span>-e<span class="w"> </span><span class="nv">trace</span><span class="o">=</span>execve,openat,mmap<span class="w"> </span>./app
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="nv">LD_DEBUG</span><span class="o">=</span>libs<span class="w"> </span>./app<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="c1"># 4) Other runtimes</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>file<span class="w"> </span><span class="k">$(</span>which<span class="w"> </span>python3<span class="k">)</span><span class="w"> </span><span class="k">$(</span>which<span class="w"> </span>node<span class="k">)</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w">   </span><span class="c1"># interpreters are ELF too</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import dis; dis.dis(lambda a, b: a + b)"</span>
+</code></pre></div>
+<p><strong>Exercise:</strong> build once with <code>gcc main.c -o app</code> and once with <code>gcc -static main.c -o app-static</code>. Compare <code>ls -lh</code>, <code>ldd</code> and <code>readelf -l | grep INTERP</code> for both.</p>
+<hr>
+<h2 id="cheat-sheet">🃏 Cheat sheet<a class="headerlink" href="#cheat-sheet" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>main.c → cpp (main.i) → cc1 (main.s) → as (main.o) → ld (+libc) → ELF ./app
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>./app → shell fork() → child execve() → kernel maps ELF segments + builds stack
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>      → PT_INTERP: ld-linux.so → mmap libc.so → relocations → _start → main()
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>      → return → exit_group → parent wait() → $?
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>JVM / V8 / CPython = an ELF that runs bytecode, often with a JIT
+</code></pre></div>
+<hr>
+<h2 id="test-yourself">❓ Test yourself<a class="headerlink" href="#test-yourself" title="Permanent link">¶</a></h2>
+<details class="question">
+<summary>1. At which stage does <code>printf</code> get its real address?</summary>
+<p>Not in the compiler or assembler. Those leave an undefined symbol. With static linking the linker fills it in; with dynamic linking the <strong>dynamic linker</strong> resolves it at start-up (or lazily on first call).</p>
+</details>
+<details class="question">
+<summary>2. What's the difference between <code>fork()</code> and <code>execve()</code>?</summary>
+<p><code>fork()</code> creates a new process that is a copy of the current one. <code>execve()</code> replaces the current process's program with a new one (same <abbr title="Product ID">PID</abbr>, new memory). Starting a program = fork + execve.</p>
+</details>
+<details class="question">
+<summary>3. Your image runs fine on your laptop but fails on the cluster with <code>exec format error</code>. Why?</summary>
+<p>The binary was built for a different <abbr title="Central Processing Unit">CPU</abbr> architecture, e.g. arm64 (Apple Silicon) vs amd64 nodes. Build multi-arch images (<code>docker buildx --platform linux/amd64,linux/arm64</code>).</p>
+</details>
+<details class="question">
+<summary>4. Why can a Go binary run in a <code>FROM scratch</code> image but a typical C program can't?</summary>
+<p>A static Go binary contains everything it needs and has no <code>PT_INTERP</code>. A dynamically linked C program needs <code>ld-linux.so</code> and <code>libc.so.6</code>, which a <code>scratch</code> image doesn't have.</p>
+</details>
+<details class="question">
+<summary>5. What does a <abbr title="Just-In-Time compiler">JIT</abbr> compiler do?</summary>
+<p>It watches which code runs often ("hot") and compiles that bytecode into native machine code while the program is running, so those parts run at near-native speed.</p>
+</details>
+<hr>
+<h2 id="sources">📚 Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://csapp.cs.cmu.edu/">Computer Systems: A Programmer's Perspective (CS:APP), Chapter 7: Linking</a></li>
+<li><a href="https://man7.org/linux/man-pages/man2/execve.2.html">man7.org: execve(2)</a> · <a href="https://man7.org/linux/man-pages/man8/ld.so.8.html">ld.so(8)</a> · <a href="https://man7.org/linux/man-pages/man5/elf.5.html">elf(5)</a></li>
+<li><a href="https://lwn.net/Articles/631631/">How programs get run: <abbr title="Executable and Linkable Format">ELF</abbr> binaries (LWN.net)</a></li>
+<li><a href="https://v8.dev/blog">V8 blog</a> · <a href="https://docs.python.org/3/library/dis.html">Python <code>dis</code> module</a></li>
+</ul>
+<h2 id="my-notes">✍️ My notes<a class="headerlink" href="#my-notes" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Explain what happens between typing <code>./app</code> and <code>main()</code> running, in your own words in 5 lines.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../03-os/05-namespaces-cgroups/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 3.5 · Namespaces &amp; cgroups">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                3.5 · Namespaces &amp; cgroups
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-compile-link/" class="md-footer__link md-footer__link--next" aria-label="Next: 4.1 · Compiling &amp; linking">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                4.1 · Compiling &amp; linking
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/gaskinimbuspro/silicon-to-cloud" target="_blank" rel="noopener" title="GitHub repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.indexes", "navigation.prune", "navigation.path", "content.tooltips", "search.suggest", "search.share", "navigation.top", "navigation.footer", "content.code.copy", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../assets/js/site.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
