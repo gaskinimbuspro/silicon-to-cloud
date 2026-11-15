@@ -6,6 +6,8 @@ title: What's new
 
 ## November 2026
 
+- **Cloud, Kubernetes & DevOps track**: three new chapters with 13 deep-dive pages and 16 diagrams: [14 · Cloud platforms](14-cloud/index.md) (compute, storage & databases, Terraform, landing zones & DR), [15 · Kubernetes in depth](15-kubernetes/index.md) (workloads & probes, config & storage, Helm & operators, autoscaling, troubleshooting & upgrades) and [16 · DevOps practices](16-devops/index.md) (Git & code review, safe releases, incidents & on-call, platform engineering).
+- **Cleaner sidebar**: collapsible chapters, number badges and a clear highlight of where you are.
 - **Three new chapters**: [11 · Security](11-security/index.md) (identity, secrets, zero trust, supply chain), [12 · Distributed systems](12-distributed/index.md) (Raft, CAP, retries & circuit breakers) and [13 · Cloud cost](13-finops/index.md) (FinOps, Kubernetes waste, NAT & egress), with 8 new diagrams.
 - **🚨 Incident stories** in every chapter: a real-world style outage to diagnose step by step, with clues, root cause and lesson.
 - **🧪 Ready-made labs** (`labs/`) you can run in GitHub Codespaces with one click; the CI-safe ones are tested on every push.

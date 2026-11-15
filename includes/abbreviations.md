@@ -25,6 +25,7 @@
 *[BM25]: Best Matching 25
 *[BPE]: Byte-Pair Encoding
 *[CA]: Certificate Authority
+*[CALMS]: Culture, Automation, Lean, Measurement, Sharing
 *[CAP]: Consistency, Availability, Partition tolerance
 *[CD]: Continuous Delivery / Deployment
 *[CDC]: Change Data Capture
@@ -70,6 +71,7 @@
 *[DPO]: Direct Preference Optimization
 *[DPU]: Data Processing Unit
 *[DRA]: Dynamic Resource Allocation
+*[DevOps]: Development + Operations
 *[DoH]: DNS over HTTPS
 *[DoT]: DNS over TLS
 *[ECDHE]: Elliptic Curve Diffie-Hellman Ephemeral
@@ -112,7 +114,9 @@
 *[HTTP]: HyperText Transfer Protocol
 *[IAM]: Identity and Access Management
 *[IB]: InfiniBand
+*[IC]: Incident Commander
 *[ICMP]: Internet Control Message Protocol
+*[IDP]: Internal Developer Platform
 *[IDT]: Interrupt Descriptor Table
 *[IGW]: Internet Gateway
 *[IME]: Input Method Editor
@@ -151,9 +155,12 @@
 *[MMU]: Memory Management Unit
 *[MPS]: Multi-Process Service
 *[MQA]: Multi-Query Attention
+*[MR]: Merge Request
 *[MSI]: Message Signaled Interrupt
 *[MSS]: Maximum Segment Size
 *[MTP]: Multi-Token Prediction
+*[MTTA]: Mean Time To Acknowledge
+*[MTTR]: Restore
 *[MTU]: Maximum Transmission Unit
 *[MVCC]: Multi-Version Concurrency Control
 *[MoE]: Mixture of Experts
@@ -192,6 +199,7 @@
 *[PP]: Pipeline Parallel
 *[PPID]: Parent PID
 *[PQ]: Product Quantization
+*[PR]: Pull
 *[PSI]: Pressure Stall Information
 *[PSS]: Proportional
 *[PTX]: Parallel Thread Execution
@@ -241,6 +249,7 @@
 *[SPIFFE]: Secure Production Identity Framework For Everyone
 *[SQL]: Structured Query Language
 *[SRAM]: Static RAM
+*[SRE]: Site Reliability Engineering
 *[SRI]: Subresource Integrity
 *[SSA]: Static Single Assignment
 *[SSE]: Server-Sent Events
@@ -250,6 +259,7 @@
 *[STP]: Spanning Tree Protocol
 *[SYN]: synchronize
 *[SaaS]: Software as a Service
+*[SemVer]: Semantic Versioning
 *[TBT]: Total Blocking Time
 *[TCP]: Transmission Control Protocol
 *[TDP]: Thermal Design Power

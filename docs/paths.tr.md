@@ -19,6 +19,7 @@ Tuş basımından buluttaki yapay zekâya, sırayla. Eksiksiz bir zihinsel model
 1. [Sunucu tarafı](07-server/index.md) → [Tarayıcı](08-browser/index.md)
 1. [Modern altyapı](09-infra/index.md) → [AI altyapısı](10-ai/index.md)
 1. [Güvenlik](11-security/index.md) → [Dağıtık sistemler](12-distributed/index.md) → [Bulut maliyeti](13-finops/index.md)
+1. [Bulut platformları](14-cloud/index.md) → [Derinlemesine Kubernetes](15-kubernetes/index.md) → [DevOps pratikleri](16-devops/index.md)
 
 </div>
 
@@ -42,6 +43,8 @@ Mülakatçıların sevdiği konular, sordukları hata modlarıyla birlikte.
 1. [Kubernetes ağı](09-infra/03-kubernetes-networking.md)
 1. [CI/CD ve GitOps](09-infra/04-cicd-gitops.md)
 1. [Gözlemlenebilirlik ve SLO'lar](09-infra/05-observability.md)
+1. [Probe'lar ve düzgün kapanış](15-kubernetes/01-workloads.md) → [Pod sorun giderme](15-kubernetes/05-troubleshooting.md)
+1. [Terraform](14-cloud/03-terraform.md) → [Olaylar ve postmortem'ler](16-devops/03-incidents.md)
 1. [Güvenlik ve zero trust](11-security/index.md) → [Yeniden denemeler, zaman aşımları ve çoğunluk](12-distributed/index.md)
 1. "Tekrar edilecek" sayacı sıfırlanana kadar [🎯 Pratik](practice.md) ile bitir.
 
@@ -92,13 +95,16 @@ Herkese açık bir web sitesi ya da API'si olan herkes için.
 
 <div class="s2c-path" markdown>
 
-### 🏗️ Production'a hazır platform mühendisi · ~6 saat
+### 🏗️ Production'a hazır platform mühendisi · ~14 saat
 
 "Kıdemli" konular: bir platformu güvenli, erişilebilir ve uygun maliyetli tutan şeyler.
 
 1. [Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri](11-security/index.md)
 1. [Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık](12-distributed/index.md)
 1. [Bulut maliyeti (FinOps)](13-finops/index.md)
+1. [Bulut platformları](14-cloud/index.md) → [Terraform](14-cloud/03-terraform.md) → [Landing zone ve DR](14-cloud/04-landing-zones-dr.md)
+1. [Derinlemesine Kubernetes](15-kubernetes/index.md) → [Ölçekleme](15-kubernetes/04-autoscaling.md) → [Sorun giderme](15-kubernetes/05-troubleshooting.md)
+1. [DevOps pratikleri](16-devops/index.md) → [Güvenli sürümler](16-devops/02-safe-releases.md) → [Platform mühendisliği](16-devops/04-platform.md)
 1. Sonra [🎯 Pratik](practice.md) sayfasında bölüm filtresiyle kendini test et.
 
 </div>

@@ -927,6 +927,59 @@ PV / PVC;PersistentVolume / Claim — Depolama nesnesi / bir pod'un onu talep et
 Helm;Kubernetes paket yöneticisi · Chart = şablonlar + değerler, release'ler
 Kustomize;Şablonsuz overlay'ler · base + ortam başına yamalar
 HPA / VPA;Horizontal / Vertical Pod Autoscaler — Replika sayısı / kaynak boyutu otomasyonu · Metriklere dayalı
+Trunk / main;Tek entegrasyon branch'i · Her zaman yeşil, her zaman deploy edilebilir
+Trunk-based geliştirme;TBD — En az günlük main'e entegre ol · Kısa branch'ler ya da doğrudan commit + flag'ler
+GitFlow;"develop/release/hotfix branch'leri · Sürümlü, dağıtılan yazılıma uyar; SaaS'ı yavaşlatır"
+PR / MR;Pull / Merge Request — Önerilen değişiklik + inceleme + kontroller · GitHub / GitLab
+Branch koruması;Branch protection — main üzerindeki kurallar · Zorunlu incelemeler, kontroller, force-push yok
+Merge kuyruğu;Merge queue — PR'ları merge sırasıyla, girmeden önce test eder · Yüksek hacimde main'i yeşil tutar
+CODEOWNERS;Dosyalar → zorunlu inceleyiciler · Doğru ekibi otomatik ister
+Squash merge;main'de PR başına tek commit · Temiz, geri alınabilir geçmiş
+Conventional Commits;type(scope): özet · feat, fix, chore, BREAKING CHANGE
+SemVer;Semantic Versioning — MAJOR.MINOR.PATCH · Kırıcı / özellik / düzeltme
+Monorepo / polyrepo;Çok proje için tek repo / proje başına bir · Araç ve bağlılıkta ödünleşimler
+İmzalı commit'ler;Signed commits — Kriptografik olarak doğrulanmış yazarlık · SSH/GPG/Sigstore gitsign (11)
+Deploy;Yeni kodu sunuculara koymak · Teknik olay, sık
+Feature flag / toggle;Kodun etrafında çalışma anı koşulu · İstek/kullanıcı başına değerlendirilir
+Release flag'i;Release flag — Bitmemiş işi saklar · Kısa ömürlü, lansmandan sonra kaldırılır
+Ops flag'i / kapatma anahtarı;Ops flag / kill switch — Pahalı ya da riskli yolları kapatır · Uzun ömürlü, olaylar için
+Deney flag'i;Experiment flag — A/B testleri · Kullanıcıları böler, sonuçları ölçer
+Yetki flag'i;Permission flag — Haklar, planlar, beta erişimi · Uzun ömürlü, ürün mantığı
+OpenFeature;CNCF'in sağlayıcıdan bağımsız flag API'si · SDK + sağlayıcılar (LaunchDarkly, Flagd, Unleash…)
+Genişlet / daralt;Expand / contract — Şema ve API'ler için paralel değişiklik · Yeniyi ekle → taşı → eskiyi kaldır
+Geriye uyumlu;Backward compatible — Eski istemciler/sürümler hâlâ çalışır · Sadece eklemeli değişiklikler
+Önizleme ortamı;Preview environment — PR başına kısa ömürlü ortam · Değişikliği çalışırken incele
+Olay;Incident — Bir servisin plansız bozulması · İlan edilir, yönetilir, kapatılır
+Nöbet;On-call — Müdahaleden sorumlu kişi · Rotasyonlar, birincil + ikincil
+Çağrı;Page — Bir insana acil alarm · Aksiyon alınabilir ve acil olmalı
+SEV / önem seviyesi;Severity — Etki seviyesi · SEV1 büyük kesinti … SEV3 küçük
+IC;Incident Commander — Müdahaleyi koordine eder · Görev dağıtır, karar verir, debug etmez
+İletişim sorumlusu;Comms lead — İç ve dış güncellemeler · Durum sayfası, paydaşlar
+Operasyon / konu uzmanı sorumlusu;Ops lead — Uygulamalı araştırma ve değişiklikler · Prod'u aynı anda tek kişi değiştirir
+MTTA / MTTR;Mean Time To Acknowledge / Restore — Müdahale hızı metrikleri · Eğilim, hedef değil
+Hafifletme;Mitigation — Kullanıcı etkisini durdurmak · Geri al, flag kapat, failover, yük at
+Runbook / playbook;Adım adım müdahale rehberi · Alarmlardan link verilir
+Postmortem / olay incelemesi;Çözümden sonra yazılı analiz · Zaman çizelgesi, katkıda bulunan etkenler, aksiyonlar
+Suçlamasız;Blameless — Bireylere değil sistemlere odak · Psikolojik güvenlik → dürüst veri
+Platform mühendisliği;Platform engineering — Self-servis iç platformlar inşa etmek · Altyapı için ürün bakışı
+IDP;Internal Developer Platform — Ekiplerin self-servis kullandığı araç/API toplamı · CI/CD, çalışma ortamı, altyapı, gözlemlenebilirlik
+Geliştirici portalı;Developer portal — Platformun arayüz kapısı · Katalog, dokümanlar, şablonlar, puan kartları
+Backstage;CNCF açık kaynak geliştirici portalı çatısı · Eklentiler, yazılım kataloğu, iskelet üretici
+Altın yol / asfalt yol;"Golden path / paved road — Bir iş için görüşlü, desteklenen yol · Her şeyi bağlanmış ""Yeni Go servisi"" şablonu"
+Bilişsel yük;Cognitive load — Bir ekibin harcaması gereken zihinsel çaba · Platform gereksiz yükü kaldırır
+Team Topologies;Dört ekip tipi, üç etkileşim modu · Akışa hizalı, platform, destekleyici, karmaşık alt sistem
+Akışa hizalı ekip;Stream-aligned team — Bir iş değeri akışına sahip · Platformun ana müşterisi
+X-as-a-Service;Az koordinasyonlu etkileşim modu · Platformu toplantısız kullan
+Puan kartı;Scorecard — Servisleri standartlara göre kontrol eder · Sahibi var, SLO tanımlı, desteklenen runtime'da
+DevEx / DX;Developer Experience — Teslimin ne kadar kolay ve keyifli olduğu · Anketler + akış metrikleri
+Ticket-ops;Karşı desen: ticket'larla platform · Bir veritabanı için günlerce beklemek
+DevOps;Development + Operations — Yazılımı geliştirme ve çalıştırmanın ortak sahipliği · Kültür + otomasyon + geri bildirim
+CALMS;Culture, Automation, Lean, Measurement, Sharing — DevOps benimsemesini değerlendirme merceği · Tek başına araçlar ≠ DevOps
+SRE;Site Reliability Engineering — Operasyonu bir yazılım problemi olarak ele almak · SLO, hata bütçeleri, angarya azaltma (9.5)
+Değişiklik teslim süresi;Lead time for changes — Commit → production'da çalışıyor · En iyilerde saatler
+Değişiklik hata oranı;Change failure rate — Hataya yol açan deploy yüzdesi · Geri alma/hotfix/olay gerektirir
+Angarya;Toil — Elle, tekrarlayan, otomatikleştirilebilir iş · SRE hedefi: zamanın < %50'si
+Postmortem;Bir olaydan sonra yazılı analiz · Suçlamasız, aksiyon maddeleri (16.3)
 Bir kesme handler'ı neden uyuyamaz ya da ağır iş yapamaz?;"Kesmeler (en azından o hatta/çekirdekte) bloklu ve herhangi bir process bağlamı dışında çalışır; uyumak o çekirdeğin kesme işlemesini dondurur. Ağır iş alt yarıya gider."
 NAPI ne yapar ve neden?;"İlk kesmeden sonra NIC'in kesmesini kapatır ve kuyruk boşalana kadar paket gruplarını yoklar; yüksek paket hızlarında kesme fırtınasını önler."
 Linux yeni takılan bir cihaz için hangi sürücüyü yükleyeceğini nasıl bilir?;"Bus cihaz kimliklerini okur, kernel modalias içeren bir uevent yayar, udev bunu bir modülle eşler ve modprobe çalıştırır; sonra sürücünün probe()'u cihazı sahiplenir."
@@ -1267,3 +1320,28 @@ Readiness ile liveness probe arasındaki fark ne?;"Readiness bir pod'un trafik a
 Kubernetes readiness'ı beklese de pod'lar kademeli güncellemede neden istek düşürebilir?;"Endpoint'ten çıkarma SIGTERM'den sonra asenkron yayılır; uygulama hemen çıkarsa load balancer'lar ona birkaç istek daha yönlendirir. preStop beklemesi ve düzgün boşaltma bunu düzeltir."
 Bir PodDisruptionBudget neye karşı korur?;"Gönüllü kesintilerin (node drain'leri, yükseltmeler, autoscaler konsolidasyonu) aynı anda çok fazla pod'u tahliye etmesine; çökmelere ya da node hatalarına karşı korumaz."
 Kubernetes cluster'ları neden düzenli yükseltilmeli?;"Minor sürümler sadece yaklaşık 14 ay desteklenir; yönetilen servisler yükseltmeye zorlar, API'ler kaldırılır ve güvenlik düzeltmeleri sadece desteklenen sürümlere gelir."
+Uzun ömürlü özellik branch'leri teslimi neden zorlaştırır?;"Entegrasyonu geciktirirler; çakışmalar ve etkileşimler geç ve hep birden ortaya çıkar; incelemeler devasa olur ve sürümler büyük, riskli partilere dönüşür."
+Bitmemiş işi kullanıcılara göstermeden her gün nasıl merge edersin?;"Onu bir feature flag'in arkasına koyarak (ya da erişilemez tutarak); kod entegre edilir ve deploy edilir ama release edilmez (16.2)."
+Merge kuyruğu hangi sorunu çözer?;"CI'ı ayrı ayrı geçen iki PR birleşince main'i bozabilir; kuyruk her PR'ı merge etmeden önce main artı önündeki PR'larla test eder."
+SemVer'de 2.4.1'den 3.0.0'a geçiş neyi işaret eder?;Kırıcı bir değişikliği: tüketicilerin yükseltmek için kodlarını ya da yapılandırmalarını değiştirmesi gerekebilir.
+GitFlow hâlâ ne zaman mantıklıdır?;Birkaç sürümün bakımının yapıldığı ve sürekli deploy yerine ayrı sürümlerle dağıtılan yazılımlarda (mobil uygulamalar, kütüphaneler, şirket içi ürünler).
+Deploy etmek ile release etmek arasındaki fark ne?;"Deploy etmek yeni kodu production'a koyar; release etmek yeni davranışı kullanıcılara açar. Feature flag'ler sürekli deploy edip kademeli ve bağımsız release etmeni sağlar."
+Feature flag'ler lansmandan sonra neden kaldırılmalı?;"Her flag kod yolları, test kombinasyonları ve kafa karışıklığı ekler; eskimiş flag'ler teknik borca ve biri onları beklenmedik şekilde değiştirdiğinde olay kaynağına dönüşür."
+Bir veritabanı kolonunu neden tek bir sürümde yeniden adlandıramazsın?;"Kademeli bir deploy sırasında (ve bir geri almadan sonra) eski sürüm hâlâ çalışır ve eski kolonu okur; tek adımlı bir yeniden adlandırma onu bozar. Genişlet/daralt iki sürümü de çalışır tutar."
+Bir canary'nin terfi ettirilip ettirilmeyeceğine ne karar vermeli?;"Kararlı sürümle karşılaştırılan önceden tanımlı metrikler (hata oranı, gecikme, SLO burn, temel iş metrikleri); ideal olarak hata durumunda geri almayla otomatik değerlendirilir."
+Değişiklik dondurmaları neden çoğu zaman ters etki yapar?;"Değişiklikler yazılmaya devam eder; dondurmadan sonra bir kerede release edilen büyük, riskli bir partiye birikir; bu da küçük güvenli değişikliklerin tam tersidir."
+Gece bir insanı ne çağırmalı, ne çağırmamalı?;"Acil, aksiyon alınabilir, kullanıcının gördüğü belirtiler (SLO burn, yüksek hata oranı, servis kapalı) çağırmalı; sebepler ve acil olmayan sinyaller (yüksek CPU, tek bir pod'un yeniden başlaması, %70 dolu disk) dashboard'lara ya da ticket'lara gitmeli."
+Olay komutanı neden genelde debug etmemeli?;Görevi koordinasyondur: büyük resmi korumak, iş dağıtmak, karar vermek ve iletişimi sağlamak. Debug etmek onu detaylara çeker ve dümende kimse kalmaz.
+Kök nedeni bulmadan önce neden hafifletilir?;"Kullanıcılar şu anda etkileniyor; geri almak, bir flag'i kapatmak ya da failover genelde hizmeti dakikalar içinde geri getirir; kök neden analizi saatler sürebilir ve sonrasında daha güvenlidir."
+Bir postmortem'i suçlamasız yapan nedir ve neden önemlidir?;"Kimin hata yaptığına değil, sistemin ve sürecin hataya nasıl izin verdiğine odaklanır; suçlanma korkusu olmadan insanlar gerçekte ne olduğunu paylaşır ve doğru düzeltmeler bulunur."
+İyi bir postmortem aksiyon maddesini ne yapar?;"Somut olması; bir sahibi, bitiş tarihi ve ticket'ı olması; katkıda bulunan bir etkeni ele alması (""daha dikkatli ol"" değil) ve gerçekten önceliklendirilip tamamlanana kadar takip edilmesi."
+Platform mühendisliği hangi sorunu çözer?;"Birçok altyapı aracında uzmanlaşmak zorunda kalan ürün ekiplerinin artan bilişsel yükünü; platform self-servis, görüşlü yollar sunar ve ekipler iş değerine odaklanabilir."
+Altın yol nedir?;"Yaygın bir işi (ör. servis oluşturmak) en iyi pratikler içine gömülü olarak yapmanın desteklenen, uçtan uca, görüşlü bir yolu; ekipler sapabilir ama o zaman ek karmaşıklığa sahip olurlar."
+Yazılım kataloğu ne içindir?;"Servisleri, API'leri ve kaynakları sahipleri, dokümanları, bağımlılıkları ve sağlıklarıyla listeleyen tek bir yer; keşif, standartlar ve olay müdahalesi için kullanılır."
+'Ticket-ops' neden bir karşı desendir?;"Talepler insanları bekleyen kuyruklarda bekler, gecikmeler ve darboğazlar yaratır; korkuluklu self-servis API'ler beklemeden aynı kontrolü sağlar."
+Bir iç platformun başarılı olduğunu nasıl anlarsın?;Ekipler onu gönüllü benimser, teslim metrikleri (teslim süresi, deploy sıklığı, değişiklik hata oranı) ve ilk deploy'a kadar geçen süre iyileşir ve geliştirici memnuniyeti artar.
+DevOps bir rol mü, araç mı, yoksa başka bir şey mi?;Öncelikle bir kültür ve pratikler bütünü: yazılımı geliştirme ve çalıştırmanın ortak sahipliği, küçük otomatik değişiklikler ve hızlı geri bildirim. Araçlar ve roller onu destekler ama yaratmaz.
+Dört DORA metriği hangileri?;Deploy sıklığı, değişiklik teslim süresi, değişiklik hata oranı ve başarısız deploy kurtarma süresi.
+Küçük ve sık deploy'lar kararlılığı neden artırır?;Her değişikliği incelemek ve test etmek daha kolaydır, hatalar daha seyrek ve küçüktür, sorunu hangi değişikliğin yarattığı bellidir ve geri almak az şeyi etkiler.
+DevOps, SRE ve platform mühendisliği nasıl ilişkilidir?;"DevOps ortak sahiplik ve akış felsefesidir; SRE güvenilirliği SLO'lar, hata bütçeleri ve angarya limitleriyle uygular; platform mühendisliği ikisini ekiplere self-servis altın yollar vererek ölçekler."
+DORA metrikleri neden bireyleri sıralamak için kullanılmamalı?;"Bir ekibin çalışma sistemini tarif ederler; kişisel hedef olarak kullanmak oyunlaştırmayı (ör. küçük anlamsız deploy'lar) davet eder ve dürüst geri bildirim değerlerini yok eder."

@@ -3058,5 +3058,230 @@
 "url": "15-kubernetes/",
 "q": "Why must Kubernetes clusters be upgraded regularly?",
 "a": "Minor versions are supported for only about 14 months; managed services force upgrades, APIs get removed, and security fixes only come for supported versions."
+},
+{
+"id": "9a3cd93a5e",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.1 — Git workflows & code review",
+"url": "16-devops/01-git-review/",
+"q": "Why do long-lived feature branches hurt delivery?",
+"a": "They delay integration, so conflicts and interactions appear late and all at once; reviews get huge, and releases become big, risky batches."
+},
+{
+"id": "b31de5bb45",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.1 — Git workflows & code review",
+"url": "16-devops/01-git-review/",
+"q": "How do you merge unfinished work daily without exposing it to users?",
+"a": "Put it behind a feature flag (or keep it unreachable) so the code is integrated and deployed but not released (16.2)."
+},
+{
+"id": "7e4ab15ff1",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.1 — Git workflows & code review",
+"url": "16-devops/01-git-review/",
+"q": "What problem does a merge queue solve?",
+"a": "Two PRs that pass CI separately can break main when combined; the queue tests each PR against main plus the PRs ahead of it before merging."
+},
+{
+"id": "72894e0b4c",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.1 — Git workflows & code review",
+"url": "16-devops/01-git-review/",
+"q": "Under SemVer, what does a change from 2.4.1 to 3.0.0 signal?",
+"a": "A breaking change: consumers may need to change their code or configuration to upgrade."
+},
+{
+"id": "68a4317834",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.1 — Git workflows & code review",
+"url": "16-devops/01-git-review/",
+"q": "When does GitFlow still make sense?",
+"a": "For software where several versions are maintained and shipped in discrete releases (mobile apps, libraries, on-prem products) rather than deployed continuously."
+},
+{
+"id": "d5088e94be",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.2 — Safe releases: feature flags & zero-downtime changes",
+"url": "16-devops/02-safe-releases/",
+"q": "What's the difference between deploying and releasing?",
+"a": "Deploying puts new code into production; releasing exposes the new behaviour to users. Feature flags let you deploy continuously and release gradually and independently."
+},
+{
+"id": "1c8293b288",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.2 — Safe releases: feature flags & zero-downtime changes",
+"url": "16-devops/02-safe-releases/",
+"q": "Why must feature flags be removed after launch?",
+"a": "Each flag adds code paths, testing combinations and confusion; stale flags become technical debt and a source of incidents when someone flips them unexpectedly."
+},
+{
+"id": "9c328b6bee",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.2 — Safe releases: feature flags & zero-downtime changes",
+"url": "16-devops/02-safe-releases/",
+"q": "Why can't you rename a database column in a single release?",
+"a": "During a rolling deploy (and after a rollback) the old version still runs and reads the old column; a one-step rename breaks it. Expand/contract keeps both versions working."
+},
+{
+"id": "3ff231d59b",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.2 — Safe releases: feature flags & zero-downtime changes",
+"url": "16-devops/02-safe-releases/",
+"q": "What should decide whether a canary is promoted?",
+"a": "Predefined metrics compared against the stable version (error rate, latency, SLO burn, key business metrics), ideally evaluated automatically with rollback on failure."
+},
+{
+"id": "7be974030a",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.2 — Safe releases: feature flags & zero-downtime changes",
+"url": "16-devops/02-safe-releases/",
+"q": "Why are change freezes often counterproductive?",
+"a": "Changes keep being written, so they accumulate into a large, risky batch released all at once after the freeze, the opposite of small safe changes."
+},
+{
+"id": "b55164f98e",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.3 — Incidents, on-call & postmortems",
+"url": "16-devops/03-incidents/",
+"q": "What should page a human at night, and what shouldn't?",
+"a": "Urgent, actionable, user-visible symptoms (SLO burn, high error rate, service down) should page; causes and non-urgent signals (high CPU, a single pod restart, disk at 70%) go to dashboards or tickets."
+},
+{
+"id": "46a17be69a",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.3 — Incidents, on-call & postmortems",
+"url": "16-devops/03-incidents/",
+"q": "Why should the incident commander usually not debug?",
+"a": "Their job is coordination: keeping the big picture, assigning work, making decisions and ensuring communication. Debugging pulls them into details and leaves nobody steering."
+},
+{
+"id": "a747e9a666",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.3 — Incidents, on-call & postmortems",
+"url": "16-devops/03-incidents/",
+"q": "Why mitigate before finding the root cause?",
+"a": "Users are affected right now; rolling back, disabling a flag or failing over usually restores service in minutes, while root cause analysis can take hours and is safer afterwards."
+},
+{
+"id": "8d48db1688",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.3 — Incidents, on-call & postmortems",
+"url": "16-devops/03-incidents/",
+"q": "What makes a postmortem blameless, and why does it matter?",
+"a": "It focuses on how the system and process allowed the failure rather than who made a mistake; without fear of blame people share what really happened, so the right fixes are found."
+},
+{
+"id": "b2bcdc5df5",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.3 — Incidents, on-call & postmortems",
+"url": "16-devops/03-incidents/",
+"q": "What makes a good postmortem action item?",
+"a": "Specific, with an owner, a due date and a ticket, addressing a contributing factor (not \"be more careful\"), and actually prioritised and tracked to completion."
+},
+{
+"id": "bb1f3fece4",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.4 — Platform engineering & developer experience",
+"url": "16-devops/04-platform/",
+"q": "What problem does platform engineering solve?",
+"a": "The growing cognitive load on product teams who must master many infrastructure tools; a platform provides self-service, opinionated paths so they can focus on business value."
+},
+{
+"id": "7b044bac5d",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.4 — Platform engineering & developer experience",
+"url": "16-devops/04-platform/",
+"q": "What is a golden path?",
+"a": "A supported, end-to-end, opinionated way to accomplish a common task (e.g. creating a service) with best practices built in; teams can deviate but then own the extra complexity."
+},
+{
+"id": "b31564233d",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.4 — Platform engineering & developer experience",
+"url": "16-devops/04-platform/",
+"q": "What is the software catalog for?",
+"a": "A single place listing services, APIs and resources with owners, docs, dependencies and health, used for discovery, standards and incident response."
+},
+{
+"id": "b64026c110",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.4 — Platform engineering & developer experience",
+"url": "16-devops/04-platform/",
+"q": "Why is 'ticket-ops' an anti-pattern?",
+"a": "Requests wait in queues for humans, creating delays and bottlenecks; self-service APIs with guardrails give the same control without the wait."
+},
+{
+"id": "48b10ee025",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "16.4 — Platform engineering & developer experience",
+"url": "16-devops/04-platform/",
+"q": "How do you know an internal platform is successful?",
+"a": "Teams adopt it voluntarily, delivery metrics (lead time, deploy frequency, change failure rate) and time-to-first-deploy improve, and developer satisfaction rises."
+},
+{
+"id": "5b02985f20",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"url": "16-devops/",
+"q": "Is DevOps a role, a tool or something else?",
+"a": "Primarily a culture and set of practices: shared ownership of building and running software, small automated changes and fast feedback. Tools and roles support it but don't create it."
+},
+{
+"id": "e8f246d920",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"url": "16-devops/",
+"q": "What are the four DORA metrics?",
+"a": "Deployment frequency, lead time for changes, change failure rate and failed deployment recovery time."
+},
+{
+"id": "282e4d0554",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"url": "16-devops/",
+"q": "Why do small, frequent deployments improve stability?",
+"a": "Each change is easier to review and test, failures are rarer and smaller, it's obvious which change caused a problem, and rolling back affects little."
+},
+{
+"id": "f355d9911e",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"url": "16-devops/",
+"q": "How do DevOps, SRE and platform engineering relate?",
+"a": "DevOps is the philosophy of shared ownership and flow; SRE implements reliability with SLOs, error budgets and toil limits; platform engineering scales both by giving teams self-service golden paths."
+},
+{
+"id": "264182b4c4",
+"ch": "16-devops",
+"chTitle": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"page": "Chapter 16 — DevOps practices: how good teams ship and operate software",
+"url": "16-devops/",
+"q": "Why should DORA metrics not be used to rank individuals?",
+"a": "They describe a team's system of work; using them as personal targets invites gaming (e.g. tiny meaningless deploys) and destroys their value as honest feedback."
 }
 ]

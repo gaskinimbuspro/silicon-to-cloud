@@ -19,6 +19,7 @@ From a keypress to AI in the cloud, in order. Best if you want the complete ment
 1. [Server side](07-server/index.md) → [Browser](08-browser/index.md)
 1. [Modern infrastructure](09-infra/index.md) → [AI infrastructure](10-ai/index.md)
 1. [Security](11-security/index.md) → [Distributed systems](12-distributed/index.md) → [Cloud cost](13-finops/index.md)
+1. [Cloud platforms](14-cloud/index.md) → [Kubernetes in depth](15-kubernetes/index.md) → [DevOps practices](16-devops/index.md)
 
 </div>
 
@@ -42,6 +43,8 @@ The topics interviewers love, with the failure modes they ask about.
 1. [Kubernetes networking](09-infra/03-kubernetes-networking.md)
 1. [CI/CD & GitOps](09-infra/04-cicd-gitops.md)
 1. [Observability & SLOs](09-infra/05-observability.md)
+1. [Probes & graceful shutdown](15-kubernetes/01-workloads.md) → [Pod troubleshooting](15-kubernetes/05-troubleshooting.md)
+1. [Terraform](14-cloud/03-terraform.md) → [Incidents & postmortems](16-devops/03-incidents.md)
 1. [Security & zero trust](11-security/index.md) → [Retries, timeouts & quorums](12-distributed/index.md)
 1. Finish with [🎯 Practice](practice.md) until the "to review" counter is zero.
 
@@ -92,13 +95,16 @@ What the kernel does for every program you run.
 
 <div class="s2c-path" markdown>
 
-### 🏗️ Production-ready platform engineer · ~6 hours
+### 🏗️ Production-ready platform engineer · ~14 hours
 
 The "senior" topics: what keeps a platform secure, available and affordable.
 
 1. [Security: identity, secrets, zero trust & supply chain](11-security/index.md)
 1. [Distributed systems: consensus, consistency & resilience](12-distributed/index.md)
 1. [Cloud cost (FinOps)](13-finops/index.md)
+1. [Cloud platforms](14-cloud/index.md) → [Terraform](14-cloud/03-terraform.md) → [Landing zones & DR](14-cloud/04-landing-zones-dr.md)
+1. [Kubernetes in depth](15-kubernetes/index.md) → [Autoscaling](15-kubernetes/04-autoscaling.md) → [Troubleshooting](15-kubernetes/05-troubleshooting.md)
+1. [DevOps practices](16-devops/index.md) → [Safe releases](16-devops/02-safe-releases.md) → [Platform engineering](16-devops/04-platform.md)
 1. Then test yourself in [🎯 Practice](practice.md) with the chapter filter.
 
 </div>

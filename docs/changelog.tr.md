@@ -6,6 +6,8 @@ title: Yenilikler
 
 ## Kasım 2026
 
+- **Bulut, Kubernetes ve DevOps serisi**: 13 alt sayfa ve 16 diagramlı üç yeni bölüm: [14 · Bulut platformları](14-cloud/index.md) (compute, depolama ve veritabanları, Terraform, landing zone ve DR), [15 · Derinlemesine Kubernetes](15-kubernetes/index.md) (workload'lar ve probe'lar, config ve depolama, Helm ve operator'ler, ölçekleme, sorun giderme ve yükseltmeler) ve [16 · DevOps pratikleri](16-devops/index.md) (Git ve kod incelemesi, güvenli sürümler, olaylar ve nöbet, platform mühendisliği).
+- **Daha derli toplu kenar menü**: açılır kapanır bölümler, numara rozetleri ve nerede olduğunun net vurgusu.
 - **Üç yeni bölüm**: [11 · Güvenlik](11-security/index.md) (kimlik, secret'lar, zero trust, tedarik zinciri), [12 · Dağıtık sistemler](12-distributed/index.md) (Raft, CAP, yeniden denemeler ve circuit breaker'lar) ve [13 · Bulut maliyeti](13-finops/index.md) (FinOps, Kubernetes israfı, NAT ve egress); 8 yeni diagramla.
 - Her bölümde **🚨 olay hikâyeleri**: adım adım teşhis edilecek gerçekçi bir kesinti; ipuçları, kök neden ve dersle.
 - GitHub Codespaces'te tek tıkla çalıştırabileceğin **🧪 hazır lab'lar** (`labs/`); CI'da güvenli olanlar her push'ta test ediliyor.

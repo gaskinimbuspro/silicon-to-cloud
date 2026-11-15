@@ -55,6 +55,9 @@ Written by a DevOps engineer while learning it properly, in **English and Turkis
 | 11 | [Security](docs/11-security/index.md) | identity · secrets · zero trust · supply chain |
 | 12 | [Distributed systems](docs/12-distributed/index.md) | consensus · CAP · consistency · resilience |
 | 13 | [Cloud cost (FinOps)](docs/13-finops/index.md) | where the money goes · Kubernetes cost · saving |
+| 14 | [Cloud platforms](docs/14-cloud/index.md) | compute · storage & databases · Terraform · landing zones & DR |
+| 15 | [Kubernetes in depth](docs/15-kubernetes/index.md) | workloads & probes · config & storage · Helm & operators · autoscaling · troubleshooting |
+| 16 | [DevOps practices](docs/16-devops/index.md) | Git & code review · safe releases · incidents & on-call · platform engineering |
 
 Every chapter has a Turkish version next to it (`index.tr.md`).
 

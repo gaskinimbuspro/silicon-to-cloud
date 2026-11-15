@@ -16,7 +16,7 @@ How computers, the internet and modern infrastructure <b>really</b> work — exp
 <a class="s2c-btn ghost" href="paths/">🧭 Pick a learning path</a>
 <a class="s2c-btn ghost" href="practice/">🎯 Practice</a>
 </div>
-<div class="s2c-chips"><span>📚 15 chapters</span><span>📄 69 pages</span><span>🗺️ 118 diagrams</span><span>❓ 340 questions</span><span>🇬🇧 / 🇹🇷</span></div>
+<div class="s2c-chips"><span>📚 16 chapters</span><span>📄 74 pages</span><span>🗺️ 123 diagrams</span><span>❓ 365 questions</span><span>🇬🇧 / 🇹🇷</span></div>
 </div>
 
 <div class="s2c-you">
@@ -44,6 +44,7 @@ Each card is a chapter. Your progress fills the bar as you mark pages as read.
 <a class="s2c-card s2c-cloud" href="13-finops/" data-chapter="13-finops/" data-pages="1"><span class="s2c-num">13</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">💰</span><strong>Cloud cost (FinOps)</strong><small>Where the money goes and how to save it</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-cloud" href="14-cloud/" data-chapter="14-cloud/" data-pages="5"><span class="s2c-num">14</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">☁️</span><strong>Cloud platforms</strong><small>Regions, compute, storage, Terraform, landing zones, DR</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-cloud" href="15-kubernetes/" data-chapter="15-kubernetes/" data-pages="6"><span class="s2c-num">15</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">☸️</span><strong>Kubernetes in depth</strong><small>Workloads, storage, Helm, autoscaling, troubleshooting</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
+<a class="s2c-card s2c-cloud" href="16-devops/" data-chapter="16-devops/" data-pages="5"><span class="s2c-num">16</span><span class="s2c-pill">Cloud</span><span class="s2c-ico">🔁</span><strong>DevOps practices</strong><small>Git flow, safe releases, incidents, platform engineering</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 <a class="s2c-card s2c-ai" href="10-ai/" data-chapter="10-ai/" data-pages="9"><span class="s2c-num">10</span><span class="s2c-pill">AI</span><span class="s2c-ico">🤖</span><strong>AI infrastructure</strong><small>LLMs, GPUs, training, inference, K8s, RAG & agents</small><span class="s2c-count"></span><span class="s2c-bar"><i></i></span></a>
 </div>
 

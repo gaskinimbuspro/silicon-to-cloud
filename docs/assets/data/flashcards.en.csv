@@ -918,6 +918,58 @@ PV / PVC;PersistentVolume / Claim — Storage object / a pod's request for it ·
 Helm;Package manager for Kubernetes · Charts = templates + values, releases
 Kustomize;Template-free overlays · base + patches per environment
 HPA / VPA;Horizontal / Vertical Pod Autoscaler — Replica count / resource size automation · Based on metrics
+Trunk / main;The single integration branch · Always green, always deployable
+Trunk-based development;TBD — Integrate into main at least daily · Short branches or direct commits + flags
+GitFlow;"develop/release/hotfix branches · Suits versioned, shipped software; slows SaaS"
+PR / MR;Pull / Merge Request — Proposed change + review + checks · GitHub / GitLab
+Branch protection;Rules on main · Required reviews, checks, no force-push
+Merge queue;Tests PRs in merge order before landing · Keeps main green at high volume
+CODEOWNERS;Files → required reviewers · Auto-requests the right team
+Squash merge;One commit per PR on main · Clean, revertible history
+Conventional Commits;type(scope): summary · feat, fix, chore, BREAKING CHANGE
+SemVer;Semantic Versioning — MAJOR.MINOR.PATCH · Breaking / feature / fix
+Monorepo / polyrepo;One repo for many projects / one per project · Trade-offs in tooling and coupling
+Signed commits;Cryptographically verified authorship · SSH/GPG/Sigstore gitsign (11)
+Deploy;Putting new code on servers · Technical event, frequent
+Feature flag / toggle;Runtime condition around code · Evaluated per request/user
+Release flag;Hides unfinished work · Short-lived, removed after launch
+Ops flag / kill switch;Turns off expensive or risky paths · Long-lived, for incidents
+Experiment flag;A/B tests · Splits users, measures outcomes
+Permission flag;Entitlements, plans, beta access · Long-lived, product logic
+OpenFeature;CNCF vendor-neutral flag API · SDK + providers (LaunchDarkly, Flagd, Unleash…)
+Expand / contract;Parallel change for schemas and APIs · Add new → migrate → remove old
+Backward compatible;Old clients/versions still work · Additive changes only
+Preview environment;Short-lived env per PR · Review the change running
+Incident;Unplanned degradation of a service · Declared, managed, closed
+On-call;Person responsible for responding · Rotations, primary + secondary
+SEV / severity;Impact level · SEV1 major outage … SEV3 minor
+IC;Incident Commander — Coordinates the response · Delegates, decides, doesn't debug
+Comms lead;Internal and external updates · Status page, stakeholders
+Ops / subject matter lead;Hands-on investigation and changes · One person changes prod at a time
+MTTA / MTTR;Mean Time To Acknowledge / Restore — Response speed metrics · Trend, not target
+Mitigation;Stop user impact · Rollback, flag off, failover, shed load
+Runbook / playbook;Step-by-step response guide · Linked from alerts
+Postmortem / incident review;Written analysis after resolution · Timeline, contributing factors, actions
+Blameless;Focus on systems, not individuals · Psychological safety → honest data
+Platform engineering;Building self-service internal platforms · Product mindset for infrastructure
+IDP;Internal Developer Platform — The sum of tools/APIs teams self-serve from · CI/CD, runtime, infra, observability
+Developer portal;UI front door to the platform · Catalog, docs, templates, scorecards
+Backstage;CNCF open-source developer portal framework · Plugins, software catalog, scaffolder
+Golden path / paved road;"Opinionated, supported way to do a task · ""New Go service"" template with everything wired"
+Cognitive load;Mental effort a team must spend · Platform removes extraneous load
+Team Topologies;Four team types, three interaction modes · Stream-aligned, platform, enabling, complicated-subsystem
+Stream-aligned team;Owns a flow of business value · The platform's main customer
+X-as-a-Service;Interaction mode with low coordination · Use the platform without meetings
+Scorecard;Checks services against standards · Owner set, SLOs defined, on supported runtime
+DevEx / DX;Developer Experience — How easy and pleasant it is to deliver · Surveys + flow metrics
+Ticket-ops;Anti-pattern: platform via tickets · Waiting days for a database
+DevOps;Development + Operations — Shared ownership of building and running software · Culture + automation + feedback
+CALMS;Culture, Automation, Lean, Measurement, Sharing — A lens to assess DevOps adoption · Tools alone ≠ DevOps
+SRE;Site Reliability Engineering — Operations as a software problem · SLOs, error budgets, toil reduction (9.5)
+Lead time for changes;Commit → running in production · Hours for top performers
+Change failure rate;% of deploys causing a failure · Needs rollback/hotfix/incident
+Toil;Manual, repetitive, automatable work · SRE goal: < 50% of time
+Postmortem;Written analysis after an incident · Blameless, action items (16.3)
 Why can't an interrupt handler sleep or do heavy work?;"It runs with interrupts (at least on that line/core) blocked and outside any process context; sleeping would freeze that core's interrupt handling. Heavy work goes to a bottom half."
 What does NAPI do and why?;After the first interrupt it disables the NIC's interrupt and polls batches of packets until the queue is empty, avoiding an interrupt storm at high packet rates.
 How does Linux know which driver to load for a newly plugged device?;"The bus reads the device IDs, the kernel emits a uevent with a modalias, udev matches it to a module and runs modprobe; the driver's probe() then claims the device."
@@ -1258,3 +1310,28 @@ What's the difference between a readiness and a liveness probe?;"Readiness decid
 Why can pods drop requests during a rolling update even though Kubernetes waits for readiness?;"Endpoint removal propagates asynchronously after SIGTERM; if the app exits immediately, load balancers still route a few requests to it. A preStop delay and graceful draining fix it."
 What does a PodDisruptionBudget protect against?;"Voluntary disruptions (node drains, upgrades, autoscaler consolidation) evicting too many pods at once; it doesn't protect against crashes or node failures."
 Why must Kubernetes clusters be upgraded regularly?;"Minor versions are supported for only about 14 months; managed services force upgrades, APIs get removed, and security fixes only come for supported versions."
+Why do long-lived feature branches hurt delivery?;"They delay integration, so conflicts and interactions appear late and all at once; reviews get huge, and releases become big, risky batches."
+How do you merge unfinished work daily without exposing it to users?;Put it behind a feature flag (or keep it unreachable) so the code is integrated and deployed but not released (16.2).
+What problem does a merge queue solve?;"Two PRs that pass CI separately can break main when combined; the queue tests each PR against main plus the PRs ahead of it before merging."
+Under SemVer, what does a change from 2.4.1 to 3.0.0 signal?;A breaking change: consumers may need to change their code or configuration to upgrade.
+When does GitFlow still make sense?;For software where several versions are maintained and shipped in discrete releases (mobile apps, libraries, on-prem products) rather than deployed continuously.
+What's the difference between deploying and releasing?;"Deploying puts new code into production; releasing exposes the new behaviour to users. Feature flags let you deploy continuously and release gradually and independently."
+Why must feature flags be removed after launch?;"Each flag adds code paths, testing combinations and confusion; stale flags become technical debt and a source of incidents when someone flips them unexpectedly."
+Why can't you rename a database column in a single release?;"During a rolling deploy (and after a rollback) the old version still runs and reads the old column; a one-step rename breaks it. Expand/contract keeps both versions working."
+What should decide whether a canary is promoted?;Predefined metrics compared against the stable version (error rate, latency, SLO burn, key business metrics), ideally evaluated automatically with rollback on failure.
+Why are change freezes often counterproductive?;Changes keep being written, so they accumulate into a large, risky batch released all at once after the freeze, the opposite of small safe changes.
+What should page a human at night, and what shouldn't?;"Urgent, actionable, user-visible symptoms (SLO burn, high error rate, service down) should page; causes and non-urgent signals (high CPU, a single pod restart, disk at 70%) go to dashboards or tickets."
+Why should the incident commander usually not debug?;Their job is coordination: keeping the big picture, assigning work, making decisions and ensuring communication. Debugging pulls them into details and leaves nobody steering.
+Why mitigate before finding the root cause?;"Users are affected right now; rolling back, disabling a flag or failing over usually restores service in minutes, while root cause analysis can take hours and is safer afterwards."
+What makes a postmortem blameless, and why does it matter?;"It focuses on how the system and process allowed the failure rather than who made a mistake; without fear of blame people share what really happened, so the right fixes are found."
+What makes a good postmortem action item?;"Specific, with an owner, a due date and a ticket, addressing a contributing factor (not ""be more careful""), and actually prioritised and tracked to completion."
+What problem does platform engineering solve?;"The growing cognitive load on product teams who must master many infrastructure tools; a platform provides self-service, opinionated paths so they can focus on business value."
+What is a golden path?;"A supported, end-to-end, opinionated way to accomplish a common task (e.g. creating a service) with best practices built in; teams can deviate but then own the extra complexity."
+What is the software catalog for?;A single place listing services, APIs and resources with owners, docs, dependencies and health, used for discovery, standards and incident response.
+Why is 'ticket-ops' an anti-pattern?;"Requests wait in queues for humans, creating delays and bottlenecks; self-service APIs with guardrails give the same control without the wait."
+How do you know an internal platform is successful?;Teams adopt it voluntarily, delivery metrics (lead time, deploy frequency, change failure rate) and time-to-first-deploy improve, and developer satisfaction rises.
+Is DevOps a role, a tool or something else?;Primarily a culture and set of practices: shared ownership of building and running software, small automated changes and fast feedback. Tools and roles support it but don't create it.
+What are the four DORA metrics?;Deployment frequency, lead time for changes, change failure rate and failed deployment recovery time.
+Why do small, frequent deployments improve stability?;Each change is easier to review and test, failures are rarer and smaller, it's obvious which change caused a problem, and rolling back affects little.
+How do DevOps, SRE and platform engineering relate?;"DevOps is the philosophy of shared ownership and flow; SRE implements reliability with SLOs, error budgets and toil limits; platform engineering scales both by giving teams self-service golden paths."
+Why should DORA metrics not be used to rank individuals?;"They describe a team's system of work; using them as personal targets invites gaming (e.g. tiny meaningless deploys) and destroys their value as honest feedback."

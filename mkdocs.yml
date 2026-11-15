@@ -125,6 +125,12 @@ nav:
       - "15.3 · Helm, Kustomize & operators": 15-kubernetes/03-helm-operators.md
       - "15.4 · Autoscaling pods & nodes": 15-kubernetes/04-autoscaling.md
       - "15.5 · Troubleshooting, upgrades & backups": 15-kubernetes/05-troubleshooting.md
+  - "16 · DevOps practices":
+      - 16-devops/index.md
+      - "16.1 · Git workflows & code review": 16-devops/01-git-review.md
+      - "16.2 · Safe releases & feature flags": 16-devops/02-safe-releases.md
+      - "16.3 · Incidents, on-call & postmortems": 16-devops/03-incidents.md
+      - "16.4 · Platform engineering": 16-devops/04-platform.md
 
 markdown_extensions:
   - admonition
