@@ -5,12 +5,12 @@ description: Core Web Vitals'ın (LCP, INP, CLS) neyi ölçtüğü ve eşikleri,
 
 # 8.3 — Web performansı ve Core Web Vitals
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **Core Web Vitals**, "site hızlı mı?" sorusunu gerçek ziyaretlerde ölçülen kullanıcı odaklı üç sayıya çevirir:
     **LCP** (ana içerik ne kadar hızlı görünür), **INP** (sayfa girdiye ne kadar hızlı tepki verir) ve **CLS** (şeyler
-    ne kadar zıplar); **75. yüzdelikte** değerlendirilir. **Lighthouse** gibi laboratuvar araçları hata ayıklamaya yardım
-    eder ama asıl önemli olan gerçek kullanıcılardan gelen **saha verisidir** (**CrUX**, **RUM**); bunun çoğu da altyapıya
-    bağlıdır: TTFB, CDN, önbellek ve sıkıştırma.
+    ne kadar zıplar); **75. yüzdelikte** değerlendirilir. **Lighthouse** gibi laboratuvar araçları hata ayıklamaya
+    yardım eder ama asıl önemli olan gerçek kullanıcılardan gelen **saha verisidir** (**CrUX**, **RUM**). Bunun çoğu da
+    altyapıya bağlıdır: TTFB, CDN, önbellek ve sıkıştırma.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -147,5 +147,3 @@ curl -so /dev/null -w 'dns=%{time_namelookup} tcp=%{time_connect} tls=%{time_app
 ## ✍️ Notlarım
 
 > Sitenin CrUX p75 değerlerine bak (PageSpeed Insights gösterir). Hangi metrik kalıyor ve düzeltmenin sahibi hangi ekip?
-
--

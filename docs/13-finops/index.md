@@ -5,11 +5,11 @@ description: How cloud billing actually works - compute, storage, data transfer,
 
 # Chapter 13 — Cloud cost (FinOps): where the money goes and how to keep it
 
-!!! abstract "In one sentence"
-    The cloud bills you for **what you reserve, not what you use**: CPUs and memory you requested, disks you provisioned,
-    every gigabyte that crosses a **zone, region or NAT gateway**, and every managed service hour; **FinOps** makes that
-    cost **visible** (tags, allocation, unit economics), **optimizes** it (right-sizing, autoscaling, spot, commitments,
-    architecture) and **operates** it continuously, so engineers see cost the same way they see latency.
+!!! abstract "In short"
+    The cloud bills you for **what you reserve, not what you use**. That means the CPUs and memory you requested, the
+    disks you provisioned, every gigabyte crossing a **zone, region or NAT gateway**, and every managed service hour.
+    **FinOps** makes that cost **visible** (tags, allocation, unit economics) and **optimizes** it (right-sizing,
+    autoscaling, spot, commitments). It **operates** continuously, so engineers see cost the way they see latency.
 
 !!! note "About the numbers"
     Prices in this chapter are **approximate public list prices** (mostly AWS us-east-1, late 2026) to show orders of magnitude.
@@ -200,5 +200,3 @@ python3 -c "print('m7i.2xlarge ≈ \$%.0f/month' % (0.4032*730))"
 ## ✍️ My notes
 
 > What are your three biggest cost lines this month, who owns each, and what is one unit-cost metric your team could track?
-
--

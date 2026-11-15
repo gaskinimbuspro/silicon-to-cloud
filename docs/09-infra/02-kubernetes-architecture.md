@@ -5,11 +5,11 @@ description: The control plane (API server, etcd, scheduler, controllers) and no
 
 # 9.2 — Kubernetes architecture
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     Kubernetes is a **database of desired state** (etcd behind the **API server**) plus many independent **controllers**
-    that **watch** it and work to make reality match: the **scheduler** assigns pods to nodes, the **kubelet** on each
-    node starts them through the container runtime, and higher-level controllers (Deployments, StatefulSets, Jobs,
-    **operators**) keep creating, replacing and updating pods for you.
+    that **watch** it and make reality match. The **scheduler** assigns pods to nodes, and the **kubelet** on each node
+    starts them through the container runtime. Higher-level controllers (Deployments, StatefulSets, Jobs, **operators**)
+    keep creating, replacing and updating pods for you.
 
 ## 📖 Key terms & abbreviations
 
@@ -131,5 +131,3 @@ kind delete cluster --name lab
 ## ✍️ My notes
 
 > Create a Deployment in a kind cluster and write down every event from `kubectl get events`. Map each to a component.
-
--

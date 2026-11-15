@@ -5,11 +5,11 @@ description: How Linux decides which task runs where, run queues and EEVDF, pree
 
 # 3.2 — The scheduler & CPU time
 
-!!! abstract "In one sentence"
-    The **scheduler** decides, many times per second on every core, which runnable task gets the CPU next: Linux keeps a
-    **run queue per CPU**, uses **EEVDF** to give each task a fair, weighted share, **preempts** tasks on timer ticks and
-    wake-ups, and balances load between cores; containers add **cgroup weights and quotas** on top, which is exactly how
-    Kubernetes CPU **requests** and **limits** are enforced.
+!!! abstract "In short"
+    The **scheduler** decides, many times per second on every core, which task gets the CPU next. Linux keeps a **run
+    queue per CPU** and uses **EEVDF** to give each task a fair, weighted share. It **preempts** tasks on timer ticks
+    and wake-ups and balances load between cores. Containers add **cgroup weights and quotas** on top, which is exactly
+    how Kubernetes CPU **requests** and **limits** work.
 
 ## 📖 Key terms & abbreviations
 
@@ -129,5 +129,3 @@ docker run --rm --cpus=0.5 alpine sh -c 'yes > /dev/null & sleep 3; cat /sys/fs/
 ## ✍️ My notes
 
 > Pick a service with a CPU limit. Check its throttled periods over the last day. Is the limit helping or hurting?
-
--

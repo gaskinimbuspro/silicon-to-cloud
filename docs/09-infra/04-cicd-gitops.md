@@ -5,11 +5,11 @@ description: Continuous integration and delivery stages, pipeline design and cac
 
 # 9.4 — CI/CD & GitOps
 
-!!! abstract "In one sentence"
-    **CI** turns every change into a tested, scanned, signed **artifact** (an image digest); **CD** moves that artifact
-    through environments; with **GitOps** the desired state of each environment lives in **git**, and an agent inside
-    the cluster (**Argo CD**, **Flux**) continuously **pulls and reconciles** it, so deployments are reviewed, auditable,
-    reversible with `git revert`, and rolled out gradually with **canary** or **blue-green** strategies.
+!!! abstract "In short"
+    **CI** turns every change into a tested, scanned, signed **artifact** (an image digest), and **CD** moves that
+    artifact through environments. With **GitOps**, each environment's desired state lives in **git**. An agent inside
+    the cluster (**Argo CD**, **Flux**) continuously **pulls and reconciles** it. Deployments become reviewed,
+    auditable, reversible with `git revert`, and can roll out gradually with **canary** or **blue-green**.
 
 ## 📖 Key terms & abbreviations
 
@@ -153,5 +153,3 @@ kind delete cluster --name gitops
 ## ✍️ My notes
 
 > Draw your current path from merge to production. Where are artifacts rebuilt, who holds cluster credentials, and how would you roll back in 5 minutes?
-
--

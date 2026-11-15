@@ -5,11 +5,11 @@ description: Why caches exist, latency numbers, cache lines and locality, associ
 
 # 2.2 — Caches & the memory hierarchy
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A CPU core can do several instructions per nanosecond but RAM takes ~100 ns to answer, so chips put small, fast
-    **caches** (L1, L2, L3) between them and move memory in **64-byte cache lines**; programs that access memory
-    **sequentially and compactly** stay in cache and run fast, while scattered access, **false sharing** between cores and
-    remote **NUMA** memory can make the same algorithm many times slower.
+    **caches** (L1, L2, L3) between them and move memory in **64-byte cache lines**. Programs that access memory
+    **sequentially and compactly** stay in cache and run fast, while scattered access, **false sharing** between cores
+    and remote **NUMA** memory can make the same algorithm many times slower.
 
 ## 📖 Key terms & abbreviations
 
@@ -146,5 +146,3 @@ cat /sys/kernel/mm/transparent_hugepage/enabled
 ## ✍️ My notes
 
 > Run the rows-vs-columns script. How many times slower is the column walk on your machine, and why?
-
--

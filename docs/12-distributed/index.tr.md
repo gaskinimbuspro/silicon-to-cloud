@@ -5,12 +5,12 @@ description: "Dağıtık sistemler neden zor (kısmi hata, bölünmeler, saatler
 
 # Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık
 
-!!! abstract "Tek cümlede"
-    Bir sistem birden fazla makinede çalışmaya başladığı anda mesajlar **gecikebilir, kaybolabilir ya da çoğalabilir**,
-    makineler **kısmen** çöker, ağ **bölünebilir** ve ortak bir saat yoktur; dağıtık sistemler bundan veriyi **replike
-    ederek**, değişikliklerin tek bir sırasında anlaşmak için **uzlaşı** (Raft, Paxos) kullanarak, ağ bölündüğünde
-    **tutarlılık ile erişilebilirlik** arasında açıkça seçim yaparak ve her uzak çağrıyı **zaman aşımı, yeniden deneme,
-    idempotency ve circuit breaker** ile sararak sağ çıkar.
+!!! abstract "Kısaca"
+    Bir sistem birden fazla makinede çalışmaya başladığı anda mesajlar **gecikebilir, kaybolabilir ya da çoğalabilir**.
+    Makineler **kısmen** çöker, ağ **bölünebilir** ve ortak bir saat yoktur. Dağıtık sistemler buna veriyi **replike
+    ederek** ve değişikliklerin sırasında **uzlaşı** (Raft, Paxos) ile anlaşarak dayanır. Ağ bölündüğünde **tutarlılık
+    ile erişilebilirlik** arasında açıkça seçim yaparlar ve her uzak çağrıyı **zaman aşımı, yeniden deneme, idempotency
+    ve circuit breaker** ile sararlar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -177,5 +177,3 @@ docker stop etcd3 etcd2 etcd1 2>/dev/null; docker network rm etcdnet
 ## ✍️ Notlarım
 
 > Sistemindeki kritik bir çağrı yolu için: her duraktaki zaman aşımları ne, kaç katman yeniden deniyor ve işlem idempotent mi?
-
--

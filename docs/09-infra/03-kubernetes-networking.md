@@ -5,11 +5,11 @@ description: The Kubernetes network model, how CNI plugins give pods IPs and con
 
 # 9.3 — Kubernetes networking
 
-!!! abstract "In one sentence"
-    Kubernetes asks for a simple model — **every pod has its own IP and can reach every other pod without NAT** — and
-    leaves the plumbing to a **CNI plugin**; on top, **Services** give groups of pods a stable virtual IP and **DNS**
-    name (implemented by kube-proxy or eBPF), **Gateway API / Ingress** bring external HTTP traffic in, **NetworkPolicies**
-    decide who may talk to whom, and a **service mesh** can add mTLS, retries and telemetry.
+!!! abstract "In short"
+    Kubernetes asks for a simple model: **every pod has its own IP and can reach every other pod without NAT**. A **CNI
+    plugin** does the plumbing. **Services** give groups of pods a stable virtual IP and **DNS** name, and **Gateway API
+    / Ingress** bring external HTTP traffic in. **NetworkPolicies** decide who may talk to whom, and a **service mesh**
+    can add mTLS, retries and telemetry.
 
 ## 📖 Key terms & abbreviations
 
@@ -142,5 +142,3 @@ kubectl delete networkpolicy default-deny; kubectl delete deploy,svc echo
 ## ✍️ My notes
 
 > Pick one request path in your cluster (internet → app → DB) and list every networking component it crosses.
-
--

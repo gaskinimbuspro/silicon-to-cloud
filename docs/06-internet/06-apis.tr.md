@@ -5,11 +5,11 @@ description: HTTP metotları ve güvenli/idempotent olmaları, operasyonda önem
 
 # 6.6 — Metotlar, durum kodları ve API stilleri
 
-!!! abstract "Tek cümlede"
-    Her HTTP alışverişi bir **URL** ("neye?") üzerinde bir **metottur** ("ne yapmak istiyorsun?") ve bir **durum koduyla**
-    ("nasıl gitti?") cevaplanır. Hangi metotların **güvenli** ve **idempotent** olduğunu bilmek neyin yeniden denenip
-    önbelleğe alınabileceğini, durum kodlarını bilmek bir hatanın **kimin suçu** olduğunu söyler. **REST, gRPC, GraphQL
-    ve WebSocket** gibi API stilleri aynı parçalar üzerine kurulmuş farklı sözleşmelerdir.
+!!! abstract "Kısaca"
+    Her HTTP alışverişi bir **URL** ("neye?") üzerinde bir **metottur** ("ne yapmak istiyorsun?") ve bir **durum
+    koduyla** ("nasıl gitti?") cevaplanır. Hangi metotların **güvenli** ve **idempotent** olduğunu bilmek neyin yeniden
+    denenip önbelleğe alınabileceğini, durum kodlarını bilmek bir hatanın **kimin suçu** olduğunu söyler. **REST, gRPC,
+    GraphQL ve WebSocket** gibi API stilleri aynı parçalar üzerine kurulmuş farklı sözleşmelerdir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -175,5 +175,3 @@ curl -sN https://httpbin.org/stream/3
 ## ✍️ Notlarım
 
 > Bir servisin geçen haftaki 5xx hatalarına bak. Hangilerini proxy, hangilerini uygulama üretti?
-
--

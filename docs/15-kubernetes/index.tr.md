@@ -5,12 +5,12 @@ description: "2. gün Kubernetes operasyonları: workload controller'ları ve po
 
 # Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak
 
-!!! abstract "Tek cümlede"
-    [Bölüm 9](../09-infra/index.md) Kubernetes'in **nasıl** çalıştığını gösterdi (kontrol döngüleri, scheduler, kubelet,
-    ağ); onu production'da çalıştırmak ise **erişilebilirliği belirleyen detaylarla** ilgilidir: doğru **probe'lar,
-    request'ler ve düzgün kapanışla** doğru **workload controller'ı**, pod'ları takip eden yapılandırma ve **kalıcı
-    volume'lar**, Helm ya da Kustomize ile **paketleme**, pod'ları ve node'ları **otomatik ölçekleme**, hızlı sorun gidermek
-    için **pod durumunu** okumak ve cluster'ı birkaç ayda bir dramsız **yükseltmek**.
+!!! abstract "Kısaca"
+    [Bölüm 9](../09-infra/index.md) Kubernetes'in **nasıl** çalıştığını gösterdi. Onu production'da çalıştırmak ise
+    **erişilebilirliği belirleyen detaylarla** ilgilidir. Doğru **probe'lar, request'ler ve düzgün kapanışla** doğru
+    **workload controller'ı** ve pod'ları takip eden yapılandırma ve **kalıcı volume'lar** gerekir. Ayrıca Helm ya da
+    Kustomize ile **paketleme**, pod ve node'ları **otomatik ölçekleme**, **pod durumunu** hızlı okumak ve cluster'ı
+    birkaç ayda bir dramsız **yükseltmek** gerekir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -167,5 +167,3 @@ kind delete cluster --name day2
 ## ✍️ Notlarım
 
 > Deployment'larından birini al ve hatırlatma kartına göre kontrol et. Hangi maddeler eksik?
-
--

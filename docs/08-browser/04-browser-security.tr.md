@@ -5,12 +5,12 @@ description: Same-origin policy ve site izolasyonu, XSS ve Content Security Poli
 
 # 8.4 — Tarayıcı güvenliği
 
-!!! abstract "Tek cümlede"
-    Tarayıcılar milyonlarca güvenilmeyen siteden gelen kodu yan yana çalıştırır; bu yüzden **same-origin policy**'yi
-    (bir sayfa başka bir origin'in verisini okuyamaz) uygular ve siteleri ayrı process'lerde izole eder. Çoğu web saldırısı
-    bunu aşmaya çalışır: **XSS** saldırganın script'ini senin origin'inin *içinde* çalıştırır, **CSRF** tarayıcının
-    cookie'lerini başka bir yerden senin sitene göndermesini sağlar, **clickjacking** sayfanı bir çerçeveye koyar.
-    Savunmaların çoğu platform ekibinin merkezi olarak ayarlayabileceği **header'lar ve cookie bayraklarıdır**.
+!!! abstract "Kısaca"
+    Tarayıcılar milyonlarca güvenilmeyen siteden gelen kodu yan yana çalıştırır. Bu yüzden **same-origin policy**'yi
+    (bir sayfa başka bir origin'in verisini okuyamaz) uygular ve siteleri ayrı process'lerde izole eder. Çoğu web
+    saldırısı bunu aşmaya çalışır: **XSS** saldırganın script'ini senin origin'inin *içinde* çalıştırır, **CSRF**
+    tarayıcının cookie'lerini başka bir yerden senin sitene göndermesini sağlar, **clickjacking** sayfanı bir çerçeveye
+    koyar. Savunmaların çoğu platform ekibinin merkezi olarak ayarlayabileceği **header'lar ve cookie bayraklarıdır**.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -147,5 +147,3 @@ document.cookie;          // HttpOnly cookie'ler burada GÖRÜNMEZ
 ## ✍️ Notlarım
 
 > Production alan adını HTTP Observatory ile tara. Hangi header'lar eksik ve onları nereye (CDN, ingress, uygulama) eklerdin?
-
--

@@ -5,10 +5,11 @@ description: Önişleme, derleme, assemble, link, ELF dosyası, fork/execve, din
 
 # Bölüm 4 — Bir program nasıl çalışır
 
-!!! abstract "Tek cümlede"
-    Bir derleme zinciri (toolchain) kaynak kodunu diskte bir **ELF** dosyasına çevirir. `./app` yazdığında shell **fork** eder,
-    çocuk process **`execve`** çağırır, kernel dosyayı yepyeni bir adres alanına **eşler (map)**, **dinamik bağlayıcı**
-    paylaşımlı kütüphaneleri yükler ve sonunda senin **`main()`** fonksiyonun çalışır. Java, Python ve Node.js araya bir **runtime/VM** ekler.
+!!! abstract "Kısaca"
+    Bir derleme zinciri (toolchain) kaynak kodunu diskte bir **ELF** dosyasına çevirir. `./app` yazdığında shell
+    **fork** eder, çocuk process **`execve`** çağırır, kernel dosyayı yepyeni bir adres alanına **eşler (map)**,
+    **dinamik bağlayıcı** paylaşımlı kütüphaneleri yükler ve sonunda senin **`main()`** fonksiyonun çalışır. Java,
+    Python ve Node.js araya bir **runtime/VM** ekler.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -213,5 +214,3 @@ JVM / V8 / CPython = bytecode çalıştıran bir ELF, çoğu zaman JIT ile
 ## ✍️ Kendi notlarım
 
 > `./app` yazmakla `main()`'in çalışması arasında ne olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

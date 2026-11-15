@@ -5,12 +5,12 @@ description: Bir LLM isteğinin yaşamı, gecikme ve verim metrikleri, KV cache 
 
 # 10.5 — Inference ve servis: derinlemesine
 
-!!! abstract "Tek cümlede"
-    Bir LLM'i servis etmek, **ilk token'a kadar geçen süreyi** ve **çıktı token'ı başına süreyi** düşük tutarken GPU bellek
-    bant genişliğini aynı anda çok sayıda kullanıcı için **saniyede token**'a çevirmek demektir. Araçlar şunlar: sanal bellek
-    gibi yönetilen bir **KV cache**, GPU'yu dolu tutmak için **sürekli batching**, her adımı ucuzlatmak için **quantization**
-    ve **speculative decoding**, tekrarlanan işi atlamak için **prefix caching**. Ölçek büyüyünce de **KV'ye duyarlı
-    yönlendirme** ve **ayrı prefill ve decode havuzları**.
+!!! abstract "Kısaca"
+    Bir LLM'i servis etmek, **ilk token'a kadar geçen süreyi** ve **çıktı token'ı başına süreyi** düşük tutarken GPU
+    bellek bant genişliğini aynı anda çok sayıda kullanıcı için **saniyede token**'a çevirmek demektir. Araçlar şunlar:
+    sanal bellek gibi yönetilen bir **KV cache**, GPU'yu dolu tutmak için **sürekli batching**, her adımı ucuzlatmak
+    için **quantization** ve **speculative decoding**, tekrarlanan işi atlamak için **prefix caching**. Ölçek büyüyünce
+    de **KV'ye duyarlı yönlendirme** ve **ayrı prefill ve decode havuzları**.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -221,5 +221,3 @@ Motorlar: vLLM · SGLang · TensorRT-LLM · Triton · llama.cpp/Ollama
 ## ✍️ Kendi notlarım
 
 > TTFT ile TPOT'u, KV cache'in neden eşzamanlılığı sınırladığını ve sürekli batching'in ne yaptığını kendi cümlelerinle 5 satırda anlat.
-
--

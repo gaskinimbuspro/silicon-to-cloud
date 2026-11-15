@@ -5,10 +5,11 @@ description: IPv4 ve IPv6 adresleri, CIDR ve subnet hesabı, özel aralıklar, r
 
 # 5.2 — IP adresleme, subnet'ler ve routing
 
-!!! abstract "Tek cümlede"
-    **IP** her makineye ağlar arası anlamlı bir adres verir; `/24` gibi bir **CIDR öneki** hangi kısmın ağ olduğunu
-    söyler, her makine ve router bir **routing tablosu** tutar, her hedef için **en uzun eşleşen öneki** seçer ve **TTL**'i
-    azaltarak paketi sonraki durağa iletir; laptopunu, internetin çekirdeğini ve cluster'ındaki pod ağını aynı birkaç kural yönetir.
+!!! abstract "Kısaca"
+    **IP** her makineye ağlar arasında anlamlı bir adres verir. `/24` gibi bir **CIDR öneki** adresin hangi kısmının ağ
+    olduğunu söyler. Her makine ve router bir **routing tablosu** tutar, her hedef için **en uzun eşleşen öneki** seçer
+    ve **TTL**'i azaltarak paketi sonraki durağa iletir. Laptopunu, internetin çekirdeğini ve cluster'ındaki pod ağını
+    aynı birkaç kural yönetir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -141,5 +142,3 @@ kubectl get nodes -o custom-columns=NAME:.metadata.name,PODCIDR:.spec.podCIDR 2>
 ## ✍️ Notlarım
 
 > Ortamındaki her CIDR'ı yaz (VPC'ler, pod'lar, service'ler, VPN, ofis). Çakışan var mı?
-
--

@@ -5,9 +5,9 @@ description: What compilers do inside (front end, IR, optimizer, back end), opti
 
 # 4.1 — Compiling & linking
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A **compiler** reads source code, checks it, turns it into an **intermediate representation (IR)**, **optimizes** it
-    and emits machine code for one target into **object files**; the **linker** then resolves the **symbols** between
+    and emits machine code for one target into **object files**. The **linker** then resolves the **symbols** between
     those files and libraries and lays everything out into one executable, either copying libraries in (**static**) or
     leaving them to be loaded at run time (**dynamic**).
 
@@ -148,5 +148,3 @@ clang -O2 -S -emit-llvm hello.c -o - 2>/dev/null | head -20   # LLVM IR (if clan
 ## ✍️ My notes
 
 > Take one of your services: is it statically or dynamically linked? Run `ldd` (or `go version -m`) on the binary in the image.
-
--

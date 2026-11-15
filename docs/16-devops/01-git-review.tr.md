@@ -5,12 +5,12 @@ description: "Ekipler kod üzerinde nasıl iş birliği yapar: trunk-based geli�
 
 # 16.1 — Git akışları ve kod incelemesi
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Yüksek performanslı ekipler **trunk-based geliştirme** kullanır: herkes **kısa ömürlü branch'lerde** (haftalar değil
     saatler) çalışır, bunlar **zorunlu otomatik kontrollü** ve **hızlı insan incelemeli** **küçük pull request'lerle**
-    **korumalı bir main'e** merge edilir; böylece main her zaman yayınlanabilir; bitmemiş iş uzun branch'ler yerine
-    **feature flag'lerin** arkasında saklanır, commit'ler bir **kurala** uyar ve sürümler **semantik sürüm** numaraları ve
-    üretilmiş **changelog'lar** alır.
+    **korumalı bir main'e** merge edilir. Böylece main her zaman yayınlanabilir. Bitmemiş iş uzun branch'ler yerine
+    **feature flag'lerin** arkasında saklanır, commit'ler bir **kurala** uyar ve sürümler **semantik sürüm** numaraları
+    ve üretilmiş **changelog'lar** alır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -159,5 +159,3 @@ printf "/infra/   @acme/platform\n/payments/ @acme/payments @acme/security\n" > 
 ## ✍️ Notlarım
 
 > Ekibinde bir pull request merge edildiğinde medyan yaşı ne? Yavaş olanları yavaş yapan ne?
-
--

@@ -5,11 +5,11 @@ description: "Bir dil runtime'ının process'e ne eklediği (yorumlayıcılar ve
 
 # 4.3 — Dil runtime'ları: JVM, V8, Python, Go
 
-!!! abstract "Tek cümlede"
-    C/C++/Rust dışında programın "tek başına" çalışmaz: process'in içinde bir **runtime** yaşar ve kodun nasıl
+!!! abstract "Kısaca"
+    C/C++/Rust dışında programın "tek başına" çalışmaz: process'in içinde bir **runtime** yaşar. Runtime kodun nasıl
     çalışacağına (**yorumlayıcı** ya da **JIT**), belleğin nasıl boşaltılacağına (**çöp toplayıcı**) ve işin nasıl
-    zamanlanacağına (**thread'ler, event loop, goroutine'ler**) karar verir; JVM, V8/Node.js, CPython ve Go için bu üç
-    seçimi bilmek performanslarının, bellek kullanımlarının ve container boyutlandırmalarının çoğunu açıklar.
+    zamanlanacağına (**thread'ler, event loop, goroutine'ler**) karar verir. JVM, V8/Node.js, CPython ve Go için bu üç
+    seçimi bilmek, performanslarını, bellek kullanımlarını ve container boyutlarını büyük ölçüde açıklar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -146,5 +146,3 @@ PYEOF
 ## ✍️ Notlarım
 
 > Ana servisin için: hangi runtime, hangi GC, container limitine karşı heap limiti ne ve gerçekte kaç çekirdek kullanabiliyor?
-
--

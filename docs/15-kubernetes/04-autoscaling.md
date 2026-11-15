@@ -5,11 +5,11 @@ description: How Kubernetes autoscaling works in two layers - metrics-server and
 
 # 15.4 — Autoscaling pods and nodes
 
-!!! abstract "In one sentence"
-    Kubernetes scales in **two layers**: **pod autoscalers** change how many replicas run (**HPA**, **KEDA**) or how big
-    they are (**VPA**) based on metrics, and when new pods don't fit, **node autoscalers** (**Cluster Autoscaler**,
-    **Karpenter**) add machines and later **consolidate** them away; it only works well if **requests are realistic**,
-    pods start fast, and you keep a little **headroom**, because new nodes take minutes.
+!!! abstract "In short"
+    Kubernetes scales in **two layers**. **Pod autoscalers** change how many replicas run (**HPA**, **KEDA**) or how big
+    they are (**VPA**). When new pods don't fit, **node autoscalers** (**Cluster Autoscaler**, **Karpenter**) add
+    machines and later **consolidate** them away. It only works well with **realistic requests**, fast-starting pods and
+    a little **headroom**, because new nodes take minutes.
 
 ## 📖 Key terms & abbreviations
 
@@ -160,5 +160,3 @@ kind delete cluster --name as
 ## ✍️ My notes
 
 > How long does it take in your cluster from "traffic doubles" to "new pods are serving"? Which step is the slowest?
-
--

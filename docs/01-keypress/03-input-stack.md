@@ -5,11 +5,11 @@ description: evdev and input events, libinput, the compositor and Wayland vs X11
 
 # 1.3 — The Linux input stack
 
-!!! abstract "In one sentence"
-    The kernel turns the keyboard report into an **evdev** event (`KEY_A pressed`); the **compositor** reads it through
+!!! abstract "In short"
+    The kernel turns the keyboard report into an **evdev** event (`KEY_A pressed`). The **compositor** reads it through
     **libinput**, decides which window has **keyboard focus**, and sends that window a raw **keycode** over the
-    **Wayland** protocol; the app's **xkbcommon** applies the **keymap** (layout + modifiers) to get a **keysym** and the
-    text `"a"`, and the toolkit or browser delivers it to your code as a key event.
+    **Wayland** protocol. The app's **xkbcommon** applies the **keymap** (layout + modifiers) to get a **keysym** and
+    the text `"a"`, and the toolkit or browser delivers it to your code as a key event.
 
 ## 📖 Key terms & abbreviations
 
@@ -152,5 +152,3 @@ addEventListener('keydown', e => console.log(e.code, e.key, e.shiftKey, e.repeat
 ## ✍️ My notes
 
 > Open the browser snippet above, switch your layout between `tr` and `us`, and press the same keys. Which field changes and which stays the same?
-
--

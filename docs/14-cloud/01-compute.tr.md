@@ -5,12 +5,12 @@ description: "Sanal makinelerden fonksiyonlara bulut compute seçenekleri: insta
 
 # 14.1 — Compute: VM'ler, container'lar ve sunucusuz
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Bulut compute bir yelpazedir: **VM'ler** sana bütün bir makine (ve onun yamalarını) verir, **yönetilen Kubernetes**
     container'larını hâlâ senin boyutladığın node'larda çalıştırır, **sunucusuz container'lar** ve **fonksiyonlar**
-    sunucuları tamamen gizler ve istek başına faturalar; hangisini seçersen seç, production compute **değişmez imajlardan**
-    kurulur, zone'lar arasında **sağlık kontrolleri ve otomatik ölçekleme** ile ayakta tutulur ve tahminle değil
-    **ölçümle** boyutlandırılır.
+    sunucuları tamamen gizler ve istek başına faturalar. Hangisini seçersen seç, production compute **değişmez
+    imajlardan** kurulur, zone'lar arasında **sağlık kontrolleri ve otomatik ölçekleme** ile ayakta tutulur ve tahminle
+    değil **ölçümle** boyutlandırılır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -160,5 +160,3 @@ for i in 1 2; do curl -so /dev/null -w "%{time_total}s\n" $URL; done
 ## ✍️ Notlarım
 
 > Servislerinden birini seç: VM'lerde, Kubernetes'te, sunucusuz container'larda ya da fonksiyonlarda daha ucuz ve basit olur muydu? Neden?
-
--

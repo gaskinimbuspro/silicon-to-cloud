@@ -5,10 +5,10 @@ description: Cloud compute options from virtual machines to functions - instance
 
 # 14.1 — Compute: VMs, containers & serverless
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     Cloud compute is a spectrum: **VMs** give you a whole machine (and its patching), **managed Kubernetes** runs your
     containers on nodes you still size, **serverless containers** and **functions** hide servers completely and bill per
-    request; whichever you choose, production compute is built from **immutable images**, kept alive by **health checks
+    request. Whichever you choose, production compute is built from **immutable images**, kept alive by **health checks
     and autoscaling** across zones, and sized from **measurements**, not guesses.
 
 ## 📖 Key terms & abbreviations
@@ -159,5 +159,3 @@ for i in 1 2; do curl -so /dev/null -w "%{time_total}s\n" $URL; done
 ## ✍️ My notes
 
 > Pick one of your services: would it be cheaper and simpler on VMs, Kubernetes, serverless containers or functions? Why?
-
--

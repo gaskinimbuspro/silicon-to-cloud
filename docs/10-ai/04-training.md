@@ -5,12 +5,12 @@ description: The training loop, memory accounting, data/tensor/pipeline/expert p
 
 # 10.4 — Distributed training
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     Training repeats one loop billions of times: **forward** (predict), **loss** (how wrong), **backward** (which way to
-    nudge each parameter), **optimizer step** (nudge). A big model doesn't fit one GPU and would take centuries on one
-    anyway, so the work is split across thousands of GPUs with several kinds of **parallelism**, kept in sync with
-    **collectives** like all-reduce over NVLink and InfiniBand, scheduled **all at once** (gang scheduling), and protected
-    against failures with frequent **checkpoints**.
+    nudge each parameter) and **optimizer step** (nudge). A big model doesn't fit on one GPU, so the work is split
+    across thousands of GPUs with several kinds of **parallelism**. **Collectives** like all-reduce keep them in sync
+    over NVLink and InfiniBand. Jobs are scheduled **all at once** (gang scheduling) and protected with frequent
+    **checkpoints**.
 
 ## 📖 Key terms & abbreviations
 
@@ -222,5 +222,3 @@ Cluster: rail-optimized IB/RoCE · parallel FS / object store · gang scheduling
 ## ✍️ My notes
 
 > Explain why a 70B model needs several kinds of parallelism and what all-reduce does, in your own words in 5 lines.
-
--

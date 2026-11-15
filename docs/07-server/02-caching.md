@@ -5,11 +5,11 @@ description: Where caches live (browser, CDN, proxy, in-process, Redis), cache-a
 
 # 7.2 — Caching patterns
 
-!!! abstract "In one sentence"
-    A **cache** keeps a copy of expensive results somewhere faster and closer; every layer from the **browser** and
-    **CDN** to an **in-process map** and **Redis** can answer before the database, and the hard parts are always the same:
-    choosing a **pattern** (cache-aside, write-through…), deciding **how stale** data may be (**TTL**, invalidation), and
-    surviving **stampedes**, **hot keys** and cache **outages**.
+!!! abstract "In short"
+    A **cache** keeps a copy of expensive results somewhere faster and closer. Every layer, from the **browser** and
+    **CDN** to an **in-process map** and **Redis**, can answer before the database. The hard parts are always the same:
+    choosing a **pattern** (cache-aside, write-through…), deciding **how stale** data may be (**TTL**, invalidation),
+    and surviving **stampedes**, **hot keys** and cache **outages**.
 
 ## 📖 Key terms & abbreviations
 
@@ -135,5 +135,3 @@ docker stop redis
 ## ✍️ My notes
 
 > For your busiest endpoint: which cache layers does it use, what's the hit ratio, and what happens if Redis disappears for 5 minutes?
-
--

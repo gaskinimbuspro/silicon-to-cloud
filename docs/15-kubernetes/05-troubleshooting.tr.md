@@ -5,10 +5,10 @@ description: "Sistematik bir Kubernetes sorun giderme yöntemi: pod durumunu ve 
 
 # 15.5 — Sorun giderme, yükseltmeler ve yedekler
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Sırayla okursan Kubernetes neyin yanlış olduğunu söyler: **pod durumu** bozulan katmanı gösterir (zamanlama, imaj,
     süreç, hazırlık, ağ), **olaylar** nedenini açıklar, **loglar** (`--previous` dahil) uygulamanın tarafını gösterir ve
-    **kubectl debug** içeriden bakmanı sağlar; cluster'ları sağlıklı tutmak ayrıca **kaldırılan API'leri** temizledikten
+    **kubectl debug** içeriden bakmanı sağlar. Cluster'ları sağlıklı tutmak ayrıca **kaldırılan API'leri** temizledikten
     sonra desteklenen **sürüm uyumu** içinde birkaç ayda bir **yükseltmek** ve gerçekten geri yüklediğin **yedeklere**
     (etcd, Velero, volume snapshot'ları) sahip olmak demektir.
 
@@ -163,5 +163,3 @@ kind delete cluster --name ts
 ## ✍️ Notlarım
 
 > Cluster'ların hangi Kubernetes sürümünde ve desteği ne zaman bitiyor?
-
--

@@ -5,11 +5,12 @@ description: Ethernet çerçeveleri, MAC adresleri ve switch'ler nasıl çalış
 
 # 5.1 — Ethernet, ARP ve VLAN'lar (Katman 2)
 
-!!! abstract "Tek cümlede"
-    Tek bir yerel ağın içinde veri **MAC** adresleriyle adreslenmiş **Ethernet çerçeveleri** olarak taşınır; **switch**'ler
-    hangi MAC'in hangi portun arkasında olduğunu öğrenir ve çerçeveleri sadece oraya iletir (emin değilse **taşırır**),
-    **ARP** aynı subnet'teki bir IP'nin MAC'ini bulur ve **VLAN**'lar tek bir fiziksel ağı ayrı yayın alanlarına böler;
-    aynı fikirler her Kubernetes node'unda Linux bridge'leri, veth çiftleri ve CNI eklentileri olarak yeniden karşına çıkar.
+!!! abstract "Kısaca"
+    Tek bir yerel ağın içinde veri **MAC** adresleriyle adreslenmiş **Ethernet çerçeveleri** olarak taşınır.
+    **Switch**'ler hangi MAC'in hangi portun arkasında olduğunu öğrenir ve çerçeveleri sadece oraya iletir (emin değilse
+    **taşırır**), **ARP** aynı subnet'teki bir IP'nin MAC'ini bulur ve **VLAN**'lar tek bir fiziksel ağı ayrı yayın
+    alanlarına böler. Aynı fikirler her Kubernetes node'unda Linux bridge'leri, veth çiftleri ve CNI eklentileri olarak
+    yeniden karşına çıkar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -133,5 +134,3 @@ ping -M do -s 1472 -c1 1.1.1.1               # 1472+28 = 1500: tam boy paket par
 ## ✍️ Notlarım
 
 > Bir Kubernetes node'unda: bir pod'un veth çiftini (`ip link`), kullandığı bridge'i ya da rotayı ve her adımdaki MTU'yu bul.
-
--

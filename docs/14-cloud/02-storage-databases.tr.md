@@ -5,10 +5,10 @@ description: Blok, dosya ve nesne depolama ve her birinin ne zaman kullanılaca�
 
 # 14.2 — Bulutta depolama ve veritabanları
 
-!!! abstract "Tek cümlede"
-    Depolamayı **verinin nasıl erişildiğine** göre seç: **blok** volume'lar tek bir makine için ham disklerdir, **dosya**
-    paylaşımları çok makine için POSIX klasörleridir, **nesne** depolama neredeyse sınırsız boyutlu ve çok yüksek
-    dayanıklılıklı bir HTTP anahtar-değer deposudur; **yönetilen veritabanını** veri modeline ve ölçeğe göre seç
+!!! abstract "Kısaca"
+    Depolamayı **verinin nasıl erişildiğine** göre seç: **blok** volume'lar tek bir makine için ham disklerdir,
+    **dosya** paylaşımları çok makine için POSIX klasörleridir, **nesne** depolama neredeyse sınırsız boyutlu ve çok
+    yüksek dayanıklılıklı bir HTTP anahtar-değer deposudur. **Yönetilen veritabanını** veri modeline ve ölçeğe göre seç
     (transaction için ilişkisel, devasa basit erişim için anahtar-değer/doküman, hız için önbellek, analitik için ambar)
     ve her şeyi **gerçekten geri yüklediğin yedeklerle** koru.
 
@@ -150,5 +150,3 @@ psql -c "select state, count(*) from pg_stat_activity group by 1;"
 ## ✍️ Notlarım
 
 > Ekibin en son ne zaman bir production veritabanı yedeğini geri yükledi? Ne kadar sürdü?
-
--

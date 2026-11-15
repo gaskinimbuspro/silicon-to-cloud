@@ -5,11 +5,11 @@ description: What a process and a thread are, fork/exec and copy-on-write, proce
 
 # 3.1 — Processes & threads
 
-!!! abstract "In one sentence"
-    A **process** is a running program with its own memory, file descriptors and identity (PID); a **thread** is a
+!!! abstract "In short"
+    A **process** is a running program with its own memory, file descriptors and identity (PID). A **thread** is a
     worker inside a process that shares that memory but has its own stack and registers. Processes are born with
-    **fork/clone + execve**, move between **running** and **sleeping**, and end with **exit**, after which the parent must
-    **wait()** for them; in a container your app is usually **PID 1**, which gives it special duties.
+    **fork/clone + execve**, move between **running** and **sleeping**, and end with **exit**, after which the parent
+    must **wait()** for them. In a container your app is usually **PID 1**, which gives it special duties.
 
 ## 📖 Key terms & abbreviations
 
@@ -139,5 +139,3 @@ docker run --rm -d --name withinit --init alpine sleep 300 && time docker stop w
 ## ✍️ My notes
 
 > Check one of your Dockerfiles: is the CMD in exec form, and does the app handle SIGTERM?
-
--

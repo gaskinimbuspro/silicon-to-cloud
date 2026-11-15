@@ -5,11 +5,11 @@ description: How to change production safely - separating deploy from release, f
 
 # 16.2 — Safe releases: feature flags & zero-downtime changes
 
-!!! abstract "In one sentence"
-    The safest way to change production is to make every change **small and reversible**: **deploy** code continuously
-    but **release** features separately with **feature flags**, expose them **progressively** (staff → 1% → 100%) while
-    **metrics decide** whether to continue, keep a **kill switch**, and evolve databases and APIs with **expand/contract**
-    so old and new versions can run side by side during every rollout and rollback.
+!!! abstract "In short"
+    The safest way to change production is to make every change **small and reversible**. **Deploy** code continuously,
+    but **release** features separately with **feature flags**. Expose them **progressively** (staff → 1% → 100%) and
+    let **metrics decide** whether to continue, with a **kill switch** ready. Evolve databases and APIs with
+    **expand/contract**, so old and new versions can run side by side during every rollout and rollback.
 
 ## 📖 Key terms & abbreviations
 
@@ -162,5 +162,3 @@ docker stop flagd
 ## ✍️ My notes
 
 > Think of your last rollback. How long did it take, and what would have made it a flag flip instead?
-
--

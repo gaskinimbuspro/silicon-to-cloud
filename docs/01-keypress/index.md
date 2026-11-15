@@ -5,11 +5,11 @@ description: How a single keypress travels through hardware, a CPU interrupt, th
 
 # Chapter 1 — What happens when you press “A”?
 
-!!! abstract "In one sentence"
-    A tiny computer inside the keyboard turns the keypress into a **number**, USB carries it to the host,
-    an **interrupt** makes the CPU drop what it's doing and run the kernel, the kernel hands the event to
-    **user space**, the application translates the number into the letter **'a'** using the keyboard layout and draws it,
-    and the GPU sends the new frame to the monitor. All of this takes **~10–50 ms**.
+!!! abstract "In short"
+    A tiny computer inside the keyboard turns the keypress into a **number**, and USB carries it to the host. An
+    **interrupt** makes the CPU drop what it's doing and run the kernel, which hands the event to **user space**. The
+    application turns the number into the letter **'a'** using the keyboard layout and draws it. Then the GPU sends the
+    new frame to the monitor. All of this takes **~10–50 ms**.
 
 ## 📖 Key terms & abbreviations
 
@@ -263,5 +263,3 @@ Key → circuit closes → matrix scan → MCU: HID usage 0x04
 ## ✍️ My notes
 
 > After reading, explain this chapter in your own words in 5 lines. The parts you can't explain are the parts you don't understand yet.
-
--

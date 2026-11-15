@@ -5,11 +5,11 @@ description: Why distributed systems are hard (partial failure, partitions, cloc
 
 # Chapter 12 — Distributed systems: consensus, consistency & resilience
 
-!!! abstract "In one sentence"
-    As soon as a system runs on more than one machine, messages can be **delayed, lost or duplicated**, machines fail
-    **partially**, the network can **partition**, and there is no shared clock; distributed systems survive this by
-    **replicating** data, using **consensus** (Raft, Paxos) to agree on one order of changes, choosing explicitly between
-    **consistency and availability** when the network splits, and wrapping every remote call in **timeouts, retries,
+!!! abstract "In short"
+    As soon as a system runs on more than one machine, messages can be **delayed, lost or duplicated**. Machines fail
+    **partially**, the network can **partition**, and there is no shared clock. Distributed systems survive this by
+    **replicating** data and using **consensus** (Raft, Paxos) to agree on one order of changes. They choose explicitly
+    between **consistency and availability** when the network splits, and wrap every remote call in **timeouts, retries,
     idempotency and circuit breakers**.
 
 ## 📖 Key terms & abbreviations
@@ -177,5 +177,3 @@ docker stop etcd3 etcd2 etcd1 2>/dev/null; docker network rm etcdnet
 ## ✍️ My notes
 
 > For one critical call path in your system: what are the timeouts at each hop, how many layers retry, and is the operation idempotent?
-
--

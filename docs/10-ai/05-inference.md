@@ -5,11 +5,12 @@ description: The life of an LLM request, latency and throughput metrics, KV cach
 
 # 10.5 — Inference & serving deep dive
 
-!!! abstract "In one sentence"
-    Serving an LLM means turning GPU memory bandwidth into **tokens per second** for many users at once while keeping
-    **time to first token** and **time per output token** low. The tools are: a **KV cache** managed like virtual memory,
-    **continuous batching** to keep the GPU full, **quantization** and **speculative decoding** to make each step cheaper,
-    **prefix caching** to skip repeated work, and at scale **KV-aware routing** and **separate prefill and decode pools**.
+!!! abstract "In short"
+    Serving an LLM means turning GPU memory bandwidth into **tokens per second** for many users at once. At the same
+    time, **time to first token** and **time per output token** must stay low. The main tools: a **KV cache** managed
+    like virtual memory, **continuous batching** to keep the GPU full, and **quantization** and **speculative decoding**
+    to make each step cheaper. At scale add **prefix caching**, **KV-aware routing** and **separate prefill and decode
+    pools**.
 
 ## 📖 Key terms & abbreviations
 
@@ -220,5 +221,3 @@ Engines: vLLM · SGLang · TensorRT-LLM · Triton · llama.cpp/Ollama
 ## ✍️ My notes
 
 > Explain TTFT vs TPOT, why the KV cache limits concurrency, and what continuous batching does, in your own words in 5 lines.
-
--

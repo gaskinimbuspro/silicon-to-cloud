@@ -5,10 +5,11 @@ description: Register'lar, bellek hiyerarşisi, fetch-decode-execute döngüsü 
 
 # Bölüm 2 — CPU & Assembly
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     CPU çok hızlı ama çok basit bir makinedir. `RIP` register'ının gösterdiği komutu **okur (fetch)**, ne olduğunu
-    **çözer (decode)**, **register**'lardaki değerlerle **çalıştırır (execute)**, sonucu **geri yazar (write back)**
-    ve bir sonrakine geçer. Bunu saniyede milyarlarca kez yapar. Önbellekler, RAM ve disk sadece onu veriyle beslemek için vardır.
+    **çözer (decode)**, **register**'lardaki değerlerle **çalıştırır (execute)**, sonucu **geri yazar (write back)** ve
+    bir sonrakine geçer. Bunu saniyede milyarlarca kez yapar. Önbellekler, RAM ve disk sadece onu veriyle beslemek için
+    vardır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -254,5 +255,3 @@ C → derleyici → assembly → assembler → makine kodu (byte'lar) → diskte
 ## ✍️ Kendi notlarım
 
 > Fetch-decode-execute döngüsünü ve stack'i kendi cümlelerinle 5 satırda anlat.
-
--

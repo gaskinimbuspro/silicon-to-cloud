@@ -5,12 +5,12 @@ description: Day-2 Kubernetes operations - workload controllers and the pod life
 
 # Chapter 15 — Kubernetes in depth: running it in production
 
-!!! abstract "In one sentence"
-    [Chapter 9](../09-infra/index.md) showed **how** Kubernetes works (control loops, scheduler, kubelet, networking); running
-    it in production is about the **details that decide uptime**: the right **workload controller** with correct
-    **probes, requests and graceful shutdown**, configuration and **persistent volumes** that follow pods, **packaging**
-    with Helm or Kustomize, **autoscaling** pods and nodes, reading **pod status** to troubleshoot quickly, and **upgrading**
-    the cluster every few months without drama.
+!!! abstract "In short"
+    [Chapter 9](../09-infra/index.md) showed **how** Kubernetes works. Running it in production is about the **details
+    that decide uptime**. That means the right **workload controller** with correct **probes, requests and graceful
+    shutdown**, plus config and **persistent volumes** that follow pods. It also means **packaging** with Helm or
+    Kustomize, **autoscaling** pods and nodes, reading **pod status** quickly, and **upgrading** every few months
+    without drama.
 
 ## 📖 Key terms & abbreviations
 
@@ -167,5 +167,3 @@ kind delete cluster --name day2
 ## ✍️ My notes
 
 > Take one of your deployments and check it against the cheat sheet. Which items are missing?
-
--

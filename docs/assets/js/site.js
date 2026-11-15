@@ -175,6 +175,74 @@
     pick();
   }
 
-  const init = () => { contentPage(); home(); markNav(); practice(); };
+  // ---- readability: collapsible key terms, mobile table cards, zoom hints, quieter abbreviations ----
+  function readability() {
+    const article = document.querySelector(".md-content article");
+    if (!article) return;
+
+    // 1. "Key terms" table → term chips + collapsible definitions
+    const h2 = [...article.querySelectorAll("h2")].find(h => /key terms|temel terimler/i.test(h.textContent));
+    let wrap = h2 && h2.nextElementSibling;
+    if (wrap && wrap.matches(".md-typeset__scrollwrap, .md-typeset__table, table")) {
+      const rows = [...wrap.querySelectorAll("tbody tr")];
+      const det = document.createElement("details");
+      det.className = "s2c-terms";
+      const sum = document.createElement("summary");
+      const chips = rows.map((r, i) => {
+        const name = (r.cells[0] && r.cells[0].textContent.trim()) || "";
+        return `<span class="s2c-chip" data-row="${i}">${name.replace(/</g, "&lt;")}</span>`;
+      }).join("");
+      sum.innerHTML = `<span class="s2c-terms-chips">${chips}</span>` +
+        `<span class="s2c-terms-toggle"><span class="s2c-open">${T("Show what they mean", "Anlamlarını göster")} (${rows.length}) ▾</span>` +
+        `<span class="s2c-close">${T("Hide", "Gizle")} ▴</span></span>`;
+      det.appendChild(sum);
+      wrap.before(det);
+      det.appendChild(wrap);
+      sum.addEventListener("click", e => {
+        const chip = e.target.closest(".s2c-chip");
+        if (!chip) return;
+        e.preventDefault();
+        det.open = true;
+        const row = rows[+chip.dataset.row];
+        rows.forEach(r => r.classList.remove("s2c-hl"));
+        row.classList.add("s2c-hl");
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+
+    // 2. tables with 3+ columns become cards on small screens
+    article.querySelectorAll("table").forEach(t => {
+      const heads = [...t.querySelectorAll("thead th")].map(th => th.textContent.trim());
+      if (heads.length < 3) return;
+      t.setAttribute("data-s2c-cards", "");
+      t.querySelectorAll("tbody tr").forEach(tr => [...tr.cells].forEach((td, i) => {
+        td.setAttribute("data-label", heads[i] || "");
+        if (/^[—–-]?$/.test(td.textContent.trim())) td.classList.add("s2c-empty");
+      }));
+    });
+
+    // 3. "click to enlarge" hint under diagrams
+    const touch = matchMedia("(pointer: coarse)").matches;
+    article.querySelectorAll('img[src*="diagrams/"]').forEach(img => {
+      const link = img.closest("a") || img;
+      if (link.nextElementSibling && link.nextElementSibling.classList.contains("s2c-zoom")) return;
+      const hint = document.createElement("span");
+      hint.className = "s2c-zoom";
+      hint.textContent = touch ? T("🔍 Tap the diagram to enlarge", "🔍 Büyütmek için diyagrama dokun")
+                               : T("🔍 Click the diagram to enlarge", "🔍 Büyütmek için diyagrama tıkla");
+      link.after(hint);
+    });
+
+    // 4. underline each abbreviation only the first time per section
+    let seen = new Set();
+    article.querySelectorAll("h2, abbr").forEach(el => {
+      if (el.tagName === "H2") { seen = new Set(); return; }
+      if (el.closest("table, details.s2c-terms")) return;
+      const k = el.textContent.trim();
+      if (seen.has(k)) el.classList.add("s2c-abbr-quiet"); else seen.add(k);
+    });
+  }
+
+  const init = () => { contentPage(); readability(); home(); markNav(); practice(); };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

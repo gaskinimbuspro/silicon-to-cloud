@@ -5,11 +5,11 @@ description: Kesmeler nedir ve neden var, polling, kesme ve DMA farkı, MSI/MSI-
 
 # 1.1 — Kesmeler ve cihaz sürücüleri
 
-!!! abstract "Tek cümlede"
-    Cihazlar yavaş ve öngörülemezdir; CPU sürekli "yeni bir şey var mı?" diye sormak yerine, bir şey olduğunda cihaz CPU'yu
-    **keser**. Küçük bir kernel **kesme handler'ı** çalışır, ağır işi bir **alt yarıya** erteler ve donanıma kimlikleriyle
-    eşlenen bir **cihaz sürücüsü**, cihazın ham register ve tamponlarını programların kullanabileceği standart bir kernel
-    arayüzüne çevirir.
+!!! abstract "Kısaca"
+    Cihazlar yavaş ve öngörülemezdir; CPU sürekli "yeni bir şey var mı?" diye sormak yerine, bir şey olduğunda cihaz
+    CPU'yu **keser**. Küçük bir kernel **kesme handler'ı** çalışır, ağır işi bir **alt yarıya** erteler ve donanıma
+    kimlikleriyle eşlenen bir **cihaz sürücüsü**, cihazın ham register ve tamponlarını programların kullanabileceği
+    standart bir kernel arayüzüne çevirir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -144,5 +144,3 @@ sudo ethtool -l eth0 2>/dev/null                # NIC kuyrukları (kanallar)
 ## ✍️ Notlarım
 
 > `watch -d cat /proc/interrupts` çalıştır ve klavyede yaz. Hangi satır, hangi çekirdekte değişiyor?
-
--

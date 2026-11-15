@@ -5,11 +5,11 @@ description: Models, parameters, tokens, embeddings, the transformer, attention,
 
 # 10.1 — AI fundamentals for infra people
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A model is a **function made of billions of numbers** (parameters). An LLM turns text into **tokens**, tokens into
-    **vectors**, pushes them through a stack of **transformer layers** (attention + MLP), gets a **score for every possible
-    next token**, picks one, appends it and runs again. Everything in AI infrastructure exists to store those numbers,
-    move them fast and do that math cheaply.
+    **vectors**, pushes them through a stack of **transformer layers** (attention + MLP), gets a **score for every
+    possible next token**, picks one, appends it and runs again. Everything in AI infrastructure exists to store those
+    numbers, move them fast and do that math cheaply.
 
 ## 📖 Key terms & abbreviations
 
@@ -209,5 +209,3 @@ Lifecycle: pre-train → post-train (SFT, RLHF/DPO) → fine-tune (LoRA) → qua
 ## ✍️ My notes
 
 > Explain what happens inside an LLM between your prompt and the first output token, in your own words in 5 lines.
-
--

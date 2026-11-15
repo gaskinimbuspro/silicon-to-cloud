@@ -5,12 +5,13 @@ description: "Kubernetes'te GPU çalıştırmak: GPU Operator, device plugin ve 
 
 # 10.6 — Kubernetes üzerinde AI platformu
 
-!!! abstract "Tek cümlede"
-    Kubernetes birkaç katman eklenerek bir AI platformuna dönüşür. **GPU Operator** GPU node'larını hazırlar (sürücü, toolkit,
-    metrikler). **DRA** (ya da eski device plugin) pod'ların GPU talep etmesini sağlar. **Kueue/KAI** işleri **gang scheduling**
-    ile kuyruğa alır ve adil kabul eder. **JobSet/LeaderWorkerSet** çok pod'lu eğitimi ve çok node'lu inference'ı çalıştırır.
-    Bir **inference gateway** (Gateway API Inference Extension, llm-d, KServe) de istekleri **LLM sinyallerine göre otomatik
-    ölçeklenen** model sunucularına yönlendirir. Platform ekibinin işi: yüksek GPU kullanımı, adil paylaşım, hızlı soğuk başlangıç, net maliyet.
+!!! abstract "Kısaca"
+    Kubernetes birkaç katman eklenerek bir AI platformuna dönüşür. **GPU Operator** GPU node'larını hazırlar (sürücü,
+    toolkit, metrikler). **DRA** (ya da eski device plugin) pod'ların GPU talep etmesini sağlar. **Kueue/KAI** işleri
+    **gang scheduling** ile kuyruğa alır ve adil kabul eder. **JobSet/LeaderWorkerSet** çok pod'lu eğitimi ve çok
+    node'lu inference'ı çalıştırır. Bir **inference gateway** (Gateway API Inference Extension, llm-d, KServe) de
+    istekleri **LLM sinyallerine göre otomatik ölçeklenen** model sunucularına yönlendirir. Platform ekibinin işi:
+    yüksek GPU kullanımı, adil paylaşım, hızlı soğuk başlangıç, net maliyet.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -260,5 +261,3 @@ CPU'ya değil kuyruk uzunluğuna, KV kullanımına, TTFT/TPOT'a göre ölçekle
 ## ✍️ Kendi notlarım
 
 > Bir GPU isteğinin pod spec'inden bir GPU node'unda çalışan bir container'a nasıl gittiğini kendi cümlelerinle 5 satırda anlat.
-
--

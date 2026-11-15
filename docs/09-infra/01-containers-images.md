@@ -5,9 +5,9 @@ description: What an OCI image is (layers, manifests, digests, multi-arch indexe
 
 # 9.1 — Containers & images
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A container **image** is a stack of read-only, content-addressed **layers** plus a **config**, described by a
-    **manifest** and identified by a **digest**; you build it from a **Dockerfile**, push it to a **registry**, and on
+    **manifest** and identified by a **digest**. You build it from a **Dockerfile**, push it to a **registry**, and on
     each node **containerd** pulls only the missing layers, stacks them with **overlayfs** and asks **runc** to start
     your process inside namespaces and cgroups (3.5).
 
@@ -151,5 +151,3 @@ sudo crictl images 2>/dev/null | head; sudo crictl ps 2>/dev/null | head   # on 
 ## ✍️ My notes
 
 > Take your biggest image: how many MB, how many layers, how many HIGH/CRITICAL CVEs? What would a distroless multi-stage version weigh?
-
--

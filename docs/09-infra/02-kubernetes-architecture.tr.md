@@ -5,11 +5,11 @@ description: Control plane (API server, etcd, scheduler, controller'lar) ve node
 
 # 9.2 — Kubernetes mimarisi
 
-!!! abstract "Tek cümlede"
-    Kubernetes bir **istenen durum veritabanı** (**API server**'ın arkasındaki etcd) artı onu **izleyen** ve gerçeği
-    eşitlemek için çalışan çok sayıda bağımsız **controller**'dır: **scheduler** pod'ları node'lara atar, her node'daki
-    **kubelet** onları container runtime üzerinden başlatır ve üst düzey controller'lar (Deployment'lar, StatefulSet'ler,
-    Job'lar, **operator**'ler) senin yerine pod oluşturup değiştirip güncellemeye devam eder.
+!!! abstract "Kısaca"
+    Kubernetes bir **istenen durum veritabanı** (**API server**'ın arkasındaki etcd) artı onu **izleyip** gerçeği
+    eşitleyen çok sayıda bağımsız **controller**'dır. **Scheduler** pod'ları node'lara atar; her node'daki **kubelet**
+    onları container runtime üzerinden başlatır. Üst düzey controller'lar (Deployment'lar, StatefulSet'ler, Job'lar,
+    **operator**'ler) senin yerine pod oluşturmaya, değiştirmeye ve güncellemeye devam eder.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -131,5 +131,3 @@ kind delete cluster --name lab
 ## ✍️ Notlarım
 
 > Bir kind cluster'ında bir Deployment oluştur ve `kubectl get events`'teki her olayı yaz. Her birini bir bileşene eşle.
-
--

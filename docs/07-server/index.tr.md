@@ -5,11 +5,11 @@ description: CDN, load balancer, reverse proxy, stateless uygulama sunucuları, 
 
 # Bölüm 7 — Sunucu tarafı
 
-!!! abstract "Tek cümlede"
-    Bir isteğe, cevaplayabiliyorsa önce bir **CDN** cevap verir. Veremiyorsa istek bir **load balancer**'a ulaşır,
-    o da isteği bir **reverse proxy** arkasındaki birbirinin aynısı, **stateless uygulama sunucularına** dağıtır.
-    Uygulama veriyi önce **cache**'ten okur, orada yoksa **veritabanına** gider, yavaş işleri de **worker**'lar için
-    bir **kuyruğa** atar. Stateless kısmı kopya ekleyerek ölçeklersin, stateful kısmı (veriyi) özenle korursun.
+!!! abstract "Kısaca"
+    Bir isteğe, cevaplayabiliyorsa önce bir **CDN** cevap verir. Veremiyorsa istek bir **load balancer**'a ulaşır, o da
+    isteği bir **reverse proxy** arkasındaki birbirinin aynısı, **stateless uygulama sunucularına** dağıtır. Uygulama
+    veriyi önce **cache**'ten okur, orada yoksa **veritabanına** gider, yavaş işleri de **worker**'lar için bir
+    **kuyruğa** atar. Stateless kısmı kopya ekleyerek ölçeklersin, stateful kısmı (veriyi) özenle korursun.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -223,5 +223,3 @@ Her zaman: zaman aşımı, backoff ile tekrar deneme, health check, gözlemleneb
 ## ✍️ Kendi notlarım
 
 > Stateless ve stateful kısımları neden farklı ölçeklediğimizi kendi cümlelerinle 5 satırda anlat.
-
--

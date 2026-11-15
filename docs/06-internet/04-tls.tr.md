@@ -5,7 +5,7 @@ description: TLS neyi korur, TLS 1.3 el sıkışması ve anahtar değişimi nas�
 
 # 6.4 — TLS ve sertifikalara derin dalış
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **TLS** bir bağlantıya üç şey verir: **gizlilik** (kimse okuyamaz), **bütünlük** (kimse değiştiremez) ve **kimlik
     doğrulama** (gerçekten `shop.example.com` ile konuşuyorsun). İki taraf **ECDHE** ile taze anahtarlarda anlaşır,
     sunucu kimliğini cihazının zaten güvendiği bir **kök CA**'ya bağlanan bir **sertifika** ile kanıtlar ve bundan sonra
@@ -161,5 +161,3 @@ kubectl get certificates,certificaterequests,orders,challenges -A
 ## ✍️ Notlarım
 
 > Şirketinin ana alan adını seç: sertifikasını kim verdi, kaç gün kaldı ve nasıl yenileniyor?
-
--

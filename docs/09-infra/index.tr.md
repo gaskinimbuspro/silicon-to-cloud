@@ -5,11 +5,12 @@ description: Container'lar (namespace, cgroup, imaj katmanları), Kubernetes (co
 
 # Bölüm 9 — Modern altyapı
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Bir **container**, katmanlı bir **imajdan** başlatılmış, **namespace**'lerle (ne görebileceği) ve **cgroup**'larla
-    (ne kullanabileceği) sarılmış sıradan bir Linux process'idir (Bölüm 3). **Kubernetes**, YAML'da yazdığın
-    **istenen durumu** cluster'ın **gerçek durumuyla** sürekli karşılaştırır ve farkı sonsuza kadar düzeltir. **CI/CD** imajları üretir,
-    **GitOps** cluster'a neyin çalışması gerektiğini söyler, **gözlemlenebilirlik** de gerçekten çalışıp çalışmadığını gösterir.
+    (ne kullanabileceği) sarılmış sıradan bir Linux process'idir (Bölüm 3). **Kubernetes**, YAML'da yazdığın **istenen
+    durumu** cluster'ın **gerçek durumuyla** sürekli karşılaştırır ve farkı sonsuza kadar düzeltir. **CI/CD** imajları
+    üretir, **GitOps** cluster'a neyin çalışması gerektiğini söyler, **gözlemlenebilirlik** de gerçekten çalışıp
+    çalışmadığını gösterir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -225,5 +226,3 @@ Gözlem: metrik (ne kadar) · log (ne oldu) · trace (nerede) · SLO'lar
 ## ✍️ Kendi notlarım
 
 > `kubectl apply` dediğinde gerçekte ne olduğunu ve bir container'ın neden "sadece bir process" olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

@@ -5,11 +5,11 @@ description: Process ve thread nedir, fork/exec ve copy-on-write, process duruml
 
 # 3.1 — Process'ler ve thread'ler
 
-!!! abstract "Tek cümlede"
-    **Process**, kendi belleği, dosya tanımlayıcıları ve kimliği (PID) olan çalışan bir programdır; **thread** ise bir
-    process'in içinde o belleği paylaşan ama kendi stack'i ve register'ları olan bir işçidir. Process'ler
-    **fork/clone + execve** ile doğar, **çalışıyor** ve **uyuyor** arasında gidip gelir, **exit** ile biter; sonra ebeveyn
-    onu **wait()** ile toplamalıdır. Container'da uygulaman genelde **PID 1**'dir ve bu ona özel görevler yükler.
+!!! abstract "Kısaca"
+    **Process**, kendi belleği, dosya tanımlayıcıları ve kimliği (PID) olan çalışan bir programdır. **Thread** ise bir
+    process'in içinde o belleği paylaşan ama kendi stack'i ve register'ları olan bir işçidir. Process'ler **fork/clone +
+    execve** ile doğar, **çalışıyor** ve **uyuyor** arasında gidip gelir, **exit** ile biter. Sonra ebeveyn onu
+    **wait()** ile toplamalıdır. Container'da uygulaman genelde **PID 1**'dir ve bu ona özel görevler yükler.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -139,5 +139,3 @@ docker run --rm -d --name withinit --init alpine sleep 300 && time docker stop w
 ## ✍️ Notlarım
 
 > Dockerfile'larından birine bak: CMD exec formunda mı, uygulama SIGTERM'i işliyor mu?
-
--

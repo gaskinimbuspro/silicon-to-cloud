@@ -5,11 +5,11 @@ description: Üç sinyal (metrikler, loglar, trace'ler) ve profiller, OpenTeleme
 
 # 9.5 — Gözlemlenebilirlik: metrikler, loglar, trace'ler ve SLO'lar
 
-!!! abstract "Tek cümlede"
-    Gözlemlenebilirlik, "ne yanlış ve neden?" sorusunu dışarıdan cevaplayabilmektir: **metrikler** bir şeyin değiştiğini
-    söyler (ucuz, toplanmış), **trace**'ler bir isteğin yolunda zamanın ya da hataların *nereden* geldiğini gösterir,
-    **loglar** *tam olarak ne* olduğunu açıklar; **OpenTelemetry** üçünü de üretmek için tek bir standart yol sunar,
-    **burn-rate alarmlı SLO**'lar da kullanıcıların gerçekten hissettiği şey için uyandırılmanı sağlar.
+!!! abstract "Kısaca"
+    Gözlemlenebilirlik, "ne yanlış ve neden?" sorusunu dışarıdan cevaplayabilmektir. **Metrikler** bir şeyin
+    *değiştiğini* söyler, **trace**'ler bir isteğin yolunda zamanın ya da hataların *nereden* geldiğini gösterir,
+    **loglar** da *tam olarak ne* olduğunu açıklar. **OpenTelemetry** üçünü de üretmenin tek standart yoludur.
+    **Burn-rate alarmlı SLO**'lar, kullanıcıların gerçekten hissettiği şey için uyandırılmanı sağlar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -140,5 +140,3 @@ docker stop lgtm
 ## ✍️ Notlarım
 
 > En önemli kullanıcı yolculuğunu seç. SLI ve SLO'sunu yaz, hata bütçesini hesapla ve iki burn-rate alarmını tanımla.
-
--

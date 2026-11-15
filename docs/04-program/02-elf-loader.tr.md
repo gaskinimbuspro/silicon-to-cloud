@@ -5,10 +5,10 @@ description: ELF dosya formatı (başlık, segmentler, bölümler), execve'nin y
 
 # 4.2 — ELF ve program yükleyici
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Linux'ta bir çalıştırılabilir dosya bir **ELF** dosyasıdır: bir başlık, belleğe neyin hangi izinlerle eşleneceğini
     söyleyen **segmentler** ve araçlar için **bölümler**; `execve()` kernel'in bu segmentleri rastgele bir adrese
-    (**ASLR**) eşlemesini ve **dinamik yükleyici** `ld.so`'yu başlatmasını sağlar; o da paylaşımlı kütüphaneleri bulur,
+    (**ASLR**) eşlemesini ve **dinamik yükleyici** `ld.so`'yu başlatmasını sağlar. O da paylaşımlı kütüphaneleri bulur,
     adresleri **GOT/PLT** üzerinden düzeltir, constructor'ları çalıştırır ve sonunda `main()`'i çağırır.
 
 ## 📖 Temel terimler ve kısaltmalar
@@ -147,5 +147,3 @@ hexdump -C /usr/bin/ls | head -2                 # 7f 45 4c 46 = \x7fELF
 ## ✍️ Notlarım
 
 > İmajlarından birinin ana binary'sinde `readelf -l` ve `ldd` çalıştır. Hangi yorumlayıcı ve kütüphanelere ihtiyaç duyuyor?
-
--

@@ -5,12 +5,11 @@ description: What DevOps really is - culture, automation, measurement and sharin
 
 # Chapter 16 — DevOps practices: how good teams ship and operate software
 
-!!! abstract "In one sentence"
-    DevOps is not a job title or a tool but a way of working in which the people who build software also **ship and run
-    it**: changes are **small** and flow through **automated pipelines** many times a day, **deploying is separated from
-    releasing** so every step is reversible, production is **observed** and **incidents** are handled calmly and turned
-    into **blameless learning**, a **platform** makes the right way the easy way, and the whole system is measured by
-    **DORA metrics**, because speed and stability turn out to go together.
+!!! abstract "In short"
+    DevOps is not a job title or a tool. It's a way of working in which the people who build software also **ship and
+    run it**. Changes are **small** and flow through **automated pipelines** many times a day, and **deploying is
+    separated from releasing** so every step is reversible. Production is **observed**, **incidents** become **blameless
+    learning**, and a **platform** makes the right way easy. **DORA metrics** show that speed and stability go together.
 
 ## 📖 Key terms & abbreviations
 
@@ -163,5 +162,3 @@ git log --merges --first-parent main --since="30 days ago" --pretty=%H | head -2
 ## ✍️ My notes
 
 > Estimate your team's four DORA metrics today. Which one would improve the most if you halved your batch size?
-
--

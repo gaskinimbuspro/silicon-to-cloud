@@ -5,10 +5,10 @@ description: Packaging and extending Kubernetes - Helm charts, templates, values
 
 # 15.3 — Helm, Kustomize & operators
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     **Helm** packages an application as a **chart** of templates rendered with **values** and tracks installs as
-    **releases**; **Kustomize** starts from plain YAML and applies **overlays** per environment without templates; both just
-    produce manifests, typically applied by **GitOps**; **operators** go further: a **CRD** adds a new API type
+    **releases**; **Kustomize** starts from plain YAML and applies **overlays** per environment without templates. Both
+    just produce manifests, typically applied by **GitOps**. **Operators** go further: a **CRD** adds a new API type
     (`PostgresCluster`) and a **controller** keeps running in the cluster, reconciling that resource into StatefulSets,
     backups and failovers, which encodes a human operator's knowledge as software.
 
@@ -170,5 +170,3 @@ kind delete cluster --name pkg
 ## ✍️ My notes
 
 > List the operators in your cluster (`kubectl get crd`). Who owns each one, and when was it last upgraded?
-
--

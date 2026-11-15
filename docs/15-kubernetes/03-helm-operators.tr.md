@@ -5,12 +5,12 @@ description: "Kubernetes'i paketlemek ve genişletmek: Helm chart'ları, şablon
 
 # 15.3 — Helm, Kustomize ve operator'ler
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **Helm** bir uygulamayı **değerlerle** üretilen şablonlardan oluşan bir **chart** olarak paketler ve kurulumları
-    **release** olarak izler; **Kustomize** düz YAML'dan başlar ve ortam başına şablonsuz **overlay'ler** uygular; ikisi de
-    sadece manifest üretir, genelde **GitOps** ile uygulanır; **operator'ler** bir adım öteye gider: bir **CRD** yeni bir
-    API tipi (`PostgresCluster`) ekler ve bir **controller** cluster'da çalışmaya devam ederek o kaynağı StatefulSet'lere,
-    yedeklere ve failover'lara uzlaştırır; insan bir operatörün bilgisini yazılım olarak kodlar.
+    **release** olarak izler; **Kustomize** düz YAML'dan başlar ve ortam başına şablonsuz **overlay'ler** uygular. Ikisi
+    de sadece manifest üretir, genelde **GitOps** ile uygulanır. **Operator'ler** bir adım öteye gider: bir **CRD** yeni
+    bir API tipi (`PostgresCluster`) ekler ve bir **controller** cluster'da çalışmaya devam ederek o kaynağı
+    StatefulSet'lere, yedeklere ve failover'lara uzlaştırır. Insan bir operatörün bilgisini yazılım olarak kodlar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -170,5 +170,3 @@ kind delete cluster --name pkg
 ## ✍️ Notlarım
 
 > Cluster'ındaki operator'leri listele (`kubectl get crd`). Her birinin sahibi kim ve en son ne zaman yükseltildi?
-
--

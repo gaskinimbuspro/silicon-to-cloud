@@ -5,11 +5,11 @@ description: The JS runtime model (call stack, heap, Web APIs, task and microtas
 
 # 8.2 — JavaScript, the event loop & async
 
-!!! abstract "In one sentence"
-    JavaScript runs your code on **one call stack per page**; slow things (network, timers, user input) are handled by
-    the browser's **Web APIs**, which put callbacks into **task** and **microtask queues**, and the **event loop** runs
-    one task at a time, drains all microtasks (promises), then lets the page **render** — so any long-running task
-    freezes clicks, scrolling and animations until it ends.
+!!! abstract "In short"
+    JavaScript runs your code on **one call stack per page**. Slow things (network, timers, user input) are handled by
+    the browser's **Web APIs**, which put callbacks into **task** and **microtask queues**. The **event loop** runs one
+    task at a time, drains all microtasks (promises), then lets the page **render**. So any long task freezes clicks,
+    scrolling and animations until it ends.
 
 ## 📖 Key terms & abbreviations
 
@@ -164,5 +164,3 @@ setTimeout(()=>console.log('p99 delay ms', h.percentile(99)/1e6),1000)"
 ## ✍️ My notes
 
 > Run the long-task observer on your product's main page. How many long tasks happen during load, and which scripts cause them?
-
--

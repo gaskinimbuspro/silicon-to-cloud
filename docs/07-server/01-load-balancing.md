@@ -5,10 +5,10 @@ description: L4 vs L7 load balancing, algorithms (round robin, least connections
 
 # 7.1 — Load balancing
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A **load balancer** sits in front of many identical backends, uses **health checks** to know which ones may get
-    traffic, and an **algorithm** to choose one for each new connection (**L4**) or request (**L7**); done right, it lets
-    you add servers, deploy without downtime and survive failures, and in Kubernetes this job is split between
+    traffic, and an **algorithm** to choose one for each new connection (**L4**) or request (**L7**). Done right, it
+    lets you add servers, deploy without downtime and survive failures, and in Kubernetes this job is split between
     **Services** (L4 inside the cluster) and **Ingress/Gateway** (L7 at the edge).
 
 ## 📖 Key terms & abbreviations
@@ -143,5 +143,3 @@ kubectl get endpointslices -l kubernetes.io/service-name=<svc> -o wide 2>/dev/nu
 ## ✍️ My notes
 
 > For one service: which LB layers does a request pass (CDN, cloud LB, ingress, Service)? Which algorithm and health check does each use?
-
--

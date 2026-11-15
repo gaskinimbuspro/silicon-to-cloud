@@ -5,12 +5,11 @@ description: What platform engineering is and why it emerged - cognitive load an
 
 # 16.4 — Platform engineering & developer experience
 
-!!! abstract "In one sentence"
-    When every product team must master Kubernetes, Terraform, CI, security and observability, delivery slows down, so a
-    **platform team** builds an **internal product**: **golden paths** (templates and defaults that make the right way the
-    easy way), a **developer portal** that shows who owns what and how to do things, and **self-service** APIs for
-    environments, databases and pipelines; it succeeds when developers **choose** to use it because it reduces their
-    **cognitive load** and helps them ship, measured by delivery and developer-experience metrics.
+!!! abstract "In short"
+    When every product team must master Kubernetes, Terraform, CI, security and observability, delivery slows down. So a
+    **platform team** builds an **internal product**. It offers **golden paths** that make the right way the easy way, a
+    **developer portal** showing who owns what, and **self-service** APIs for environments, databases and pipelines. It
+    succeeds when developers **choose** it because it lowers their **cognitive load** and helps them ship.
 
 ## 📖 Key terms & abbreviations
 
@@ -160,5 +159,3 @@ echo "catalog-info.yaml created"
 ## ✍️ My notes
 
 > What are the three most repetitive requests your team gets from developers? Which could become a self-service golden path?
-
--

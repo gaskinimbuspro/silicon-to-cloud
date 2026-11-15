@@ -5,11 +5,12 @@ description: Bulut faturasının gerçekte nasıl oluştuğu (compute, depolama,
 
 # Bölüm 13 — Bulut maliyeti (FinOps): para nereye gidiyor ve nasıl korunur
 
-!!! abstract "Tek cümlede"
-    Bulut seni **kullandığın için değil, ayırdığın için** faturalar: istediğin CPU ve bellek, provizyonladığın diskler,
-    bir **zone'u, bölgeyi ya da NAT gateway'i** geçen her gigabayt ve her yönetilen servis saati; **FinOps** bu maliyeti
-    **görünür** yapar (etiketler, dağıtım, birim ekonomisi), **optimize** eder (doğru boyutlandırma, otomatik ölçekleme,
-    spot, taahhütler, mimari) ve sürekli **işletir**; böylece mühendisler maliyeti gecikmeyi gördükleri gibi görür.
+!!! abstract "Kısaca"
+    Bulut seni **kullandığın için değil, ayırdığın için** faturalar. Yani istediğin CPU ve bellek, provizyonladığın
+    diskler, bir **zone'u, bölgeyi ya da NAT gateway'i** geçen her gigabayt ve her yönetilen servis saati. **FinOps** bu
+    maliyeti **görünür** yapar (etiketler, dağıtım, birim ekonomisi) ve **optimize** eder (doğru boyutlandırma, otomatik
+    ölçekleme, spot, taahhütler). Bunu sürekli **işletir**; böylece mühendisler maliyeti gecikmeyi gördükleri gibi
+    görür.
 
 !!! note "Rakamlar hakkında"
     Bu bölümdeki fiyatlar büyüklük sırasını göstermek için **yaklaşık herkese açık liste fiyatlarıdır** (çoğunlukla AWS us-east-1, 2026 sonu).
@@ -200,5 +201,3 @@ python3 -c "print('m7i.2xlarge ≈ \$%.0f/ay' % (0.4032*730))"
 ## ✍️ Notlarım
 
 > Bu ayki en büyük üç maliyet kalemin ne, her birinin sahibi kim ve ekibinin takip edebileceği bir birim maliyet metriği ne olabilir?
-
--

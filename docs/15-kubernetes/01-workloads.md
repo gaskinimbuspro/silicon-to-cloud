@@ -5,11 +5,11 @@ description: Running workloads well on Kubernetes - Deployments and rollout sett
 
 # 15.1 — Workloads, probes & scheduling
 
-!!! abstract "In one sentence"
-    A production workload is a **controller** (Deployment, StatefulSet, DaemonSet, Job) plus a pod template whose
-    lifecycle settings decide reliability: **requests** and **placement rules** decide where it runs, **startup and
-    readiness probes** decide when it gets traffic, **liveness** decides when it's restarted, and **SIGTERM handling,
-    preStop and the grace period** decide whether it shuts down without dropping a single request.
+!!! abstract "In short"
+    A production workload is a **controller** (Deployment, StatefulSet, DaemonSet, Job) plus a pod template.
+    **Requests** and **placement rules** decide where it runs. **Startup and readiness probes** decide when it gets
+    traffic, and **liveness** decides when it's restarted. **SIGTERM handling, preStop and the grace period** decide
+    whether it shuts down without dropping a single request.
 
 ## 📖 Key terms & abbreviations
 
@@ -168,5 +168,3 @@ kind delete cluster --name wl
 ## ✍️ My notes
 
 > Does your most important service have a liveness probe? What exactly does it check, and could it restart all pods at once?
-
--

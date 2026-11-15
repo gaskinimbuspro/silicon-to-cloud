@@ -5,10 +5,10 @@ description: ISA nedir, x86-64 ve ARM64 (ve RISC-V), CISC ve RISC, komutların b
 
 # 2.1 — Komut setleri ve assembly
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **ISA**, yazılım ile CPU arasındaki sözleşmedir: çipin anlamayı vaat ettiği komutların, register'ların ve kuralların
     listesi. Derleyiciler kodunu bu komutlara çevirir, assembler onları byte'lara **kodlar** ve **çağrı kuralı**
-    (**ABI**'nin bir parçası) fonksiyonların argüman ve sonuçları nasıl aktardığını söyler; derleyici çıktısını, `perf`
+    (**ABI**'nin bir parçası) fonksiyonların argüman ve sonuçları nasıl aktardığını söyler. Derleyici çıktısını, `perf`
     profillerini ve crash dump'ları okumak için tam da bu gerekir.
 
 ## 📖 Temel terimler ve kısaltmalar
@@ -163,5 +163,3 @@ uname -m; docker buildx ls 2>/dev/null | head -3
 ## ✍️ Notlarım
 
 > Kendi kodundan küçük bir fonksiyonu godbolt'a yapıştır. `call`'ları, döngüyü ve sonucun nereye gittiğini bul.
-
--

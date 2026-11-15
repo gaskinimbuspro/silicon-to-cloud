@@ -5,10 +5,10 @@ description: Processes, threads, the scheduler, virtual memory, syscalls, file d
 
 # Chapter 3 — The operating system
 
-!!! abstract "In one sentence"
-    The operating system kernel is the **referee**: it gives every program the illusion of having its own CPU
-    (**scheduler**), its own memory (**virtual memory**) and simple access to devices (**files, sockets**),
-    while making sure no program can touch what isn't its own. Programs ask it for anything they need through **syscalls**.
+!!! abstract "In short"
+    The operating system kernel is the **referee**. It gives every program the illusion of its own CPU (**scheduler**),
+    its own memory (**virtual memory**) and simple access to devices (**files, sockets**). At the same time it makes
+    sure no program can touch what isn't its own. Programs ask it for anything they need through **syscalls**.
 
 ## 📖 Key terms & abbreviations
 
@@ -228,5 +228,3 @@ Signals: SIGTERM (polite, catchable) → SIGKILL (final)
 ## ✍️ My notes
 
 > Explain the difference between a process and a thread, and what a syscall is, in your own words in 5 lines.
-
--

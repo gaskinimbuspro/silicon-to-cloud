@@ -5,12 +5,12 @@ description: How modern infrastructure security works in layers - authentication
 
 # Chapter 11 — Security: identity, secrets, zero trust & supply chain
 
-!!! abstract "In one sentence"
-    Modern security is not one wall around the network but **layers**: every human and workload proves **who** it is
-    (**authentication**), gets only the permissions it needs (**authorization**, least privilege), uses **short-lived
-    credentials** instead of stored secrets, talks only over **authenticated, encrypted** connections (**zero trust**),
-    runs only **verified** software (**supply chain**), and leaves an **audit trail** so you can detect and respond when —
-    not if — something goes wrong.
+!!! abstract "In short"
+    Modern security is not one wall around the network but **layers**. Every human and workload proves **who** it is
+    (**authentication**) and gets only the permissions it needs (**authorization**, least privilege). It uses
+    **short-lived credentials** instead of stored secrets and talks only over **authenticated, encrypted** connections
+    (**zero trust**). It runs only **verified** software (**supply chain**) and leaves an **audit trail**, so you can
+    detect and respond when, not if, something goes wrong.
 
 ## 📖 Key terms & abbreviations
 
@@ -197,5 +197,3 @@ cosign verify ghcr.io/sigstore/cosign/cosign:latest \
 ## ✍️ My notes
 
 > List every long-lived credential your team has (CI secrets, kubeconfigs, cloud keys, DB passwords). Which ones could be replaced by federation or short-lived credentials?
-
--

@@ -5,10 +5,10 @@ description: İlişkisel veritabanları veriyi nasıl saklar ve bulur (sayfalar,
 
 # 7.3 — Veritabanları: depolama, transaction'lar ve replikasyon
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Bir veritabanı veriyi diskte **sayfalarda** tutar, satırları **indekslerle** (genelde **B-tree**) hızla bulur, her
     değişikliği önce bir **write-ahead log'a (WAL)** yazarak kalıcı yapar, eşzamanlı **transaction**'ları **MVCC** ve
-    kilitlerle izole eder, o log'u diğer sunuculara **replike ederek** ölçeklenir ve hatalardan sağ çıkar; yine de
+    kilitlerle izole eder, o log'u diğer sunuculara **replike ederek** ölçeklenir ve hatalardan sağ çıkar. Yine de
     **yedeğe** ihtiyacın var, çünkü replikasyon hataları da kopyalar.
 
 ## 📖 Temel terimler ve kısaltmalar
@@ -139,5 +139,3 @@ docker stop pg
 ## ✍️ Notlarım
 
 > Ana veritabanın için: RPO ve RTO ne, son geri yükleme testi ne zamandı ve şu an replikasyon lag'i ne?
-
--

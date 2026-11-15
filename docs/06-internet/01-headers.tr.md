@@ -5,11 +5,12 @@ description: HTTP header'ı nedir, bir mesaj nasıl kurulur, header'lar yönlend
 
 # 6.1 — HTTP header'larına derin dalış
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **Header**, her HTTP istek ve cevabıyla birlikte giden `Ad: değer` biçiminde bir **üst veri (metadata)** satırıdır.
-    Gövde içeriktir; header'lar ise **kime gittiğini, hangi formatta olduğunu, ne kadar önbellekte tutulabileceğini,
+    Gövde içeriktir. Header'lar ise **kime gittiğini, hangi formatta olduğunu, ne kadar önbellekte tutulabileceğini,
     kimin sorduğunu, tarayıcının onunla neler yapabileceğini ve hangi duraklardan geçtiğini** söyler. CDN'lerin, load
-    balancer'ların, ingress controller'ların, kimlik doğrulamanın ve tarayıcı güvenliğinin yaptığı işlerin çoğu header'larla yürür.
+    balancer'ların, ingress controller'ların, kimlik doğrulamanın ve tarayıcı güvenliğinin yaptığı işlerin çoğu
+    header'larla yürür.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -290,5 +291,3 @@ PYEOF
 ## ✍️ Notlarım
 
 > Üzerinde çalıştığın bir siteyi seç. `curl -sI` çalıştır ve her cevap header'ını birer satırda açıkla. Hangi güvenlik header'ları eksik?
-
--

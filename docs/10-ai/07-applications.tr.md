@@ -5,11 +5,11 @@ description: "Model servisinin üstündeki katman: embedding'ler ve vektör aram
 
 # 10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme
 
-!!! abstract "Tek cümlede"
-    Gerçek AI ürünlerinin çoğu "sadece bir LLM" değildir. Doğru şirket verisini **getirirler** (bir **vektör veritabanı**
-    üzerinde **RAG**), modelin bir döngü içinde **araç çağırmasına** izin verirler (**ajanlar**, çoğu zaman **MCP** üzerinden),
-    kimlik doğrulama, kota, **guardrail** ve yönlendirmeyi uygulayan bir **AI gateway**'den geçerler ve kalite, güvenlik ve
-    maliyet sessizce kaymasın diye sürekli **izlenir ve değerlendirilirler**.
+!!! abstract "Kısaca"
+    Gerçek AI ürünlerinin çoğu "sadece bir LLM" değildir. Doğru şirket verisini **getirirler** (bir **vektör
+    veritabanı** üzerinde **RAG**) ve modelin bir döngü içinde **araç çağırmasına** izin verirler (**ajanlar**, çoğu
+    zaman **MCP** üzerinden). Bir **AI gateway** kimlik doğrulama, kota, **guardrail** ve yönlendirmeyi uygular. Her şey
+    sürekli **izlenir ve değerlendirilir**; böylece kalite, güvenlik ve maliyet sessizce kaymaz.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -196,5 +196,3 @@ Getirilen/araç içeriği güvenilmezdir · en az yetki · yan etkiler için ins
 ## ✍️ Kendi notlarım
 
 > RAG hattını uçtan uca ve ajan döngüsünü kendi cümlelerinle 5 satırda anlat.
-
--

@@ -5,10 +5,11 @@ description: DNS çözümlemesi nasıl çalışır, kayıt tipleri, TTL ve önbe
 
 # 6.2 — DNS'e derin dalış
 
-!!! abstract "Tek cümlede"
-    **DNS** internetin dağıtık telefon rehberidir: bir **özyinelemeli çözücü** (recursive resolver) **kökten** **TLD**'ye,
-    oradan alan adının **yetkili** sunucularına giderek bir ismi kayıtlara (IP adresleri, takma adlar, mail sunucuları,
-    metinler) çevirir ve her cevap **TTL süresince önbellekte tutulur**. DNS'i hızlı yapan da bu, DNS değişikliklerinin "zaman almasının" sebebi de.
+!!! abstract "Kısaca"
+    **DNS** internetin dağıtık telefon rehberidir: bir **özyinelemeli çözücü** (recursive resolver) **kökten**
+    **TLD**'ye, oradan alan adının **yetkili** sunucularına giderek bir ismi kayıtlara (IP adresleri, takma adlar, mail
+    sunucuları, metinler) çevirir ve her cevap **TTL süresince önbellekte tutulur**. DNS'i hızlı yapan da bu, DNS
+    değişikliklerinin "zaman almasının" sebebi de.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -153,5 +154,3 @@ kubectl run -it --rm dnstest --image=busybox:1.36 --restart=Never -- sh -c \
 ## ✍️ Notlarım
 
 > Şirketinin ana alan adı için `dig +trace` çalıştır ve cevap veren her sunucuyu not et.
-
--

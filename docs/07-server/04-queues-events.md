@@ -5,9 +5,9 @@ description: Why systems use queues, queues vs logs (RabbitMQ/SQS vs Kafka), top
 
 # 7.4 — Queues, streams & event-driven systems
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A **message broker** sits between services so a producer can hand off work or announce an **event** and move on,
-    while consumers process it later at their own pace; **queues** (RabbitMQ, SQS) delete messages once handled,
+    while consumers process it later at their own pace. **Queues** (RabbitMQ, SQS) delete messages once handled,
     **logs** (Kafka, Kinesis) keep them for replay, delivery is almost always **at-least-once** — so consumers must be
     **idempotent** — and failures go to **retries** and a **dead-letter queue** instead of being lost.
 
@@ -146,5 +146,3 @@ docker stop kafka rmq
 ## ✍️ My notes
 
 > For one async flow you own: what's the delivery guarantee, how are duplicates handled, where do failed messages go, and who gets alerted?
-
--

@@ -5,13 +5,13 @@ description: "Platform mühendisliği nedir ve neden ortaya çıktı: bilişsel 
 
 # 16.4 — Platform mühendisliği ve geliştirici deneyimi
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Her ürün ekibi Kubernetes, Terraform, CI, güvenlik ve gözlemlenebilirlikte uzmanlaşmak zorunda kalınca teslim
-    yavaşlar; bu yüzden bir **platform ekibi** bir **iç ürün** inşa eder: **altın yollar** (doğru yolu kolay yol yapan
-    şablonlar ve varsayılanlar), neyin kime ait olduğunu ve işlerin nasıl yapılacağını gösteren bir **geliştirici portalı**
-    ve ortamlar, veritabanları ve pipeline'lar için **self-servis** API'ler; geliştiriciler onu **bilişsel yüklerini**
-    azalttığı ve göndermelerine yardım ettiği için **gönüllü seçtiklerinde** başarılı olur; teslim ve geliştirici
-    deneyimi metrikleriyle ölçülür.
+    yavaşlar. Bu yüzden bir **platform ekibi** bir **iç ürün** inşa eder: **altın yollar** (doğru yolu kolay yol yapan
+    şablonlar ve varsayılanlar), neyin kime ait olduğunu ve işlerin nasıl yapılacağını gösteren bir **geliştirici
+    portalı** ve ortamlar, veritabanları ve pipeline'lar için **self-servis** API'ler. Geliştiriciler onu **bilişsel
+    yüklerini** azalttığı ve göndermelerine yardım ettiği için **gönüllü seçtiklerinde** başarılı olur. Teslim ve
+    geliştirici deneyimi metrikleriyle ölçülür.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -161,5 +161,3 @@ echo "catalog-info.yaml oluşturuldu"
 ## ✍️ Notlarım
 
 > Ekibinin geliştiricilerden aldığı en tekrarlayan üç talep ne? Hangisi self-servis bir altın yola dönüşebilir?
-
--

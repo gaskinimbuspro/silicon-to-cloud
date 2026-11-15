@@ -5,11 +5,11 @@ description: "Container'ları oluşturan Linux kernel özellikleri: yedi namespa
 
 # 3.5 — Namespace'ler, cgroup'lar ve container izolasyonu
 
-!!! abstract "Tek cümlede"
-    Container kernel'in bildiği bir şey değildir: bir runtime'ın (runc, crun) kendi **namespace**'leriyle (neyi
-    *gördüğü*: PID'ler, ağ, mount'lar, hostname…), bir **cgroup**'un içinde (neyi *kullanabildiği*: CPU, bellek, I/O, PID),
-    imajdan gelen bir **kök dosya sistemi** üzerinde, azaltılmış **capability**'ler, bir **seccomp** syscall filtresi ve
-    ne *yapabileceğini* sınırlayan bir **LSM** profiliyle (AppArmor/SELinux) başlattığı sıradan bir process'tir.
+!!! abstract "Kısaca"
+    Container, kernel'in bildiği bir şey değildir. Bir runtime'ın (runc, crun) kendi **namespace**'lerinde başlattığı
+    sıradan bir process'tir; namespace'ler neyi *gördüğünü* sınırlar: PID'ler, ağ, mount'lar, hostname. Bir **cgroup**
+    neyi *kullanabileceğini* sınırlar: CPU, bellek, I/O. **Kök dosya sistemi** imajdan gelir; azaltılmış
+    **capability**'ler, bir **seccomp** filtresi ve bir **LSM** profili de ne *yapabileceğini* sınırlar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -151,5 +151,3 @@ capsh --decode=00000000a80425fb 2>/dev/null                   # varsayılan seti
 ## ✍️ Notlarım
 
 > Elle bir "container" kur: pid, net, mnt ve uts namespace'leriyle `unshare` yap, sonra `ps`, `ip a` ve `hostname` çalıştır. Docker'a göre ne eksik?
-
--

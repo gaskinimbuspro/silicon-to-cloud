@@ -5,12 +5,12 @@ description: How an LLM is served — GPUs, HBM and tensor cores, prefill and de
 
 # Chapter 10 — AI infrastructure
 
-!!! abstract "In one sentence"
-    An LLM is a huge file of **weights** plus code that does **matrix multiplications**. Serving it means: take a prompt,
-    optionally add relevant documents (**RAG**), process the prompt in one big parallel step (**prefill**), then generate
-    the answer **one token at a time** (**decode**), each step reading all the weights and a growing **KV cache** from the
-    GPU's **HBM** memory. An **inference server** batches many users together to keep the very expensive GPU busy.
-    Everything from Chapters 1–9 is still underneath.
+!!! abstract "In short"
+    An LLM is a huge file of **weights** plus code that does **matrix multiplications**. To answer a prompt, you may add
+    relevant documents (**RAG**) and process the prompt in one parallel step (**prefill**). Then the answer is generated
+    **one token at a time** (**decode**). Each step reads all the weights and a growing **KV cache** from the GPU's
+    **HBM** memory. An **inference server** batches many users together to keep the very expensive GPU busy. Everything
+    from Chapters 1–9 is still underneath.
 
 ## 📖 Key terms & abbreviations
 
@@ -229,5 +229,3 @@ K8s: GPU Operator · nvidia.com/gpu · tainted GPU pools · scale on queue/KV, n
 ## ✍️ My notes
 
 > Explain prefill vs decode, and why the KV cache matters, in your own words in 5 lines.
-
--

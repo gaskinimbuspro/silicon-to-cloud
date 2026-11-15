@@ -5,11 +5,11 @@ description: Stateless vs stateful firewalls, netfilter hooks, iptables vs nftab
 
 # 5.3 — NAT, firewalls & conntrack
 
-!!! abstract "In one sentence"
-    The Linux kernel's **netfilter** framework lets rules inspect every packet at fixed **hooks**; **conntrack** remembers
-    each connection so firewalls can be **stateful** ("allow replies") and **NAT** can rewrite addresses consistently —
-    **SNAT** to share one public IP, **DNAT** to send traffic for a virtual IP to a real backend, which is exactly how
-    Docker port publishing and Kubernetes **Services** work.
+!!! abstract "In short"
+    The Linux kernel's **netfilter** framework lets rules inspect every packet at fixed **hooks**. **Conntrack**
+    remembers each connection, so firewalls can be **stateful** ("allow replies") and **NAT** can rewrite addresses
+    consistently. **SNAT** shares one public IP; **DNAT** sends traffic for a virtual IP to a real backend. That's
+    exactly how Docker port publishing and Kubernetes **Services** work.
 
 ## 📖 Key terms & abbreviations
 
@@ -149,5 +149,3 @@ docker run -d --rm -p 8080:80 --name web nginx:alpine && sudo iptables -t nat -S
 ## ✍️ My notes
 
 > Pick one Service in your cluster and trace it: ClusterIP → kube-proxy rule (or eBPF map) → endpoint pod IPs.
-
--

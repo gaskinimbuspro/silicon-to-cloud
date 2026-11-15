@@ -5,11 +5,12 @@ description: Önbelleklerin nerede yaşadığı (tarayıcı, CDN, proxy, process
 
 # 7.2 — Önbellek desenleri
 
-!!! abstract "Tek cümlede"
-    Bir **önbellek** pahalı sonuçların bir kopyasını daha hızlı ve daha yakın bir yerde tutar; **tarayıcı** ve **CDN**'den
-    **process içi bir map**'e ve **Redis**'e kadar her katman veritabanından önce cevap verebilir. Zor kısımlar hep
-    aynıdır: bir **desen** seçmek (cache-aside, write-through…), verinin **ne kadar eski** olabileceğine karar vermek
-    (**TTL**, geçersiz kılma) ve **izdihamlardan**, **sıcak anahtarlardan** ve önbellek **kesintilerinden** sağ çıkmak.
+!!! abstract "Kısaca"
+    Bir **önbellek** pahalı sonuçların bir kopyasını daha hızlı ve daha yakın bir yerde tutar. **Tarayıcı** ve
+    **CDN**'den **process içi bir map**'e ve **Redis**'e kadar her katman veritabanından önce cevap verebilir. Zor
+    kısımlar hep aynıdır: bir **desen** seçmek (cache-aside, write-through…), verinin **ne kadar eski** olabileceğine
+    karar vermek (**TTL**, geçersiz kılma) ve **izdihamlardan**, **sıcak anahtarlardan** ve önbellek **kesintilerinden**
+    sağ çıkmak.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -135,5 +136,3 @@ docker stop redis
 ## ✍️ Notlarım
 
 > En yoğun uç noktan için: hangi önbellek katmanlarını kullanıyor, isabet oranı ne ve Redis 5 dakika kaybolursa ne olur?
-
--

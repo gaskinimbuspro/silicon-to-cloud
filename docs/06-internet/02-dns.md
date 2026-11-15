@@ -5,10 +5,10 @@ description: How DNS resolution works, record types, TTL and caching, DNS in Kub
 
 # 6.2 — DNS deep dive
 
-!!! abstract "In one sentence"
-    **DNS** is the internet's distributed phone book: a **recursive resolver** walks from the **root** to the **TLD**
-    to the domain's **authoritative** servers to turn a name into records (IP addresses, aliases, mail servers, text),
-    and every answer is **cached for its TTL**. That makes DNS fast, and it's also why DNS changes "take time".
+!!! abstract "In short"
+    **DNS** is the internet's distributed phone book. A **recursive resolver** walks from the **root** to the **TLD** to
+    the domain's **authoritative** servers to turn a name into records: IP addresses, aliases, mail servers, text. Every
+    answer is **cached for its TTL**. That makes DNS fast, and it's also why DNS changes "take time".
 
 ## 📖 Key terms & abbreviations
 
@@ -153,5 +153,3 @@ kubectl run -it --rm dnstest --image=busybox:1.36 --restart=Never -- sh -c \
 ## ✍️ My notes
 
 > Run `dig +trace` for your company's main domain and write down every server that answered.
-
--

@@ -5,11 +5,11 @@ description: What interrupts are and why they exist, polling vs interrupts vs DM
 
 # 1.1 — Interrupts & device drivers
 
-!!! abstract "In one sentence"
-    Devices are slow and unpredictable, so instead of the CPU constantly asking "anything new?", a device **interrupts**
-    the CPU when something happens; a small kernel **interrupt handler** runs, defers the heavy work to a **bottom half**,
-    and a **device driver** (matched to the hardware by its IDs) turns the device's raw registers and buffers into a
-    standard kernel interface that programs can use.
+!!! abstract "In short"
+    Devices are slow and unpredictable. So instead of the CPU constantly asking "anything new?", a device **interrupts**
+    the CPU when something happens. A small kernel **interrupt handler** runs and defers the heavy work to a **bottom
+    half**. A **device driver**, matched to the hardware by its IDs, turns the device's raw registers into a standard
+    interface programs can use.
 
 ## 📖 Key terms & abbreviations
 
@@ -144,5 +144,3 @@ sudo ethtool -l eth0 2>/dev/null                # NIC queues (channels)
 ## ✍️ My notes
 
 > Run `watch -d cat /proc/interrupts` and type on the keyboard. Which line changes, and on which core?
-
--

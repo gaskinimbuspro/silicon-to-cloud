@@ -5,10 +5,10 @@ description: Preprocess, compile, assemble, link, the ELF file, fork/execve, the
 
 # Chapter 4 — How a program runs
 
-!!! abstract "In one sentence"
-    A toolchain turns your source code into an **ELF** file on disk. When you type `./app`, the shell **forks**,
-    the child calls **`execve`**, the kernel **maps** the file into a fresh address space, the **dynamic linker**
-    pulls in shared libraries, and finally your **`main()`** runs. Java, Python and Node.js add a **runtime/VM** in between.
+!!! abstract "In short"
+    A toolchain turns your source code into an **ELF** file on disk. When you type `./app`, the shell **forks**, the
+    child calls **`execve`**, the kernel **maps** the file into a fresh address space, the **dynamic linker** pulls in
+    shared libraries, and finally your **`main()`** runs. Java, Python and Node.js add a **runtime/VM** in between.
 
 ## 📖 Key terms & abbreviations
 
@@ -213,5 +213,3 @@ JVM / V8 / CPython = an ELF that runs bytecode, often with a JIT
 ## ✍️ My notes
 
 > Explain what happens between typing `./app` and `main()` running, in your own words in 5 lines.
-
--

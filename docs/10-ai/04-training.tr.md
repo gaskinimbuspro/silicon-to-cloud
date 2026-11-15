@@ -5,12 +5,12 @@ description: Eğitim döngüsü, bellek hesabı, data/tensor/pipeline/expert par
 
 # 10.4 — Dağıtık eğitim
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Eğitim tek bir döngüyü milyarlarca kez tekrarlar: **forward** (tahmin et), **loss** (ne kadar yanlış), **backward**
-    (her parametreyi hangi yöne itmeli), **optimizer adımı** (it). Büyük bir model tek bir GPU'ya sığmaz, sığsa da tek GPU'da
-    yüzyıllar sürerdi. Bu yüzden iş, birkaç tür **paralellik** ile binlerce GPU'ya bölünür. GPU'lar NVLink ve InfiniBand üzerinden
-    all-reduce gibi **toplu işlemlerle (collective)** senkron tutulur, **hepsi birden** zamanlanır (gang scheduling) ve
-    sık alınan **checkpoint**'lerle arızalara karşı korunur.
+    (her parametreyi hangi yöne itmeli), **optimizer adımı** (it). Büyük bir model tek bir GPU'ya sığmaz, sığsa da tek
+    GPU'da yüzyıllar sürerdi. Bu yüzden iş, birkaç tür **paralellik** ile binlerce GPU'ya bölünür. GPU'lar NVLink ve
+    InfiniBand üzerinden all-reduce gibi **toplu işlemlerle (collective)** senkron tutulur, **hepsi birden** zamanlanır
+    (gang scheduling) ve sık alınan **checkpoint**'lerle arızalara karşı korunur.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -222,5 +222,3 @@ Cluster: rail-optimized IB/RoCE · paralel FS / nesne depo · gang scheduling (S
 ## ✍️ Kendi notlarım
 
 > 70B'lik bir modelin neden birkaç tür paralelliğe ihtiyaç duyduğunu ve all-reduce'un ne yaptığını kendi cümlelerinle 5 satırda anlat.
-
--

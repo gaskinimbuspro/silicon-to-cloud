@@ -5,11 +5,11 @@ description: "Kubernetes'te iş yüklerini iyi çalıştırmak: Deployment'lar v
 
 # 15.1 — Workload'lar, probe'lar ve zamanlama
 
-!!! abstract "Tek cümlede"
-    Bir production iş yükü bir **controller** (Deployment, StatefulSet, DaemonSet, Job) artı yaşam döngüsü ayarları
-    güvenilirliği belirleyen bir pod şablonudur: **request'ler** ve **yerleşim kuralları** nerede çalışacağına, **startup ve
-    readiness probe'ları** ne zaman trafik alacağına, **liveness** ne zaman yeniden başlatılacağına, **SIGTERM ele alımı,
-    preStop ve bekleme süresi** de tek bir istek düşürmeden kapanıp kapanmayacağına karar verir.
+!!! abstract "Kısaca"
+    Bir production iş yükü bir **controller** (Deployment, StatefulSet, DaemonSet, Job) artı bir pod şablonudur.
+    **Request'ler** ve **yerleşim kuralları** nerede çalışacağını belirler. **Startup ve readiness probe'ları** ne zaman
+    trafik alacağına, **liveness** de ne zaman yeniden başlatılacağına karar verir. **SIGTERM ele alımı, preStop ve
+    bekleme süresi** ise tek bir istek düşürmeden kapanıp kapanmayacağını belirler.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -168,5 +168,3 @@ kind delete cluster --name wl
 ## ✍️ Notlarım
 
 > En önemli servisinin bir liveness probe'u var mı? Tam olarak neyi kontrol ediyor ve tüm pod'ları aynı anda yeniden başlatabilir mi?
-
--

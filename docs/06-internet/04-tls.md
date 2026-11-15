@@ -5,9 +5,9 @@ description: What TLS protects, how the TLS 1.3 handshake and key exchange work,
 
 # 6.4 — TLS & certificates deep dive
 
-!!! abstract "In one sentence"
-    **TLS** gives a connection three things: **confidentiality** (nobody can read it), **integrity** (nobody can change it)
-    and **authentication** (you're really talking to `shop.example.com`). The two sides agree on fresh keys with
+!!! abstract "In short"
+    **TLS** gives a connection three things: **confidentiality** (nobody can read it), **integrity** (nobody can change
+    it) and **authentication** (you're really talking to `shop.example.com`). The two sides agree on fresh keys with
     **ECDHE**, the server proves its identity with a **certificate** that chains up to a **root CA** your device already
     trusts, and from then on everything is encrypted with fast **symmetric** ciphers.
 
@@ -161,5 +161,3 @@ kubectl get certificates,certificaterequests,orders,challenges -A
 ## ✍️ My notes
 
 > Pick your company's main domain: who issued its certificate, how many days are left, and how is it renewed?
-
--

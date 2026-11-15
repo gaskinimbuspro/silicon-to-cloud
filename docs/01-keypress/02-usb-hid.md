@@ -5,10 +5,10 @@ description: How USB works (host-driven polling, enumeration, descriptors, endpo
 
 # 1.2 — USB & HID
 
-!!! abstract "In one sentence"
-    **USB** is a **host-driven** bus: the computer discovers each device (**enumeration**), reads its **descriptors**
-    to learn what it is, assigns it an address, and then **polls** it on a schedule. A keyboard belongs to the **HID**
-    class, which describes its data with a **report descriptor**; every time you press or release a key it answers the
+!!! abstract "In short"
+    **USB** is a **host-driven** bus: the computer discovers each device (**enumeration**), reads its **descriptors** to
+    learn what it is, assigns it an address, and then **polls** it on a schedule. A keyboard belongs to the **HID**
+    class, which describes its data with a **report descriptor**. Every time you press or release a key it answers the
     next poll with a small **report** listing which keys are currently down.
 
 ## 📖 Key terms & abbreviations
@@ -142,5 +142,3 @@ ls /sys/bus/usb/devices/                # sysfs view of the bus
 ## ✍️ My notes
 
 > Run `evtest` on your keyboard and press Shift+A. Write down every event you see and match it to the report bytes above.
-
--

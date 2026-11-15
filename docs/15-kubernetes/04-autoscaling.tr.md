@@ -5,10 +5,10 @@ description: "Kubernetes otomatik ölçeklemesi iki katmanda nasıl çalışır:
 
 # 15.4 — Pod ve node'ları otomatik ölçekleme
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Kubernetes **iki katmanda** ölçeklenir: **pod ölçekleyicileri** metriklere göre kaç replika çalışacağını (**HPA**,
-    **KEDA**) ya da ne kadar büyük olacaklarını (**VPA**) değiştirir; yeni pod'lar sığmazsa **node ölçekleyicileri**
-    (**Cluster Autoscaler**, **Karpenter**) makine ekler ve sonra onları **konsolide ederek** kaldırır; bu ancak
+    **KEDA**) ya da ne kadar büyük olacaklarını (**VPA**) değiştirir. Yeni pod'lar sığmazsa **node ölçekleyicileri**
+    (**Cluster Autoscaler**, **Karpenter**) makine ekler ve sonra onları **konsolide ederek** kaldırır. Bu ancak
     **request'ler gerçekçiyse**, pod'lar hızlı açılıyorsa ve biraz **pay** bırakırsan iyi çalışır, çünkü yeni node'lar
     dakikalar sürer.
 
@@ -161,5 +161,3 @@ kind delete cluster --name as
 ## ✍️ Notlarım
 
 > Cluster'ında "trafik ikiye katlanıyor"dan "yeni pod'lar hizmet veriyor"a kadar ne kadar sürüyor? En yavaş adım hangisi?
-
--

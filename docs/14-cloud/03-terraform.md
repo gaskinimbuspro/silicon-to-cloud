@@ -5,11 +5,11 @@ description: How Terraform and OpenTofu work - providers, resources, the depende
 
 # 14.3 — Infrastructure as Code with Terraform
 
-!!! abstract "In one sentence"
-    With **Terraform** (or its open-source fork **OpenTofu**) you describe the infrastructure you want in `.tf` files;
-    `plan` compares that **desired state** with the **state file** and the real cloud, shows exactly what will be
-    created, changed or destroyed, and `apply` calls the provider APIs in **dependency order**; kept in git, reviewed in
-    pull requests, with **remote, locked state** and reusable **modules**, it makes infrastructure repeatable,
+!!! abstract "In short"
+    With **Terraform** (or its open-source fork **OpenTofu**) you describe the infrastructure you want in `.tf` files.
+    `plan` compares that **desired state** with the **state file** and the real cloud, and shows exactly what will be
+    created, changed or destroyed. `apply` then calls the provider APIs in **dependency order**. Kept in git, reviewed
+    in pull requests, with **remote, locked state** and reusable **modules**, infrastructure becomes repeatable,
     auditable and recoverable.
 
 ## 📖 Key terms & abbreviations
@@ -187,5 +187,3 @@ terraform destroy -auto-approve
 ## ✍️ My notes
 
 > Which resources in your environment were created by hand? What would it take to import them?
-
--

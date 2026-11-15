@@ -5,11 +5,11 @@ description: What Core Web Vitals (LCP, INP, CLS) measure and their thresholds, 
 
 # 8.3 — Web performance & Core Web Vitals
 
-!!! abstract "In one sentence"
-    **Core Web Vitals** turn "is the site fast?" into three user-centred numbers measured on real visits: **LCP**
-    (how fast the main content appears), **INP** (how quickly the page responds to input) and **CLS** (how much things
-    jump around), judged at the **75th percentile**; lab tools like **Lighthouse** help you debug, but **field data**
-    from real users (**CrUX**, **RUM**) is what counts — and much of it depends on infrastructure: TTFB, CDN, caching and compression.
+!!! abstract "In short"
+    **Core Web Vitals** turn "is the site fast?" into three user-centred numbers from real visits. **LCP** measures how
+    fast the main content appears, **INP** how quickly the page responds to input, and **CLS** how much things jump
+    around, all at the **75th percentile**. Lab tools like **Lighthouse** help you debug, but **field data** (**CrUX**,
+    **RUM**) is what counts. Much of it depends on infrastructure: TTFB, CDN, caching and compression.
 
 ## 📖 Key terms & abbreviations
 
@@ -146,5 +146,3 @@ curl -so /dev/null -w 'dns=%{time_namelookup} tcp=%{time_connect} tls=%{time_app
 ## ✍️ My notes
 
 > Look up your site's CrUX p75 values (PageSpeed Insights shows them). Which metric fails, and which team owns the fix?
-
--

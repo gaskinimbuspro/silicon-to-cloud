@@ -5,12 +5,12 @@ description: "DevOps gerçekte nedir: kültür, otomasyon, ölçüm ve paylaşı
 
 # Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir
 
-!!! abstract "Tek cümlede"
-    DevOps bir iş unvanı ya da araç değil, yazılımı geliştirenlerin onu **gönderip çalıştırdığı** bir çalışma biçimidir:
-    değişiklikler **küçüktür** ve günde birçok kez **otomatik pipeline'lardan** akar, her adım geri alınabilsin diye
-    **deploy release'ten ayrılır**, production **gözlemlenir** ve **olaylar** sakin şekilde ele alınıp **suçlamasız
-    öğrenmeye** dönüştürülür, bir **platform** doğru yolu kolay yol yapar ve tüm sistem **DORA metrikleriyle** ölçülür;
-    çünkü hız ve kararlılığın birlikte geldiği ortaya çıkmıştır.
+!!! abstract "Kısaca"
+    DevOps bir iş unvanı ya da araç değildir. Yazılımı geliştirenlerin onu **gönderip çalıştırdığı** bir çalışma
+    biçimidir. Değişiklikler **küçüktür** ve günde birçok kez **otomatik pipeline'lardan** akar; her adım geri
+    alınabilsin diye **deploy release'ten ayrılır**. Production **gözlemlenir**, **olaylar** **suçlamasız öğrenmeye**
+    dönüşür ve bir **platform** doğru yolu kolaylaştırır. **DORA metrikleri** hız ile kararlılığın birlikte geldiğini
+    gösterir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -163,5 +163,3 @@ git log --merges --first-parent main --since="30 days ago" --pretty=%H | head -2
 ## ✍️ Notlarım
 
 > Ekibinin dört DORA metriğini bugün için tahmin et. Parti boyutunu yarıya indirseydin hangisi en çok iyileşirdi?
-
--

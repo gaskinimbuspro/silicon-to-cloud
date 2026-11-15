@@ -5,11 +5,11 @@ description: What's inside a GPU, why memory bandwidth rules LLMs, number format
 
 # 10.2 — GPU & accelerator hardware
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A data-center GPU is **thousands of small math lanes** (with special **Tensor Cores** for matrix math) fed by a few
-    hundred GB of very fast **HBM** memory. Eight of them sit in one server, connected all-to-all with **NVLink** through
-    **NVSwitch** (scale-up). Servers talk to each other with **one NIC per GPU** over InfiniBand or RoCE Ethernet
-    (scale-out). For LLMs the limit is usually **how fast bytes move**, not how fast math happens.
+    hundred GB of very fast **HBM** memory. Eight of them sit in one server, connected all-to-all with **NVLink**
+    through **NVSwitch** (scale-up). Servers talk to each other with **one NIC per GPU** over InfiniBand or RoCE
+    Ethernet (scale-out). For LLMs the limit is usually **how fast bytes move**, not how fast math happens.
 
 ## 📖 Key terms & abbreviations
 
@@ -214,5 +214,3 @@ Scale-up: NVLink/NVSwitch, NVL72 · Scale-out: IB/RoCE, rail-optimized, GPUDirec
 ## ✍️ My notes
 
 > Explain why "bandwidth ÷ model size" limits decode speed, and what scale-up vs scale-out means, in your own words in 5 lines.
-
--

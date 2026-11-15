@@ -5,11 +5,11 @@ description: Katmanlar ve kapsülleme, MAC ve IP adresleri, subnet'ler, ARP, swi
 
 # Bölüm 5 — Ağın temelleri
 
-!!! abstract "Tek cümlede"
-    Verin başlık **katmanlarına** sarılır (TCP → IP → Ethernet). Yerel ağın içinde onu **MAC** adreslerini kullanan
-    bir **switch** teslim eder. Ağlar arasında **IP** adreslerini kullanan bir **router** taşır, **NAT** ise özel IP'ni
-    genel bir IP ile değiştirir. Sonra onlarca router paketi sunucuya ulaşana kadar **hop hop** iletir.
-    Sunucu da katmanları ters sırayla açar.
+!!! abstract "Kısaca"
+    Verin başlık **katmanlarına** sarılır (TCP → IP → Ethernet). Yerel ağın içinde onu **MAC** adreslerini kullanan bir
+    **switch** teslim eder. Ağlar arasında **IP** adreslerini kullanan bir **router** taşır, **NAT** ise özel IP'ni
+    genel bir IP ile değiştirir. Sonra onlarca router paketi sunucuya ulaşana kadar **hop hop** iletir. Sunucu da
+    katmanları ters sırayla açar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -217,5 +217,3 @@ MTU 1500 · /24 = 256 adres · özel: 10/8, 172.16/12, 192.168/16
 ## ✍️ Kendi notlarım
 
 > MAC adreslerinin neden her hop'ta değiştiğini ama IP adreslerinin neden değişmediğini kendi cümlelerinle 5 satırda anlat.
-
--

@@ -5,10 +5,10 @@ description: Derleyicilerin içinde ne olur (ön uç, IR, optimizer, arka uç), 
 
 # 4.1 — Derleme ve linkleme
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Bir **derleyici** kaynak kodu okur, kontrol eder, bir **ara gösterime (IR)** çevirir, **optimize eder** ve tek bir
-    hedef için makine kodunu **object dosyalarına** yazar; **linker** ise bu dosyalar ve kütüphaneler arasındaki
-    **sembolleri** çözer ve her şeyi tek bir çalıştırılabilir dosyaya yerleştirir; kütüphaneleri ya içine kopyalar
+    hedef için makine kodunu **object dosyalarına** yazar. **Linker** ise bu dosyalar ve kütüphaneler arasındaki
+    **sembolleri** çözer ve her şeyi tek bir çalıştırılabilir dosyaya yerleştirir. Kütüphaneleri ya içine kopyalar
     (**statik**) ya da çalışma anında yüklenmeye bırakır (**dinamik**).
 
 ## 📖 Temel terimler ve kısaltmalar
@@ -148,5 +148,3 @@ clang -O2 -S -emit-llvm hello.c -o - 2>/dev/null | head -20   # LLVM IR (clang k
 ## ✍️ Notlarım
 
 > Servislerinden birini al: statik mi dinamik mi linklenmiş? İmajdaki binary'de `ldd` (ya da `go version -m`) çalıştır.
-
--

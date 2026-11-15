@@ -5,10 +5,11 @@ description: Bir URL'de Enter'a bastıktan sonra ne olur? DNS çözümleme, TCP 
 
 # Bölüm 6 — İnternete çıkış: DNS, TCP, TLS, HTTP
 
-!!! abstract "Tek cümlede"
-    Tarayıcı DNS ile bir **ismi** bir **IP**'ye çevirir, o IP'ye güvenilir bir **TCP** bağlantısı açar,
-    kimse okuyamasın ve değiştiremesin diye bağlantıyı **TLS** ile sarar, sonra üzerinden **HTTP** konuşur:
-    "GET / lütfen" → "200 OK, işte HTML". Bu adımların her biri gidiş-dönüşe (round trip) mal olur. Gecikme olarak hissettiğin şey bu gidiş-dönüşlerdir.
+!!! abstract "Kısaca"
+    Tarayıcı DNS ile bir **ismi** bir **IP**'ye çevirir, o IP'ye güvenilir bir **TCP** bağlantısı açar, kimse okuyamasın
+    ve değiştiremesin diye bağlantıyı **TLS** ile sarar, sonra üzerinden **HTTP** konuşur: "GET / lütfen" → "200 OK,
+    işte HTML". Bu adımların her biri gidiş-dönüşe (round trip) mal olur. Gecikme olarak hissettiğin şey bu
+    gidiş-dönüşlerdir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -251,5 +252,3 @@ HTTP/1.1 (metin, bağlantı başına 1 istek) → HTTP/2 (tek TCP'de akışlar) 
 ## ✍️ Kendi notlarım
 
 > Enter'a basmakla HTML'in ilk byte'ını almak arasında ne olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

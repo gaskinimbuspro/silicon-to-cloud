@@ -5,11 +5,11 @@ description: Klavyedeki bir tuş basışının donanımdan, CPU kesmesinden, ker
 
 # Bölüm 1 — “A” tuşuna bastığımızda ne olur?
 
-!!! abstract "Tek cümlede"
-    Tuşa basınca klavyedeki küçük bir bilgisayar bunu **sayıya** çevirir. USB bu sayıyı bilgisayara taşır.
-    CPU'ya bir **kesme (interrupt)** gelir, CPU işini bırakıp kernel'i çalıştırır. Kernel olayı **user space**'e iletir,
-    uygulama sayıyı klavye düzenine göre **'a' harfine** çevirip çizer ve GPU bu kareyi monitöre yollar.
-    Bunların hepsi **~10–50 ms** içinde olur.
+!!! abstract "Kısaca"
+    Tuşa basınca klavyedeki küçük bir bilgisayar bunu **sayıya** çevirir. USB bu sayıyı bilgisayara taşır. CPU'ya bir
+    **kesme (interrupt)** gelir, CPU işini bırakıp kernel'i çalıştırır. Kernel olayı **user space**'e iletir, uygulama
+    sayıyı klavye düzenine göre **'a' harfine** çevirip çizer ve GPU bu kareyi monitöre yollar. Bunların hepsi **~10–50
+    ms** içinde olur.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -263,5 +263,3 @@ Tuş → devre kapanır → matris taraması → MCU: HID usage 0x04
 ## ✍️ Kendi notlarım
 
 > Bu bölümü okuduktan sonra kendi cümlelerinle 5 satırda anlat. Anlatamadığın yer, henüz anlamadığın yerdir.
-
--

@@ -5,11 +5,11 @@ description: Sistem çağrıları nasıl çalışır, dosya tanımlayıcıları 
 
 # 3.4 — Syscall'lar, I/O ve dosya sistemleri
 
-!!! abstract "Tek cümlede"
-    Programlar dosyalara, soketlere ve cihazlara ancak **sistem çağrılarıyla** kernel'e sorarak dokunabilir; kernel
+!!! abstract "Kısaca"
+    Programlar dosyalara, soketlere ve cihazlara ancak **sistem çağrılarıyla** kernel'e sorarak dokunabilir. Kernel
     onlara **dosya tanımlayıcıları** verir, her `read()`/`write()`'ı **VFS** üzerinden **page cache**'e, **dosya
-    sistemine** ve **blok katmanına** yönlendirir ve farklı bekleme yolları sunar (**bloklayan**, **epoll**, **io_uring**);
-    100 bağlantı yöneten bir sunucuyu 100.000 yönetenden ayıran şey de budur.
+    sistemine** ve **blok katmanına** yönlendirir ve farklı bekleme yolları sunar (**bloklayan**, **epoll**,
+    **io_uring**); 100 bağlantı yöneten bir sunucuyu 100.000 yönetenden ayıran şey de budur.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -148,5 +148,3 @@ dd if=/dev/zero of=/tmp/f bs=4k count=1000 oflag=dsync 2>&1 | tail -1
 ## ✍️ Notlarım
 
 > Kendi komutlarından ya da servislerinden birinde birkaç saniye `strace -c` çalıştır. Hangi syscall'lar baskın?
-
--

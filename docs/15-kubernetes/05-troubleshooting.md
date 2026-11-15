@@ -5,12 +5,11 @@ description: A systematic Kubernetes troubleshooting method - reading pod status
 
 # 15.5 — Troubleshooting, upgrades & backups
 
-!!! abstract "In one sentence"
-    Kubernetes tells you what's wrong if you read it in order: the **pod status** points to the failing layer
-    (scheduling, image, process, readiness, network), **events** explain why, **logs** (including `--previous`) show the
-    app's side, and **kubectl debug** lets you inspect from inside; keeping clusters healthy also means **upgrading** every
-    few months within the supported **version skew** after removing **deprecated APIs**, and having **backups** (etcd,
-    Velero, volume snapshots) you have actually restored.
+!!! abstract "In short"
+    Kubernetes tells you what's wrong if you read it in order. The **pod status** points to the failing layer,
+    **events** explain why, **logs** (including `--previous`) show the app's side, and **kubectl debug** lets you look
+    inside. Healthy clusters also need **upgrades** every few months within the supported **version skew**, after
+    removing **deprecated APIs**. And **backups** (etcd, Velero, snapshots) that you have actually restored.
 
 ## 📖 Key terms & abbreviations
 
@@ -163,5 +162,3 @@ kind delete cluster --name ts
 ## ✍️ My notes
 
 > Which Kubernetes version are your clusters on, and when does its support end?
-
--

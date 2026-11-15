@@ -5,11 +5,11 @@ description: The three signals (metrics, logs, traces) and profiles, OpenTelemet
 
 # 9.5 — Observability: metrics, logs, traces & SLOs
 
-!!! abstract "In one sentence"
-    Observability is being able to answer "what is wrong and why?" from the outside: **metrics** tell you *that*
-    something changed (cheap, aggregated), **traces** show *where* in a request's path time or errors come from,
-    **logs** explain *what exactly* happened; **OpenTelemetry** gives one standard way to produce all three, and
-    **SLOs** with **burn-rate alerts** make sure you get paged for what users actually feel.
+!!! abstract "In short"
+    Observability means answering "what is wrong and why?" from the outside. **Metrics** tell you *that* something
+    changed, **traces** show *where* in a request time or errors come from, and **logs** explain *what exactly*
+    happened. **OpenTelemetry** is one standard way to produce all three. **SLOs** with **burn-rate alerts** make sure
+    you get paged for what users actually feel.
 
 ## 📖 Key terms & abbreviations
 
@@ -140,5 +140,3 @@ docker stop lgtm
 ## ✍️ My notes
 
 > Pick your most important user journey. Write its SLI and SLO, calculate the error budget, and define the two burn-rate alerts.
-
--

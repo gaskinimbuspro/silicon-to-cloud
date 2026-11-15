@@ -5,11 +5,11 @@ description: Process, thread, zamanlayıcı, sanal bellek, syscall, dosya tanım
 
 # Bölüm 3 — İşletim sistemi
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     İşletim sistemi çekirdeği (kernel) bir **hakemdir**. Her programa kendi CPU'su varmış gibi bir yanılsama verir
-    (**zamanlayıcı**), kendi belleği varmış gibi bir yanılsama verir (**sanal bellek**) ve cihazlara basit bir erişim sağlar
-    (**dosyalar, soketler**). Bunu yaparken hiçbir programın kendine ait olmayan şeye dokunamamasını garanti eder.
-    Programlar ihtiyaç duydukları her şeyi ondan **syscall** ile ister.
+    (**zamanlayıcı**), kendi belleği varmış gibi bir yanılsama verir (**sanal bellek**) ve cihazlara basit bir erişim
+    sağlar (**dosyalar, soketler**). Bunu yaparken hiçbir programın kendine ait olmayan şeye dokunamamasını garanti
+    eder. Programlar ihtiyaç duydukları her şeyi ondan **syscall** ile ister.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -229,5 +229,3 @@ Sinyaller: SIGTERM (kibar, yakalanabilir) → SIGKILL (son)
 ## ✍️ Kendi notlarım
 
 > Process ile thread arasındaki farkı ve syscall'un ne olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

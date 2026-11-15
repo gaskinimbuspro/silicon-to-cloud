@@ -5,10 +5,10 @@ description: The layer on top of model serving — embeddings and vector search,
 
 # 10.7 — AI applications: RAG, agents, gateways, evals
 
-!!! abstract "In one sentence"
-    Most real AI products are not "just an LLM": they **retrieve** the right company data (**RAG** over a **vector
-    database**), let the model **call tools** in a loop (**agents**, often through **MCP**), go through an **AI gateway**
-    that enforces auth, quotas, **guardrails** and routing, and are continuously **traced and evaluated** so quality,
+!!! abstract "In short"
+    Most real AI products are not "just an LLM". They **retrieve** the right company data (**RAG** over a **vector
+    database**) and let the model **call tools** in a loop (**agents**, often through **MCP**). An **AI gateway**
+    enforces auth, quotas, **guardrails** and routing. Everything is continuously **traced and evaluated**, so quality,
     safety and cost don't silently drift.
 
 ## 📖 Key terms & abbreviations
@@ -196,5 +196,3 @@ Treat retrieved/tool content as untrusted · least privilege · human approval f
 ## ✍️ My notes
 
 > Explain the RAG pipeline end to end and the agent loop, in your own words in 5 lines.
-
--

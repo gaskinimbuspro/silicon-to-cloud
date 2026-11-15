@@ -5,11 +5,11 @@ description: Önbellekler neden var, gecikme rakamları, cache line ve yerellik,
 
 # 2.2 — Önbellekler ve bellek hiyerarşisi
 
-!!! abstract "Tek cümlede"
-    Bir CPU çekirdeği nanosaniyede birkaç komut çalıştırabilir ama RAM ~100 ns'de cevap verir; bu yüzden çipler araya küçük,
-    hızlı **önbellekler** (L1, L2, L3) koyar ve belleği **64 byte'lık cache line**'lar halinde taşır. Belleğe **sıralı ve
-    sıkışık** erişen programlar önbellekte kalır ve hızlı çalışır; dağınık erişim, çekirdekler arasındaki **false sharing** ve
-    uzak **NUMA** belleği aynı algoritmayı kat kat yavaşlatabilir.
+!!! abstract "Kısaca"
+    Bir CPU çekirdeği nanosaniyede birkaç komut çalıştırabilir ama RAM ~100 ns'de cevap verir. Bu yüzden çipler araya
+    küçük, hızlı **önbellekler** (L1, L2, L3) koyar ve belleği **64 byte'lık cache line**'lar halinde taşır. Belleğe
+    **sıralı ve sıkışık** erişen programlar önbellekte kalır ve hızlı çalışır. Dağınık erişim, çekirdekler arasındaki
+    **false sharing** ve uzak **NUMA** belleği aynı algoritmayı kat kat yavaşlatabilir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -146,5 +146,3 @@ cat /sys/kernel/mm/transparent_hugepage/enabled
 ## ✍️ Notlarım
 
 > Satır-sütun betiğini çalıştır. Senin makinende sütun gezmesi kaç kat yavaş, neden?
-
--

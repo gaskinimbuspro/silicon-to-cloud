@@ -5,11 +5,11 @@ description: Modeller, parametreler, token'lar, embedding'ler, transformer, atte
 
 # 10.1 — Altyapıcılar için AI temelleri
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Bir model, **milyarlarca sayıdan oluşan bir fonksiyondur** (parametreler). Bir LLM metni **token**'lara, token'ları
-    **vektörlere** çevirir. Bunları bir **transformer katmanları** yığınından (attention + MLP) geçirir, **olası her sıradaki
-    token için bir skor** üretir, birini seçer, sona ekler ve tekrar çalışır. AI altyapısındaki her şey bu sayıları saklamak,
-    onları hızlı taşımak ve bu hesabı ucuza yapmak için vardır.
+    **vektörlere** çevirir. Bunları bir **transformer katmanları** yığınından (attention + MLP) geçirir, **olası her
+    sıradaki token için bir skor** üretir, birini seçer, sona ekler ve tekrar çalışır. AI altyapısındaki her şey bu
+    sayıları saklamak, onları hızlı taşımak ve bu hesabı ucuza yapmak için vardır.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -209,5 +209,3 @@ Yaşam döngüsü: ön eğitim → son eğitim (SFT, RLHF/DPO) → fine-tune (Lo
 ## ✍️ Kendi notlarım
 
 > Prompt'un ile ilk çıktı token'ı arasında bir LLM'in içinde ne olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

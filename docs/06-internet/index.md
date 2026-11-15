@@ -5,10 +5,10 @@ description: What happens after you press Enter on a URL — DNS resolution, the
 
 # Chapter 6 — Reaching the internet: DNS, TCP, TLS, HTTP
 
-!!! abstract "In one sentence"
-    The browser turns a **name** into an **IP** with DNS, opens a reliable **TCP** connection to that IP,
-    wraps it in **TLS** so nobody can read or change it, and then speaks **HTTP** over it:
-    "GET / please" → "200 OK, here's the HTML". Each of these steps costs round trips, and round trips are what you feel as latency.
+!!! abstract "In short"
+    The browser turns a **name** into an **IP** with DNS and opens a reliable **TCP** connection to it. It wraps the
+    connection in **TLS** so nobody can read or change it. Then it speaks **HTTP** over it: "GET / please" → "200 OK,
+    here's the HTML". Each step costs round trips, and round trips are what you feel as latency.
 
 ## 📖 Key terms & abbreviations
 
@@ -251,5 +251,3 @@ HTTP/1.1 (text, 1 req/conn) → HTTP/2 (streams on 1 TCP) → HTTP/3 (QUIC on UD
 ## ✍️ My notes
 
 > Explain what happens between pressing Enter and receiving the first byte of HTML, in your own words in 5 lines.
-
--

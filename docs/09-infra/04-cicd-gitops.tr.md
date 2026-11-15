@@ -5,11 +5,12 @@ description: Sürekli entegrasyon ve teslim aşamaları, pipeline tasarımı ve 
 
 # 9.4 — CI/CD ve GitOps
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **CI** her değişikliği test edilmiş, taranmış, imzalanmış bir **artefakta** (bir imaj digest'i) çevirir; **CD** o
     artefaktı ortamlar arasında taşır; **GitOps**'ta her ortamın istenen durumu **git**'te yaşar ve cluster içindeki bir
-    ajan (**Argo CD**, **Flux**) onu sürekli **çeker ve uzlaştırır**. Böylece deploy'lar gözden geçirilmiş, denetlenebilir,
-    `git revert` ile geri alınabilir olur ve **canary** ya da **blue-green** stratejileriyle kademeli yayına alınır.
+    ajan (**Argo CD**, **Flux**) onu sürekli **çeker ve uzlaştırır**. Böylece deploy'lar gözden geçirilmiş,
+    denetlenebilir, `git revert` ile geri alınabilir olur ve **canary** ya da **blue-green** stratejileriyle kademeli
+    yayına alınır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -153,5 +154,3 @@ kind delete cluster --name gitops
 ## ✍️ Notlarım
 
 > Merge'den production'a mevcut yolunu çiz. Artefaktlar nerede yeniden üretiliyor, cluster kimlik bilgilerini kim tutuyor ve 5 dakikada nasıl geri alırdın?
-
--

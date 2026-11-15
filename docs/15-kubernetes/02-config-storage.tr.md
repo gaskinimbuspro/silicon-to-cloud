@@ -5,12 +5,12 @@ description: "Kubernetes yapılandırmayı nasıl enjekte eder ve veriyi nasıl 
 
 # 15.2 — Yapılandırma ve kalıcı depolama
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Aynı imaj her ortamda çalışır çünkü **yapılandırma** çalışma anında **ConfigMap** ve **Secret'lardan** (ortam
-    değişkeni ya da dosya olarak) **enjekte edilir**, ideal olarak gerçek bir secret yöneticisinden senkronlanır; bir
-    pod'dan uzun yaşaması gereken veri, pod'un bir **PVC** ile **talep ettiği** bir **PersistentVolume** üzerinde yaşar; bunu
-    bir **StorageClass** ve onun **CSI sürücüsü** **doğru zone'da** bir bulut diski olarak oluşturur ve pod hangi node'a
-    düşerse ona takar.
+    değişkeni ya da dosya olarak) **enjekte edilir**, ideal olarak gerçek bir secret yöneticisinden senkronlanır. Bir
+    pod'dan uzun yaşaması gereken veri, pod'un bir **PVC** ile **talep ettiği** bir **PersistentVolume** üzerinde yaşar.
+    Bunu bir **StorageClass** ve onun **CSI sürücüsü** **doğru zone'da** bir bulut diski olarak oluşturur ve pod hangi
+    node'a düşerse ona takar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -169,5 +169,3 @@ kind delete cluster --name st
 ## ✍️ Notlarım
 
 > Cluster'ındaki her secret gerçekte nereden geliyor ve kim okuyabiliyor?
-
--

@@ -5,11 +5,12 @@ description: JS runtime modeli (çağrı stack'i, heap, Web API'leri, görev ve 
 
 # 8.2 — JavaScript, event loop ve asenkron
 
-!!! abstract "Tek cümlede"
-    JavaScript kodunu **sayfa başına tek bir çağrı stack'inde** çalıştırır; yavaş şeyler (ağ, zamanlayıcılar, kullanıcı
+!!! abstract "Kısaca"
+    JavaScript kodunu **sayfa başına tek bir çağrı stack'inde** çalıştırır. Yavaş şeyler (ağ, zamanlayıcılar, kullanıcı
     girdisi) tarayıcının **Web API**'leri tarafından ele alınır, onlar da callback'leri **görev** ve **mikro görev
     kuyruklarına** koyar. **Event loop** aynı anda tek bir görev çalıştırır, tüm mikro görevleri (promise'ler) boşaltır,
-    sonra sayfanın **render** etmesine izin verir; bu yüzden uzun süren her görev, bitene kadar tıklamaları, kaydırmayı ve animasyonları dondurur.
+    sonra sayfanın **render** etmesine izin verir. Bu yüzden uzun süren her görev, bitene kadar tıklamaları, kaydırmayı
+    ve animasyonları dondurur.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -164,5 +165,3 @@ setTimeout(()=>console.log('p99 gecikme ms', h.percentile(99)/1e6),1000)"
 ## ✍️ Notlarım
 
 > Ürününün ana sayfasında uzun görev gözlemcisini çalıştır. Yükleme sırasında kaç uzun görev oluyor ve onlara hangi script'ler yol açıyor?
-
--

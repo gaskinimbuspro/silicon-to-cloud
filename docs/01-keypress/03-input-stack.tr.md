@@ -5,11 +5,11 @@ description: evdev ve girdi olayları, libinput, compositor ile Wayland ve X11 f
 
 # 1.3 — Linux girdi yığını
 
-!!! abstract "Tek cümlede"
-    Kernel klavye raporunu bir **evdev** olayına çevirir (`KEY_A basıldı`); **compositor** onu **libinput** ile okur,
+!!! abstract "Kısaca"
+    Kernel klavye raporunu bir **evdev** olayına çevirir (`KEY_A basıldı`). **Compositor** onu **libinput** ile okur,
     **klavye odağının** hangi pencerede olduğuna karar verir ve o pencereye **Wayland** protokolüyle ham bir **keycode**
-    gönderir; uygulamadaki **xkbcommon** **keymap**'i (düzen + değiştiriciler) uygulayıp bir **keysym** ve `"a"` metnini
-    elde eder; toolkit ya da tarayıcı bunu koduna bir tuş olayı olarak verir.
+    gönderir. Uygulamadaki **xkbcommon** **keymap**'i (düzen + değiştiriciler) uygulayıp bir **keysym** ve `"a"` metnini
+    elde eder. Toolkit ya da tarayıcı bunu koduna bir tuş olayı olarak verir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -152,5 +152,3 @@ addEventListener('keydown', e => console.log(e.code, e.key, e.shiftKey, e.repeat
 ## ✍️ Notlarım
 
 > Yukarıdaki tarayıcı kodunu çalıştır, düzenini `tr` ile `us` arasında değiştir ve aynı tuşlara bas. Hangi alan değişiyor, hangisi aynı kalıyor?
-
--

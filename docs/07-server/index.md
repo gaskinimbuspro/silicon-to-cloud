@@ -5,11 +5,11 @@ description: CDN, load balancers, reverse proxies, stateless app servers, caches
 
 # Chapter 7 — Server side
 
-!!! abstract "In one sentence"
-    A request is first answered by a **CDN** if it can be. Otherwise it reaches a **load balancer**, which spreads it across
-    identical, **stateless app servers** behind a **reverse proxy**. The app reads from a **cache**, falls back to the
-    **database**, and pushes slow work to a **queue** for **workers**. You scale the stateless part by adding copies
-    and protect the stateful part (data) carefully.
+!!! abstract "In short"
+    A request is first answered by a **CDN** if it can be. Otherwise it reaches a **load balancer**, which spreads it
+    across identical, **stateless app servers** behind a **reverse proxy**. The app reads from a **cache**, falls back
+    to the **database**, and pushes slow work to a **queue** for **workers**. You scale the stateless part by adding
+    copies and protect the stateful part (data) carefully.
 
 ## 📖 Key terms & abbreviations
 
@@ -223,5 +223,3 @@ Always: timeouts, retries with backoff, health checks, observability.
 ## ✍️ My notes
 
 > Explain why we scale stateless and stateful parts differently, in your own words in 5 lines.
-
--

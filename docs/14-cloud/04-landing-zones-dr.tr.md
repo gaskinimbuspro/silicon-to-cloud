@@ -5,12 +5,12 @@ description: "Ciddi bulut kurulumlarının neden çok sayıda hesap ya da proje 
 
 # 14.4 — Hesaplar, landing zone'lar ve felaket kurtarma
 
-!!! abstract "Tek cümlede"
-    Bir **landing zone**, her iş yükünün üzerine kurulduğu temeldir: hataların ve ihlallerin küçük kalması için çok
-    sayıda **hesap/projeden** (ekip ve ortam başına) oluşan bir **organizasyon**, insanlar için **tek oturum açma**,
-    kimsenin kapatamayacağı organizasyon çapında **korkuluklar**, paylaşılan **ağ** ve merkezi **loglama ve güvenlik**;
-    bunun üzerine **felaket kurtarma**, ne kadar veri (**RPO**) ve zaman (**RTO**) kaybetmeyi göze alabileceğine dair,
-    ucuz yedeklerden pahalı aktif-aktife uzanan bilinçli bir seçimdir ve düzenli **game day'lerle** kanıtlanır.
+!!! abstract "Kısaca"
+    Bir **landing zone**, her iş yükünün üzerine kurulduğu temeldir. Çok sayıda **hesap/projeden** (ekip ve ortam
+    başına) oluşan bir **organizasyondur**; böylece hatalar ve ihlaller küçük kalır. Üstüne **tek oturum açma**,
+    kimsenin kapatamayacağı organizasyon çapında **korkuluklar**, paylaşılan **ağ** ve merkezi **loglama ve güvenlik**
+    ekler. **Felaket kurtarma** ise ne kadar veri (**RPO**) ve zaman (**RTO**) kaybedebileceğine dair bilinçli bir
+    seçimdir ve düzenli **game day'lerle** kanıtlanır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -154,5 +154,3 @@ python3 -m json.tool region-guardrail.json > /dev/null && echo "geçerli JSON"
 ## ✍️ Notlarım
 
 > En önemli servisin için: üzerinde anlaşılmış RPO ve RTO ne ve en son ne zaman kanıtlandı?
-
--

@@ -5,12 +5,12 @@ description: "Production'ı güvenle değiştirmek: deploy'u release'ten ayırma
 
 # 16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler
 
-!!! abstract "Tek cümlede"
-    Production'ı değiştirmenin en güvenli yolu her değişikliği **küçük ve geri alınabilir** yapmaktır: kodu sürekli
-    **deploy et**, ama özellikleri **feature flag'lerle** ayrıca **release et**, onları **kademeli** aç (çalışanlar → %1 →
-    %100) ve devam edip etmeyeceğine **metrikler karar versin**, bir **kapatma anahtarı** tut ve veritabanlarını ile
-    API'leri **genişlet/daralt** ile evrilt; böylece her rollout ve geri alma sırasında eski ve yeni sürümler yan yana
-    çalışabilsin.
+!!! abstract "Kısaca"
+    Production'ı değiştirmenin en güvenli yolu her değişikliği **küçük ve geri alınabilir** yapmaktır. Kodu sürekli
+    **deploy et**, ama özellikleri **feature flag'lerle** ayrıca **release et**. Onları **kademeli** aç (çalışanlar → %1
+    → %100); devam edip etmeyeceğine **metrikler karar versin** ve bir **kapatma anahtarı** hazır dursun.
+    Veritabanlarını ve API'leri **genişlet/daralt** ile evrilt; böylece her rollout ve geri almada eski ve yeni sürümler
+    yan yana çalışabilir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -163,5 +163,3 @@ docker stop flagd
 ## ✍️ Notlarım
 
 > Son geri almanı düşün. Ne kadar sürdü ve onu bir flag değişikliğine çevirmek için ne gerekirdi?
-
--

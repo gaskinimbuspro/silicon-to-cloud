@@ -5,10 +5,10 @@ description: TCP connection lifecycle and states, sequence numbers and ACKs, flo
 
 # 6.3 — TCP deep dive
 
-!!! abstract "In one sentence"
-    **TCP** turns an unreliable stream of IP packets into a **reliable, ordered byte stream** between two sockets: it opens
-    with a **3-way handshake**, numbers every byte, resends what isn't **ACKed**, slows the sender down when the receiver
-    (**flow control**) or the network (**congestion control**) can't keep up, and closes with **FIN** packets.
+!!! abstract "In short"
+    **TCP** turns unreliable IP packets into a **reliable, ordered byte stream** between two sockets. It opens with a
+    **3-way handshake**, numbers every byte and resends what isn't **ACKed**. It slows the sender down when the receiver
+    (**flow control**) or the network (**congestion control**) can't keep up. It closes with **FIN** packets.
 
 ## 📖 Key terms & abbreviations
 
@@ -139,5 +139,3 @@ sysctl net.ipv4.tcp_congestion_control net.core.somaxconn
 ## ✍️ My notes
 
 > Run `ss -tan | awk '{print $1}' | sort | uniq -c` on one of your servers. Explain each state you see.
-
--

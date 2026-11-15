@@ -5,11 +5,11 @@ description: CUDA, the libraries (cuBLAS, cuDNN, NCCL), the user-space and kerne
 
 # 10.3 — GPU software stack & sharing
 
-!!! abstract "In one sentence"
-    Your PyTorch code calls **CUDA libraries** (cuBLAS for matmul, cuDNN/FlashAttention for attention, NCCL for multi-GPU
-    communication), which launch **kernels** through the **user-space driver** (`libcuda.so`), which talks to the
-    **kernel driver** (`nvidia.ko`) via `ioctl` syscalls, which programs the GPU. In containers the **image brings the
-    libraries**, the **host brings the driver**, and the two must be compatible. One GPU can be given whole, sliced
+!!! abstract "In short"
+    Your PyTorch code calls **CUDA libraries** (cuBLAS for matmul, cuDNN/FlashAttention for attention, NCCL for
+    multi-GPU communication), which launch **kernels** through the **user-space driver** (`libcuda.so`), which talks to
+    the **kernel driver** (`nvidia.ko`) via `ioctl` syscalls, which programs the GPU. In containers the **image brings
+    the libraries**, the **host brings the driver**, and the two must be compatible. One GPU can be given whole, sliced
     in hardware (**MIG**), shared by processes (**MPS**) or time-shared.
 
 ## 📖 Key terms & abbreviations
@@ -184,5 +184,3 @@ Monitor: nvidia-smi (NVML) · DCGM exporter (SM/tensor activity, XID) · dcgmi d
 ## ✍️ My notes
 
 > Explain which parts of the GPU stack live in the container image and which on the host, and why, in your own words in 5 lines.
-
--

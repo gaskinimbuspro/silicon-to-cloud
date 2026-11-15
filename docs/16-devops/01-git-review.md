@@ -5,10 +5,10 @@ description: How teams collaborate on code - trunk-based development vs GitFlow 
 
 # 16.1 — Git workflows & code review
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     High-performing teams use **trunk-based development**: everyone works on **short-lived branches** (hours, not weeks)
     that merge into a **protected main** through **small pull requests** with **required automated checks** and a **fast
-    human review**, so main is always releasable; unfinished work hides behind **feature flags** instead of long
+    human review**, so main is always releasable. Unfinished work hides behind **feature flags** instead of long
     branches, commits follow a **convention**, and releases get **semantic versions** and generated **changelogs**.
 
 ## 📖 Key terms & abbreviations
@@ -158,5 +158,3 @@ printf "/infra/   @acme/platform\n/payments/ @acme/payments @acme/security\n" > 
 ## ✍️ My notes
 
 > What's the median age of a pull request in your team when it's merged? What makes the slow ones slow?
-
--

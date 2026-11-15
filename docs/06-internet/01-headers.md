@@ -5,11 +5,11 @@ description: What an HTTP header is, how a message is built, and what headers do
 
 # 6.1 — HTTP headers deep dive
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A **header** is a `Name: value` line of **metadata** that travels with every HTTP request and response. The body is
-    the content; the headers say **who it is for, what format it is in, how long it may be cached, who is asking, what
-    the browser is allowed to do with it, and which hops it passed through**. Most of what CDNs, load balancers,
-    ingress controllers, auth and browser security do is driven by headers.
+    the content. The headers say **who it is for, what format it is in, how long it may be cached, who is asking, what
+    the browser is allowed to do with it, and which hops it passed through**. Most of what CDNs, load balancers, ingress
+    controllers, auth and browser security do is driven by headers.
 
 ## 📖 Key terms & abbreviations
 
@@ -290,5 +290,3 @@ PYEOF
 ## ✍️ My notes
 
 > Pick one site you work on. Run `curl -sI` against it and explain every response header in one line each. Which security headers are missing?
-
--

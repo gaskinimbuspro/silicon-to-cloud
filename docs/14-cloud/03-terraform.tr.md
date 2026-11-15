@@ -5,12 +5,12 @@ description: "Terraform ve OpenTofu nasıl çalışır: provider'lar, kaynaklar,
 
 # 14.3 — Terraform ile kod olarak altyapı
 
-!!! abstract "Tek cümlede"
-    **Terraform** (ya da açık kaynak fork'u **OpenTofu**) ile istediğin altyapıyı `.tf` dosyalarında tarif edersin;
-    `plan` bu **istenen durumu** **state dosyası** ve gerçek bulutla karşılaştırır, tam olarak neyin oluşturulacağını,
-    değişeceğini ya da yok edileceğini gösterir, `apply` de provider API'lerini **bağımlılık sırasıyla** çağırır; git'te
-    tutulan, pull request'lerde incelenen, **uzak ve kilitli state** ve yeniden kullanılabilir **modüllerle** altyapıyı
-    tekrarlanabilir, denetlenebilir ve kurtarılabilir yapar.
+!!! abstract "Kısaca"
+    **Terraform** (ya da açık kaynak fork'u **OpenTofu**) ile istediğin altyapıyı `.tf` dosyalarında tarif edersin.
+    `plan` bu **istenen durumu** **state dosyası** ve gerçek bulutla karşılaştırır; neyin oluşturulacağını, değişeceğini
+    ya da yok edileceğini tam olarak gösterir. `apply` de provider API'lerini **bağımlılık sırasıyla** çağırır. Git'te
+    tutulan, pull request'lerde incelenen, **uzak ve kilitli state** ve yeniden kullanılabilir **modüllerle** altyapı
+    tekrarlanabilir, denetlenebilir ve kurtarılabilir olur.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -187,5 +187,3 @@ terraform destroy -auto-approve
 ## ✍️ Notlarım
 
 > Ortamındaki hangi kaynaklar elle oluşturuldu? Onları import etmek için ne gerekir?
-
--

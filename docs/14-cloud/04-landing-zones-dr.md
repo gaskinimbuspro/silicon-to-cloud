@@ -5,12 +5,12 @@ description: Why serious cloud setups use many accounts or projects, organizatio
 
 # 14.4 — Accounts, landing zones & disaster recovery
 
-!!! abstract "In one sentence"
-    A **landing zone** is the foundation every workload lands on: an **organization** of many **accounts/projects**
-    (per team and environment) so mistakes and breaches stay small, **single sign-on** for people, organization-wide
-    **guardrails** nobody can switch off, shared **networking** and central **logging and security**; on top of it,
-    **disaster recovery** is a deliberate choice of how much data (**RPO**) and time (**RTO**) you can afford to lose,
-    from cheap backups to expensive active-active, proven by regular **game days**.
+!!! abstract "In short"
+    A **landing zone** is the foundation every workload lands on. It's an **organization** of many **accounts/projects**
+    (per team and environment), so mistakes and breaches stay small. It adds **single sign-on**, organization-wide
+    **guardrails** nobody can switch off, shared **networking**, and central **logging and security**. **Disaster
+    recovery** is a deliberate choice of how much data (**RPO**) and time (**RTO**) you can lose, proven by regular
+    **game days**.
 
 ## 📖 Key terms & abbreviations
 
@@ -154,5 +154,3 @@ python3 -m json.tool region-guardrail.json > /dev/null && echo "valid JSON"
 ## ✍️ My notes
 
 > For your most important service: what are the agreed RPO and RTO, and when were they last proven?
-
--

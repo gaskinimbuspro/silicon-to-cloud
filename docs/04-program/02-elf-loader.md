@@ -5,11 +5,11 @@ description: The ELF file format (header, segments, sections), what execve does,
 
 # 4.2 — ELF & the program loader
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     An executable on Linux is an **ELF** file: a header, **segments** that say what to map into memory with which
-    permissions, and **sections** for tools; `execve()` makes the kernel map those segments at a randomized address
-    (**ASLR**) and start the **dynamic loader** `ld.so`, which finds the shared libraries, fixes up addresses through the
-    **GOT/PLT**, runs constructors and finally calls `main()`.
+    permissions, and **sections** for tools. `execve()` makes the kernel map those segments at a randomized address
+    (**ASLR**) and start the **dynamic loader** `ld.so`. The loader finds the shared libraries, fixes up addresses
+    through the **GOT/PLT**, runs constructors and finally calls `main()`.
 
 ## 📖 Key terms & abbreviations
 
@@ -147,5 +147,3 @@ hexdump -C /usr/bin/ls | head -2                 # 7f 45 4c 46 = \x7fELF
 ## ✍️ My notes
 
 > Run `readelf -l` and `ldd` on the main binary of one of your images. Which interpreter and libraries does it need?
-
--

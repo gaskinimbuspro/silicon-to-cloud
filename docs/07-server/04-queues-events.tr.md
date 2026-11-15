@@ -5,11 +5,12 @@ description: Sistemler neden kuyruk kullanır, kuyruk ve log farkı (RabbitMQ/SQ
 
 # 7.4 — Kuyruklar, stream'ler ve olay güdümlü sistemler
 
-!!! abstract "Tek cümlede"
-    Bir **mesaj broker'ı** servislerin arasına oturur; üretici işi devredip ya da bir **olay** duyurup yoluna devam eder,
-    tüketiciler de onu sonra kendi hızlarında işler. **Kuyruklar** (RabbitMQ, SQS) işlenen mesajı siler, **log'lar**
-    (Kafka, Kinesis) yeniden oynatmak için saklar. Teslim neredeyse her zaman **en az bir kezdir**, bu yüzden
-    tüketiciler **idempotent** olmalıdır; hatalar kaybolmak yerine **yeniden denemelere** ve bir **dead-letter kuyruğuna** gider.
+!!! abstract "Kısaca"
+    Bir **mesaj broker'ı** servislerin arasına oturur. Üretici işi devredip ya da bir **olay** duyurup yoluna devam
+    eder, tüketiciler de onu sonra kendi hızlarında işler. **Kuyruklar** (RabbitMQ, SQS) işlenen mesajı siler,
+    **log'lar** (Kafka, Kinesis) yeniden oynatmak için saklar. Teslim neredeyse her zaman **en az bir kezdir**, bu
+    yüzden tüketiciler **idempotent** olmalıdır. Hatalar kaybolmak yerine **yeniden denemelere** ve bir **dead-letter
+    kuyruğuna** gider.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -146,5 +147,3 @@ docker stop kafka rmq
 ## ✍️ Notlarım
 
 > Sahip olduğun bir asenkron akış için: teslim garantisi ne, tekrarlar nasıl ele alınıyor, başarısız mesajlar nereye gidiyor ve kime alarm gidiyor?
-
--

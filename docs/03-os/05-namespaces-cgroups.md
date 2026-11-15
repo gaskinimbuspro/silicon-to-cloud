@@ -5,11 +5,11 @@ description: The Linux kernel features that make containers - the seven namespac
 
 # 3.5 — Namespaces, cgroups & container isolation
 
-!!! abstract "In one sentence"
-    A container is not a thing the kernel knows about: it's an ordinary process that a runtime (runc, crun) starts with
-    its own **namespaces** (what it can *see*: PIDs, network, mounts, hostname…), inside a **cgroup** (what it can *use*:
-    CPU, memory, I/O, PIDs), on a **root filesystem** from the image, with reduced **capabilities**, a **seccomp**
-    syscall filter and an **LSM** profile (AppArmor/SELinux) limiting what it can *do*.
+!!! abstract "In short"
+    A container is not something the kernel knows about. It's an ordinary process that a runtime (runc, crun) starts in
+    its own **namespaces**, which limit what it can *see*: PIDs, network, mounts, hostname. A **cgroup** limits what it
+    can *use*: CPU, memory, I/O. Its **root filesystem** comes from the image, and reduced **capabilities**, a
+    **seccomp** filter and an **LSM** profile limit what it can *do*.
 
 ## 📖 Key terms & abbreviations
 
@@ -151,5 +151,3 @@ capsh --decode=00000000a80425fb 2>/dev/null                   # decode the defau
 ## ✍️ My notes
 
 > Build a "container" by hand: `unshare` with pid, net, mnt and uts namespaces, then run `ps`, `ip a` and `hostname`. What's missing compared to Docker?
-
--

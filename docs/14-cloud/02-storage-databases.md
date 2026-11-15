@@ -5,12 +5,12 @@ description: Block, file and object storage and when to use each, durability vs 
 
 # 14.2 — Storage & databases in the cloud
 
-!!! abstract "In one sentence"
-    Choose storage by **how data is accessed**: **block** volumes are raw disks for one machine, **file** shares are POSIX
-    folders for many machines, **object** storage is an HTTP key-value store with virtually unlimited size and very high
-    durability; choose a **managed database** by data model and scale (relational for transactions, key-value/document for
-    massive simple access, cache for speed, warehouse for analytics); and protect everything with **backups you have
-    actually restored**.
+!!! abstract "In short"
+    Choose storage by **how data is accessed**: **block** volumes are raw disks for one machine, **file** shares are
+    POSIX folders for many machines, **object** storage is an HTTP key-value store with virtually unlimited size and
+    very high durability. Choose a **managed database** by data model and scale (relational for transactions,
+    key-value/document for massive simple access, cache for speed, warehouse for analytics). And protect everything with
+    **backups you have actually restored**.
 
 ## 📖 Key terms & abbreviations
 
@@ -150,5 +150,3 @@ psql -c "select state, count(*) from pg_stat_activity group by 1;"
 ## ✍️ My notes
 
 > When was the last time your team restored a production database backup? How long did it take?
-
--

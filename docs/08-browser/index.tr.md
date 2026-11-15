@@ -5,11 +5,11 @@ description: Tarayıcı HTML, CSS ve JavaScript'i nasıl piksele çevirir? Proce
 
 # Bölüm 8 — Tarayıcı
 
-!!! abstract "Tek cümlede"
-    Tarayıcı HTML'i **DOM**'a, CSS'i **CSSOM**'a **ayrıştırır**, **JavaScript**'in ikisini de değiştirmesine izin verir,
-    bunları stillendirilmiş kutulara dönüştürür (**style**), her kutunun nereye gideceğini hesaplar (**layout**),
-    onları nasıl çizeceğini kaydeder (**paint**) ve ortaya çıkan katmanları GPU'nun bir kare halinde üst üste koymasını sağlar
-    (**composite**). Bunu saniyede 60 kez, 16,7 ms içinde, JavaScript'in de paylaşmak zorunda olduğu **tek bir ana thread** üzerinde yapmaya çalışır.
+!!! abstract "Kısaca"
+    Tarayıcı HTML'i **DOM**'a, CSS'i **CSSOM**'a **ayrıştırır** ve **JavaScript**'in ikisini de değiştirmesine izin
+    verir. Bunları stillendirilmiş kutulara dönüştürür (**style**), her kutunun yerini hesaplar (**layout**) ve nasıl
+    çizileceğini kaydeder (**paint**). Ardından GPU katmanları üst üste koyup bir kare oluşturur (**composite**). Bütün
+    bunlar saniyede 60 kez, 16,7 ms içinde ve JavaScript'in de paylaştığı **tek bir ana thread** üzerinde sığmalıdır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -205,5 +205,3 @@ Core Web Vitals: LCP ≤ 2,5 sn · INP ≤ 200 ms · CLS ≤ 0,1
 ## ✍️ Kendi notlarım
 
 > HTML byte'larından piksellere giden yolu ve uzun JavaScript görevlerinin sayfayı neden yavaş hissettirdiğini kendi cümlelerinle 5 satırda anlat.
-
--

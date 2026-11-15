@@ -5,11 +5,11 @@ description: USB nasıl çalışır (host güdümlü yoklama, enumeration, tanı
 
 # 1.2 — USB ve HID
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     **USB** **host güdümlü** bir bus'tır: bilgisayar her cihazı keşfeder (**enumeration**), ne olduğunu öğrenmek için
-    **tanımlayıcılarını** okur, ona bir adres verir ve sonra onu bir takvime göre **yoklar**. Klavye **HID** sınıfına aittir;
-    verisini bir **rapor tanımlayıcısıyla** tarif eder ve her tuşa bastığında ya da bıraktığında bir sonraki yoklamayı o anda
-    basılı tuşları listeleyen küçük bir **raporla** cevaplar.
+    **tanımlayıcılarını** okur, ona bir adres verir ve sonra onu bir takvime göre **yoklar**. Klavye **HID** sınıfına
+    aittir. Verisini bir **rapor tanımlayıcısıyla** tarif eder ve her tuşa bastığında ya da bıraktığında bir sonraki
+    yoklamayı o anda basılı tuşları listeleyen küçük bir **raporla** cevaplar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -142,5 +142,3 @@ ls /sys/bus/usb/devices/                # bus'ın sysfs görünümü
 ## ✍️ Notlarım
 
 > Klavyende `evtest` çalıştır ve Shift+A'ya bas. Gördüğün her olayı yaz ve yukarıdaki rapor byte'larıyla eşleştir.
-
--

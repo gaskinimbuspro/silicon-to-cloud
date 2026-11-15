@@ -5,11 +5,11 @@ description: Process adres alanı, sayfalar ve page table'lar, talep üzerine sa
 
 # 3.3 — Sanal bellek ve bellek yönetimi
 
-!!! abstract "Tek cümlede"
-    Her process kendi dev ve özel **sanal adres alanını** görür; kernel onu sayfa sayfa (4 KB) fiziksel RAM'e ancak
-    dokunulduğunda eşler (**talep üzerine sayfalama**), boş RAM'i **page cache** ile doldurur ve bellek azalınca önce cache'i
-    **geri alır**, izin varsa **swap** yapar, son çare olarak **OOM killer** bir process'i öldürür; container'da bu
-    **cgroup bellek limitine** takılmak ve meşhur `OOMKilled` demektir.
+!!! abstract "Kısaca"
+    Her process kendi dev ve özel **sanal adres alanını** görür. Kernel onu sayfa sayfa (4 KB) fiziksel RAM'e ancak
+    dokunulduğunda eşler (**talep üzerine sayfalama**), boş RAM'i **page cache** ile doldurur ve bellek azalınca önce
+    cache'i **geri alır**, izin varsa **swap** yapar, son çare olarak **OOM killer** bir process'i öldürür. Container'da
+    bu **cgroup bellek limitine** takılmak ve meşhur `OOMKilled` demektir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -145,5 +145,3 @@ docker run --rm -m 64m python:3.12-alpine python -c "x = bytearray(200*1024*1024
 ## ✍️ Notlarım
 
 > Bir pod için: `memory.current`, `memory.stat`'taki anon ve file satırlarını ve limiti karşılaştır. OOM'a gerçekte ne kadar yakın?
-
--

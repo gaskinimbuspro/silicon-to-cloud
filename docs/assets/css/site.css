@@ -145,3 +145,53 @@
 .s2c-n { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 1.4rem; height: 1.4rem; margin-right: .55rem; border-radius: .45rem; font-size: .6rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #6366f1, #8b5cf6); }
 .s2c-n--sub { min-width: 1.7rem; height: auto; margin-right: .35rem; justify-content: flex-start; background: none; color: var(--md-default-fg-color--light); font-weight: 600; font-variant-numeric: tabular-nums; }
 .md-nav__link--active .s2c-n--sub { color: inherit; }
+
+/* ---------- Readability pass ---------- */
+/* titles: strong, dark */
+.md-typeset h1 { color: var(--md-default-fg-color); }
+/* "In short" box: readable size */
+.md-typeset .admonition.abstract { font-size: .8rem; line-height: 1.65; }
+.md-typeset .admonition.abstract > .admonition-title { font-size: .72rem; }
+/* questions: normal weight, larger */
+.md-typeset details.question { font-size: .76rem; }
+.md-typeset details.question > summary { font-weight: 600; }
+/* abbreviations: underline only the first one per section */
+.md-typeset abbr.s2c-abbr-quiet { border-bottom: none; }
+
+/* key terms: chips + collapsible table */
+.md-typeset details.s2c-terms { border: 1px solid var(--md-default-fg-color--lightest); border-radius: 12px; padding: 0; background: transparent; margin: 1em 0 1.5em; box-shadow: none; font-size: .78rem; }
+.md-typeset details.s2c-terms > summary { list-style: none; cursor: pointer; margin: 0; border-radius: 12px; background: rgba(99,102,241,.04); padding: .9rem 1rem; display: flex; flex-direction: column; gap: .7rem; }
+.md-typeset details.s2c-terms > summary::-webkit-details-marker { display: none; }
+.md-typeset details.s2c-terms > summary::before, .md-typeset details.s2c-terms > summary::after { display: none; }
+.s2c-terms-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.s2c-chip { display: inline-block; padding: .18rem .6rem; border-radius: 999px; font-size: .68rem; font-weight: 600; background: rgba(99,102,241,.09); color: #4338ca; border: 1px solid rgba(99,102,241,.18); transition: background .15s; }
+.s2c-chip:hover { background: rgba(99,102,241,.18); }
+[data-md-color-scheme="slate"] .s2c-chip { color: #c7d2fe; background: rgba(129,140,248,.15); border-color: rgba(129,140,248,.25); }
+.s2c-terms-toggle { font-size: .68rem; font-weight: 600; color: var(--md-accent-fg-color); }
+details.s2c-terms .s2c-close, details.s2c-terms[open] .s2c-open { display: none; }
+details.s2c-terms[open] .s2c-close { display: inline; }
+.md-typeset details.s2c-terms > .md-typeset__scrollwrap { margin: 0 0 0; }
+.md-typeset details.s2c-terms table:not([class]) { border: none; border-top: 1px solid var(--md-default-fg-color--lightest); border-radius: 0; margin: 0; }
+.md-typeset tr.s2c-hl td { background: rgba(250,204,21,.18); transition: background .4s; }
+
+/* diagram zoom hint */
+.md-typeset .s2c-zoom { display: block; text-align: center; font-size: .62rem; color: var(--md-default-fg-color--light); margin: -.3rem 0 1rem; }
+
+/* tables → cards on small screens */
+@media screen and (max-width: 44.9375em) {
+  .md-typeset table[data-s2c-cards] { display: block; border: none; background: none; box-shadow: none; }
+  .md-typeset table[data-s2c-cards] thead { display: none; }
+  .md-typeset table[data-s2c-cards] tbody { display: block; }
+  .md-typeset table[data-s2c-cards] tr { display: block; margin: 0 0 .7rem; padding: .6rem .8rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 12px; background: var(--md-default-bg-color); }
+  .md-typeset table[data-s2c-cards] td { display: block; padding: .15rem 0; border: none; }
+  .md-typeset table[data-s2c-cards] td:first-child { font-size: .8rem; padding-bottom: .3rem; }
+  .md-typeset table[data-s2c-cards] td:not(:first-child)::before { content: attr(data-label); display: block; font-size: .58rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--md-default-fg-color--light); }
+  .md-typeset table[data-s2c-cards] td.s2c-empty { display: none; }
+  .md-typeset .md-typeset__table { padding: 0; }
+  .s2c-chip { font-size: .62rem; padding: .12rem .5rem; }
+  .md-typeset details.s2c-terms table[data-s2c-cards] { border-top: none; padding: .2rem .6rem 0; }
+  /* home hero: smaller headline on phones */
+  .md-typeset .s2c-hero h1 { font-size: 1.6rem; }
+  .md-typeset .s2c-hero { padding: 1.4rem 1.2rem; }
+  .md-typeset .s2c-hero p { font-size: .82rem; }
+}

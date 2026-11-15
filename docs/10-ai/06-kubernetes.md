@@ -5,12 +5,12 @@ description: Running GPUs on Kubernetes — GPU Operator, device plugin vs Dynam
 
 # 10.6 — AI platform on Kubernetes
 
-!!! abstract "In one sentence"
-    Kubernetes becomes an AI platform by adding a few layers: the **GPU Operator** prepares GPU nodes (driver, toolkit,
-    metrics), **DRA** (or the older device plugin) lets pods claim GPUs, **Kueue/KAI** queue and admit jobs fairly with
-    **gang scheduling**, **JobSet/LeaderWorkerSet** run multi-pod training and multi-node inference, and an
-    **inference gateway** (Gateway API Inference Extension, llm-d, KServe) routes requests to model servers that
-    **autoscale on LLM signals**. The platform team's job: high GPU utilization, fair sharing, fast cold starts, clear cost.
+!!! abstract "In short"
+    Kubernetes becomes an AI platform by adding a few layers. The **GPU Operator** prepares GPU nodes, and **DRA** (or
+    the older device plugin) lets pods claim GPUs. **Kueue/KAI** queue jobs fairly with **gang scheduling**, and
+    **JobSet/LeaderWorkerSet** run multi-pod training and inference. An **inference gateway** routes requests to model
+    servers that **autoscale on LLM signals**. The platform team's goal: high GPU utilization, fair sharing, fast cold
+    starts, clear cost.
 
 ## 📖 Key terms & abbreviations
 
@@ -260,5 +260,3 @@ Watch: DCGM (SM/tensor activity, XID) · engine metrics · GPU-hours and $/1M to
 ## ✍️ My notes
 
 > Explain how a GPU request travels from a pod spec to a running container on a GPU node, in your own words in 5 lines.
-
--

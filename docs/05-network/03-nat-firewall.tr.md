@@ -5,11 +5,12 @@ description: Durumsuz ve durumlu firewall'lar, netfilter kancaları, iptables ve
 
 # 5.3 — NAT, firewall'lar ve conntrack
 
-!!! abstract "Tek cümlede"
-    Linux kernel'inin **netfilter** çerçevesi kuralların her paketi sabit **kancalarda** incelemesine izin verir;
-    **conntrack** her bağlantıyı hatırlar, böylece firewall'lar **durumlu** olabilir ("cevaplara izin ver") ve **NAT**
-    adresleri tutarlı biçimde yeniden yazabilir: tek bir genel IP'yi paylaşmak için **SNAT**, sanal bir IP'ye gelen
-    trafiği gerçek bir backend'e göndermek için **DNAT**; Docker port yayınlama ve Kubernetes **Service**'leri tam olarak böyle çalışır.
+!!! abstract "Kısaca"
+    Linux kernel'inin **netfilter** çerçevesi, kuralların her paketi sabit **kancalarda** incelemesine izin verir.
+    **Conntrack** her bağlantıyı hatırlar; böylece firewall'lar **durumlu** olabilir ("cevaplara izin ver") ve **NAT**
+    adresleri tutarlı biçimde yeniden yazabilir. **SNAT** tek bir genel IP'yi paylaştırır; **DNAT** sanal bir IP'ye
+    gelen trafiği gerçek bir backend'e gönderir. Docker port yayınlama ve Kubernetes **Service**'leri tam olarak böyle
+    çalışır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -149,5 +150,3 @@ docker run -d --rm -p 8080:80 --name web nginx:alpine && sudo iptables -t nat -S
 ## ✍️ Notlarım
 
 > Cluster'ından bir Service seç ve izini sür: ClusterIP → kube-proxy kuralı (ya da eBPF map'i) → endpoint pod IP'leri.
-
--

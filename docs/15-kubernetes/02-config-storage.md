@@ -5,11 +5,11 @@ description: How Kubernetes injects configuration and keeps data - ConfigMaps an
 
 # 15.2 — Configuration & persistent storage
 
-!!! abstract "In one sentence"
-    The same image runs in every environment because **configuration is injected** at runtime from **ConfigMaps** and
-    **Secrets** (as env vars or files), ideally synced from a real secret manager; data that must outlive a pod lives on a
-    **PersistentVolume** that the pod **claims** through a **PVC**, which a **StorageClass** and its **CSI driver**
-    provision as a cloud disk in the **right zone** and attach to whichever node the pod lands on.
+!!! abstract "In short"
+    The same image runs in every environment because **configuration is injected** at runtime. It comes from
+    **ConfigMaps** and **Secrets** (as env vars or files), ideally synced from a real secret manager. Data that must
+    outlive a pod lives on a **PersistentVolume** that the pod **claims** through a **PVC**. A **StorageClass** and its
+    **CSI driver** create it as a cloud disk in the **right zone** and attach it wherever the pod runs.
 
 ## 📖 Key terms & abbreviations
 
@@ -168,5 +168,3 @@ kind delete cluster --name st
 ## ✍️ My notes
 
 > Where does each secret in your cluster really come from, and who can read it?
-
--

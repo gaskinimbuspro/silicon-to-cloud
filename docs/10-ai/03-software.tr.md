@@ -5,12 +5,13 @@ description: CUDA, kütüphaneler (cuBLAS, cuDNN, NCCL), user space ve kernel s�
 
 # 10.3 — GPU yazılım yığını ve paylaşım
 
-!!! abstract "Tek cümlede"
-    PyTorch kodun **CUDA kütüphanelerini** çağırır: matris çarpımı için cuBLAS, attention için cuDNN/FlashAttention, çoklu GPU
-    iletişimi için NCCL. Bunlar **kernel**'leri **user space sürücüsü** (`libcuda.so`) üzerinden başlatır. O da `ioctl`
-    syscall'larıyla **kernel sürücüsüyle** (`nvidia.ko`) konuşur, kernel sürücüsü de GPU'yu programlar. Container'larda
-    **kütüphaneleri imaj getirir**, **sürücüyü host getirir** ve ikisi uyumlu olmalıdır. Bir GPU bütün olarak verilebilir,
-    donanımda dilimlenebilir (**MIG**), process'ler tarafından paylaşılabilir (**MPS**) ya da zaman paylaşımlı kullanılabilir.
+!!! abstract "Kısaca"
+    PyTorch kodun **CUDA kütüphanelerini** çağırır: matris çarpımı için cuBLAS, attention için cuDNN/FlashAttention,
+    çoklu GPU iletişimi için NCCL. Bunlar **kernel**'leri **user space sürücüsü** (`libcuda.so`) üzerinden başlatır. O
+    da `ioctl` syscall'larıyla **kernel sürücüsüyle** (`nvidia.ko`) konuşur, kernel sürücüsü de GPU'yu programlar.
+    Container'larda **kütüphaneleri imaj getirir**, **sürücüyü host getirir** ve ikisi uyumlu olmalıdır. Bir GPU bütün
+    olarak verilebilir, donanımda dilimlenebilir (**MIG**), process'ler tarafından paylaşılabilir (**MPS**) ya da zaman
+    paylaşımlı kullanılabilir.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -184,5 +185,3 @@ Paylaşım: tüm GPU > MIG (donanım dilimi) > MPS (ortak bağlam) > zaman dilim
 ## ✍️ Kendi notlarım
 
 > GPU yığınının hangi parçalarının container imajında, hangilerinin host'ta durduğunu ve nedenini kendi cümlelerinle 5 satırda anlat.
-
--

@@ -5,11 +5,12 @@ description: Linux hangi task'ın nerede çalışacağına nasıl karar verir, �
 
 # 3.2 — Zamanlayıcı ve CPU zamanı
 
-!!! abstract "Tek cümlede"
-    **Zamanlayıcı** (scheduler), her çekirdekte saniyede defalarca, sıradaki CPU'yu hangi çalışabilir task'ın alacağına
-    karar verir: Linux **CPU başına bir çalışma kuyruğu** tutar, her task'a adil ve ağırlıklı bir pay vermek için **EEVDF**
-    kullanır, timer tick'lerinde ve uyanmalarda task'ları **keser** (preempt) ve yükü çekirdekler arasında dengeler;
-    container'lar üstüne **cgroup ağırlıkları ve kotaları** ekler, Kubernetes CPU **request** ve **limit**'leri de tam olarak böyle uygulanır.
+!!! abstract "Kısaca"
+    **Zamanlayıcı** (scheduler), her çekirdekte saniyede defalarca, CPU'yu sırada hangi task'ın alacağına karar verir.
+    Linux **CPU başına bir çalışma kuyruğu** tutar ve her task'a adil, ağırlıklı bir pay vermek için **EEVDF** kullanır.
+    Timer tick'lerinde ve uyanmalarda task'ları **keser** (preempt) ve yükü çekirdekler arasında dengeler. Container'lar
+    üstüne **cgroup ağırlıkları ve kotaları** ekler; Kubernetes CPU **request** ve **limit**'leri tam olarak böyle
+    çalışır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -129,5 +130,3 @@ docker run --rm --cpus=0.5 alpine sh -c 'yes > /dev/null & sleep 3; cat /sys/fs/
 ## ✍️ Notlarım
 
 > CPU limiti olan bir servis seç. Son bir gündeki throttle edilen periyotlarına bak. Limit yardım mı ediyor, zarar mı veriyor?
-
--

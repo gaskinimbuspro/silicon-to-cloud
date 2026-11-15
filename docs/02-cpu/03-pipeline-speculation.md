@@ -5,9 +5,9 @@ description: How CPUs overlap instructions in a pipeline, superscalar and out-of
 
 # 2.3 — Pipelines, branch prediction & speculation
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A modern core doesn't run one instruction at a time: it **pipelines** them, executes several per cycle **out of
-    order** as soon as their inputs are ready, and **guesses** the outcome of branches so it can keep going; correct
+    order** as soon as their inputs are ready, and **guesses** the outcome of branches so it can keep going. Correct
     guesses make code fast, wrong ones throw work away, and the traces left by that speculative work are what
     **Spectre**-style attacks exploit.
 
@@ -147,5 +147,3 @@ perf stat --topdown -a sleep 2 2>/dev/null | tail -6    # where cycles go (if su
 ## ✍️ My notes
 
 > Run the branch demo. Write down the branch-miss % and run time for sorted vs unsorted, and explain the difference.
-
--

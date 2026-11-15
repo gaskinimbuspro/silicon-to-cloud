@@ -5,9 +5,9 @@ description: How browsers turn bytes into pixels - the critical rendering path, 
 
 # 8.1 — The rendering pipeline in depth
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     The browser parses **HTML** into the **DOM** and **CSS** into the **CSSOM**, combines them, computes **style** and
-    **layout** (where every box goes), **paints** layers and **composites** them on the GPU; anything that blocks this
+    **layout** (where every box goes), **paints** layers and **composites** them on the GPU. Anything that blocks this
     path — **render-blocking CSS**, **parser-blocking scripts**, late fonts and images — delays the first meaningful
     pixels, and anything that forces layout again and again makes the page janky.
 
@@ -138,5 +138,3 @@ In Chrome DevTools:
 ## ✍️ My notes
 
 > Record a Performance trace of your company's homepage. Which resource blocks the first paint the longest?
-
--

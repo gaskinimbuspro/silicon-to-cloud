@@ -5,11 +5,11 @@ description: "Herkese açık bulut nasıl çalışır: bölgeler, erişilebilirl
 
 # Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Herkese açık bir bulut, **bölgelere** ve **erişilebilirlik zone'larına** gruplanmış, tamamen **API'ler** üzerinden
-    sunulan devasa bir veri merkezi havuzudur: compute, depolama, veritabanı ve ağı saniye bazında kiralarsın; sağlayıcı
-    binaları ve donanımı korur, **sen** de verini, kimliklerini ve yapılandırmanı korursun (**paylaşılan sorumluluk**);
-    her şey bir API çağrısı olduğu için onu kullanmanın profesyonel yolu **kod olarak** (Terraform), **korkuluklu
+    sunulan devasa bir veri merkezi havuzudur: compute, depolama, veritabanı ve ağı saniye bazında kiralarsın. Sağlayıcı
+    binaları ve donanımı korur, **sen** de verini, kimliklerini ve yapılandırmanı korursun (**paylaşılan sorumluluk**).
+    Her şey bir API çağrısı olduğu için onu kullanmanın profesyonel yolu **kod olarak** (Terraform), **korkuluklu
     hesaplar** içinde ve tek bir hatanın seni düşürmemesi için **zone'lara** yayarak kullanmaktır.
 
 ## 📖 Temel terimler ve kısaltmalar
@@ -176,5 +176,3 @@ for r in eu-central-1 eu-west-1 us-east-1; do
 ## ✍️ Notlarım
 
 > Ana production sistemini çiz: hangi parçalar zone'lara yayılmış, hangileri tekil ve bir zone ortadan kalkarsa ne olur?
-
--

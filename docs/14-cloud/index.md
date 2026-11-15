@@ -5,12 +5,12 @@ description: How public cloud works - regions, availability zones and edge locat
 
 # Chapter 14 — Cloud platforms: what you are really renting
 
-!!! abstract "In one sentence"
-    A public cloud is a huge pool of data centers grouped into **regions** and **availability zones**, exposed entirely
-    through **APIs**: you rent compute, storage, databases and networks by the second, the provider secures the buildings
-    and hardware while **you** secure your data, identities and configuration (**shared responsibility**), and because
-    everything is an API call, the professional way to use it is **as code** (Terraform), inside **accounts with guardrails**,
-    spread across **zones** so one failure doesn't take you down.
+!!! abstract "In short"
+    A public cloud is a huge pool of data centers grouped into **regions** and **availability zones**, all exposed
+    through **APIs**. You rent compute, storage, databases and networks by the second. The provider secures the
+    buildings and hardware; **you** secure your data, identities and configuration (**shared responsibility**). Because
+    everything is an API call, the professional way to use it is **as code**, in **accounts with guardrails**, spread
+    across **zones**.
 
 ## 📖 Key terms & abbreviations
 
@@ -176,5 +176,3 @@ for r in eu-central-1 eu-west-1 us-east-1; do
 ## ✍️ My notes
 
 > Draw your main production system: which parts are spread across zones, which are single, and what happens if one zone disappears?
-
--

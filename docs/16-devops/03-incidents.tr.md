@@ -5,12 +5,12 @@ description: "Ekipler production olaylarını nasıl ele alır: sürdürülebili
 
 # 16.3 — Olaylar, nöbet ve postmortem'ler
 
-!!! abstract "Tek cümlede"
-    Olaylar olacak; önemli olan hizmeti ne kadar hızlı ve sakin **geri getirdiğin** ve ne kadar iyi **öğrendiğindir**:
-    **sürdürülebilir bir nöbet** sadece **kullanıcının hissettiği belirtiler** için çağrılır, bir **önem seviyesi** ilan
-    eder, diğerleri araştırıp **iletişim kurarken** bir **olay komutanı** koordine eder, ekip **önce hafifletir** (geri al,
-    flag'i kapat, failover) ve sonra düzeltir, **suçlamasız bir postmortem** de olayı sistemi ve organizasyonu
-    güçlendiren **aksiyon maddelerine** dönüştürür.
+!!! abstract "Kısaca"
+    Olaylar olacak. Önemli olan hizmeti ne kadar hızlı ve sakin **geri getirdiğin** ve ne kadar iyi **öğrendiğindir**.
+    **Sürdürülebilir bir nöbet** sadece **kullanıcının hissettiği belirtiler** için çağrılır ve bir **önem seviyesi**
+    ilan eder. Diğerleri araştırıp **iletişim kurarken** bir **olay komutanı** koordine eder; ekip **önce hafifletir**
+    (geri al, flag'i kapat, failover). Ardından **suçlamasız bir postmortem**, olayı sistemi güçlendiren **aksiyon
+    maddelerine** dönüştürür.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -165,5 +165,3 @@ echo "şablon yazıldı: postmortems/TEMPLATE.md"
 ## ✍️ Notlarım
 
 > Geçen ayın çağrılarına bak. Kaçı aksiyon alınabilir, kullanıcının gördüğü belirtilerdi? İlk hangi alarmı silerdin?
-
--

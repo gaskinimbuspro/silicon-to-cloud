@@ -5,11 +5,11 @@ description: What an ISA is, x86-64 vs ARM64 (and RISC-V), CISC vs RISC, how ins
 
 # 2.1 — Instruction sets & assembly
 
-!!! abstract "In one sentence"
-    An **ISA** is the contract between software and a CPU: the list of instructions, registers and rules the chip
-    promises to understand. Compilers turn your code into those instructions, the assembler **encodes** them into bytes,
-    and the **calling convention** (part of the **ABI**) says how functions pass arguments and results, which is exactly
-    what you need to read compiler output, `perf` profiles and crash dumps.
+!!! abstract "In short"
+    An **ISA** is the contract between software and a CPU: the instructions, registers and rules the chip promises to
+    understand. Compilers turn your code into those instructions, and the assembler **encodes** them into bytes. The
+    **calling convention** (part of the **ABI**) says how functions pass arguments and results. That's what you need to
+    read compiler output, `perf` profiles and crash dumps.
 
 ## 📖 Key terms & abbreviations
 
@@ -163,5 +163,3 @@ uname -m; docker buildx ls 2>/dev/null | head -3
 ## ✍️ My notes
 
 > Paste a small function from your own code into godbolt. Find the `call`s, the loop and where the result ends up.
-
--

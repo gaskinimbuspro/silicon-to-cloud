@@ -5,7 +5,7 @@ description: Layers and encapsulation, MAC and IP addresses, subnets, ARP, switc
 
 # Chapter 5 — Networking fundamentals
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     Your data gets wrapped in **layers** of headers (TCP → IP → Ethernet). A **switch** delivers it inside your local
     network using **MAC** addresses. A **router** moves it between networks using **IP** addresses, and **NAT** swaps
     your private IP for a public one. Then dozens of routers forward it **hop by hop** until it reaches the server,
@@ -217,5 +217,3 @@ MTU 1500 · /24 = 256 addresses · private: 10/8, 172.16/12, 192.168/16
 ## ✍️ My notes
 
 > Explain why MAC addresses change at every hop but IP addresses don't, in your own words in 5 lines.
-
--

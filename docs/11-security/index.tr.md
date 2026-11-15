@@ -5,12 +5,12 @@ description: "Modern altyapı güvenliğinin katmanlar halinde nasıl çalışt�
 
 # Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri
 
-!!! abstract "Tek cümlede"
-    Modern güvenlik ağın etrafında tek bir duvar değil, **katmanlardır**: her insan ve iş yükü **kim** olduğunu kanıtlar
-    (**kimlik doğrulama**), sadece ihtiyacı olan yetkileri alır (**yetkilendirme**, en az yetki), saklanan secret'lar
-    yerine **kısa ömürlü kimlik bilgileri** kullanır, sadece **kimliği doğrulanmış, şifreli** bağlantılarla konuşur
-    (**zero trust**), sadece **doğrulanmış** yazılım çalıştırır (**tedarik zinciri**) ve bir şey ters gittiğinde (gidecek de)
-    tespit edip müdahale edebilmen için bir **denetim izi** bırakır.
+!!! abstract "Kısaca"
+    Modern güvenlik ağın etrafında tek bir duvar değil, **katmanlardır**. Her insan ve iş yükü **kim** olduğunu kanıtlar
+    (**kimlik doğrulama**) ve sadece ihtiyacı olan yetkileri alır (**yetkilendirme**, en az yetki). Saklanan secret'lar
+    yerine **kısa ömürlü kimlik bilgileri** kullanır ve sadece **kimliği doğrulanmış, şifreli** bağlantılarla konuşur
+    (**zero trust**). Sadece **doğrulanmış** yazılım çalıştırır (**tedarik zinciri**) ve bir **denetim izi** bırakır;
+    böylece bir şey ters gittiğinde (gidecek de) tespit edip müdahale edebilirsin.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -197,5 +197,3 @@ cosign verify ghcr.io/sigstore/cosign/cosign:latest \
 ## ✍️ Notlarım
 
 > Ekibinin sahip olduğu her uzun ömürlü kimlik bilgisini listele (CI secret'ları, kubeconfig'ler, bulut anahtarları, DB şifreleri). Hangileri federasyon ya da kısa ömürlü kimlik bilgileriyle değiştirilebilir?
-
--

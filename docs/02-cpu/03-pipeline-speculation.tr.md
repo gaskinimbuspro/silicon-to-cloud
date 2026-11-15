@@ -5,11 +5,11 @@ description: CPU'ların komutları boru hattında nasıl üst üste bindirdiği,
 
 # 2.3 — Boru hatları, dal tahmini ve spekülasyon
 
-!!! abstract "Tek cümlede"
-    Modern bir çekirdek komutları teker teker çalıştırmaz: onları **boru hattına** koyar, girdileri hazır olur olmaz döngü
-    başına birkaçını **sıra dışı** çalıştırır ve devam edebilmek için dalların sonucunu **tahmin eder**; doğru tahminler
-    kodu hızlandırır, yanlışlar işi çöpe atar ve bu spekülatif işin bıraktığı izler **Spectre** tarzı saldırıların
-    kullandığı şeydir.
+!!! abstract "Kısaca"
+    Modern bir çekirdek komutları teker teker çalıştırmaz: onları **boru hattına** koyar, girdileri hazır olur olmaz
+    döngü başına birkaçını **sıra dışı** çalıştırır ve devam edebilmek için dalların sonucunu **tahmin eder**. Doğru
+    tahminler kodu hızlandırır, yanlışlar işi çöpe atar ve bu spekülatif işin bıraktığı izler **Spectre** tarzı
+    saldırıların kullandığı şeydir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -147,5 +147,3 @@ perf stat --topdown -a sleep 2 2>/dev/null | tail -6    # döngüler nereye gidi
 ## ✍️ Notlarım
 
 > Dal demosunu çalıştır. Sıralı ve sırasız için dal ıska yüzdesini ve çalışma süresini yaz, farkı açıkla.
-
--

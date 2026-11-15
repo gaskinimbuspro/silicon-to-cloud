@@ -5,10 +5,10 @@ description: TCP bağlantı yaşam döngüsü ve durumları, sıra numaraları v
 
 # 6.3 — TCP'ye derin dalış
 
-!!! abstract "Tek cümlede"
-    **TCP**, güvenilmez IP paketlerini iki soket arasında **güvenilir ve sıralı bir byte akışına** çevirir: **3 adımlı el
-    sıkışma** ile açılır, her byte'ı numaralar, **ACK** gelmeyeni yeniden gönderir, alıcı (**akış kontrolü**) ya da ağ
-    (**tıkanıklık kontrolü**) yetişemediğinde göndereni yavaşlatır ve **FIN** paketleriyle kapanır.
+!!! abstract "Kısaca"
+    **TCP**, güvenilmez IP paketlerini iki soket arasında **güvenilir ve sıralı bir byte akışına** çevirir. **3 adımlı
+    el sıkışma** ile açılır, her byte'ı numaralar ve **ACK** gelmeyeni yeniden gönderir. Alıcı (**akış kontrolü**) ya da
+    ağ (**tıkanıklık kontrolü**) yetişemediğinde göndereni yavaşlatır. **FIN** paketleriyle kapanır.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -139,5 +139,3 @@ sysctl net.ipv4.tcp_congestion_control net.core.somaxconn
 ## ✍️ Notlarım
 
 > Sunucularından birinde `ss -tan | awk '{print $1}' | sort | uniq -c` çalıştır. Gördüğün her durumu açıkla.
-
--

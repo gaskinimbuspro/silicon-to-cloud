@@ -5,11 +5,11 @@ description: The process address space, pages and page tables, demand paging and
 
 # 3.3 — Virtual memory & memory management
 
-!!! abstract "In one sentence"
-    Every process sees its own huge, private **virtual address space**; the kernel maps it page by page (4 KB) to
-    physical RAM only when touched (**demand paging**), fills free RAM with **page cache**, and when memory runs short it
-    **reclaims** cache, **swaps** if allowed, and as a last resort the **OOM killer** kills a process, which in a container
-    means hitting its **cgroup memory limit** and the famous `OOMKilled`.
+!!! abstract "In short"
+    Every process sees its own huge, private **virtual address space**. The kernel maps it page by page (4 KB) to
+    physical RAM only when touched (**demand paging**) and fills free RAM with **page cache**. When memory runs short it
+    **reclaims** cache and **swaps** if allowed. As a last resort the **OOM killer** kills a process: in a container,
+    that's the famous `OOMKilled` at the **cgroup memory limit**.
 
 ## 📖 Key terms & abbreviations
 
@@ -145,5 +145,3 @@ docker run --rm -m 64m python:3.12-alpine python -c "x = bytearray(200*1024*1024
 ## ✍️ My notes
 
 > For one pod: compare `memory.current`, the anon and file lines in `memory.stat`, and the limit. How close is it to OOM really?
-
--

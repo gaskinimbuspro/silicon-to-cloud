@@ -5,11 +5,11 @@ description: How Ethernet frames, MAC addresses and switches work, MAC learning 
 
 # 5.1 — Ethernet, ARP & VLANs (Layer 2)
 
-!!! abstract "In one sentence"
-    Inside one local network, data moves as **Ethernet frames** addressed by **MAC** addresses; **switches** learn which
-    MAC sits behind which port and forward frames only there (or **flood** them when unsure), **ARP** finds the MAC for
-    an IP on the same subnet, and **VLANs** split one physical network into separate broadcast domains — the same ideas
-    reappear as Linux bridges, veth pairs and CNI plugins inside every Kubernetes node.
+!!! abstract "In short"
+    Inside one local network, data moves as **Ethernet frames** addressed by **MAC** addresses. **Switches** learn which
+    MAC sits behind which port and forward frames only there, or **flood** them when unsure. **ARP** finds the MAC for
+    an IP on the same subnet, and **VLANs** split one physical network into separate broadcast domains. The same ideas
+    reappear as Linux bridges, veth pairs and CNI plugins on every Kubernetes node.
 
 ## 📖 Key terms & abbreviations
 
@@ -133,5 +133,3 @@ ping -M do -s 1472 -c1 1.1.1.1               # 1472+28 = 1500: does a full-size 
 ## ✍️ My notes
 
 > On a Kubernetes node: find a pod's veth pair (`ip link`), the bridge or route it uses, and the MTU at each step.
-
--

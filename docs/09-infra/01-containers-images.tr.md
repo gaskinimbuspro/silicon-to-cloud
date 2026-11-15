@@ -5,11 +5,11 @@ description: OCI imajı nedir (katmanlar, manifest'ler, digest'ler, çok mimaril
 
 # 9.1 — Container'lar ve imajlar
 
-!!! abstract "Tek cümlede"
-    Bir container **imajı**, salt okunur, içerikle adreslenen **katmanlar** yığını artı bir **config**'tir; bir **manifest**
-    ile tarif edilir ve bir **digest** ile tanımlanır. Onu bir **Dockerfile**'dan üretirsin, bir **registry**'ye push edersin;
-    her node'da **containerd** sadece eksik katmanları çeker, onları **overlayfs** ile üst üste koyar ve process'ini
-    namespace ve cgroup'lar içinde başlatması için **runc**'ye söyler (3.5).
+!!! abstract "Kısaca"
+    Bir container **imajı**, salt okunur, içerikle adreslenen **katmanlar** yığını artı bir **config**'tir. Bir
+    **manifest** ile tarif edilir ve bir **digest** ile tanımlanır. Onu bir **Dockerfile**'dan üretirsin, bir
+    **registry**'ye push edersin. Her node'da **containerd** sadece eksik katmanları çeker, onları **overlayfs** ile üst
+    üste koyar ve process'ini namespace ve cgroup'lar içinde başlatması için **runc**'ye söyler (3.5).
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -151,5 +151,3 @@ sudo crictl images 2>/dev/null | head; sudo crictl ps 2>/dev/null | head   # bir
 ## ✍️ Notlarım
 
 > En büyük imajını al: kaç MB, kaç katman, kaç HIGH/CRITICAL CVE? Distroless çok aşamalı bir sürümü ne kadar tutardı?
-
--

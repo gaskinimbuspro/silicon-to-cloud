@@ -5,10 +5,10 @@ description: Registers, the memory hierarchy, the fetch-decode-execute cycle and
 
 # Chapter 2 — CPU & Assembly
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A CPU is a very fast, very simple machine. It **fetches** the instruction that the `RIP` register points to,
-    **decodes** it, **executes** it on values held in **registers**, **writes back** the result and moves on to the
-    next one, billions of times per second. Everything else (caches, RAM, disk) exists to keep it fed with data.
+    **decodes** it, **executes** it on values held in **registers**, **writes back** the result and moves on to the next
+    one, billions of times per second. Everything else (caches, RAM, disk) exists to keep it fed with data.
 
 ## 📖 Key terms & abbreviations
 
@@ -255,5 +255,3 @@ C → compiler → assembly → assembler → machine code (bytes) → ELF file 
 ## ✍️ My notes
 
 > Explain the fetch-decode-execute cycle and the stack in your own words in 5 lines.
-
--

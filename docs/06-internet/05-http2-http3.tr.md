@@ -5,11 +5,11 @@ description: HTTP/1.1 neden yetmedi, HTTP/2 tek TCP bağlantısında akışları
 
 # 6.5 — HTTP/2 ve HTTP/3'e derin dalış
 
-!!! abstract "Tek cümlede"
-    HTTP'nin **anlamı** (metotlar, header'lar, durum kodları) 1.1'den beri değişmedi; değişen **nasıl taşındığı**.
-    **HTTP/2** mesajları ikili **çerçevelere** böler ve tek bir TCP bağlantısında çok sayıda **akışı** paralel çalıştırır;
-    **HTTP/3** bunu UDP üzerinde **QUIC**'e taşır: kayıp bir paket sadece tek akışı durdurur, el sıkışmalar hızlanır ve
-    bağlantılar ağ değişikliklerinde yaşamaya devam eder.
+!!! abstract "Kısaca"
+    HTTP'nin **anlamı** (metotlar, header'lar, durum kodları) 1.1'den beri değişmedi. Değişen **nasıl taşındığı**.
+    **HTTP/2** mesajları ikili **çerçevelere** böler ve tek bir TCP bağlantısında çok sayıda **akışı** paralel
+    çalıştırır; **HTTP/3** bunu UDP üzerinde **QUIC**'e taşır: kayıp bir paket sadece tek akışı durdurur, el sıkışmalar
+    hızlanır ve bağlantılar ağ değişikliklerinde yaşamaya devam eder.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -130,5 +130,3 @@ dig www.cloudflare.com HTTPS +short                                             
 ## ✍️ Notlarım
 
 > Şirketinin sitesini Protocol sütunu açık Chrome DevTools'ta aç. Hangi kaynaklar h2, h3 ya da http/1.1 kullanıyor ve neden?
-
--

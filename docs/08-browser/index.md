@@ -5,11 +5,11 @@ description: How a browser turns HTML, CSS and JavaScript into pixels — proces
 
 # Chapter 8 — The browser
 
-!!! abstract "In one sentence"
-    The browser **parses** HTML into the **DOM** and CSS into the **CSSOM**, lets **JavaScript** modify both,
-    combines them into styled boxes (**style**), works out where every box goes (**layout**), records how to draw them
-    (**paint**), and lets the GPU stack the resulting layers into a frame (**composite**). It tries to do this
-    within 16.7 ms, 60 times a second, on a **single main thread** that JavaScript also has to share.
+!!! abstract "In short"
+    The browser **parses** HTML into the **DOM** and CSS into the **CSSOM**, and lets **JavaScript** change both. It
+    turns them into styled boxes (**style**), works out where every box goes (**layout**) and records how to draw them
+    (**paint**). The GPU then stacks the layers into a frame (**composite**). All of this should fit in 16.7 ms, 60
+    times a second, on a **single main thread** that JavaScript shares.
 
 ## 📖 Key terms & abbreviations
 
@@ -205,5 +205,3 @@ Core Web Vitals: LCP ≤ 2.5 s · INP ≤ 200 ms · CLS ≤ 0.1
 ## ✍️ My notes
 
 > Explain the path from HTML bytes to pixels, and why long JavaScript tasks make a page feel slow, in your own words in 5 lines.
-
--

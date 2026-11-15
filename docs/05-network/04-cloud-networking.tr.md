@@ -5,11 +5,11 @@ description: Bulut ağlarının SDN üzerine nasıl kurulduğu, VPC'ler, subnet'
 
 # 5.4 — Bulut ağları (VPC)
 
-!!! abstract "Tek cümlede"
-    **VPC**, bir bulut bölgesi içinde sana ait özel, yazılım tanımlı bir ağdır: bir IP aralığı seçersin, onu availability
-    zone başına **subnet**'lere bölersin, her subnet'in internete doğrudan mı (**internet gateway**), sadece dışa doğru mu
-    (**NAT gateway**) yoksa hiç mi çıkacağına **route table**'larla karar verirsin, her arayüzü **security group**'larla
-    korursun ve diğer VPC'lere ve veri merkezine **peering, transit gateway, VPN ya da Direct Connect** ile bağlanırsın.
+!!! abstract "Kısaca"
+    **VPC**, bir bulut bölgesi içinde sana ait özel, yazılım tanımlı bir ağdır. Bir IP aralığı seçer ve onu availability
+    zone başına **subnet**'lere bölersin. **Route table**'lar her subnet'in internete doğrudan mı (**internet
+    gateway**), sadece dışa doğru mu (**NAT gateway**) yoksa hiç mi çıkacağına karar verir. **Security group**'lar her
+    arayüzü korur; **peering, transit gateway, VPN ya da Direct Connect** seni diğer ağlara bağlar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -147,5 +147,3 @@ curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta
 ## ✍️ Notlarım
 
 > Production VPC'ni çiz: AZ başına subnet'ler, route table'lar, gateway'ler, endpoint'ler, peering. Trafik buluttan nerede çıkıyor ve maliyeti ne?
-
--

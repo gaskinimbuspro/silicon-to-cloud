@@ -5,11 +5,11 @@ description: IPv4 and IPv6 addresses, CIDR and subnet math, private ranges, rout
 
 # 5.2 — IP addressing, subnets & routing
 
-!!! abstract "In one sentence"
-    **IP** gives every host an address that's meaningful across networks; a **CIDR prefix** like `/24` says which part
-    is the network, every host and router keeps a **routing table**, picks the **longest matching prefix** for each
-    destination, and forwards the packet to the next hop, decrementing the **TTL** — the same few rules run your
-    laptop, the internet core and the pod network in your cluster.
+!!! abstract "In short"
+    **IP** gives every host an address that's meaningful across networks. A **CIDR prefix** like `/24` says which part
+    is the network. Every host and router keeps a **routing table**, picks the **longest matching prefix** for each
+    destination and forwards the packet to the next hop, decrementing the **TTL**. The same few rules run your laptop,
+    the internet core and your cluster's pod network.
 
 ## 📖 Key terms & abbreviations
 
@@ -142,5 +142,3 @@ kubectl get nodes -o custom-columns=NAME:.metadata.name,PODCIDR:.spec.podCIDR 2>
 ## ✍️ My notes
 
 > Write down every CIDR in your environment (VPCs, pods, services, VPN, office). Do any overlap?
-
--

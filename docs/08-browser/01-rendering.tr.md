@@ -5,11 +5,11 @@ description: "Tarayıcılar byte'ları piksellere nasıl çevirir: kritik render
 
 # 8.1 — Render pipeline'ına derin dalış
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Tarayıcı **HTML**'i **DOM**'a, **CSS**'i **CSSOM**'a ayrıştırır, onları birleştirir, **stili** ve **layout**'u (her
-    kutunun nereye gideceğini) hesaplar, katmanları **boyar** ve GPU'da **birleştirir** (composite); bu yolu engelleyen
-    her şey (**render engelleyici CSS**, **ayrıştırma engelleyici script'ler**, geç gelen fontlar ve görseller) ilk anlamlı
-    pikselleri geciktirir, layout'u tekrar tekrar zorlayan her şey de sayfayı takılgan yapar.
+    kutunun nereye gideceğini) hesaplar, katmanları **boyar** ve GPU'da **birleştirir** (composite). Bu yolu engelleyen
+    her şey (**render engelleyici CSS**, **ayrıştırma engelleyici script'ler**, geç gelen fontlar ve görseller) ilk
+    anlamlı pikselleri geciktirir, layout'u tekrar tekrar zorlayan her şey de sayfayı takılgan yapar.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -138,5 +138,3 @@ Chrome DevTools'ta:
 ## ✍️ Notlarım
 
 > Şirketinin ana sayfasının bir Performance kaydını al. İlk boyamayı en uzun hangi kaynak engelliyor?
-
--

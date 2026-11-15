@@ -5,11 +5,11 @@ description: How relational databases store and find data (pages, B-tree indexes
 
 # 7.3 — Databases: storage, transactions & replication
 
-!!! abstract "In one sentence"
-    A database keeps data in **pages** on disk, finds rows quickly with **indexes** (usually **B-trees**), makes every
-    change durable by writing it to a **write-ahead log (WAL)** first, isolates concurrent **transactions** with **MVCC**
-    and locks, and scales and survives failures by **replicating** that log to other servers — while you still need
-    **backups** because replication copies mistakes too.
+!!! abstract "In short"
+    A database keeps data in **pages** on disk and finds rows quickly with **indexes**, usually **B-trees**. It makes
+    every change durable by writing it to a **write-ahead log (WAL)** first, and isolates concurrent **transactions**
+    with **MVCC** and locks. It scales and survives failures by **replicating** that log to other servers. You still
+    need **backups**, because replication copies mistakes too.
 
 ## 📖 Key terms & abbreviations
 
@@ -139,5 +139,3 @@ docker stop pg
 ## ✍️ My notes
 
 > For your main database: what's the RPO and RTO, when was the last restore test, and what's the replication lag right now?
-
--

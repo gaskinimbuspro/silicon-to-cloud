@@ -5,12 +5,12 @@ description: Bir LLM nasıl servis edilir? GPU'lar, HBM ve tensor core'lar, pref
 
 # Bölüm 10 — AI altyapısı
 
-!!! abstract "Tek cümlede"
-    Bir LLM, devasa bir **ağırlık (weights)** dosyası ve **matris çarpımları** yapan bir koddan ibarettir. Onu servis etmek şu demektir:
-    bir prompt al, istersen ilgili dokümanları ekle (**RAG**), prompt'u tek büyük bir paralel adımda işle (**prefill**), sonra cevabı
-    **her seferinde bir token** olarak üret (**decode**). Her adımda tüm ağırlıklar ve büyüyen bir **KV cache**, GPU'nun **HBM**
-    belleğinden okunur. Bir **inference sunucusu**, çok pahalı GPU'yu meşgul tutmak için birçok kullanıcıyı bir araya toplar (batch).
-    Bölüm 1–9'daki her şey hâlâ altta çalışıyor.
+!!! abstract "Kısaca"
+    Bir LLM, devasa bir **ağırlık (weights)** dosyası ve **matris çarpımları** yapan bir koddan ibarettir. Onu servis
+    etmek şu demektir: bir prompt al, istersen ilgili dokümanları ekle (**RAG**), prompt'u tek büyük bir paralel adımda
+    işle (**prefill**), sonra cevabı **her seferinde bir token** olarak üret (**decode**). Her adımda tüm ağırlıklar ve
+    büyüyen bir **KV cache**, GPU'nun **HBM** belleğinden okunur. Bir **inference sunucusu**, çok pahalı GPU'yu meşgul
+    tutmak için birçok kullanıcıyı bir araya toplar (batch). Bölüm 1–9'daki her şey hâlâ altta çalışıyor.
 
 ## 📖 Terimler ve kısaltmalar
 
@@ -229,5 +229,3 @@ K8s: GPU Operator · nvidia.com/gpu · taint'li GPU havuzları · CPU'ya değil 
 ## ✍️ Kendi notlarım
 
 > Prefill ile decode arasındaki farkı ve KV cache'in neden önemli olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

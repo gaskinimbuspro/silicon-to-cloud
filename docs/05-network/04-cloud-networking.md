@@ -5,11 +5,11 @@ description: How cloud networks are built on SDN, VPCs, subnets and availability
 
 # 5.4 — Cloud networking (VPC)
 
-!!! abstract "In one sentence"
-    A **VPC** is your own private, software-defined network inside a cloud region: you choose an IP range, split it into
-    **subnets** per availability zone, decide with **route tables** whether each subnet reaches the internet directly
-    (**internet gateway**), only outbound (**NAT gateway**) or not at all, guard every interface with **security
-    groups**, and connect to other VPCs and your data centre with **peering, transit gateways, VPN or Direct Connect**.
+!!! abstract "In short"
+    A **VPC** is your own private, software-defined network inside a cloud region. You choose an IP range and split it
+    into **subnets** per availability zone. **Route tables** decide whether each subnet reaches the internet directly
+    (**internet gateway**), only outbound (**NAT gateway**) or not at all. **Security groups** guard every interface,
+    and **peering, transit gateways, VPN or Direct Connect** link you to other networks.
 
 ## 📖 Key terms & abbreviations
 
@@ -147,5 +147,3 @@ curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta
 ## ✍️ My notes
 
 > Draw your production VPC: subnets per AZ, route tables, gateways, endpoints, peering. Where does traffic leave the cloud, and what does it cost?
-
--

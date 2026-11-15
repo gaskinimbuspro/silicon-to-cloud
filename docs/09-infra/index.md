@@ -5,11 +5,11 @@ description: Containers (namespaces, cgroups, image layers), Kubernetes (control
 
 # Chapter 9 — Modern infrastructure
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     A **container** is just a Linux process (Chapter 3) wrapped in **namespaces** (what it can see) and **cgroups**
     (what it can use), started from a layered **image**. **Kubernetes** keeps comparing the **desired state** you wrote
-    in YAML with the **actual state** of the cluster and fixes the difference, forever. **CI/CD** builds the images
-    and **GitOps** tells the cluster what should run. **Observability** shows you whether it actually works.
+    in YAML with the **actual state** of the cluster and fixes the difference, forever. **CI/CD** builds the images and
+    **GitOps** tells the cluster what should run. **Observability** shows you whether it actually works.
 
 ## 📖 Key terms & abbreviations
 
@@ -225,5 +225,3 @@ Observe: metrics (how much) · logs (what) · traces (where) · SLOs
 ## ✍️ My notes
 
 > Explain what really happens on `kubectl apply`, and why a container is "just a process", in your own words in 5 lines.
-
--

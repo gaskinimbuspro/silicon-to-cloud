@@ -5,7 +5,7 @@ description: Bir GPU'nun içinde ne var, LLM'lerde neden bellek bant genişliği
 
 # 10.2 — GPU ve hızlandırıcı donanımı
 
-!!! abstract "Tek cümlede"
+!!! abstract "Kısaca"
     Bir veri merkezi GPU'su, birkaç yüz GB'lık çok hızlı **HBM** belleğin beslediği **binlerce küçük hesap şeridinden**
     oluşur (matris hesabı için özel **Tensor Core**'larla birlikte). Sekiz tanesi tek bir sunucuda durur ve **NVSwitch**
     üzerinden **NVLink** ile herkes herkese bağlıdır (scale-up). Sunucular birbirleriyle InfiniBand ya da RoCE Ethernet
@@ -215,5 +215,3 @@ Scale-up: NVLink/NVSwitch, NVL72 · Scale-out: IB/RoCE, rail-optimized, GPUDirec
 ## ✍️ Kendi notlarım
 
 > "Bant genişliği ÷ model boyutu"nun decode hızını neden sınırladığını ve scale-up ile scale-out'un ne demek olduğunu kendi cümlelerinle 5 satırda anlat.
-
--

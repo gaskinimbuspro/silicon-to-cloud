@@ -5,8 +5,8 @@ description: Why HTTP/1.1 needed replacing, how HTTP/2 multiplexes streams over 
 
 # 6.5 — HTTP/2 & HTTP/3 deep dive
 
-!!! abstract "In one sentence"
-    HTTP's **meaning** (methods, headers, status codes) hasn't changed since 1.1; what changed is **how it travels**.
+!!! abstract "In short"
+    HTTP's **meaning** (methods, headers, status codes) hasn't changed since 1.1. What changed is **how it travels**.
     **HTTP/2** splits messages into binary **frames** and runs many **streams** in parallel over one TCP connection, and
     **HTTP/3** moves that onto **QUIC** over UDP so a lost packet only stalls one stream, handshakes are faster, and
     connections survive network changes.
@@ -130,5 +130,3 @@ dig www.cloudflare.com HTTPS +short                                             
 ## ✍️ My notes
 
 > Open your company's site in Chrome DevTools with the Protocol column. Which resources use h2, h3, or http/1.1, and why?
-
--

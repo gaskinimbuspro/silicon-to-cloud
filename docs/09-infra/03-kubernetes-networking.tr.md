@@ -5,11 +5,11 @@ description: Kubernetes ağ modeli, CNI eklentilerinin pod'lara nasıl IP verdi�
 
 # 9.3 — Kubernetes ağı
 
-!!! abstract "Tek cümlede"
-    Kubernetes basit bir model ister: **her pod'un kendi IP'si var ve diğer her pod'a NAT'sız ulaşabilir**; tesisatı bir
-    **CNI eklentisine** bırakır. Üstüne, **Service**'ler pod gruplarına sabit bir sanal IP ve **DNS** adı verir (kube-proxy
-    ya da eBPF ile uygulanır), **Gateway API / Ingress** dış HTTP trafiğini içeri alır, **NetworkPolicy**'ler kimin kiminle
-    konuşabileceğine karar verir, bir **service mesh** de mTLS, yeniden denemeler ve telemetri ekleyebilir.
+!!! abstract "Kısaca"
+    Kubernetes basit bir model ister: **her pod'un kendi IP'si vardır ve diğer her pod'a NAT'sız ulaşabilir**. Tesisatı
+    bir **CNI eklentisi** yapar. **Service**'ler pod gruplarına sabit bir sanal IP ve **DNS** adı verir; **Gateway API /
+    Ingress** dış HTTP trafiğini içeri alır. **NetworkPolicy**'ler kimin kiminle konuşabileceğine karar verir; bir
+    **service mesh** de mTLS, yeniden denemeler ve telemetri ekleyebilir.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -142,5 +142,3 @@ kubectl delete networkpolicy default-deny; kubectl delete deploy,svc echo
 ## ✍️ Notlarım
 
 > Cluster'ında bir istek yolu seç (internet → uygulama → DB) ve geçtiği her ağ bileşenini listele.
-
--

@@ -5,12 +5,12 @@ description: How teams handle production incidents - sustainable on-call, alerti
 
 # 16.3 — Incidents, on-call & postmortems
 
-!!! abstract "In one sentence"
-    Incidents will happen; what matters is how fast and calmly you **restore service** and how well you **learn**: a
-    **sustainable on-call** gets paged only for **user-visible symptoms**, declares a **severity**, an **incident
-    commander** coordinates while others investigate and **communicate**, the team **mitigates first** (rollback, flag off,
-    failover) and fixes later, and a **blameless postmortem** turns the incident into **action items** that make the system
-    and the organisation stronger.
+!!! abstract "In short"
+    Incidents will happen. What matters is how fast and calmly you **restore service** and how well you **learn**. A
+    **sustainable on-call** is paged only for **user-visible symptoms** and declares a **severity**. An **incident
+    commander** coordinates while others investigate and **communicate**, and the team **mitigates first** (rollback,
+    flag off, failover). A **blameless postmortem** then turns the incident into **action items** that make the system
+    stronger.
 
 ## 📖 Key terms & abbreviations
 
@@ -165,5 +165,3 @@ echo "template written: postmortems/TEMPLATE.md"
 ## ✍️ My notes
 
 > Look at last month's pages. How many were actionable, user-visible symptoms? Which alert would you delete first?
-
--

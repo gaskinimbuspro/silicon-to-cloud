@@ -5,10 +5,10 @@ description: What a language runtime adds to a process - interpreters and JIT co
 
 # 4.3 — Language runtimes: JVM, V8, Python, Go
 
-!!! abstract "In one sentence"
+!!! abstract "In short"
     Except for C/C++/Rust, your program doesn't run "alone": a **runtime** lives inside the process and decides how code
     is executed (**interpreter** or **JIT**), how memory is freed (**garbage collector**) and how work is scheduled
-    (**threads, event loop, goroutines**); knowing those three choices for the JVM, V8/Node.js, CPython and Go explains
+    (**threads, event loop, goroutines**). Knowing those three choices for the JVM, V8/Node.js, CPython and Go explains
     most of their performance, memory and container-sizing behaviour.
 
 ## 📖 Key terms & abbreviations
@@ -146,5 +146,3 @@ PYEOF
 ## ✍️ My notes
 
 > For your main service: which runtime, which GC, what heap limit vs container limit, and how many cores can it really use?
-
--

@@ -5,11 +5,11 @@ description: How system calls work, file descriptors and "everything is a file",
 
 # 3.4 — Syscalls, I/O & filesystems
 
-!!! abstract "In one sentence"
-    Programs can only touch files, sockets and devices by asking the kernel through **system calls**; the kernel gives
-    them **file descriptors**, routes each `read()`/`write()` through the **VFS** to the **page cache**, the
-    **filesystem** and the **block layer**, and offers different ways to wait (**blocking**, **epoll**, **io_uring**),
-    which is what separates a server that handles 100 connections from one that handles 100,000.
+!!! abstract "In short"
+    Programs can only touch files, sockets and devices by asking the kernel through **system calls**. The kernel gives
+    them **file descriptors** and routes each `read()`/`write()` through the **VFS**, the **page cache**, the
+    **filesystem** and the **block layer**. It also offers different ways to wait: **blocking**, **epoll** and
+    **io_uring**. That choice separates a server handling 100 connections from one handling 100,000.
 
 ## 📖 Key terms & abbreviations
 
@@ -148,5 +148,3 @@ dd if=/dev/zero of=/tmp/f bs=4k count=1000 oflag=dsync 2>&1 | tail -1
 ## ✍️ My notes
 
 > Run `strace -c` on one of your own commands or services for a few seconds. Which syscalls dominate?
-
--

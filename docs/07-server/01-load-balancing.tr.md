@@ -5,11 +5,11 @@ description: L4 ve L7 yük dengeleme, algoritmalar (round robin, least connectio
 
 # 7.1 — Yük dengeleme
 
-!!! abstract "Tek cümlede"
-    Bir **load balancer** çok sayıda özdeş backend'in önünde durur; hangilerinin trafik alabileceğini bilmek için
-    **health check**'ler, her yeni bağlantı (**L4**) ya da istek (**L7**) için birini seçmek için bir **algoritma** kullanır;
-    doğru yapılınca sunucu eklemeni, kesintisiz deploy etmeni ve hatalardan sağ çıkmanı sağlar. Kubernetes'te bu iş
-    **Service**'ler (cluster içinde L4) ve **Ingress/Gateway** (uçta L7) arasında bölünür.
+!!! abstract "Kısaca"
+    Bir **load balancer** çok sayıda özdeş backend'in önünde durur. Hangilerinin trafik alabileceğini bilmek için
+    **health check**'ler, her yeni bağlantı (**L4**) ya da istek (**L7**) için birini seçmek için bir **algoritma**
+    kullanır. Doğru yapılınca sunucu eklemeni, kesintisiz deploy etmeni ve hatalardan sağ çıkmanı sağlar. Kubernetes'te
+    bu iş **Service**'ler (cluster içinde L4) ve **Ingress/Gateway** (uçta L7) arasında bölünür.
 
 ## 📖 Temel terimler ve kısaltmalar
 
@@ -143,5 +143,3 @@ kubectl get endpointslices -l kubernetes.io/service-name=<svc> -o wide 2>/dev/nu
 ## ✍️ Notlarım
 
 > Bir servis için: bir istek hangi LB katmanlarından geçiyor (CDN, bulut LB, ingress, Service)? Her biri hangi algoritmayı ve health check'i kullanıyor?
-
--

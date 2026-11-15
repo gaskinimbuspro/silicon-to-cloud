@@ -5,12 +5,12 @@ description: The same-origin policy and site isolation, XSS and Content Security
 
 # 8.4 — Browser security
 
-!!! abstract "In one sentence"
-    Browsers run code from millions of untrusted sites side by side, so they enforce the **same-origin policy** (a page
-    can't read another origin's data) and isolate sites in separate processes; most web attacks try to get around that —
-    **XSS** runs the attacker's script *inside* your origin, **CSRF** makes the browser send your cookies to your site
-    from somewhere else, **clickjacking** frames your page — and the defences are mostly **headers and cookie flags** the
-    platform team can set centrally.
+!!! abstract "In short"
+    Browsers run code from millions of untrusted sites side by side. So they enforce the **same-origin policy** (a page
+    can't read another origin's data) and isolate sites in separate processes. Most web attacks try to get around that:
+    **XSS** runs the attacker's script *inside* your origin, **CSRF** abuses your cookies from another site,
+    **clickjacking** frames your page. The defences are mostly **headers and cookie flags** a platform team can set
+    centrally.
 
 ## 📖 Key terms & abbreviations
 
@@ -147,5 +147,3 @@ Online: run your domain through **securityheaders.com** and Mozilla **HTTP Obser
 ## ✍️ My notes
 
 > Scan your production domain with HTTP Observatory. Which headers are missing, and where (CDN, ingress, app) would you add them?
-
--
