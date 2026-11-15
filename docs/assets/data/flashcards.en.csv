@@ -855,6 +855,69 @@ Managed service;Provider runs the software for you · RDS, EKS, Pub/Sub: patchin
 Landing zone;Pre-built multi-account foundation · Accounts, SSO, networking, logging, guardrails
 Quota / limit;"Max resources per account/region · vCPUs, IPs, API rate limits; raise before launch"
 SLA;"Service Level Agreement — Provider's uptime promise · e.g. 99.99% for multi-AZ; credits, not compensation"
+ReplicaSet;Keeps N identical pods · Created and managed by a Deployment
+maxSurge / maxUnavailable;Rolling update speed · Extra pods allowed / pods allowed down
+Startup probe;"""Has it finished booting?"" · Other probes wait until it succeeds"
+Readiness probe;"""Can it take traffic now?"" · Fail → removed from Service endpoints"
+Liveness probe;"""Is it stuck?"" · Fail → container restarted"
+Node affinity;Prefer/require nodes by labels · zone, instance-type, gpu=true
+Pod (anti-)affinity;Place near / away from other pods · Co-locate cache, separate replicas
+Taint / toleration;Node repels pods / pod accepts the taint · Dedicated GPU or system nodes
+Topology spread;Even distribution over a topology key · maxSkew: 1 across zones
+PriorityClass;Importance of pods · Higher priority can preempt lower
+Grace period;Time between SIGTERM and SIGKILL · terminationGracePeriodSeconds, default 30
+ConfigMap;Key-value config object · Mounted as files or env vars
+Secret;"Config for sensitive values · base64 in the API; encrypt etcd at rest"
+External Secrets Operator;ESO — Syncs secrets from Vault/cloud managers · ExternalSecret → Kubernetes Secret
+Secrets Store CSI;Mounts secrets directly from a manager · No Kubernetes Secret object needed
+PV;PersistentVolume — A piece of storage in the cluster · Backed by a cloud disk, NFS, local disk
+PVC;PersistentVolumeClaim — A request for storage · Size + access mode + class
+StorageClass;How to provision volumes · Provisioner, parameters, reclaim policy
+Access modes;RWO / ROX / RWX / RWOP — Who can mount it · Block disks are RWO (one node)
+CSI;Container Storage Interface — Standard storage driver API · Controller (create/attach) + node (mount) plugins
+WaitForFirstConsumer;Delay provisioning until a pod is scheduled · Disk created in the pod's zone
+Reclaim policy;What happens to a PV when the PVC is deleted · Delete or Retain
+VolumeSnapshot;Point-in-time copy of a volume · Via CSI snapshot support
+Chart;Helm package · Chart.yaml, values.yaml, templates/
+Values;Inputs to a chart · Defaults overridden by -f prod.yaml / --set
+Release;One installation of a chart · Name + namespace + revision history
+Hook;Job run at install/upgrade phases · pre-upgrade DB migration
+OCI registry;Open Container Initiative — Store charts like images · helm push chart.tgz oci://…
+Base / overlay;Kustomize shared config / per-env patches · overlays/prod patches base
+Generator;Creates ConfigMaps/Secrets with hash suffix · Triggers rollouts on change
+CRD;CustomResourceDefinition — Adds a new resource type to the API · Schema, versions, validation
+CR;Custom Resource — An instance of a CRD · kind: Certificate
+Operator;Controller for a CRD with domain knowledge · Reconcile loop: observe → diff → act
+Finalizer;Blocks deletion until cleanup is done · Operator removes it when finished
+Crossplane;Operators for cloud resources · Kubernetes API for databases, buckets
+metrics-server;Cluster-wide CPU/memory usage · Source for kubectl top and resource HPA
+Utilization target;% of the request to aim for · averageUtilization: 70
+Custom / external metrics;Non-CPU signals · RPS, latency, queue depth via adapters
+Stabilization window;Wait before scaling down/up · Avoids flapping (behavior)
+VPA;Vertical Pod Autoscaler — Recommends/sets requests · Off / Initial / Recreate / InPlaceOrRecreate
+Cluster Autoscaler;CA — Scales node groups · Reacts to pending pods
+Karpenter;Provisions nodes directly · Picks instance type per pending pods
+Consolidation;Removing/replacing underused nodes · Evicts pods respecting PDBs
+Overprovisioning;Low-priority placeholder pods · Reserve headroom for fast scale-up
+Cooldown;Delay between scaling actions · Prevents oscillation
+Events;Short-lived records of what controllers did · kubectl events, kept ~1 h by default
+OOMKilled;Out Of Memory — Kernel killed the container for exceeding its memory limit · cgroup memory.max (3.3)
+CrashLoopBackOff;"Container keeps exiting; restarts are delayed exponentially · 10 s → 5 min"
+ImagePullBackOff;"Image can't be pulled; retries with backoff · Name/tag, auth, registry limits"
+Ephemeral container;Debug container added to a running pod · kubectl debug -it pod --image=…
+Node conditions;Ready, MemoryPressure, DiskPressure, PIDPressure · Pressure → evictions
+Version skew;Allowed version gaps between components · kubelet up to 3 minors older than API server
+Deprecated API;API version scheduled for removal · Must migrate manifests before upgrading
+etcd snapshot;"Backup of the cluster's state store · Self-managed clusters; managed ones do it for you"
+Velero;Backs up Kubernetes objects + volumes · To object storage, restore to any cluster
+Day 2;Operating after the initial install · Upgrades, scaling, backups, incidents
+Workload controller;Object that manages pods for you · Deployment, StatefulSet, DaemonSet, Job, CronJob
+Probe;Kubelet health check · startup, readiness, liveness
+PDB;PodDisruptionBudget — Min available pods during voluntary disruptions · Protects against drains taking too many
+PV / PVC;PersistentVolume / Claim — Storage object / a pod's request for it · Bound 1:1, provisioned by CSI
+Helm;Package manager for Kubernetes · Charts = templates + values, releases
+Kustomize;Template-free overlays · base + patches per environment
+HPA / VPA;Horizontal / Vertical Pod Autoscaler — Replica count / resource size automation · Based on metrics
 Why can't an interrupt handler sleep or do heavy work?;"It runs with interrupts (at least on that line/core) blocked and outside any process context; sleeping would freeze that core's interrupt handling. Heavy work goes to a bottom half."
 What does NAPI do and why?;After the first interrupt it disables the NIC's interrupt and polls batches of packets until the queue is empty, avoiding an interrupt storm at high packet rates.
 How does Linux know which driver to load for a newly plugged device?;"The bus reads the device IDs, the kernel emits a uevent with a modalias, udev matches it to a module and runs modprobe; the driver's probe() then claims the device."
@@ -1165,3 +1228,33 @@ Under the shared responsibility model, who is responsible for a public S3 bucket
 Why is 'multi-AZ' usually enough for high availability, and when do you need multi-region?;AZs have independent failure domains, so spreading across them survives data-center failures at low latency and cost. Multi-region is needed for regional outages, strict RTO/RPO, data residency or global latency, at much higher complexity.
 Why should production changes go through Infrastructure as Code instead of the console?;"Code is reviewed, versioned, repeatable and can rebuild the environment after a disaster; console changes are invisible, unreproducible and drift from what everyone thinks exists."
 What do RPO and RTO mean?;"RPO is how much data (time) you can afford to lose; RTO is how long the service can be unavailable. Together they decide the backup and DR strategy and its cost."
+What do maxSurge: 25% and maxUnavailable: 0 mean for a 4-replica Deployment?;During the rollout up to 1 extra pod may exist (5 total), and the number of available pods never drops below 4: a new pod must be ready before an old one is removed.
+Why can a liveness probe that checks the database make an outage worse?;If the database slows down, every pod fails liveness and is restarted at the same time, losing caches and connections and adding load exactly when the system is struggling.
+Why is a startup probe useful?;"It gives slow-starting apps time to boot without loosening liveness and readiness probes; those only start once the startup probe succeeds."
+What happens between kubectl delete pod and the container stopping?;"The pod is marked terminating; in parallel the endpoint is removed from Services and the kubelet runs preStop then sends SIGTERM; after the grace period any remaining process gets SIGKILL."
+What's the difference between a taint and node affinity?;"A taint on a node repels pods that don't tolerate it (node chooses); node affinity on a pod attracts it to nodes with certain labels (pod chooses). Dedicated nodes usually use both."
+You change a ConfigMap used via envFrom. Why doesn't the app see the new value?;"Environment variables are set when the container starts; they aren't updated in a running process. Restart the pods (e.g. via a config checksum annotation) or mount the ConfigMap as files."
+Why are Kubernetes Secrets not enough on their own?;They're only base64-encoded, readable by anyone with get secrets, and stored in etcd unencrypted unless configured. Use encryption at rest, tight RBAC and ideally an external secret manager.
+What does WaitForFirstConsumer solve?;"It delays creating the disk until the pod is scheduled, so the volume is created in the same zone as the node; otherwise the disk could land in a zone where the pod can't run."
+Why can a pod with an RWO PVC get stuck in Pending after a zone failure?;"The disk lives in the failed zone and can only attach to nodes there; the scheduler can't place the pod anywhere else."
+Why use Retain as the reclaim policy for important volumes?;"With Delete, deleting the PVC (or its namespace) also deletes the underlying disk; Retain keeps the disk so the data can be recovered."
+Where does Helm store information about a release?;"In the release's namespace, as a Secret per revision containing the rendered manifest, values and metadata; that's what helm history and rollback use."
+What's the main difference between Helm and Kustomize?;"Helm renders templates with values (and manages releases); Kustomize patches plain YAML bases with overlays, without templates or release tracking."
+Why add a checksum of the ConfigMap to the pod template annotations?;"So a config change changes the pod template, triggering a rolling update; otherwise pods keep running with old config."
+What is the operator pattern?;A CRD defines a new resource type and a controller continuously reconciles those resources to the desired state, automating operational tasks like provisioning, failover, backups and upgrades.
+What should you check before running an operator in production?;Maturity and maintenance, how the operator and its CRDs are upgraded, the RBAC it needs, behaviour when the operator is down, and its backup/restore and failure handling.
+"5 pods run at 90% of their CPU request; the target is 60%. How many replicas will the HPA want?";ceil(5 × 90 / 60) = ceil(7.5) = 8 replicas (within min/max).
+Why does CPU-based HPA depend on correct requests?;Utilization is measured as a percentage of the request. If requests are much higher than real usage, utilization never reaches the target and the HPA doesn't scale (and nodes are wasted).
+What can KEDA do that the HPA alone can't?;Scale on many external event sources out of the box and scale workloads to zero and back up when events arrive.
+How does Karpenter differ from Cluster Autoscaler?;Instead of growing predefined node groups, it looks at pending pods and launches the best-fitting instance types directly, and actively consolidates by removing or replacing nodes with cheaper ones.
+Why keep headroom even with fast autoscalers?;"New nodes take minutes to boot, join and pull images; without spare capacity, sudden spikes hit before new capacity is ready."
+A pod is Pending. Where do you look first and what are common causes?;The events in kubectl describe pod: insufficient CPU/memory for its requests, taints without tolerations, unsatisfiable affinity/spread, an unbound PVC or one in another zone, or a namespace quota.
+A container shows exit code 137. What happened?;It was killed with SIGKILL, most often by the OOM killer for exceeding its memory limit (Reason: OOMKilled), or because it didn't stop within the termination grace period.
+Why use kubectl logs --previous for a CrashLoopBackOff?;"The current container may have just restarted and logged nothing useful; --previous shows the output of the instance that crashed."
+A Service returns connection errors but the pods are Running. What do you check?;Whether the pods are Ready and appear in the Service's EndpointSlices, whether the selector and target port match, NetworkPolicies, and DNS resolution from a debug pod.
+Why can't you jump from Kubernetes 1.31 directly to 1.34?;"The control plane must be upgraded one minor version at a time to keep components within the supported skew and allow storage/API migrations; removed APIs must also be migrated at each step."
+When do you use a StatefulSet instead of a Deployment?;When pods need stable identity and their own storage: stable names, ordered start/stop and one PVC per replica (databases, brokers, clustered apps).
+What's the difference between a readiness and a liveness probe?;"Readiness decides whether a pod receives traffic (removed from Service endpoints when failing); liveness decides whether the container is restarted."
+Why can pods drop requests during a rolling update even though Kubernetes waits for readiness?;"Endpoint removal propagates asynchronously after SIGTERM; if the app exits immediately, load balancers still route a few requests to it. A preStop delay and graceful draining fix it."
+What does a PodDisruptionBudget protect against?;"Voluntary disruptions (node drains, upgrades, autoscaler consolidation) evicting too many pods at once; it doesn't protect against crashes or node failures."
+Why must Kubernetes clusters be upgraded regularly?;"Minor versions are supported for only about 14 months; managed services force upgrades, APIs get removed, and security fixes only come for supported versions."

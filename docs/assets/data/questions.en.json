@@ -2788,5 +2788,275 @@
 "url": "14-cloud/",
 "q": "What do RPO and RTO mean?",
 "a": "RPO is how much data (time) you can afford to lose; RTO is how long the service can be unavailable. Together they decide the backup and DR strategy and its cost."
+},
+{
+"id": "1df0df543a",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.1 — Workloads, probes & scheduling",
+"url": "15-kubernetes/01-workloads/",
+"q": "What do maxSurge: 25% and maxUnavailable: 0 mean for a 4-replica Deployment?",
+"a": "During the rollout up to 1 extra pod may exist (5 total), and the number of available pods never drops below 4: a new pod must be ready before an old one is removed."
+},
+{
+"id": "ac8d0bbd1c",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.1 — Workloads, probes & scheduling",
+"url": "15-kubernetes/01-workloads/",
+"q": "Why can a liveness probe that checks the database make an outage worse?",
+"a": "If the database slows down, every pod fails liveness and is restarted at the same time, losing caches and connections and adding load exactly when the system is struggling."
+},
+{
+"id": "177ff9358d",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.1 — Workloads, probes & scheduling",
+"url": "15-kubernetes/01-workloads/",
+"q": "Why is a startup probe useful?",
+"a": "It gives slow-starting apps time to boot without loosening liveness and readiness probes; those only start once the startup probe succeeds."
+},
+{
+"id": "2e00c95a9e",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.1 — Workloads, probes & scheduling",
+"url": "15-kubernetes/01-workloads/",
+"q": "What happens between kubectl delete pod and the container stopping?",
+"a": "The pod is marked terminating; in parallel the endpoint is removed from Services and the kubelet runs preStop then sends SIGTERM; after the grace period any remaining process gets SIGKILL."
+},
+{
+"id": "8580dfb72d",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.1 — Workloads, probes & scheduling",
+"url": "15-kubernetes/01-workloads/",
+"q": "What's the difference between a taint and node affinity?",
+"a": "A taint on a node repels pods that don't tolerate it (node chooses); node affinity on a pod attracts it to nodes with certain labels (pod chooses). Dedicated nodes usually use both."
+},
+{
+"id": "fd57d81d4e",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.2 — Configuration & persistent storage",
+"url": "15-kubernetes/02-config-storage/",
+"q": "You change a ConfigMap used via envFrom. Why doesn't the app see the new value?",
+"a": "Environment variables are set when the container starts; they aren't updated in a running process. Restart the pods (e.g. via a config checksum annotation) or mount the ConfigMap as files."
+},
+{
+"id": "7f95f80e2d",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.2 — Configuration & persistent storage",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Why are Kubernetes Secrets not enough on their own?",
+"a": "They're only base64-encoded, readable by anyone with get secrets, and stored in etcd unencrypted unless configured. Use encryption at rest, tight RBAC and ideally an external secret manager."
+},
+{
+"id": "98f928e681",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.2 — Configuration & persistent storage",
+"url": "15-kubernetes/02-config-storage/",
+"q": "What does WaitForFirstConsumer solve?",
+"a": "It delays creating the disk until the pod is scheduled, so the volume is created in the same zone as the node; otherwise the disk could land in a zone where the pod can't run."
+},
+{
+"id": "1a0a46fa24",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.2 — Configuration & persistent storage",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Why can a pod with an RWO PVC get stuck in Pending after a zone failure?",
+"a": "The disk lives in the failed zone and can only attach to nodes there; the scheduler can't place the pod anywhere else."
+},
+{
+"id": "8039d08372",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.2 — Configuration & persistent storage",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Why use Retain as the reclaim policy for important volumes?",
+"a": "With Delete, deleting the PVC (or its namespace) also deletes the underlying disk; Retain keeps the disk so the data can be recovered."
+},
+{
+"id": "95ec93854c",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.3 — Helm, Kustomize & operators",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Where does Helm store information about a release?",
+"a": "In the release's namespace, as a Secret per revision containing the rendered manifest, values and metadata; that's what helm history and rollback use."
+},
+{
+"id": "1f9c1a86a6",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.3 — Helm, Kustomize & operators",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "What's the main difference between Helm and Kustomize?",
+"a": "Helm renders templates with values (and manages releases); Kustomize patches plain YAML bases with overlays, without templates or release tracking."
+},
+{
+"id": "4a161d2b87",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.3 — Helm, Kustomize & operators",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Why add a checksum of the ConfigMap to the pod template annotations?",
+"a": "So a config change changes the pod template, triggering a rolling update; otherwise pods keep running with old config."
+},
+{
+"id": "2e2ce51d08",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.3 — Helm, Kustomize & operators",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "What is the operator pattern?",
+"a": "A CRD defines a new resource type and a controller continuously reconciles those resources to the desired state, automating operational tasks like provisioning, failover, backups and upgrades."
+},
+{
+"id": "567b43c706",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.3 — Helm, Kustomize & operators",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "What should you check before running an operator in production?",
+"a": "Maturity and maintenance, how the operator and its CRDs are upgraded, the RBAC it needs, behaviour when the operator is down, and its backup/restore and failure handling."
+},
+{
+"id": "e61a2670f0",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.4 — Autoscaling pods and nodes",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "5 pods run at 90% of their CPU request; the target is 60%. How many replicas will the HPA want?",
+"a": "ceil(5 × 90 / 60) = ceil(7.5) = 8 replicas (within min/max)."
+},
+{
+"id": "1a94d6cd17",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.4 — Autoscaling pods and nodes",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "Why does CPU-based HPA depend on correct requests?",
+"a": "Utilization is measured as a percentage of the request. If requests are much higher than real usage, utilization never reaches the target and the HPA doesn't scale (and nodes are wasted)."
+},
+{
+"id": "1f82f4f3e8",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.4 — Autoscaling pods and nodes",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "What can KEDA do that the HPA alone can't?",
+"a": "Scale on many external event sources out of the box and scale workloads to zero and back up when events arrive."
+},
+{
+"id": "50bd4c55f8",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.4 — Autoscaling pods and nodes",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "How does Karpenter differ from Cluster Autoscaler?",
+"a": "Instead of growing predefined node groups, it looks at pending pods and launches the best-fitting instance types directly, and actively consolidates by removing or replacing nodes with cheaper ones."
+},
+{
+"id": "6e304c1087",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.4 — Autoscaling pods and nodes",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "Why keep headroom even with fast autoscalers?",
+"a": "New nodes take minutes to boot, join and pull images; without spare capacity, sudden spikes hit before new capacity is ready."
+},
+{
+"id": "a4ca0ef539",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.5 — Troubleshooting, upgrades & backups",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "A pod is Pending. Where do you look first and what are common causes?",
+"a": "The events in kubectl describe pod: insufficient CPU/memory for its requests, taints without tolerations, unsatisfiable affinity/spread, an unbound PVC or one in another zone, or a namespace quota."
+},
+{
+"id": "b26d6f81ee",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.5 — Troubleshooting, upgrades & backups",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "A container shows exit code 137. What happened?",
+"a": "It was killed with SIGKILL, most often by the OOM killer for exceeding its memory limit (Reason: OOMKilled), or because it didn't stop within the termination grace period."
+},
+{
+"id": "f8665aa5a2",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.5 — Troubleshooting, upgrades & backups",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Why use kubectl logs --previous for a CrashLoopBackOff?",
+"a": "The current container may have just restarted and logged nothing useful; --previous shows the output of the instance that crashed."
+},
+{
+"id": "3fd1f56c2c",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.5 — Troubleshooting, upgrades & backups",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "A Service returns connection errors but the pods are Running. What do you check?",
+"a": "Whether the pods are Ready and appear in the Service's EndpointSlices, whether the selector and target port match, NetworkPolicies, and DNS resolution from a debug pod."
+},
+{
+"id": "371a62ca41",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "15.5 — Troubleshooting, upgrades & backups",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Why can't you jump from Kubernetes 1.31 directly to 1.34?",
+"a": "The control plane must be upgraded one minor version at a time to keep components within the supported skew and allow storage/API migrations; removed APIs must also be migrated at each step."
+},
+{
+"id": "c654c2de87",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "Chapter 15 — Kubernetes in depth: running it in production",
+"url": "15-kubernetes/",
+"q": "When do you use a StatefulSet instead of a Deployment?",
+"a": "When pods need stable identity and their own storage: stable names, ordered start/stop and one PVC per replica (databases, brokers, clustered apps)."
+},
+{
+"id": "4c8f639a4b",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "Chapter 15 — Kubernetes in depth: running it in production",
+"url": "15-kubernetes/",
+"q": "What's the difference between a readiness and a liveness probe?",
+"a": "Readiness decides whether a pod receives traffic (removed from Service endpoints when failing); liveness decides whether the container is restarted."
+},
+{
+"id": "e818e3161a",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "Chapter 15 — Kubernetes in depth: running it in production",
+"url": "15-kubernetes/",
+"q": "Why can pods drop requests during a rolling update even though Kubernetes waits for readiness?",
+"a": "Endpoint removal propagates asynchronously after SIGTERM; if the app exits immediately, load balancers still route a few requests to it. A preStop delay and graceful draining fix it."
+},
+{
+"id": "07da7db7ce",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "Chapter 15 — Kubernetes in depth: running it in production",
+"url": "15-kubernetes/",
+"q": "What does a PodDisruptionBudget protect against?",
+"a": "Voluntary disruptions (node drains, upgrades, autoscaler consolidation) evicting too many pods at once; it doesn't protect against crashes or node failures."
+},
+{
+"id": "eb3788972c",
+"ch": "15-kubernetes",
+"chTitle": "Chapter 15 — Kubernetes in depth: running it in production",
+"page": "Chapter 15 — Kubernetes in depth: running it in production",
+"url": "15-kubernetes/",
+"q": "Why must Kubernetes clusters be upgraded regularly?",
+"a": "Minor versions are supported for only about 14 months; managed services force upgrades, APIs get removed, and security fixes only come for supported versions."
 }
 ]

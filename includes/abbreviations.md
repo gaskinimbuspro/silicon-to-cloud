@@ -43,9 +43,12 @@
 *[CP]: Context
 *[CPI]: Cycles Per Instruction
 *[CPU]: Central Processing Unit
+*[CR]: Custom Resource
+*[CRD]: CustomResourceDefinition
 *[CRI]: Container Runtime Interface
 *[CRL]: Certificate Revocation List
 *[CRP]: Critical Rendering Path
+*[CSI]: Container Storage Interface
 *[CSP]: Content Security Policy
 *[CSRF]: Cross-Site Request Forgery
 *[CSSOM]: CSS Object Model
@@ -178,6 +181,7 @@
 *[P2C]: Power of Two Choices
 *[PACELC]: Partition → A/C, Else → Latency/Consistency
 *[PCIe]: Peripheral Component Interconnect Express
+*[PDB]: PodDisruptionBudget
 *[PGO]: Profile-Guided Optimization
 *[PID]: Product ID
 *[PIE]: Position-Independent Executable
@@ -191,6 +195,8 @@
 *[PSI]: Pressure Stall Information
 *[PSS]: Proportional
 *[PTX]: Parallel Thread Execution
+*[PV]: PersistentVolume
+*[PVC]: PersistentVolumeClaim
 *[PaaS]: Platform
 *[QLoRA]: Quantized LoRA
 *[QUIC]: — (originally "Quick UDP Internet Connections")
@@ -271,6 +277,7 @@
 *[VM]: Virtual Machine (language runtime)
 *[VMSS]: VM Scale Set
 *[VNet]: Virtual Network
+*[VPA]: Vertical Pod Autoscaler
 *[VPC]: Virtual Private Cloud
 *[VSZ]: Virtual Size
 *[XSS]: Cross-Site Scripting

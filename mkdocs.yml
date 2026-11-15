@@ -118,6 +118,13 @@ nav:
       - "14.2 · Storage & databases": 14-cloud/02-storage-databases.md
       - "14.3 · Infrastructure as Code (Terraform)": 14-cloud/03-terraform.md
       - "14.4 · Accounts, landing zones & DR": 14-cloud/04-landing-zones-dr.md
+  - "15 · Kubernetes in depth":
+      - 15-kubernetes/index.md
+      - "15.1 · Workloads, probes & scheduling": 15-kubernetes/01-workloads.md
+      - "15.2 · Config & persistent storage": 15-kubernetes/02-config-storage.md
+      - "15.3 · Helm, Kustomize & operators": 15-kubernetes/03-helm-operators.md
+      - "15.4 · Autoscaling pods & nodes": 15-kubernetes/04-autoscaling.md
+      - "15.5 · Troubleshooting, upgrades & backups": 15-kubernetes/05-troubleshooting.md
 
 markdown_extensions:
   - admonition

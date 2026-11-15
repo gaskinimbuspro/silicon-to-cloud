@@ -865,6 +865,68 @@ Yönetilen servis;Managed service — Yazılımı senin için sağlayıcı çal�
 Landing zone;Önceden kurulmuş çok hesaplı temel · Hesaplar, SSO, ağ, loglama, korkuluklar
 Kota / limit;"Quota / limit — Hesap/bölge başına en fazla kaynak · vCPU, IP, API hız limitleri; lansmandan önce artır"
 SLA;"Service Level Agreement — Sağlayıcının erişilebilirlik sözü · Örn. çok AZ için %99,99; tazminat değil kredi"
+ReplicaSet;N özdeş pod'u tutar · Bir Deployment tarafından oluşturulur ve yönetilir
+maxSurge / maxUnavailable;Kademeli güncelleme hızı · İzin verilen ek pod / izin verilen eksik pod
+Startup probe;"""Açılışı bitti mi?"" · Diğer probe'lar o başarılı olana kadar bekler"
+Readiness probe;"""Şu an trafik alabilir mi?"" · Başarısız → Service endpoint'lerinden çıkarılır"
+Liveness probe;"""Takıldı mı?"" · Başarısız → container yeniden başlatılır"
+Node affinity;Label'lara göre node tercih et/zorunlu kıl · zone, instance-type, gpu=true
+Pod (anti-)affinity;Diğer pod'ların yanına / uzağına yerleştir · Önbelleği yan yana koy, replikaları ayır
+Topoloji yayılımı;Topology spread — Bir topoloji anahtarına eşit dağılım · Zone'lar arasında maxSkew: 1
+PriorityClass;Pod'ların önemi · Yüksek öncelik düşüğü yerinden edebilir
+Bekleme süresi;Grace period — SIGTERM ile SIGKILL arasındaki süre · terminationGracePeriodSeconds, varsayılan 30
+ConfigMap;Anahtar-değer yapılandırma nesnesi · Dosya ya da env olarak mount edilir
+Secret;"Hassas değerler için yapılandırma · API'de base64; etcd'yi durağanda şifrele"
+External Secrets Operator;ESO — Vault/bulut yöneticilerinden secret senkronlar · ExternalSecret → Kubernetes Secret
+Secrets Store CSI;Secret'ları doğrudan yöneticiden mount eder · Kubernetes Secret nesnesi gerekmez
+PV;PersistentVolume — Cluster'daki bir depolama parçası · Bulut diski, NFS, yerel disk destekli
+PVC;PersistentVolumeClaim — Depolama talebi · Boyut + erişim modu + sınıf
+StorageClass;Volume'ların nasıl oluşturulacağı · Provisioner, parametreler, geri alma politikası
+Erişim modları;RWO / ROX / RWX / RWOP — Kim mount edebilir · Blok diskler RWO'dur (tek node)
+CSI;Container Storage Interface — Standart depolama sürücüsü API'si · Controller (oluştur/tak) + node (mount) eklentileri
+WaitForFirstConsumer;Pod zamanlanana kadar oluşturmayı ertele · Disk pod'un zone'unda oluşur
+Geri alma politikası;Reclaim policy — PVC silinince PV'ye ne olur · Delete ya da Retain
+VolumeSnapshot;Bir volume'un zamandaki kopyası · CSI snapshot desteğiyle
+Chart;Helm paketi · Chart.yaml, values.yaml, templates/
+Values;Bir chart'ın girdileri · Varsayılanlar -f prod.yaml / --set ile ezilir
+Release;Bir chart'ın bir kurulumu · İsim + namespace + revizyon geçmişi
+Hook;Kurulum/yükseltme aşamalarında çalışan Job · pre-upgrade DB migration'ı
+OCI registry;Open Container Initiative — Chart'ları imaj gibi sakla · helm push chart.tgz oci://…
+Base / overlay;Kustomize ortak yapılandırma / ortam başına yamalar · overlays/prod, base'i yamalar
+Generator;Hash ekli ConfigMap/Secret oluşturur · Değişince rollout tetikler
+CRD;CustomResourceDefinition — API'ye yeni kaynak tipi ekler · Şema, sürümler, doğrulama
+CR;Custom Resource — Bir CRD'nin örneği · kind: Certificate
+Operator;Alan bilgisine sahip bir CRD controller'ı · Uzlaştırma döngüsü: gözle → farkı bul → uygula
+Finalizer;Temizlik bitene kadar silmeyi engeller · Operator bitince kaldırır
+Crossplane;Bulut kaynakları için operator'ler · Veritabanları, bucket'lar için Kubernetes API'si
+metrics-server;Cluster çapında CPU/bellek kullanımı · kubectl top ve kaynak HPA'sı için kaynak
+Kullanım hedefi;Utilization target — Hedeflenen request yüzdesi · averageUtilization: 70
+Özel / harici metrikler;Custom / external metrics — CPU dışı sinyaller · Adapter'larla RPS, gecikme, kuyruk derinliği
+Stabilizasyon penceresi;Stabilization window — Küçültmeden/büyütmeden önce bekle · Salınımı önler (behavior)
+VPA;Vertical Pod Autoscaler — Request'leri önerir/ayarlar · Off / Initial / Recreate / InPlaceOrRecreate
+Cluster Autoscaler;CA — Node gruplarını ölçekler · Bekleyen pod'lara tepki verir
+Karpenter;Node'ları doğrudan oluşturur · Bekleyen pod'lara göre instance tipi seçer
+Konsolidasyon;Consolidation — Az kullanılan node'ları kaldırmak/değiştirmek · PDB'lere uyarak pod'ları tahliye eder
+Fazla provizyon;Overprovisioning — Düşük öncelikli yer tutucu pod'lar · Hızlı büyüme için pay ayırır
+Bekleme;Cooldown — Ölçekleme aksiyonları arasındaki gecikme · Salınımı engeller
+Olaylar;Events — Controller'ların yaptıklarının kısa ömürlü kayıtları · kubectl events, varsayılan ~1 saat tutulur
+OOMKilled;Out Of Memory — Kernel container'ı bellek limitini aştığı için öldürdü · cgroup memory.max (3.3)
+CrashLoopBackOff;"Container sürekli çıkıyor; yeniden başlatmalar üstel geciktiriliyor · 10 sn → 5 dk"
+ImagePullBackOff;"İmaj çekilemiyor; backoff ile yeniden deneniyor · İsim/etiket, yetki, registry limitleri"
+Geçici container;Ephemeral container — Çalışan bir pod'a eklenen debug container'ı · kubectl debug -it pod --image=…
+Node durumları;Node conditions — Ready, MemoryPressure, DiskPressure, PIDPressure · Baskı → tahliyeler
+Sürüm uyumu;Version skew — Bileşenler arası izin verilen sürüm farkları · kubelet, API server'dan en fazla 3 minor eski
+Kaldırılan API;Deprecated API — Kaldırılması planlanan API sürümü · Yükseltmeden önce manifest'leri taşımak gerekir
+etcd snapshot'ı;"Cluster'ın durum deposunun yedeği · Kendi yönettiğin cluster'lar; yönetilenlerde sağlayıcı yapar"
+Velero;Kubernetes nesnelerini + volume'ları yedekler · Nesne depolamaya, herhangi bir cluster'a geri yükler
+2. gün;Day 2 — İlk kurulumdan sonra işletim · Yükseltmeler, ölçekleme, yedekler, olaylar
+Workload controller'ı;Workload controller — Pod'ları senin için yöneten nesne · Deployment, StatefulSet, DaemonSet, Job, CronJob
+Probe;Kubelet sağlık kontrolü · startup, readiness, liveness
+PDB;PodDisruptionBudget — Gönüllü kesintilerde en az erişilebilir pod sayısı · Drain'lerin çok fazlasını almasına karşı korur
+PV / PVC;PersistentVolume / Claim — Depolama nesnesi / bir pod'un onu talep etmesi · 1:1 bağlanır, CSI ile oluşturulur
+Helm;Kubernetes paket yöneticisi · Chart = şablonlar + değerler, release'ler
+Kustomize;Şablonsuz overlay'ler · base + ortam başına yamalar
+HPA / VPA;Horizontal / Vertical Pod Autoscaler — Replika sayısı / kaynak boyutu otomasyonu · Metriklere dayalı
 Bir kesme handler'ı neden uyuyamaz ya da ağır iş yapamaz?;"Kesmeler (en azından o hatta/çekirdekte) bloklu ve herhangi bir process bağlamı dışında çalışır; uyumak o çekirdeğin kesme işlemesini dondurur. Ağır iş alt yarıya gider."
 NAPI ne yapar ve neden?;"İlk kesmeden sonra NIC'in kesmesini kapatır ve kuyruk boşalana kadar paket gruplarını yoklar; yüksek paket hızlarında kesme fırtınasını önler."
 Linux yeni takılan bir cihaz için hangi sürücüyü yükleyeceğini nasıl bilir?;"Bus cihaz kimliklerini okur, kernel modalias içeren bir uevent yayar, udev bunu bir modülle eşler ve modprobe çalıştırır; sonra sürücünün probe()'u cihazı sahiplenir."
@@ -1175,3 +1237,33 @@ Paylaşılan sorumluluk modelinde herkese açık bir S3 bucket'ından veri sızm
 Yüksek erişilebilirlik için 'çok AZ' neden genelde yeterli ve ne zaman çok bölge gerekir?;"AZ'lerin bağımsız hata alanları vardır; onlara yaymak veri merkezi hatalarından düşük gecikme ve maliyetle sağ çıkarır. Çok bölge; bölgesel kesintiler, sıkı RTO/RPO, veri yerelliği ya da global gecikme için gerekir ve çok daha karmaşıktır."
 Production değişiklikleri neden konsol yerine kod olarak altyapıyla yapılmalı?;"Kod incelenir, sürümlenir, tekrarlanabilir ve bir felaketten sonra ortamı yeniden kurabilir; konsol değişiklikleri görünmez, tekrar üretilemez ve herkesin var sandığından uzaklaşır."
 RPO ve RTO ne demek?;"RPO ne kadar veri (zaman) kaybetmeyi göze alabileceğindir; RTO servisin ne kadar süre erişilemez kalabileceğidir. Birlikte yedek ve DR stratejisini ve maliyetini belirlerler."
+4 replikalı bir Deployment için maxSurge: 25% ve maxUnavailable: 0 ne anlama gelir?;Rollout sırasında en fazla 1 ek pod olabilir (toplam 5) ve erişilebilir pod sayısı asla 4'ün altına düşmez: eskisi kaldırılmadan önce yeni bir pod hazır olmalıdır.
+Veritabanını kontrol eden bir liveness probe neden bir kesintiyi kötüleştirebilir?;"Veritabanı yavaşlarsa her pod liveness'ta başarısız olur ve aynı anda yeniden başlatılır; önbellekler ve bağlantılar kaybolur ve sistem zorlandığı anda tam da ek yük gelir."
+Startup probe neden faydalı?;"Liveness ve readiness probe'larını gevşetmeden yavaş açılan uygulamalara boot süresi verir; onlar ancak startup probe başarılı olunca başlar."
+kubectl delete pod ile container'ın durması arasında ne olur?;"Pod sonlanıyor olarak işaretlenir; paralelde endpoint Service'lerden çıkarılır ve kubelet preStop'u çalıştırıp SIGTERM gönderir; bekleme süresinden sonra kalan süreç SIGKILL alır."
+Taint ile node affinity arasındaki fark ne?;"Node üzerindeki taint onu tolere etmeyen pod'ları iter (node seçer); pod üzerindeki node affinity onu belli label'lara sahip node'lara çeker (pod seçer). Özel node'lar genelde ikisini birden kullanır."
+envFrom ile kullanılan bir ConfigMap'i değiştirdin. Uygulama neden yeni değeri görmüyor?;"Ortam değişkenleri container başlarken ayarlanır; çalışan bir süreçte güncellenmez. Pod'ları yeniden başlat (ör. bir yapılandırma checksum annotation'ıyla) ya da ConfigMap'i dosya olarak mount et."
+Kubernetes Secret'ları tek başına neden yeterli değil?;Sadece base64 kodludurlar, get secrets yetkisi olan herkes okuyabilir ve yapılandırılmazsa etcd'de şifresiz saklanırlar. Durağan şifreleme, sıkı RBAC ve ideal olarak harici bir secret yöneticisi kullan.
+WaitForFirstConsumer neyi çözer?;"Diski oluşturmayı pod zamanlanana kadar erteler; volume node ile aynı zone'da oluşturulur. Yoksa disk pod'un çalışamayacağı bir zone'a düşebilir."
+RWO PVC'li bir pod bir zone hatasından sonra neden Pending'de takılabilir?;"Disk çöken zone'da yaşar ve sadece oradaki node'lara takılabilir; scheduler pod'u başka bir yere yerleştiremez."
+Önemli volume'lar için geri alma politikası olarak neden Retain kullanılır?;"Delete ile PVC'yi (ya da namespace'ini) silmek alttaki diski de siler; Retain diski tutar, böylece veri kurtarılabilir."
+Helm bir release hakkındaki bilgiyi nerede saklar?;"Release'in namespace'inde, revizyon başına üretilmiş manifest'i, değerleri ve meta veriyi içeren bir Secret olarak; helm history ve rollback bunu kullanır."
+Helm ile Kustomize arasındaki temel fark ne?;"Helm şablonları değerlerle üretir (ve release'leri yönetir); Kustomize düz YAML base'lerini şablon ya da release takibi olmadan overlay'lerle yamalar."
+ConfigMap'in checksum'ını neden pod şablonu annotation'larına eklenir?;"Yapılandırma değişikliği pod şablonunu değiştirsin ve kademeli bir güncelleme tetiklensin diye; yoksa pod'lar eski yapılandırmayla çalışmaya devam eder."
+Operator deseni nedir?;"Bir CRD yeni bir kaynak tipi tanımlar ve bir controller o kaynakları sürekli istenen duruma uzlaştırır; provizyon, failover, yedekler ve yükseltmeler gibi operasyonel görevleri otomatikleştirir."
+Bir operator'ü production'da çalıştırmadan önce neyi kontrol etmelisin?;Olgunluk ve bakım, operator'ün ve CRD'lerinin nasıl yükseltildiği, ihtiyaç duyduğu RBAC, operator kapalıyken davranış ve yedek/geri yükleme ile hata ele alımı.
+"5 pod CPU request'lerinin %90'ında çalışıyor; hedef %60. HPA kaç replika ister?";ceil(5 × 90 / 60) = ceil(7,5) = 8 replika (min/max içinde).
+CPU tabanlı HPA neden doğru request'lere bağlı?;Kullanım request'in yüzdesi olarak ölçülür. Request'ler gerçek kullanımdan çok yüksekse kullanım hedefe hiç ulaşmaz ve HPA ölçeklemez (node'lar da israf olur).
+KEDA tek başına HPA'nın yapamadığı neyi yapabilir?;Birçok harici olay kaynağına göre hazır ölçekleme yapabilir ve iş yüklerini sıfıra indirip olaylar gelince tekrar büyütebilir.
+Karpenter, Cluster Autoscaler'dan nasıl farklı?;"Önceden tanımlı node gruplarını büyütmek yerine bekleyen pod'lara bakar ve en uygun instance tiplerini doğrudan başlatır; node'ları kaldırarak ya da daha ucuzlarıyla değiştirerek aktif konsolide eder."
+Hızlı autoscaler'larla bile neden pay bırakılır?;"Yeni node'ların boot etmesi, katılması ve imaj çekmesi dakikalar sürer; boş kapasite olmadan ani artışlar yeni kapasite hazır olmadan gelir."
+Bir pod Pending. İlk nereye bakarsın ve yaygın sebepler neler?;kubectl describe pod'daki olaylara: request'leri için yetersiz CPU/bellek, toleration'sız taint'ler, karşılanamayan affinity/yayılım, bağlanmamış ya da başka zone'daki bir PVC ya da namespace kotası.
+Bir container 137 çıkış kodu gösteriyor. Ne oldu?;"SIGKILL ile öldürüldü; çoğunlukla bellek limitini aştığı için OOM killer tarafından (Reason: OOMKilled) ya da sonlanma bekleme süresi içinde durmadığı için."
+CrashLoopBackOff için neden kubectl logs --previous kullanılır?;"Mevcut container az önce yeniden başlamış ve işe yarar bir şey loglamamış olabilir; --previous çöken örneğin çıktısını gösterir."
+Bir Service bağlantı hataları dönüyor ama pod'lar Running. Neyi kontrol edersin?;Pod'ların Ready olup Service'in EndpointSlice'larında görünüp görünmediğini, seçici ve hedef portun eşleşip eşleşmediğini, NetworkPolicy'leri ve debug pod'dan DNS çözümlemesini.
+Kubernetes 1.31'den doğrudan 1.34'e neden atlayamazsın?;"Bileşenleri desteklenen uyum içinde tutmak ve depolama/API taşımalarına izin vermek için control plane her seferinde bir minor sürüm yükseltilmelidir; kaldırılan API'ler de her adımda taşınmalıdır."
+Deployment yerine ne zaman StatefulSet kullanılır?;Pod'ların sabit kimliğe ve kendi depolamalarına ihtiyacı olduğunda: sabit isimler, sıralı başlatma/durdurma ve replika başına bir PVC (veritabanları, broker'lar, cluster'lı uygulamalar).
+Readiness ile liveness probe arasındaki fark ne?;"Readiness bir pod'un trafik alıp almayacağına karar verir (başarısız olunca Service endpoint'lerinden çıkarılır); liveness container'ın yeniden başlatılıp başlatılmayacağına karar verir."
+Kubernetes readiness'ı beklese de pod'lar kademeli güncellemede neden istek düşürebilir?;"Endpoint'ten çıkarma SIGTERM'den sonra asenkron yayılır; uygulama hemen çıkarsa load balancer'lar ona birkaç istek daha yönlendirir. preStop beklemesi ve düzgün boşaltma bunu düzeltir."
+Bir PodDisruptionBudget neye karşı korur?;"Gönüllü kesintilerin (node drain'leri, yükseltmeler, autoscaler konsolidasyonu) aynı anda çok fazla pod'u tahliye etmesine; çökmelere ya da node hatalarına karşı korumaz."
+Kubernetes cluster'ları neden düzenli yükseltilmeli?;"Minor sürümler sadece yaklaşık 14 ay desteklenir; yönetilen servisler yükseltmeye zorlar, API'ler kaldırılır ve güvenlik düzeltmeleri sadece desteklenen sürümlere gelir."

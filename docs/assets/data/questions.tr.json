@@ -2788,5 +2788,275 @@
 "url": "14-cloud/",
 "q": "RPO ve RTO ne demek?",
 "a": "RPO ne kadar veri (zaman) kaybetmeyi göze alabileceğindir; RTO servisin ne kadar süre erişilemez kalabileceğidir. Birlikte yedek ve DR stratejisini ve maliyetini belirlerler."
+},
+{
+"id": "b73de9452a",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "4 replikalı bir Deployment için maxSurge: 25% ve maxUnavailable: 0 ne anlama gelir?",
+"a": "Rollout sırasında en fazla 1 ek pod olabilir (toplam 5) ve erişilebilir pod sayısı asla 4'ün altına düşmez: eskisi kaldırılmadan önce yeni bir pod hazır olmalıdır."
+},
+{
+"id": "f3b21d7d0c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "Veritabanını kontrol eden bir liveness probe neden bir kesintiyi kötüleştirebilir?",
+"a": "Veritabanı yavaşlarsa her pod liveness'ta başarısız olur ve aynı anda yeniden başlatılır; önbellekler ve bağlantılar kaybolur ve sistem zorlandığı anda tam da ek yük gelir."
+},
+{
+"id": "23fd585ded",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "Startup probe neden faydalı?",
+"a": "Liveness ve readiness probe'larını gevşetmeden yavaş açılan uygulamalara boot süresi verir; onlar ancak startup probe başarılı olunca başlar."
+},
+{
+"id": "a54fd32b7c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "kubectl delete pod ile container'ın durması arasında ne olur?",
+"a": "Pod sonlanıyor olarak işaretlenir; paralelde endpoint Service'lerden çıkarılır ve kubelet preStop'u çalıştırıp SIGTERM gönderir; bekleme süresinden sonra kalan süreç SIGKILL alır."
+},
+{
+"id": "fa3c738d7b",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.1 — Workload'lar, probe'lar ve zamanlama",
+"url": "15-kubernetes/01-workloads/",
+"q": "Taint ile node affinity arasındaki fark ne?",
+"a": "Node üzerindeki taint onu tolere etmeyen pod'ları iter (node seçer); pod üzerindeki node affinity onu belli label'lara sahip node'lara çeker (pod seçer). Özel node'lar genelde ikisini birden kullanır."
+},
+{
+"id": "c9c5921801",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "envFrom ile kullanılan bir ConfigMap'i değiştirdin. Uygulama neden yeni değeri görmüyor?",
+"a": "Ortam değişkenleri container başlarken ayarlanır; çalışan bir süreçte güncellenmez. Pod'ları yeniden başlat (ör. bir yapılandırma checksum annotation'ıyla) ya da ConfigMap'i dosya olarak mount et."
+},
+{
+"id": "567bf736cf",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Kubernetes Secret'ları tek başına neden yeterli değil?",
+"a": "Sadece base64 kodludurlar, get secrets yetkisi olan herkes okuyabilir ve yapılandırılmazsa etcd'de şifresiz saklanırlar. Durağan şifreleme, sıkı RBAC ve ideal olarak harici bir secret yöneticisi kullan."
+},
+{
+"id": "423391fa67",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "WaitForFirstConsumer neyi çözer?",
+"a": "Diski oluşturmayı pod zamanlanana kadar erteler; volume node ile aynı zone'da oluşturulur. Yoksa disk pod'un çalışamayacağı bir zone'a düşebilir."
+},
+{
+"id": "465f6da064",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "RWO PVC'li bir pod bir zone hatasından sonra neden Pending'de takılabilir?",
+"a": "Disk çöken zone'da yaşar ve sadece oradaki node'lara takılabilir; scheduler pod'u başka bir yere yerleştiremez."
+},
+{
+"id": "5b97b8ed72",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.2 — Yapılandırma ve kalıcı depolama",
+"url": "15-kubernetes/02-config-storage/",
+"q": "Önemli volume'lar için geri alma politikası olarak neden Retain kullanılır?",
+"a": "Delete ile PVC'yi (ya da namespace'ini) silmek alttaki diski de siler; Retain diski tutar, böylece veri kurtarılabilir."
+},
+{
+"id": "2b451eef98",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Helm bir release hakkındaki bilgiyi nerede saklar?",
+"a": "Release'in namespace'inde, revizyon başına üretilmiş manifest'i, değerleri ve meta veriyi içeren bir Secret olarak; helm history ve rollback bunu kullanır."
+},
+{
+"id": "ab725eaaa7",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Helm ile Kustomize arasındaki temel fark ne?",
+"a": "Helm şablonları değerlerle üretir (ve release'leri yönetir); Kustomize düz YAML base'lerini şablon ya da release takibi olmadan overlay'lerle yamalar."
+},
+{
+"id": "34a397de42",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "ConfigMap'in checksum'ını neden pod şablonu annotation'larına eklenir?",
+"a": "Yapılandırma değişikliği pod şablonunu değiştirsin ve kademeli bir güncelleme tetiklensin diye; yoksa pod'lar eski yapılandırmayla çalışmaya devam eder."
+},
+{
+"id": "1d7158898c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Operator deseni nedir?",
+"a": "Bir CRD yeni bir kaynak tipi tanımlar ve bir controller o kaynakları sürekli istenen duruma uzlaştırır; provizyon, failover, yedekler ve yükseltmeler gibi operasyonel görevleri otomatikleştirir."
+},
+{
+"id": "3325e9a90e",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.3 — Helm, Kustomize ve operator'ler",
+"url": "15-kubernetes/03-helm-operators/",
+"q": "Bir operator'ü production'da çalıştırmadan önce neyi kontrol etmelisin?",
+"a": "Olgunluk ve bakım, operator'ün ve CRD'lerinin nasıl yükseltildiği, ihtiyaç duyduğu RBAC, operator kapalıyken davranış ve yedek/geri yükleme ile hata ele alımı."
+},
+{
+"id": "50af2c9c4f",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "5 pod CPU request'lerinin %90'ında çalışıyor; hedef %60. HPA kaç replika ister?",
+"a": "ceil(5 × 90 / 60) = ceil(7,5) = 8 replika (min/max içinde)."
+},
+{
+"id": "bf71192db7",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "CPU tabanlı HPA neden doğru request'lere bağlı?",
+"a": "Kullanım request'in yüzdesi olarak ölçülür. Request'ler gerçek kullanımdan çok yüksekse kullanım hedefe hiç ulaşmaz ve HPA ölçeklemez (node'lar da israf olur)."
+},
+{
+"id": "ee41d3d5ef",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "KEDA tek başına HPA'nın yapamadığı neyi yapabilir?",
+"a": "Birçok harici olay kaynağına göre hazır ölçekleme yapabilir ve iş yüklerini sıfıra indirip olaylar gelince tekrar büyütebilir."
+},
+{
+"id": "d3dcc5139b",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "Karpenter, Cluster Autoscaler'dan nasıl farklı?",
+"a": "Önceden tanımlı node gruplarını büyütmek yerine bekleyen pod'lara bakar ve en uygun instance tiplerini doğrudan başlatır; node'ları kaldırarak ya da daha ucuzlarıyla değiştirerek aktif konsolide eder."
+},
+{
+"id": "d1fdbe101e",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.4 — Pod ve node'ları otomatik ölçekleme",
+"url": "15-kubernetes/04-autoscaling/",
+"q": "Hızlı autoscaler'larla bile neden pay bırakılır?",
+"a": "Yeni node'ların boot etmesi, katılması ve imaj çekmesi dakikalar sürer; boş kapasite olmadan ani artışlar yeni kapasite hazır olmadan gelir."
+},
+{
+"id": "1ace210035",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Bir pod Pending. İlk nereye bakarsın ve yaygın sebepler neler?",
+"a": "kubectl describe pod'daki olaylara: request'leri için yetersiz CPU/bellek, toleration'sız taint'ler, karşılanamayan affinity/yayılım, bağlanmamış ya da başka zone'daki bir PVC ya da namespace kotası."
+},
+{
+"id": "c50d0a77fb",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Bir container 137 çıkış kodu gösteriyor. Ne oldu?",
+"a": "SIGKILL ile öldürüldü; çoğunlukla bellek limitini aştığı için OOM killer tarafından (Reason: OOMKilled) ya da sonlanma bekleme süresi içinde durmadığı için."
+},
+{
+"id": "813f295a5c",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "CrashLoopBackOff için neden kubectl logs --previous kullanılır?",
+"a": "Mevcut container az önce yeniden başlamış ve işe yarar bir şey loglamamış olabilir; --previous çöken örneğin çıktısını gösterir."
+},
+{
+"id": "3db0921b72",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Bir Service bağlantı hataları dönüyor ama pod'lar Running. Neyi kontrol edersin?",
+"a": "Pod'ların Ready olup Service'in EndpointSlice'larında görünüp görünmediğini, seçici ve hedef portun eşleşip eşleşmediğini, NetworkPolicy'leri ve debug pod'dan DNS çözümlemesini."
+},
+{
+"id": "701a53af3d",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "15.5 — Sorun giderme, yükseltmeler ve yedekler",
+"url": "15-kubernetes/05-troubleshooting/",
+"q": "Kubernetes 1.31'den doğrudan 1.34'e neden atlayamazsın?",
+"a": "Bileşenleri desteklenen uyum içinde tutmak ve depolama/API taşımalarına izin vermek için control plane her seferinde bir minor sürüm yükseltilmelidir; kaldırılan API'ler de her adımda taşınmalıdır."
+},
+{
+"id": "277effe933",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Deployment yerine ne zaman StatefulSet kullanılır?",
+"a": "Pod'ların sabit kimliğe ve kendi depolamalarına ihtiyacı olduğunda: sabit isimler, sıralı başlatma/durdurma ve replika başına bir PVC (veritabanları, broker'lar, cluster'lı uygulamalar)."
+},
+{
+"id": "8a8f9f7e52",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Readiness ile liveness probe arasındaki fark ne?",
+"a": "Readiness bir pod'un trafik alıp almayacağına karar verir (başarısız olunca Service endpoint'lerinden çıkarılır); liveness container'ın yeniden başlatılıp başlatılmayacağına karar verir."
+},
+{
+"id": "1228c2af63",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Kubernetes readiness'ı beklese de pod'lar kademeli güncellemede neden istek düşürebilir?",
+"a": "Endpoint'ten çıkarma SIGTERM'den sonra asenkron yayılır; uygulama hemen çıkarsa load balancer'lar ona birkaç istek daha yönlendirir. preStop beklemesi ve düzgün boşaltma bunu düzeltir."
+},
+{
+"id": "6f8a71fee8",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Bir PodDisruptionBudget neye karşı korur?",
+"a": "Gönüllü kesintilerin (node drain'leri, yükseltmeler, autoscaler konsolidasyonu) aynı anda çok fazla pod'u tahliye etmesine; çökmelere ya da node hatalarına karşı korumaz."
+},
+{
+"id": "8d5ea8929f",
+"ch": "15-kubernetes",
+"chTitle": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"page": "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak",
+"url": "15-kubernetes/",
+"q": "Kubernetes cluster'ları neden düzenli yükseltilmeli?",
+"a": "Minor sürümler sadece yaklaşık 14 ay desteklenir; yönetilen servisler yükseltmeye zorlar, API'ler kaldırılır ve güvenlik düzeltmeleri sadece desteklenen sürümlere gelir."
 }
 ]
