@@ -1,6 +1,6 @@
 ---
 title: "16.3 — Olaylar, nöbet ve postmortem'ler"
-description: Ekipler production olaylarını nasıl ele alır: sürdürülebilir nöbet, belirtilere ve SLO'lara alarm, önem seviyeleri, olay komutanı ve diğer roller, iletişim ve durum sayfaları, düzeltmeden önce hafifletme, runbook'lar, suçlamasız postmortem'ler, aksiyon maddeleri ve ramak kala olaylardan öğrenmek.
+description: "Ekipler production olaylarını nasıl ele alır: sürdürülebilir nöbet, belirtilere ve SLO'lara alarm, önem seviyeleri, olay komutanı ve diğer roller, iletişim ve durum sayfaları, düzeltmeden önce hafifletme, runbook'lar, suçlamasız postmortem'ler, aksiyon maddeleri ve ramak kala olaylardan öğrenmek."
 ---
 
 # 16.3 — Olaylar, nöbet ve postmortem'ler

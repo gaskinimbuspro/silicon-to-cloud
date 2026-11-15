@@ -1,6 +1,6 @@
 ---
 title: "16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler"
-description: Production'ı güvenle değiştirmek: deploy'u release'ten ayırmak, feature flag tipleri ve yaşam döngüsü, OpenFeature, metriklere dayalı kademeli teslim, kapatma anahtarları, genişlet/daralt veritabanı migration'ları, geriye uyumlu API'ler ve olaylar, ortamlar, önizleme ortamları ve terfi, değişiklik dondurmalarının neden nadiren işe yaradığı.
+description: "Production'ı güvenle değiştirmek: deploy'u release'ten ayırmak, feature flag tipleri ve yaşam döngüsü, OpenFeature, metriklere dayalı kademeli teslim, kapatma anahtarları, genişlet/daralt veritabanı migration'ları, geriye uyumlu API'ler ve olaylar, ortamlar, önizleme ortamları ve terfi, değişiklik dondurmalarının neden nadiren işe yaradığı."
 ---
 
 # 16.2 — Güvenli sürümler: feature flag'ler ve kesintisiz değişiklikler

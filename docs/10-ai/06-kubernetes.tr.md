@@ -1,6 +1,6 @@
 ---
 title: "10.6 — Kubernetes üzerinde AI platformu"
-description: Kubernetes'te GPU çalıştırmak: GPU Operator, device plugin ve Dynamic Resource Allocation, GPU node havuzları, Kueue ve gang scheduling, JobSet ve LeaderWorkerSet, KServe, llm-d ve Gateway API Inference Extension, model önbellekleme, otomatik ölçekleme, gözlemlenebilirlik ve maliyet.
+description: "Kubernetes'te GPU çalıştırmak: GPU Operator, device plugin ve Dynamic Resource Allocation, GPU node havuzları, Kueue ve gang scheduling, JobSet ve LeaderWorkerSet, KServe, llm-d ve Gateway API Inference Extension, model önbellekleme, otomatik ölçekleme, gözlemlenebilirlik ve maliyet."
 ---
 
 # 10.6 — Kubernetes üzerinde AI platformu

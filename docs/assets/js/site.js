@@ -83,7 +83,7 @@
       const meta = document.createElement("div");
       meta.className = "s2c-meta";
       meta.innerHTML = `<span>⏱ ${mins} ${T("min read", "dk okuma")}</span>` +
-        (diagrams ? `<span>🗺️ ${diagrams} ${T("diagrams", "diagram")}</span>` : "") +
+        (diagrams ? `<span>🗺️ ${diagrams} ${T(diagrams === 1 ? "diagram" : "diagrams", "diagram")}</span>` : "") +
         (qs ? `<span>❓ ${qs} ${T("questions", "soru")}</span>` : "");
       h1.after(meta);
     }

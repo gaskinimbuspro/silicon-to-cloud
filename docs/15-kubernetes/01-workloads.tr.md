@@ -1,6 +1,6 @@
 ---
 title: "15.1 — Workload'lar, probe'lar ve zamanlama"
-description: Kubernetes'te iş yüklerini iyi çalıştırmak: Deployment'lar ve rollout ayarları, StatefulSet'ler, DaemonSet'ler, Job ve CronJob'lar, startup, readiness ve liveness probe tasarımı, düzgün kapanış, request, limit ve QoS, node affinity, taint ve toleration'lar, topoloji yayılımı, öncelik sınıfları ve PodDisruptionBudget'lar.
+description: "Kubernetes'te iş yüklerini iyi çalıştırmak: Deployment'lar ve rollout ayarları, StatefulSet'ler, DaemonSet'ler, Job ve CronJob'lar, startup, readiness ve liveness probe tasarımı, düzgün kapanış, request, limit ve QoS, node affinity, taint ve toleration'lar, topoloji yayılımı, öncelik sınıfları ve PodDisruptionBudget'lar."
 ---
 
 # 15.1 — Workload'lar, probe'lar ve zamanlama

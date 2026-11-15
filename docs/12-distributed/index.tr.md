@@ -1,6 +1,6 @@
 ---
 title: "Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık"
-description: Dağıtık sistemler neden zor (kısmi hata, bölünmeler, saatler), replikasyon, CAP ve PACELC ödünleşimleri, tutarlılık modelleri, Raft ile uzlaşı ve etcd'nin neden çoğunluğa ihtiyaç duyduğu, idempotency ve tam bir kez, dayanıklılık desenleri: zaman aşımları, yeniden denemeler, circuit breaker'lar, bulkhead'ler ve yük atma.
+description: "Dağıtık sistemler neden zor (kısmi hata, bölünmeler, saatler), replikasyon, CAP ve PACELC ödünleşimleri, tutarlılık modelleri, Raft ile uzlaşı ve etcd'nin neden çoğunluğa ihtiyaç duyduğu, idempotency ve tam bir kez, dayanıklılık desenleri: zaman aşımları, yeniden denemeler, circuit breaker'lar, bulkhead'ler ve yük atma."
 ---
 
 # Bölüm 12 — Dağıtık sistemler: uzlaşı, tutarlılık ve dayanıklılık

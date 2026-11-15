@@ -98,7 +98,7 @@
 .s2c-quiz .q-answer { display: none; padding: .9rem 1rem; border-radius: 12px; background: rgba(16,185,129,.08); border-left: 4px solid #10b981; font-size: .8rem; }
 .s2c-quiz.revealed .q-answer { display: block; }
 .s2c-quiz .q-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
-.s2c-quiz select { font: inherit; font-size: .72rem; padding: .3rem .5rem; border-radius: 8px; border: 1px solid var(--s2c-border); background: transparent; color: inherit; }
+.s2c-quiz select { font: inherit; font-size: .72rem; padding: .3rem .5rem; border-radius: 8px; border: 1px solid var(--s2c-border); background: transparent; color: inherit; max-width: 100%; min-width: 0; }
 .s2c-score { display: flex; gap: 1rem; font-size: .72rem; font-weight: 700; margin-top: .9rem; }
 .s2c-score .ok { color: #10b981; } .s2c-score .no { color: #f43f5e; }
 

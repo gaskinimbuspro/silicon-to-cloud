@@ -1,6 +1,6 @@
 ---
 title: "14.3 — Terraform ile kod olarak altyapı"
-description: Terraform ve OpenTofu nasıl çalışır: provider'lar, kaynaklar, bağımlılık grafiği, state ve neden var olduğu, plan ve apply, kilitli uzak state, değişkenler, çıktılar ve modüller, ortamlar, kayma ve import, altyapı için CI/CD pipeline'ları, politika kontrolleri ve klasik hatalar.
+description: "Terraform ve OpenTofu nasıl çalışır: provider'lar, kaynaklar, bağımlılık grafiği, state ve neden var olduğu, plan ve apply, kilitli uzak state, değişkenler, çıktılar ve modüller, ortamlar, kayma ve import, altyapı için CI/CD pipeline'ları, politika kontrolleri ve klasik hatalar."
 ---
 
 # 14.3 — Terraform ile kod olarak altyapı

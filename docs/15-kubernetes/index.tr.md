@@ -1,6 +1,6 @@
 ---
 title: "Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak"
-description: 2. gün Kubernetes operasyonları: workload controller'ları ve pod yaşam döngüsü, probe'lar ve düzgün kapanış, yapılandırma ve kalıcı depolama, Helm, Kustomize ve operator'ler, pod ve node ölçekleme, pod durumuna göre sorun giderme, yükseltmeler, yedekler ve çok kiracılık.
+description: "2. gün Kubernetes operasyonları: workload controller'ları ve pod yaşam döngüsü, probe'lar ve düzgün kapanış, yapılandırma ve kalıcı depolama, Helm, Kustomize ve operator'ler, pod ve node ölçekleme, pod durumuna göre sorun giderme, yükseltmeler, yedekler ve çok kiracılık."
 ---
 
 # Bölüm 15 — Derinlemesine Kubernetes: production'da çalıştırmak

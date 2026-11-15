@@ -1,6 +1,6 @@
 ---
 title: "14.1 — Compute: VM'ler, container'lar ve sunucusuz"
-description: Sanal makinelerden fonksiyonlara bulut compute seçenekleri: instance aileleri ve boyutlandırma, imajlar ve değişmez sunucular, Auto Scaling grupları ve sağlık kontrolleri, yönetilen Kubernetes, sunucusuz container'lar, fonksiyonlar ve soğuk başlangıçlar, spot kapasite ve bir karar rehberi.
+description: "Sanal makinelerden fonksiyonlara bulut compute seçenekleri: instance aileleri ve boyutlandırma, imajlar ve değişmez sunucular, Auto Scaling grupları ve sağlık kontrolleri, yönetilen Kubernetes, sunucusuz container'lar, fonksiyonlar ve soğuk başlangıçlar, spot kapasite ve bir karar rehberi."
 ---
 
 # 14.1 — Compute: VM'ler, container'lar ve sunucusuz

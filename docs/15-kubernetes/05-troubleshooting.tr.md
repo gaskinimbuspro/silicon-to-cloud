@@ -1,6 +1,6 @@
 ---
 title: "15.5 — Sorun giderme, yükseltmeler ve yedekler"
-description: Sistematik bir Kubernetes sorun giderme yöntemi: pod durumunu ve olayları okumak, Pending, ImagePullBackOff, CrashLoopBackOff, OOMKilled ve çıkış kodları, hazır olmayan pod'lar ve Service endpoint'leri, kubectl debug ve geçici container'lar, node ve DNS sorunları; ayrıca cluster yükseltmeleri, sürüm uyumu ve kaldırılan API'ler, etcd ve Velero ile iş yüklerini yedeklemek.
+description: "Sistematik bir Kubernetes sorun giderme yöntemi: pod durumunu ve olayları okumak, Pending, ImagePullBackOff, CrashLoopBackOff, OOMKilled ve çıkış kodları, hazır olmayan pod'lar ve Service endpoint'leri, kubectl debug ve geçici container'lar, node ve DNS sorunları; ayrıca cluster yükseltmeleri, sürüm uyumu ve kaldırılan API'ler, etcd ve Velero ile iş yüklerini yedeklemek."
 ---
 
 # 15.5 — Sorun giderme, yükseltmeler ve yedekler

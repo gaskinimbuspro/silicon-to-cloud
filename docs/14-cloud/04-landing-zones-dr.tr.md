@@ -1,6 +1,6 @@
 ---
 title: "14.4 — Hesaplar, landing zone'lar ve felaket kurtarma"
-description: Ciddi bulut kurulumlarının neden çok sayıda hesap ya da proje kullandığı, organizasyonlar ve organizasyon birimleri, SSO ve yetki setleri, korkuluk politikaları (SCP, org politikaları), hub-and-spoke ağ, merkezi loglama ve güvenlik, hesap üretimi ve felaket kurtarma: RPO ve RTO, yedekle ve geri yükle, pilot ışığı, ılık yedek, aktif-aktif ve game day'ler.
+description: "Ciddi bulut kurulumlarının neden çok sayıda hesap ya da proje kullandığı, organizasyonlar ve organizasyon birimleri, SSO ve yetki setleri, korkuluk politikaları (SCP, org politikaları), hub-and-spoke ağ, merkezi loglama ve güvenlik, hesap üretimi ve felaket kurtarma: RPO ve RTO, yedekle ve geri yükle, pilot ışığı, ılık yedek, aktif-aktif ve game day'ler."
 ---
 
 # 14.4 — Hesaplar, landing zone'lar ve felaket kurtarma

@@ -1,6 +1,6 @@
 ---
 title: "10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme"
-description: Model servisinin üstündeki katman: embedding'ler ve vektör arama, RAG hatları, araç çağırma ve ajanlar, MCP, AI gateway'leri ve guardrail'ler, değerlendirme ve LLM gözlemlenebilirliği.
+description: "Model servisinin üstündeki katman: embedding'ler ve vektör arama, RAG hatları, araç çağırma ve ajanlar, MCP, AI gateway'leri ve guardrail'ler, değerlendirme ve LLM gözlemlenebilirliği."
 ---
 
 # 10.7 — AI uygulamaları: RAG, ajanlar, gateway'ler, değerlendirme

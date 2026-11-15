@@ -1,6 +1,6 @@
 ---
 title: "8.1 — Render pipeline'ına derin dalış"
-description: Tarayıcılar byte'ları piksellere nasıl çevirir: kritik render yolu, render engelleyici CSS ve ayrıştırma engelleyici JS, preload tarayıcısı ve kaynak ipuçları, stil, layout, paint ve compositing, reflow'lar ve layout thrashing, GPU katmanları, fontlar ve görseller.
+description: "Tarayıcılar byte'ları piksellere nasıl çevirir: kritik render yolu, render engelleyici CSS ve ayrıştırma engelleyici JS, preload tarayıcısı ve kaynak ipuçları, stil, layout, paint ve compositing, reflow'lar ve layout thrashing, GPU katmanları, fontlar ve görseller."
 ---
 
 # 8.1 — Render pipeline'ına derin dalış

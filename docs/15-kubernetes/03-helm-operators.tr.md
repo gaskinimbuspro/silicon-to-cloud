@@ -1,6 +1,6 @@
 ---
 title: "15.3 — Helm, Kustomize ve operator'ler"
-description: Kubernetes'i paketlemek ve genişletmek: Helm chart'ları, şablonlar, değerler, release'ler, hook'lar ve OCI registry'leri, Kustomize base, overlay ve generator'ları, hangisinin ne zaman seçileceği, ikisinin GitOps'a nasıl oturduğu, CustomResourceDefinition'lar, operator deseni ve uzlaştırma döngüsü, bilinen operator'ler, Crossplane ve bir operator'ü çalıştırmadan önce nasıl değerlendireceğin.
+description: "Kubernetes'i paketlemek ve genişletmek: Helm chart'ları, şablonlar, değerler, release'ler, hook'lar ve OCI registry'leri, Kustomize base, overlay ve generator'ları, hangisinin ne zaman seçileceği, ikisinin GitOps'a nasıl oturduğu, CustomResourceDefinition'lar, operator deseni ve uzlaştırma döngüsü, bilinen operator'ler, Crossplane ve bir operator'ü çalıştırmadan önce nasıl değerlendireceğin."
 ---
 
 # 15.3 — Helm, Kustomize ve operator'ler

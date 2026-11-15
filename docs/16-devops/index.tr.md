@@ -1,6 +1,6 @@
 ---
 title: "Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir"
-description: DevOps gerçekte nedir: kültür, otomasyon, ölçüm ve paylaşım (CALMS), fikirden production'a akış, DORA metrikleri, ekip topolojileri ve DevOps, SRE ile platform mühendisliğinin rolleri; ayrıca Git akışları ve kod incelemesi, feature flag'ler ve genişlet/daralt ile güvenli sürümler, olay yönetimi ve suçlamasız postmortem'ler ve platform mühendisliği.
+description: "DevOps gerçekte nedir: kültür, otomasyon, ölçüm ve paylaşım (CALMS), fikirden production'a akış, DORA metrikleri, ekip topolojileri ve DevOps, SRE ile platform mühendisliğinin rolleri; ayrıca Git akışları ve kod incelemesi, feature flag'ler ve genişlet/daralt ile güvenli sürümler, olay yönetimi ve suçlamasız postmortem'ler ve platform mühendisliği."
 ---
 
 # Bölüm 16 — DevOps pratikleri: iyi ekipler yazılımı nasıl gönderir ve işletir

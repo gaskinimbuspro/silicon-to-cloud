@@ -1,6 +1,6 @@
 ---
 title: "15.2 — Yapılandırma ve kalıcı depolama"
-description: Kubernetes yapılandırmayı nasıl enjekte eder ve veriyi nasıl tutar: ConfigMap ve Secret'lar, ortam değişkenleri ve mount edilen dosyalar, yapılandırmayı yeniden yüklemek, External Secrets ve Secrets Store CSI sürücüsü, PersistentVolume'lar, PersistentVolumeClaim'ler, StorageClass'lar, erişim modları, CSI sürücüleri, zone farkında volume bağlama, büyütme ve snapshot'lar, StatefulSet'ler ve Kubernetes'te veritabanı çalıştırmak.
+description: "Kubernetes yapılandırmayı nasıl enjekte eder ve veriyi nasıl tutar: ConfigMap ve Secret'lar, ortam değişkenleri ve mount edilen dosyalar, yapılandırmayı yeniden yüklemek, External Secrets ve Secrets Store CSI sürücüsü, PersistentVolume'lar, PersistentVolumeClaim'ler, StorageClass'lar, erişim modları, CSI sürücüleri, zone farkında volume bağlama, büyütme ve snapshot'lar, StatefulSet'ler ve Kubernetes'te veritabanı çalıştırmak."
 ---
 
 # 15.2 — Yapılandırma ve kalıcı depolama

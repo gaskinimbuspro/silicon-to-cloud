@@ -23,4 +23,20 @@ for en in sorted(DOCS.rglob("*.md")):
         if f(a) != f(b):
             problems.append(f"{rel}: {name} differ (EN {f(a)} vs TR {f(b)})")
 print("\n".join(problems) or "EN/TR parity OK")
-sys.exit(1 if problems else 0)
+if problems:
+    sys.exit(1)
+
+
+# --- front matter must be valid YAML (otherwise it is rendered as text on the page)
+import yaml as _yaml, re as _re, glob as _glob, sys as _sys
+_bad = []
+for _f in _glob.glob("docs/**/*.md", recursive=True):
+    _m = _re.match(r"---\n(.*?)\n---\n", open(_f, encoding="utf-8").read(), _re.S)
+    if _m:
+        try:
+            assert isinstance(_yaml.safe_load(_m.group(1)), dict)
+        except Exception as _e:
+            _bad.append(f"{_f}: {_e}")
+if _bad:
+    print("Invalid front matter:\n  " + "\n  ".join(_bad)); _sys.exit(1)
+print("front matter OK")

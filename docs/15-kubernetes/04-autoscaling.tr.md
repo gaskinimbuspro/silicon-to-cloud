@@ -1,6 +1,6 @@
 ---
 title: "15.4 — Pod ve node'ları otomatik ölçekleme"
-description: Kubernetes otomatik ölçeklemesi iki katmanda nasıl çalışır: metrics-server ve özel metrikler, HPA algoritması, davranış ve stabilizasyon pencereleri, olay güdümlü ölçekleme ve sıfıra ölçekleme için KEDA, doğru boyutlandırma için VPA, Cluster Autoscaler ve Karpenter, konsolidasyon ve kesinti, spot node'lar, pay için fazla provizyon ve yaygın tuzaklar.
+description: "Kubernetes otomatik ölçeklemesi iki katmanda nasıl çalışır: metrics-server ve özel metrikler, HPA algoritması, davranış ve stabilizasyon pencereleri, olay güdümlü ölçekleme ve sıfıra ölçekleme için KEDA, doğru boyutlandırma için VPA, Cluster Autoscaler ve Karpenter, konsolidasyon ve kesinti, spot node'lar, pay için fazla provizyon ve yaygın tuzaklar."
 ---
 
 # 15.4 — Pod ve node'ları otomatik ölçekleme

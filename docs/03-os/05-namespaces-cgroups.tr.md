@@ -1,6 +1,6 @@
 ---
 title: "3.5 — Namespace'ler, cgroup'lar ve container izolasyonu"
-description: Container'ları oluşturan Linux kernel özellikleri: yedi namespace, cgroup v2 controller'ları, capability'ler, seccomp ve LSM'ler, user namespace'ler ve rootless container'lar; runc'nin bunlardan nasıl container kurduğu.
+description: "Container'ları oluşturan Linux kernel özellikleri: yedi namespace, cgroup v2 controller'ları, capability'ler, seccomp ve LSM'ler, user namespace'ler ve rootless container'lar; runc'nin bunlardan nasıl container kurduğu."
 ---
 
 # 3.5 — Namespace'ler, cgroup'lar ve container izolasyonu

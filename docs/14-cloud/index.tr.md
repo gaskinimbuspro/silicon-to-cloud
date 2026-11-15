@@ -1,6 +1,6 @@
 ---
 title: "Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun"
-description: Herkese açık bulut nasıl çalışır: bölgeler, erişilebilirlik zone'ları ve edge noktaları, paylaşılan sorumluluk modeli, IaaS/PaaS/sunucusuz, temel yapı taşları (compute, depolama, veritabanları, ağ, IAM), AWS/Azure/GCP servis eşlemesi, kod olarak altyapı, landing zone'lar ve felaket kurtarma.
+description: "Herkese açık bulut nasıl çalışır: bölgeler, erişilebilirlik zone'ları ve edge noktaları, paylaşılan sorumluluk modeli, IaaS/PaaS/sunucusuz, temel yapı taşları (compute, depolama, veritabanları, ağ, IAM), AWS/Azure/GCP servis eşlemesi, kod olarak altyapı, landing zone'lar ve felaket kurtarma."
 ---
 
 # Bölüm 14 — Bulut platformları: gerçekte ne kiralıyorsun

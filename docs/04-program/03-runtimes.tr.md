@@ -1,6 +1,6 @@
 ---
 title: "4.3 — Dil runtime'ları: JVM, V8, Python, Go"
-description: Bir dil runtime'ının process'e ne eklediği (yorumlayıcılar ve JIT derleyiciler, çöp toplama, thread modelleri: GIL, event loop, goroutine'ler, sanal thread'ler) ve JVM, Node.js, Python ve Go servislerinin container'larda nasıl boyutlandırılıp ayarlanacağı.
+description: "Bir dil runtime'ının process'e ne eklediği (yorumlayıcılar ve JIT derleyiciler, çöp toplama, thread modelleri: GIL, event loop, goroutine'ler, sanal thread'ler) ve JVM, Node.js, Python ve Go servislerinin container'larda nasıl boyutlandırılıp ayarlanacağı."
 ---
 
 # 4.3 — Dil runtime'ları: JVM, V8, Python, Go

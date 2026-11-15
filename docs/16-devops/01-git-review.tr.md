@@ -1,6 +1,6 @@
 ---
 title: "16.1 — Git akışları ve kod incelemesi"
-description: Ekipler kod üzerinde nasıl iş birliği yapar: trunk-based geliştirme ve GitFlow ile release branch'leri, branch koruması, zorunlu kontroller ve merge kuyrukları, küçük pull request'ler, etkili kod incelemesi ve CODEOWNERS, Conventional Commits, semantik sürümleme ve otomatik changelog'lar, monorepo ve polyrepo, imzalı commit'ler.
+description: "Ekipler kod üzerinde nasıl iş birliği yapar: trunk-based geliştirme ve GitFlow ile release branch'leri, branch koruması, zorunlu kontroller ve merge kuyrukları, küçük pull request'ler, etkili kod incelemesi ve CODEOWNERS, Conventional Commits, semantik sürümleme ve otomatik changelog'lar, monorepo ve polyrepo, imzalı commit'ler."
 ---
 
 # 16.1 — Git akışları ve kod incelemesi

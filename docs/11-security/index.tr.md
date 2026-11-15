@@ -1,6 +1,6 @@
 ---
 title: "Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri"
-description: Modern altyapı güvenliğinin katmanlar halinde nasıl çalıştığı: kimlik doğrulama ve yetkilendirme (OIDC, RBAC, IAM), secret yönetimi, statik anahtarsız iş yükü kimliği, zero trust ve mTLS, Kubernetes sıkılaştırma, yazılım tedarik zinciri güvenliği (SBOM, imzalama, SLSA), tespit ve müdahale.
+description: "Modern altyapı güvenliğinin katmanlar halinde nasıl çalıştığı: kimlik doğrulama ve yetkilendirme (OIDC, RBAC, IAM), secret yönetimi, statik anahtarsız iş yükü kimliği, zero trust ve mTLS, Kubernetes sıkılaştırma, yazılım tedarik zinciri güvenliği (SBOM, imzalama, SLSA), tespit ve müdahale."
 ---
 
 # Bölüm 11 — Güvenlik: kimlik, secret'lar, zero trust ve tedarik zinciri

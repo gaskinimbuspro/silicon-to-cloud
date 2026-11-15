@@ -1,6 +1,6 @@
 ---
 title: "16.4 — Platform mühendisliği ve geliştirici deneyimi"
-description: Platform mühendisliği nedir ve neden ortaya çıktı: bilişsel yük ve Team Topologies, ürün olarak platform, altın yollar ve servis şablonları, iç geliştirici portalları ve Backstage, modüller, CRD'ler ve API'lerle self-servis altyapı, geliştirici deneyimini ölçmek ve karşı desenler (ticket-ops, zorunlu kılınan platformlar, her şeyi inşa etmek).
+description: "Platform mühendisliği nedir ve neden ortaya çıktı: bilişsel yük ve Team Topologies, ürün olarak platform, altın yollar ve servis şablonları, iç geliştirici portalları ve Backstage, modüller, CRD'ler ve API'lerle self-servis altyapı, geliştirici deneyimini ölçmek ve karşı desenler (ticket-ops, zorunlu kılınan platformlar, her şeyi inşa etmek)."
 ---
 
 # 16.4 — Platform mühendisliği ve geliştirici deneyimi
