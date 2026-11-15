@@ -43,6 +43,21 @@
   // ---- nav checkmarks ----
   function markNav() {
     const read = readSet();
+
+  // Sidebar: turn "3 · Title" / "3.1 · Title" into a number badge + title
+  document.querySelectorAll(".md-nav--primary .md-ellipsis").forEach(el => {
+    const m = el.textContent.trim().match(/^(\d+(?:\.\d+)?) · (.+)$/);
+    if (!m) return;
+    const sub = m[1].includes(".");
+    el.textContent = "";
+    const n = document.createElement("span");
+    n.className = "s2c-n" + (sub ? " s2c-n--sub" : "");
+    n.textContent = m[1];
+    const t = document.createElement("span");
+    t.textContent = m[2];
+    el.append(n, t); el.classList.add("s2c-has-n");
+  });
+
     document.querySelectorAll(".md-nav__link[href]").forEach(a => {
       const k = keyOf(new URL(a.getAttribute("href"), location.href).pathname);
       a.classList.toggle("s2c-read", k !== "" && read.has(k));

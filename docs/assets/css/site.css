@@ -117,3 +117,31 @@
 .s2c-cloud .s2c-pill { background: rgba(139,92,246,.13); color: #7c3aed; }
 .s2c-ai .s2c-pill { background: rgba(236,72,153,.12); color: #db2777; }
 .s2c-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+
+/* ---------- Sidebar navigation (clean, collapsible) ---------- */
+@media screen and (min-width: 76.25em) {
+  .md-nav--primary > .md-nav__title { display: none; }
+}
+.md-nav--primary .md-nav__item { padding: 0; }
+.md-nav--primary .md-nav__link { margin: .08rem 0; padding: .3rem .5rem; border-radius: .5rem; transition: background .15s, color .15s; }
+.md-nav--primary .md-nav__container { padding: 0; }
+.md-nav--primary .md-nav__container > .md-nav__link { margin: 0; }
+.md-nav--primary .md-nav__container > a.md-nav__link { flex-grow: 1; }
+.md-nav--primary .md-nav__link:hover { background: rgba(99,102,241,.08); color: var(--md-default-fg-color); }
+.md-nav--primary .md-nav__link--active,
+.md-nav--primary .md-nav__item--active > .md-nav__container > a.md-nav__link { background: rgba(99,102,241,.12); color: #4338ca; font-weight: 600; }
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__link--active,
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__item--active > .md-nav__container > a.md-nav__link { background: rgba(129,140,248,.18); color: #c7d2fe; }
+@media screen and (min-width: 76.25em) {
+/* sub-pages: indented with a guide line */
+.md-nav--primary .md-nav[data-md-level="1"] > .md-nav__list { margin: .15rem 0 .4rem .95rem; padding-left: .45rem; border-left: 2px solid rgba(99,102,241,.18); }
+.md-nav--primary .md-nav[data-md-level="1"] > .md-nav__title { display: none; }
+/* "Chapters" separator after the quick links */
+.md-nav--primary > .md-nav__list > .md-nav__item:nth-child(5) { margin-top: .7rem; padding-top: .9rem; border-top: 1px solid var(--md-default-fg-color--lightest); position: relative; }
+.md-nav--primary > .md-nav__list > .md-nav__item:nth-child(5)::before { content: "CHAPTERS"; position: absolute; top: -.55rem; left: .5rem; padding: 0 .4rem; font-size: .55rem; font-weight: 700; letter-spacing: .08em; color: var(--md-default-fg-color--light); background: var(--md-default-bg-color); }
+}
+/* number badges (added by site.js) */
+.md-nav--primary .md-ellipsis.s2c-has-n { display: flex; align-items: center; white-space: normal; }
+.s2c-n { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 1.4rem; height: 1.4rem; margin-right: .55rem; border-radius: .45rem; font-size: .6rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+.s2c-n--sub { min-width: 1.7rem; height: auto; margin-right: .35rem; justify-content: flex-start; background: none; color: var(--md-default-fg-color--light); font-weight: 600; font-variant-numeric: tabular-nums; }
+.md-nav__link--active .s2c-n--sub { color: inherit; }

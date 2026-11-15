@@ -27,7 +27,8 @@ theme:
     text: Inter
     code: JetBrains Mono
   features:
-    - navigation.sections
+    - navigation.indexes
+    - navigation.prune
     - navigation.path
     - content.tooltips
     - search.suggest
@@ -39,39 +40,40 @@ theme:
     - toc.follow
 
 nav:
-  - Home: index.md
+  - "🏠 Home": index.md
   - "🧭 Learning paths": paths.md
   - "🎯 Practice": practice.md
+  - "🆕 What's new": changelog.md
   - "1 · Keypress":
-      - "Overview": 01-keypress/index.md
+      - 01-keypress/index.md
       - "1.1 · Interrupts & drivers": 01-keypress/01-interrupts-drivers.md
       - "1.2 · USB & HID": 01-keypress/02-usb-hid.md
       - "1.3 · Linux input stack": 01-keypress/03-input-stack.md
   - "2 · CPU & Assembly":
-      - "Overview": 02-cpu/index.md
+      - 02-cpu/index.md
       - "2.1 · Instruction sets & assembly": 02-cpu/01-isa-assembly.md
       - "2.2 · Caches & memory": 02-cpu/02-caches-memory.md
       - "2.3 · Pipelines & speculation": 02-cpu/03-pipeline-speculation.md
   - "3 · Operating system":
-      - "Overview": 03-os/index.md
+      - 03-os/index.md
       - "3.1 · Processes & threads": 03-os/01-processes-threads.md
       - "3.2 · Scheduler & CPU time": 03-os/02-scheduler.md
       - "3.3 · Virtual memory": 03-os/03-virtual-memory.md
       - "3.4 · Syscalls, I/O & filesystems": 03-os/04-io-filesystems.md
       - "3.5 · Namespaces & cgroups": 03-os/05-namespaces-cgroups.md
   - "4 · How a program runs":
-      - "Overview": 04-program/index.md
+      - 04-program/index.md
       - "4.1 · Compiling & linking": 04-program/01-compile-link.md
       - "4.2 · ELF & the loader": 04-program/02-elf-loader.md
       - "4.3 · Language runtimes": 04-program/03-runtimes.md
   - "5 · Networking":
-      - "Overview": 05-network/index.md
+      - 05-network/index.md
       - "5.1 · Ethernet, ARP & VLANs": 05-network/01-ethernet-arp-vlan.md
       - "5.2 · IP & routing": 05-network/02-ip-routing.md
       - "5.3 · NAT, firewalls & conntrack": 05-network/03-nat-firewall.md
       - "5.4 · Cloud networking (VPC)": 05-network/04-cloud-networking.md
   - "6 · DNS, TCP, TLS, HTTP":
-      - "Overview": 06-internet/index.md
+      - 06-internet/index.md
       - "6.1 · HTTP headers": 06-internet/01-headers.md
       - "6.2 · DNS": 06-internet/02-dns.md
       - "6.3 · TCP": 06-internet/03-tcp.md
@@ -79,26 +81,26 @@ nav:
       - "6.5 · HTTP/2 & HTTP/3": 06-internet/05-http2-http3.md
       - "6.6 · Methods, status codes & APIs": 06-internet/06-apis.md
   - "7 · Server side":
-      - "Overview": 07-server/index.md
+      - 07-server/index.md
       - "7.1 · Load balancing": 07-server/01-load-balancing.md
       - "7.2 · Caching patterns": 07-server/02-caching.md
       - "7.3 · Databases": 07-server/03-databases.md
       - "7.4 · Queues & events": 07-server/04-queues-events.md
   - "8 · The browser":
-      - "Overview": 08-browser/index.md
+      - 08-browser/index.md
       - "8.1 · Rendering pipeline": 08-browser/01-rendering.md
       - "8.2 · JavaScript & event loop": 08-browser/02-javascript-event-loop.md
       - "8.3 · Web performance": 08-browser/03-web-performance.md
       - "8.4 · Browser security": 08-browser/04-browser-security.md
   - "9 · Modern infrastructure":
-      - "Overview": 09-infra/index.md
+      - 09-infra/index.md
       - "9.1 · Containers & images": 09-infra/01-containers-images.md
       - "9.2 · Kubernetes architecture": 09-infra/02-kubernetes-architecture.md
       - "9.3 · Kubernetes networking": 09-infra/03-kubernetes-networking.md
       - "9.4 · CI/CD & GitOps": 09-infra/04-cicd-gitops.md
       - "9.5 · Observability & SLOs": 09-infra/05-observability.md
   - "10 · AI infrastructure":
-      - "Overview": 10-ai/index.md
+      - 10-ai/index.md
       - "10.1 · AI fundamentals": 10-ai/01-fundamentals.md
       - "10.2 · GPU hardware": 10-ai/02-gpu.md
       - "10.3 · Software stack": 10-ai/03-software.md
@@ -110,7 +112,6 @@ nav:
   - "11 · Security": 11-security/index.md
   - "12 · Distributed systems": 12-distributed/index.md
   - "13 · Cloud cost (FinOps)": 13-finops/index.md
-  - "🆕 What's new": changelog.md
 
 markdown_extensions:
   - admonition
